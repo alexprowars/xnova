@@ -13,7 +13,7 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class ResetPasswordController extends Controller
 {
-	public function forgot(Request $request)
+	public function forgot(Request $request): array
 	{
 		$request->validate([
 			'email' => ['required', 'email'],
@@ -32,7 +32,7 @@ class ResetPasswordController extends Controller
 		];
 	}
 
-	public function reset(Request $request)
+	public function reset(Request $request): void
 	{
 		$data = $request->validate([
 			'token' => ['required'],

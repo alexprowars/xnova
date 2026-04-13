@@ -30,14 +30,14 @@ class FleetSend
 	protected int $fleetSpeed = 10;
 	protected ?AllianceDiplomacy $diplomacy = null;
 
-	public function __construct(protected Planet $planet, protected Coordinates $target, protected Mission $mission)
+	public function __construct(protected Planet $planet, protected Coordinates $target, protected MissionType $mission)
 	{
 		$this->targetPlanet = Planet::query()->coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
 			->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])
 			->first();
 	}
 
-	public function setMission(Mission $mission)
+	public function setMission(MissionType $mission)
 	{
 		$this->mission = $mission;
 	}
@@ -84,7 +84,7 @@ class FleetSend
 			throw new Exception('Неизвестный тип планеты!');
 		}
 
-		if (in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::Spy, Mission::Destruction]) && config('game.disableAttacks', 0) > 0 && time() < config('game.disableAttacks', 0)) {
+		if (in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::Spy, MissionType::Destruction]) && config('game.disableAttacks', 0) > 0 && time() < config('game.disableAttacks', 0)) {
 			throw new PageException('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)), '/fleet');
 		}
 
@@ -118,19 +118,19 @@ class FleetSend
 			throw new Exception('Невозможно отправить флот на эту же планету!');
 		}
 
-		if ($this->mission != Mission::Expedition) {
-			if (!$this->targetPlanet && $this->mission != Mission::Colonization && $this->mission != Mission::CreateBase) {
+		if ($this->mission != MissionType::Expedition) {
+			if (!$this->targetPlanet && $this->mission != MissionType::Colonization && $this->mission != MissionType::CreateBase) {
 				throw new Exception('Данной планеты не существует! - [' . $this->target->getGalaxy() . ':' . $this->target->getSystem() . ':' . $this->target->getPlanet() . ']');
-			} elseif ($this->mission == Mission::Destruction && !$this->targetPlanet) {
+			} elseif ($this->mission == MissionType::Destruction && !$this->targetPlanet) {
 				throw new Exception('Данной планеты не существует! - [' . $this->target->getGalaxy() . ':' . $this->target->getSystem() . ':' . $this->target->getPlanet() . ']');
-			} elseif (!$this->targetPlanet && $this->mission == Mission::Colonization && $this->target->getType() != PlanetType::PLANET) {
+			} elseif (!$this->targetPlanet && $this->mission == MissionType::Colonization && $this->target->getType() != PlanetType::PLANET) {
 				throw new Exception('Колонизировать можно только планету!');
 			}
 		} else {
 			if ($this->planet->user->getTechLevel('expedition') > 0) {
 				$ExpeditionEnCours = Fleet::query()
 					->whereBelongsTo($this->planet->user)
-					->where('mission', Mission::Expedition)
+					->where('mission', MissionType::Expedition)
 					->count();
 
 				$MaxExpedition = 1 + floor($this->planet->user->getTechLevel('expedition') / 3);
@@ -152,7 +152,7 @@ class FleetSend
 
 		$missions = [];
 
-		foreach (Mission::cases() as $m) {
+		foreach (MissionType::cases() as $m) {
 			if (MissionFactory::getMission($m)::isMissionPossible($this->planet, $this->target, $this->targetPlanet, $this->fleetArray, !empty($this->assault))) {
 				$missions[] = $m;
 			}
@@ -162,7 +162,7 @@ class FleetSend
 			throw new Exception('Выполнение данной миссии невозможно!');
 		}
 
-		if ($this->mission == Mission::Recycling && $this->targetPlanet->debris_metal <= 0 && $this->targetPlanet->debris_crystal <= 0) {
+		if ($this->mission == MissionType::Recycling && $this->targetPlanet->debris_metal <= 0 && $this->targetPlanet->debris_crystal <= 0) {
 			throw new PageException('Нет обломков для сбора.');
 		}
 
@@ -176,15 +176,15 @@ class FleetSend
 			$targerUser = $this->planet->user;
 		}
 
-		if (($targerUser->roles->isNotEmpty() && $this->planet->user->roles->isEmpty()) && ($this->mission != Mission::Stay && $this->mission != Mission::Transport)) {
+		if (($targerUser->roles->isNotEmpty() && $this->planet->user->roles->isEmpty()) && ($this->mission != MissionType::Stay && $this->mission != MissionType::Transport)) {
 			throw new PageException('На этого игрока запрещено нападать');
 		}
 
-		if ($targerUser->isVacation() && $this->mission != Mission::Recycling && !$this->planet->user->isAdmin()) {
+		if ($targerUser->isVacation() && $this->mission != MissionType::Recycling && !$this->planet->user->isAdmin()) {
 			throw new PageException('Игрок в режиме отпуска!');
 		}
 
-		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $this->mission == Mission::Attack) {
+		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $this->mission == MissionType::Attack) {
 			$this->diplomacy = AllianceDiplomacy::query()
 				->where('alliance_id', $targerUser->alliance_id)
 				->where('diplomacy_id', $this->planet->user->alliance_id)
@@ -199,7 +199,7 @@ class FleetSend
 
 		$protection = (int) config('game.noobprotection') > 0;
 
-		if ($protection && $this->targetPlanet && in_array($this->mission, [Mission::Attack, Mission::Assault, Mission::StayAlly, Mission::Spy, Mission::Destruction]) && ($this->planet->user->roles->isEmpty() || $this->planet->user->hasExactRoles('operator'))) {
+		if ($protection && $this->targetPlanet && in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::StayAlly, MissionType::Spy, MissionType::Destruction]) && ($this->planet->user->roles->isEmpty() || $this->planet->user->hasExactRoles('operator'))) {
 			$protectionPoints = (int) config('game.noobprotectionPoints');
 			$protectionFactor = (int) config('game.noobprotectionFactor');
 
@@ -211,7 +211,7 @@ class FleetSend
 				$protection = false;
 			}
 
-			if ($this->mission == Mission::StayAlly && $targerUser->alliance_id == $this->planet->user->alliance_id) {
+			if ($this->mission == MissionType::StayAlly && $targerUser->alliance_id == $this->planet->user->alliance_id) {
 				$protection = false;
 			}
 
@@ -238,24 +238,24 @@ class FleetSend
 			}
 		}
 
-		if ($this->mission == Mission::Transport && array_sum($this->resources) < 1) {
+		if ($this->mission == MissionType::Transport && array_sum($this->resources) < 1) {
 			throw new Exception('Нет сырья для транспорта!');
 		}
 
-		if ($this->mission != Mission::Expedition) {
+		if ($this->mission != MissionType::Expedition) {
 			if (!$this->targetPlanet && $this->mission->value < 7) {
 				throw new Exception('Планеты не существует!');
 			}
 
-			if ($this->targetPlanet && ($this->mission == Mission::Colonization || $this->mission == Mission::CreateBase)) {
+			if ($this->targetPlanet && ($this->mission == MissionType::Colonization || $this->mission == MissionType::CreateBase)) {
 				throw new Exception('Место занято');
 			}
 
-			if ($this->targetPlanet && $this->targetPlanet->getLevel('ally_deposit') == 0 && $targerUser->id != $this->planet->user->id && $this->mission == Mission::StayAlly) {
+			if ($this->targetPlanet && $this->targetPlanet->getLevel('ally_deposit') == 0 && $targerUser->id != $this->planet->user->id && $this->mission == MissionType::StayAlly) {
 				throw new Exception('На планете нет склада альянса!');
 			}
 
-			if ($this->mission == Mission::StayAlly) {
+			if ($this->mission == MissionType::StayAlly) {
 				$isFriends = Friend::hasFriends($this->planet->user, $targerUser);
 
 				if ($targerUser->alliance_id != $this->planet->user->alliance_id && !$isFriends && (!$this->diplomacy || $this->diplomacy->type != 2)) {
@@ -263,11 +263,11 @@ class FleetSend
 				}
 			}
 
-			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && ($this->mission == Mission::Attack || $this->mission == Mission::Assault)) {
+			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && ($this->mission == MissionType::Attack || $this->mission == MissionType::Assault)) {
 				throw new Exception('Невозможно атаковать самого себя!');
 			}
 
-			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && $this->mission == Mission::Spy) {
+			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && $this->mission == MissionType::Spy) {
 				throw new Exception('Невозможно шпионить самого себя!');
 			}
 		}
@@ -313,7 +313,7 @@ class FleetSend
 			$fleet->start_date = now()->toImmutable()->addSeconds($duration);
 		}
 
-		if ($this->mission == Mission::Expedition) {
+		if ($this->mission == MissionType::Expedition) {
 			$StayDuration = $this->expeditionTime * 3600;
 			$StayTime = $fleet->start_date->addSeconds($StayDuration);
 		} else {
@@ -336,7 +336,7 @@ class FleetSend
 
 		$totalFleetCons = 0;
 
-		if ($this->mission == Mission::StayAlly) {
+		if ($this->mission == MissionType::StayAlly) {
 			if (!in_array($this->stayTime, [0, 1, 2, 4, 8, 16, 32])) {
 				$this->stayTime = 0;
 			}
@@ -394,7 +394,7 @@ class FleetSend
 			}
 		}
 
-		if ($this->mission == Mission::Transport && $this->targetPlanet->user_id != $this->planet->user->id) {
+		if ($this->mission == MissionType::Transport && $this->targetPlanet->user_id != $this->planet->user->id) {
 			if ($this->targetPlanet->user->onlinetime->lessThan(now()->subDays(7))) {
 				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
 			}
@@ -432,9 +432,9 @@ class FleetSend
 		}
 
 		// Баш контроль
-		if ($this->mission == Mission::Attack && !$this->planet->user->isAdmin()) {
+		if ($this->mission == MissionType::Attack && !$this->planet->user->isAdmin()) {
 			$log = LogsFleet::query()->where('s_id', $this->planet->user->id)
-				->where('mission', Mission::Attack)
+				->where('mission', MissionType::Attack)
 				->where('e_galaxy', $this->targetPlanet->galaxy)
 				->where('e_system', $this->targetPlanet->system)
 				->where('e_planet', $this->targetPlanet->planet)
@@ -449,7 +449,7 @@ class FleetSend
 				$log->increment('amount');
 			} else {
 				LogsFleet::create([
-					'mission' => Mission::Attack,
+					'mission' => MissionType::Attack,
 					'amount' => 1,
 					's_id' => $this->planet->user->id,
 					's_galaxy' => $this->planet->galaxy,
@@ -463,7 +463,7 @@ class FleetSend
 			}
 		}
 
-		if ($this->mission == Mission::Attack) {
+		if ($this->mission == MissionType::Attack) {
 			$rounds = max(min(10, 6), 6);
 		} else {
 			$rounds = 0;

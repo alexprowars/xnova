@@ -5,7 +5,6 @@ namespace App\Engine;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
-use App\Helpers;
 use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
@@ -252,7 +251,7 @@ class UpdateStatistics
 				'delete_time' => now()->addDays(config('game.deleteTime', 7)),
 			]);
 
-			if (Helpers::is_email($user->email)) {
+			if (filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
 				$user->notify(new UserDeleteNotification());
 			}
 
@@ -448,7 +447,7 @@ class UpdateStatistics
 		$settings->save();
 	}
 
-	private function calcPositions()
+	private function calcPositions(): void
 	{
 		$qryFormat = 'UPDATE ' . app(Statistic::class)->getTable() . ' SET `%1$s_rank` = (SELECT @rownum:=@rownum+1) WHERE `stat_type` = %2$d AND `stat_code` = 1 AND stat_hide = 0 ORDER BY `%1$s_points` DESC, `user_id` ASC;';
 
@@ -537,7 +536,7 @@ class UpdateStatistics
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
 	}
 
-	public function buildRecordsCache()
+	public function buildRecordsCache(): void
 	{
 		$Elements = Vars::getItemsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
 

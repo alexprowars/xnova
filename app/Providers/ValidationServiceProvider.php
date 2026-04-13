@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ValidationServiceProvider extends ServiceProvider
 {
-	public function boot()
+	public function boot(): void
 	{
 		Validator::extend('galaxy', function ($attribute, $value) {
 			$value = (int) $value;

@@ -10,7 +10,7 @@ use App\Format;
 
 class QuestController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$quests = require resource_path('engine/quests.php');
 
@@ -56,7 +56,7 @@ class QuestController extends Controller
 		return $result;
 	}
 
-	public function info(int $id)
+	public function info(int $id): array
 	{
 		if ($id <= 0) {
 			throw new PageException('Не выбрано задание', '/quests');
@@ -190,7 +190,7 @@ class QuestController extends Controller
 		return $result;
 	}
 
-	public function finish(int $id)
+	public function finish(int $id): void
 	{
 		if ($id <= 0) {
 			throw new Exception('Не выбрано задание');

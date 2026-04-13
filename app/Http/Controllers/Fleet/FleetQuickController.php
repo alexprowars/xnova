@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Fleet;
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetSend;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\PageException;
@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\DB;
 
 class FleetQuickController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$mission = (int) $request->post('mission', 0);
-		$mission = Mission::tryFrom($mission);
+		$mission = MissionType::tryFrom($mission);
 
 		if (!$mission) {
 			throw new Exception('<span class="error"><b>Не выбрана миссия!</b></span>');
@@ -44,9 +44,9 @@ class FleetQuickController extends Controller
 
 		$fleetArray = [];
 
-		if ($mission == Mission::Spy && ($planetType == PlanetType::PLANET || $planetType == PlanetType::MOON || $planetType == PlanetType::MILITARY_BASE)) {
+		if ($mission == MissionType::Spy && ($planetType == PlanetType::PLANET || $planetType == PlanetType::MOON || $planetType == PlanetType::MILITARY_BASE)) {
 			$fleetArray[210] = $num;
-		} elseif ($mission == Mission::Recycling && $planetType == PlanetType::DEBRIS) {
+		} elseif ($mission == MissionType::Recycling && $planetType == PlanetType::DEBRIS) {
 			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
 			if ($debrisSize <= 0) {

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$query = $request->post('query', '');
 		$type = $request->post('type', 'playername');

@@ -5,20 +5,20 @@ namespace App\Http\Controllers\Alliance;
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Format;
-use App\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Throwable;
 
 class AllianceAdminController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -54,7 +54,7 @@ class AllianceAdminController extends Controller
 		return $parse;
 	}
 
-	public function name(Request $request)
+	public function name(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -79,7 +79,7 @@ class AllianceAdminController extends Controller
 			->update(['alliance_name' => $alliance->name]);
 	}
 
-	public function tag(Request $request)
+	public function tag(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -101,7 +101,7 @@ class AllianceAdminController extends Controller
 		$alliance->save();
 	}
 
-	public function remove()
+	public function remove(): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -112,7 +112,7 @@ class AllianceAdminController extends Controller
 		$alliance->delete();
 	}
 
-	public function give()
+	public function give(): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -126,11 +126,13 @@ class AllianceAdminController extends Controller
 			->with('user')
 			->get();
 
-		$parse['users'] = [];
+		$result = [
+			'user' => [],
+		];
 
 		foreach ($listuser as $u) {
 			if ($alliance->ranks[$u->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
-				$parse['users'][] = [
+				$result['users'][] = [
 					'id' => $u->id,
 					'name' => $u->user?->username,
 					'rank' => $alliance->ranks[$u->rank]['name'],
@@ -138,12 +140,12 @@ class AllianceAdminController extends Controller
 			}
 		}
 
-		$parse['id'] = $this->user->id;
+		$result['id'] = $this->user->id;
 
-		return $parse;
+		return $result;
 	}
 
-	public function giveSend(Request $request)
+	public function giveSend(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -164,7 +166,7 @@ class AllianceAdminController extends Controller
 			->update(['rank' => 0]);
 	}
 
-	public function update(Request $request)
+	public function update(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -172,8 +174,8 @@ class AllianceAdminController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$alliance->owner_range = Helpers::checkString($request->post('owner_range', ''), true);
-		$alliance->web = Helpers::checkString($request->post('web', ''), true);
+		$alliance->owner_range = Str::sanitize(strip_tags($request->post('owner_range', '')));
+		$alliance->web = Str::sanitize(strip_tags($request->post('web', '')));
 
 		if ($request->hasFile('image')) {
 			$file = $request->file('image');
@@ -204,7 +206,7 @@ class AllianceAdminController extends Controller
 		$alliance->update();
 	}
 
-	public function text(Request $request)
+	public function text(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 

@@ -16,7 +16,7 @@ class AllianceChatController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		if ($this->user->messages_ally != 0) {
 			$this->user->messages_ally = 0;
@@ -67,7 +67,7 @@ class AllianceChatController extends Controller
 		return $result;
 	}
 
-	public function send(Request $request)
+	public function send(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -93,7 +93,7 @@ class AllianceChatController extends Controller
 			->increment('messages_ally');
 	}
 
-	public function delete(Request $request)
+	public function delete(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 

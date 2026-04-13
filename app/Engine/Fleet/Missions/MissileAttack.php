@@ -6,11 +6,12 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Messages\Types\MissionMissileAttackMessage;
 use App\Facades\Vars;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
-class Rak extends BaseMission
+class MissileAttack extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
@@ -43,19 +44,26 @@ class Rak extends BaseMission
 
 		$defenceMissiles = $targetPlanet->getLevel('interceptor_misil');
 
-		$message = '';
+		$message = [];
 
 		if ($defenceMissiles >= $rockets) {
-			$message .= 'Вражеская ракетная атака была отбита ракетами-перехватчиками<br>';
-
 			$targetPlanet->updateAmount('interceptor_misil', -$rockets, true);
 		} else {
-			$message .= 'Произведена межпланетная атака (' . $rockets . ' ракет) с ' . $this->fleet->user_name . ' <a href="/galaxy?galaxy=' . $this->fleet->start_galaxy . '&system=' . $this->fleet->start_system . '">[' . $this->fleet->start_galaxy . ':' . $this->fleet->start_system . ':' . $this->fleet->start_planet . ']</a>';
-			$message .= ' на планету ' . $this->fleet->target_user_name . ' <a href="/galaxy?galaxy=' . $this->fleet->end_galaxy . '&system=' . $this->fleet->end_system . '">[' . $this->fleet->end_galaxy . ':' . $this->fleet->end_system . ':' . $this->fleet->end_planet . ']</a>.<br><br>';
+			$message = [
+				'missiles' => $rockets,
+				'missiles_destroyed' => $defenceMissiles,
+				'planet' => [
+					'name' => $this->fleet->user_name,
+					...$this->fleet->getOriginCoordinates(false)->toArray(),
+				],
+				'target' => [
+					'name' => $this->fleet->target_user_name,
+					...$this->fleet->getDestinationCoordinates(false)->toArray(),
+				],
+				'destroyed' => [],
+			];
 
 			if ($defenceMissiles > 0) {
-				$message .= $defenceMissiles . ' ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>';
-
 				$targetPlanet->updateAmount('interceptor_misil', 0);
 			}
 
@@ -70,19 +78,17 @@ class Rak extends BaseMission
 					continue;
 				}
 
-				$message .= __('main.tech.' . $elementId) . ' (' . $destroy . ' уничтожено)<br>';
+				$message['destroyed'][$elementId] = $destroy;
 
 				$targetPlanet->updateAmount($elementId, -$destroy, true);
-			}
-
-			if (empty($irak)) {
-				$message .= 'Нет обороны для разрушения!';
 			}
 		}
 
 		$targetPlanet->update();
 
-		$this->fleet->target->notify(new MessageNotification(null, MessageType::Battle, 'Ракетная атака', $message));
+		$this->fleet->target->notify(
+			new SystemMessage(MessageType::Battle, new MissionMissileAttackMessage($message))
+		);
 	}
 
 	public function returnEvent(): void

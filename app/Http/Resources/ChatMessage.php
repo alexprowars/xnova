@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class ChatMessage extends JsonResource
 {
-	public function toArray($request)
+	public function toArray($request): array
 	{
 		$message = $this->message;
 

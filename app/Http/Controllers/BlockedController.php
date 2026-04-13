@@ -6,7 +6,7 @@ use App\Models\Blocked;
 
 class BlockedController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$rows = Blocked::orderByDesc('id')
 			->with(['user', 'author'])

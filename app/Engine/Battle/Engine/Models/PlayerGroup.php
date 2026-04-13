@@ -108,7 +108,7 @@ class PlayerGroup
 
 	public function repairShields($round = 0)
 	{
-		foreach ($this->array as $idPlayer => $player) {
+		foreach ($this->array as $player) {
 			$player->repairShields($round);
 		}
 	}
@@ -116,7 +116,7 @@ class PlayerGroup
 	public function getEquivalentFleetContent()
 	{
 		$merged = new Fleet(-1);
-		foreach ($this->array as $idPlayer => $player) { // cloning don't have any sense because we don't touch the array,maybe php bug :(
+		foreach ($this->array as $player) { // cloning don't have any sense because we don't touch the array,maybe php bug :(
 			$merged->mergeFleet($player->getEquivalentFleetContent());
 		}
 		return $merged;
@@ -125,7 +125,7 @@ class PlayerGroup
 	public function getTotalCount()
 	{
 		$amount = 0;
-		foreach ($this->array as $idPlayer => $player) {
+		foreach ($this->array as $player) {
 			$amount += $player->getTotalCount();
 		}
 		return $amount;

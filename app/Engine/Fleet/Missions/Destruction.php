@@ -7,9 +7,11 @@ use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Formulas;
+use App\Engine\Messages\Types\MissionDestructionFailureMessage;
+use App\Engine\Messages\Types\MissionDestructionMessage;
 use App\Models;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use App\Services\FleetService;
 use Illuminate\Support\Facades\Cache;
 
@@ -109,35 +111,24 @@ class Destruction extends BaseMission
 					}
 				}
 
-				$message = __('fleet_engine.sys_destruc_mess1');
+				$message = new MissionDestructionMessage([
+					'destroyed' => $moonDestroyed,
+					'killed' => $ripsKilled,
+				]);
 
-				if ($moonDestroyed && !$ripsKilled) {
-					$message .= __('fleet_engine.sys_destruc_reussi');
-				}
-
-				if ($moonDestroyed && $ripsKilled) {
-					$message .= __('fleet_engine.sys_destruc_all');
-				}
-
-				if (!$moonDestroyed && $ripsKilled) {
-					$message .= __('fleet_engine.sys_destruc_echec');
-				}
-
-				if (!$moonDestroyed && !$ripsKilled) {
-					$message .= __('fleet_engine.sys_destruc_null');
-				}
-
-				$message .= '<br><br>' . __('fleet_engine.sys_destruc_lune') . $moonDestroyChance . '%. <br>' . __('fleet_engine.sys_destruc_rip') . $fleetDestroyChance . '%';
-
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));
-				$targetMoon->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), $message));
+				$this->fleet->user->notify(new SystemMessage(MessageType::Battle, $message));
+				$targetMoon->user->notify(new SystemMessage(MessageType::Battle, $message));
 
 				Cache::forget('app::planetlist_' . $targetMoon->user_id);
 			} else {
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop')));
+				$this->fleet->user->notify(
+					new SystemMessage(MessageType::Battle, new MissionDestructionFailureMessage())
+				);
 			}
 		} else {
-			$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, __('fleet_engine.sys_mess_destruc_report'), __('fleet_engine.sys_destruc_stop')));
+			$this->fleet->user->notify(
+				new SystemMessage(MessageType::Battle, new MissionDestructionFailureMessage())
+			);
 		}
 	}
 }

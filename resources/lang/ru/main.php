@@ -74,6 +74,12 @@ return [
 		'deuterium' => 'Дейтерий',
 		'energy' => 'Энергия',
 	],
+	'res_plural' => [
+		'metal' => 'металла',
+		'crystal' => 'кристалла',
+		'deuterium' => 'дейтерия',
+		'energy' => 'энергии',
+	],
 	'res_builds' => [
 		'metal' => 1,
 		'crystal' => 2,

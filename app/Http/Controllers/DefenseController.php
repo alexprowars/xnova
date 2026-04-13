@@ -8,7 +8,7 @@ class DefenseController extends ShipyardController
 {
 	protected string $mode = 'defense';
 
-	public function index()
+	public function index(): array
 	{
 		if ($this->planet->planet_type == PlanetType::MILITARY_BASE) {
 			$this->user->setOption('only_available', true);

@@ -313,7 +313,7 @@ class BattleReport
 		return $html;
 	}
 
-	protected function convertToSimLink($resultData, $attackUsers, $defenseUsers): string
+	protected function convertToSimLink(array $resultData, array $attackUsers, array $defenseUsers): string
 	{
 		$usersInfo = [];
 

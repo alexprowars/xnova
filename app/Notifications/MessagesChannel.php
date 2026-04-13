@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\MessageContract;
 use App\Models\Message;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ class MessagesChannel
 		 * @var User|int|null $sender
 		 * @var MessageType $type
 		 * @var ?string $subject
-		 * @var string|array $message
+		 * @var string|array|MessageContract $message
 		 */
 		[$user, $sender, $type, $subject, $message] = $notification->toMessages($notifiable);
 
@@ -34,6 +35,10 @@ class MessagesChannel
 		$obj->from_id = $sender ?: null;
 		$obj->type = $type;
 		$obj->subject = $subject;
+
+		if ($message instanceof MessageContract) {
+			$message = $message->toArray();
+		}
 
 		if (!is_array($message)) {
 			$message = [

@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
-	public function boot()
+	public function boot(): void
 	{
 		Model::unguard();
 

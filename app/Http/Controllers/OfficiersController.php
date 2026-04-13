@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class OfficiersController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$items = [];
 
@@ -26,7 +26,7 @@ class OfficiersController extends Controller
 		return $items;
 	}
 
-	public function buy(Request $request)
+	public function buy(Request $request): void
 	{
 		$id = (int) $request->post('id');
 		$duration = (int) $request->post('duration');

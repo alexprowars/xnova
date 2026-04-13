@@ -6,7 +6,7 @@ use App\Models\User;
 
 class ContactsController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$users = User::query()
 			->with(['roles'])

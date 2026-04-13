@@ -98,13 +98,15 @@ class GalaxyService
 			$planet->refresh();
 			$planet->setRelation('user', $user);
 
+			cache()->forget('app::planetlist_' . $user->id);
+
 			return $planet;
 		}
 
 		return null;
 	}
 
-	public function createMoon(Coordinates $target, User $user, $chance): ?Planet
+	public function createMoon(Coordinates $target, User $user, int $chance): ?Planet
 	{
 		$planet = Planet::findByCoordinates(new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet(), PlanetType::PLANET));
 
@@ -151,7 +153,7 @@ class GalaxyService
 		return !Planet::query()->coordinates($target)->exists();
 	}
 
-	public function getFreePositions(Coordinates $target, $startPosition, $endPosition): array
+	public function getFreePositions(Coordinates $target, int $startPosition, int $endPosition): array
 	{
 		$planets = Planet::query()
 			->where('galaxy', $target->getGalaxy())
@@ -172,7 +174,7 @@ class GalaxyService
 		return $result;
 	}
 
-	public function sizeRandomiser(Planet $planet, $mainPlanet = false): Planet
+	public function sizeRandomiser(Planet $planet, bool $mainPlanet = false): Planet
 	{
 		/** @var array<int, array> $planetData */
 		$planetData = [];

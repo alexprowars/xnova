@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class PlanetResource extends JsonResource
 {
-	public function toArray($request)
+	public function toArray($request): array
 	{
 		$data = [
 			'id' => $this->resource->id,

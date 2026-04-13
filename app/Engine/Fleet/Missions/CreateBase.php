@@ -5,11 +5,15 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Messages\AbstractMessage;
+use App\Engine\Messages\Types\MissionCreateBaseMaxReachedMessage;
+use App\Engine\Messages\Types\MissionCreateBaseErrorMessage;
+use App\Engine\Messages\Types\MissionCreateBaseExistMessage;
+use App\Engine\Messages\Types\MissionCreateBaseMessage;
 use App\Facades\Galaxy;
 use App\Models;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
-use Illuminate\Support\Facades\Cache;
+use App\Notifications\SystemMessage;
 
 class CreateBase extends BaseMission
 {
@@ -29,20 +33,16 @@ class CreateBase extends BaseMission
 			->where('planet_type', PlanetType::MILITARY_BASE)
 			->count();
 
-		$TargetAdress = __('main.sys_adress_planet', [
-			'galaxy' => $this->fleet->end_galaxy,
-			'system' => $this->fleet->end_system,
-			'planet' => $this->fleet->end_planet,
-		]);
-
 		// Если в галактике пусто (планета не заселена)
 		if (Galaxy::isPositionFree($this->fleet->getDestinationCoordinates())) {
 			// Если лимит баз исчерпан
 			if ($iPlanetCount >= $maxBases) {
-				$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_colo_maxcolo') . $maxBases . __('fleet_engine.sys_base_planet');
-
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
 				$this->return();
+
+				$this->sendNotify(new MissionCreateBaseMaxReachedMessage([
+					'target' => $this->fleet->getDestinationCoordinates()->toArray(),
+					'max' => $maxBases,
+				]));
 			} else {
 				// Создание планеты-базы
 				$NewOwnerPlanet = Galaxy::createPlanet(
@@ -53,10 +53,6 @@ class CreateBase extends BaseMission
 
 				// Если планета-база создана
 				if ($NewOwnerPlanet) {
-					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_allisok');
-
-					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
-
 					foreach ($this->fleet->entities as $entity) {
 						if ($entity->id == 216 && $entity->count > 0) {
 							$entity->count--;
@@ -68,21 +64,28 @@ class CreateBase extends BaseMission
 					$this->restoreFleetToPlanet(false);
 					$this->killFleet();
 
-					Cache::forget('app::planetlist_' . $this->fleet->user_id);
+					$this->sendNotify(new MissionCreateBaseMessage([
+						'target' => $this->fleet->getDestinationCoordinates()->toArray(),
+					]));
 				} else {
 					$this->return();
 
-					$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_badpos');
-
-					$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
+					$this->sendNotify(new MissionCreateBaseErrorMessage([
+						'target' => $this->fleet->getDestinationCoordinates()->toArray(),
+					]));
 				}
 			}
 		} else {
 			$this->return();
 
-			$TheMessage = __('fleet_engine.sys_colo_arrival') . $TargetAdress . __('fleet_engine.sys_base_notfree');
-
-			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_base_mess_from'), $TheMessage));
+			$this->sendNotify(new MissionCreateBaseExistMessage([
+				'target' => $this->fleet->getDestinationCoordinates()->toArray(),
+			]));
 		}
+	}
+
+	protected function sendNotify(AbstractMessage $message)
+	{
+		$this->fleet->user->notify(new SystemMessage(MessageType::Fleet, $message));
 	}
 }

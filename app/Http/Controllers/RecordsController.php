@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Date;
 
 class RecordsController extends Controller
 {
-	public function index(Settings $settings)
+	public function index(Settings $settings): array
 	{
 		/** @var array<int, array> $recordsArray */
 		$recordsArray = [];

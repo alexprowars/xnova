@@ -5,8 +5,9 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Actions\Fleet\FinishExpeditionAction;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\MissionExpeditionReturnMessage;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
 class Expedition extends BaseMission
 {
@@ -35,14 +36,15 @@ class Expedition extends BaseMission
 
 	public function returnEvent(): void
 	{
-		$message = [
-			'type' => 'ExpeditionReturnMessage',
+		$message = new MissionExpeditionReturnMessage([
 			'metal' => $this->fleet->resource_metal,
 			'crystal' => $this->fleet->resource_crystal,
 			'deuterium' => $this->fleet->resource_deuterium,
-		];
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, $message)
+		);
 
 		parent::returnEvent();
 	}

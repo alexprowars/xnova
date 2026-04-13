@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class HallController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$type = $request->input('type', 'single');
 

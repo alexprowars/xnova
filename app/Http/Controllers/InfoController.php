@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class InfoController extends Controller
 {
-	public function index(int $element)
+	public function index(int $element): array
 	{
 		return $this->showBuildingInfoPage($element);
 	}

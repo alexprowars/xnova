@@ -7,6 +7,7 @@ use App\Engine\Battle\Engine\Utils\Math;
 
 class BattleCombat
 {
+	/** @var array<int, Round> */
 	protected array $rounds = [];
 	protected int $roundsCount = 0;
 
@@ -33,7 +34,7 @@ class BattleCombat
 		return $this->rounds[(int) $number];
 	}
 
-	private function getResultRound($number): Round
+	private function getResultRound(int|string $number): Round
 	{
 		return $this->getRound($number);
 	}

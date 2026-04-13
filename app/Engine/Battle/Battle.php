@@ -10,6 +10,7 @@ use App\Engine\Battle\Engine\Models\HomeFleet;
 use App\Engine\Battle\Engine\Models\Player;
 use App\Engine\Battle\Engine\Models\PlayerGroup;
 use App\Engine\Battle\Engine\Models\Ship;
+use App\Engine\Battle\Engine\Models\ShipType;
 use App\Engine\Battle\Engine\Round;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
@@ -29,17 +30,17 @@ class Battle
 		$this->defenders = new PlayerGroup();
 	}
 
-	public function addAttackerFleet(FleetModel $fleet)
+	public function addAttackerFleet(FleetModel $fleet): void
 	{
 		$this->addFleetToGroup($this->attackers, $fleet);
 	}
 
-	public function addDefenderFleet(FleetModel $fleet)
+	public function addDefenderFleet(FleetModel $fleet): void
 	{
 		$this->addFleetToGroup($this->defenders, $fleet);
 	}
 
-	public function addPlanet(Planet $planet)
+	public function addPlanet(Planet $planet): void
 	{
 		$res = [];
 
@@ -98,7 +99,7 @@ class Battle
 		return $this;
 	}
 
-	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet)
+	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet): void
 	{
 		if ($fleet->entities->isEmpty()) {
 			return;
@@ -179,7 +180,7 @@ class Battle
 		return $result;
 	}
 
-	public function getShipType($id, $count, $res)
+	public function getShipType($id, int $count, $res): ShipType
 	{
 		$shipData = Vars::getUnitData($id);
 

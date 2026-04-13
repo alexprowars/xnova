@@ -15,7 +15,7 @@ class LoginController extends Controller
 		'vkontakte',
 	];
 
-	public function credentials(Request $request)
+	public function credentials(Request $request): void
 	{
 		if (empty($request->post('email'))) {
 			throw new Exception('Введите Email');
@@ -77,10 +77,6 @@ class LoginController extends Controller
 					'name' => $profile->getNickname() ?: $profile->getName(),
 					'email' => $email,
 				]);
-
-				if (!$user) {
-					throw new Exception('create user error');
-				}
 			}
 
 			UserAuthentication::create([

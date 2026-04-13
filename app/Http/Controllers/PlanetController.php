@@ -21,7 +21,7 @@ class PlanetController extends Controller
 		'eis' => 20,
 	];
 
-	public function delete()
+	public function delete(): void
 	{
 		if ($this->user->planet_id == $this->planet->id) {
 			throw new Exception(__('overview.deletemessage_wrong'));
@@ -59,7 +59,7 @@ class PlanetController extends Controller
 		Cache::forget('app::planetlist_' . $this->user->id);
 	}
 
-	public function rename(Request $request)
+	public function rename(Request $request): void
 	{
 		$name = strip_tags(trim($request->post('name', '')));
 
@@ -79,7 +79,7 @@ class PlanetController extends Controller
 		$this->planet->update();
 	}
 
-	public function image(Request $request)
+	public function image(Request $request): void
 	{
 		if ($this->user->credits < 1) {
 			throw new Exception('Недостаточно кредитов');

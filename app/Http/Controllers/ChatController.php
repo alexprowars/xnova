@@ -9,12 +9,13 @@ use App\Http\Resources;
 use App\Models\Chat;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
-	public function send(Request $request)
+	public function send(Request $request): void
 	{
 		$message = $request->post('message');
 
@@ -43,7 +44,7 @@ class ChatController extends Controller
 		Cache::delete('chat.cache');
 	}
 
-	public function last()
+	public function last(): JsonResource
 	{
 		$items = Chat::query()
 			->with(['user'])

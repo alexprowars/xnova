@@ -14,7 +14,7 @@ use Throwable;
 
 class SimController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		if ($request->has('units')) {
 			$units = explode(';', $request->input('units'));
@@ -66,7 +66,7 @@ class SimController extends Controller
 		return $result;
 	}
 
-	public function reportById(string $id)
+	public function reportById(string $id): array
 	{
 		$log = LogsSimulation::findOne($id);
 
@@ -88,7 +88,7 @@ class SimController extends Controller
 		];
 	}
 
-	public function report(Request $request)
+	public function report(Request $request): array
 	{
 		$r = explode('|', $request->input('r', ''));
 

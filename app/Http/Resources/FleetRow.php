@@ -11,12 +11,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class FleetRow extends JsonResource
 {
-	public function __construct(Models\Fleet $fleetRow, protected $status, protected $owner)
+	public function __construct(Models\Fleet $fleetRow, protected int $status, protected $owner)
 	{
 		parent::__construct($fleetRow);
 	}
 
-	public function toArray($request)
+	public function toArray($request): array
 	{
 		if ($this->status == 0) {
 			$date = $this->resource->start_date;

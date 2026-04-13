@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class UserResource extends JsonResource
 {
-	public function toArray($request)
+	public function toArray($request): array
 	{
 		$quests = Cache::remember('app::quests::' . $this->resource->id, 3600, function () {
 			return $this->resource->quests()->where('finish', 1)->count();

@@ -11,7 +11,7 @@ use App\Models\Planet;
 
 class EmpireController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$result = [];
 

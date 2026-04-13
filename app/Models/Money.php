@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Money extends Model
 {
@@ -11,6 +12,12 @@ class Money extends Model
 	protected $guarded = [];
 
 	protected $casts = [
-		'time' => 'immutable_datetime',
+		'date' => 'immutable_datetime',
 	];
+
+	/** @return BelongsTo<User, $this> */
+	public function user(): BelongsTo
+	{
+		return $this->belongsTo(User::class, 'user_id');
+	}
 }

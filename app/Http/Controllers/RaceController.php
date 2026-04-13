@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class RaceController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$isChangeAvailable = ($this->user->race_change_count > 0 || $this->user->credits >= 100)
 			&& !$this->user->isVacation();
@@ -21,7 +21,7 @@ class RaceController extends Controller
 		];
 	}
 
-	public function change(Request $request)
+	public function change(Request $request): void
 	{
 		if (!$this->user->race) {
 			throw new Exception('Нельзя изменить фракцию в данный момент');

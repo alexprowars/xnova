@@ -14,7 +14,7 @@ class QueueResource extends JsonResource
 		parent::__construct($user);
 	}
 
-	public function toArray($request)
+	public function toArray($request): array
 	{
 		$queue = $this->user->queue;
 		$queue->loadMissing('planet');

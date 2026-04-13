@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class ResearchController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$labInQueue = true;
 
@@ -117,7 +117,7 @@ class ResearchController extends Controller
 		return $items;
 	}
 
-	public function action(Request $request, string $action)
+	public function action(Request $request, string $action): void
 	{
 		if (!Building::checkLabSettingsInQueue($this->planet)) {
 			return;

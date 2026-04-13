@@ -4,8 +4,10 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\MissionTransportArrivedMessage;
+use App\Engine\Messages\Types\MissionTransportReceivedMessage;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
 class Transport extends BaseMission
 {
@@ -18,34 +20,28 @@ class Transport extends BaseMission
 	{
 		$this->restoreFleetToPlanet(false, false);
 
-		$message = __('fleet_engine.sys_tran_mess_owner', [
-			'user' => $this->fleet->target_user_name,
-			'target' => $this->fleet->getDestinationCoordinates()->getLink(),
-			'm' => $this->fleet->resource_metal,
-			'mt' => __('main.metal', locale: $this->fleet->user->locale),
-			'c' => $this->fleet->resource_crystal,
-			'ct' => __('main.crystal', locale: $this->fleet->user->locale),
-			'd' => $this->fleet->resource_deuterium,
-			'dt' => __('main.deuterium', locale: $this->fleet->user->locale)
-		], $this->fleet->user->locale);
+		$message = new MissionTransportArrivedMessage([
+			'target_name' => $this->fleet->target_user_name,
+			'target' => $this->fleet->getDestinationCoordinates(false)->toArray(),
+			'metal' => $this->fleet->resource_metal,
+			'crystal' => $this->fleet->resource_crystal,
+			'deuterium' => $this->fleet->resource_deuterium,
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower', locale: $this->fleet->user->locale), $message));
+		$this->fleet->user->notify(new SystemMessage(MessageType::Fleet, $message));
 
 		if ($this->fleet->target_user_id != $this->fleet->user_id) {
-			$message = __('fleet_engine.sys_tran_mess_user', [
-				'user' => $this->fleet->user_name,
-				'start' => $this->fleet->getOriginCoordinates()->getLink(),
-				'target_user' => $this->fleet->target_user_name,
-				'target' => $this->fleet->getDestinationCoordinates()->getLink(),
-				'm' => $this->fleet->resource_metal,
-				'mt' => __('main.metal', locale: $this->fleet->target->locale),
-				'c' => $this->fleet->resource_crystal,
-				'ct' => __('main.crystal', locale: $this->fleet->target->locale),
-				'd' => $this->fleet->resource_deuterium,
-				'dt' => __('main.deuterium', locale: $this->fleet->target->locale)
-			], $this->fleet->target->locale);
+			$message = new MissionTransportReceivedMessage([
+				'start_name' => $this->fleet->user_name,
+				'start' => $this->fleet->getOriginCoordinates(false)->toArray(),
+				'target_name' => $this->fleet->target_user_name,
+				'target' => $this->fleet->getDestinationCoordinates(false)->toArray(),
+				'metal' => $this->fleet->resource_metal,
+				'crystal' => $this->fleet->resource_crystal,
+				'deuterium' => $this->fleet->resource_deuterium,
+			]);
 
-			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_tower', locale: $this->fleet->target->locale), $message));
+			$this->fleet->target->notify(new SystemMessage(MessageType::Fleet, $message));
 		}
 
 		$this->fleet->resource_metal = 0;

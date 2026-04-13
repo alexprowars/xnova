@@ -4,8 +4,9 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\AcsFleetArrivedMessage;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
 class StayAlly extends BaseMission
 {
@@ -18,14 +19,14 @@ class StayAlly extends BaseMission
 	{
 		$this->stayFleet();
 
-		$message = __('fleet_engine.sys_stay_mess_user', [
-			'user' => $this->fleet->user_name,
-			'start' => $this->fleet->getOriginCoordinates()->getLink(),
+		$message = new AcsFleetArrivedMessage([
+			'start_name' => $this->fleet->user_name,
+			'start' => $this->fleet->getOriginCoordinates(false)->toArray(),
 			'target_user' => $this->fleet->target_user_name,
-			'target' => $this->fleet->getDestinationCoordinates()->getLink(),
-		], $this->fleet->user->locale);
+			'target' => $this->fleet->getDestinationCoordinates(false)->toArray(),
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Alliance, __('fleet_engine.sys_mess_tower'), $message));
+		$this->fleet->user->notify(new SystemMessage(MessageType::Alliance, $message));
 	}
 
 	public function endStayEvent(): void

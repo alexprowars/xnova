@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LogoutController extends Controller
 {
-	public function index()
+	public function index(): void
 	{
 		Auth::logout();
 	}

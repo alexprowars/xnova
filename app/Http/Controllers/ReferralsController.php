@@ -6,7 +6,7 @@ use App\Models\Referal;
 
 class ReferralsController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$referals = Referal::query()
 			->whereBelongsTo($this->user, 'user')

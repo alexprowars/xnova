@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,10 @@ class Report extends Model
 		'data' => 'json:unicode',
 	];
 
-	public function prunable()
+	/**
+	 * @return Builder<static>
+	 */
+	public function prunable(): Builder
 	{
 		return static::query()->where('created_at', '<', now()->subDays(7));
 	}

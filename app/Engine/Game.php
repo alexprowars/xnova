@@ -67,7 +67,7 @@ class Game
 			return;
 		}
 
-		$user = User::find($id);
+		$user = User::findOne($id);
 
 		if (!$user) {
 			return;
@@ -75,18 +75,17 @@ class Game
 
 		$ip = Helpers::convertIp(Request::ip());
 
-		$res = Money::query()
+		$exist = Money::query()
 			->where('ip', $ip)
-			->where('time', '>', now()->subDay())
+			->where('date', '>', now()->subDay())
 			->exists();
 
-		if ($res) {
+		if ($exist) {
 			return;
 		}
 
 		Money::create([
 			'user_id' => $user->id,
-			'time' => now(),
 			'ip' => $ip,
 			'referer' => Request::server('HTTP_REFERER'),
 			'user_agent' => Request::server('HTTP_USER_AGENT'),

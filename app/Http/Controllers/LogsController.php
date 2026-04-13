@@ -13,7 +13,7 @@ use Throwable;
 
 class LogsController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$logs = LogsBattle::query()->whereBelongsTo($this->user)
 			->orderByDesc('id')->get();
@@ -30,7 +30,7 @@ class LogsController extends Controller
 		return $items;
 	}
 
-	public function delete(int $id)
+	public function delete(int $id): void
 	{
 		$log = LogsBattle::query()->whereKey($id)
 			->whereBelongsTo($this->user)
@@ -45,7 +45,7 @@ class LogsController extends Controller
 		}
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): void
 	{
 		$title = $request->post('title');
 		$code = $request->post('code');
@@ -91,7 +91,7 @@ class LogsController extends Controller
 		}
 	}
 
-	public function info(int $id)
+	public function info(int $id): array
 	{
 		$raport = LogsBattle::find($id);
 

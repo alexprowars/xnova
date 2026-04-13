@@ -7,7 +7,7 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\FleetCollection;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\PageException;
 use App\Factories\PlanetServiceFactory;
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 
 class FleetSendController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$moon = (int) $request->post('moon', 0);
 
@@ -39,7 +39,7 @@ class FleetSendController extends Controller
 		$planetType = PlanetType::tryFrom($planetType);
 
 		$fleetMission = (int) $request->post('mission', 0);
-		$fleetMission = Mission::tryFrom($fleetMission);
+		$fleetMission = MissionType::tryFrom($fleetMission);
 
 		$assaultId = (int) $request->post('alliance', 0);
 
@@ -57,7 +57,7 @@ class FleetSendController extends Controller
 		$sender->setResources($resources);
 		$sender->setFleetSpeed($fleetSpeedFactor);
 
-		if ($fleetMission == Mission::Expedition) {
+		if ($fleetMission == MissionType::Expedition) {
 			$sender->setExpeditionTime((int) $request->post('expeditiontime', 0));
 		}
 
@@ -67,7 +67,7 @@ class FleetSendController extends Controller
 			$sender->setStayTime($holdTime);
 		}
 
-		if ($assaultId && $fleetMission == Mission::Assault) {
+		if ($assaultId && $fleetMission == MissionType::Assault) {
 			$assault = Models\Assault::query()
 				->whereKey($assaultId)
 				->whereHas('users', function (Builder $query) {
@@ -78,7 +78,7 @@ class FleetSendController extends Controller
 			if ($assault && $assault->coordinates->isSame($target)) {
 				$sender->setAssault($assault);
 			} else {
-				$sender->setMission(Mission::Attack);
+				$sender->setMission(MissionType::Attack);
 			}
 		}
 
@@ -116,7 +116,7 @@ class FleetSendController extends Controller
 		return $result;
 	}
 
-	private function checkJumpGate(Planet $planet)
+	private function checkJumpGate(Planet $planet): void
 	{
 		$planetService = resolve(PlanetServiceFactory::class)
 			->make($planet);

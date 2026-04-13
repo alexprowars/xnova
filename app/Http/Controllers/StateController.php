@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class StateController extends Controller
 {
-	public function index(Settings $settings)
+	public function index(Settings $settings): array
 	{
 		$user = Auth::user();
 		$planet = $user?->getCurrentPlanet();

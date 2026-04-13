@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\SupportAnswerMessage;
 use App\Exceptions\Exception;
-use App\Helpers;
 use App\Models\SupportTicket;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -84,11 +84,9 @@ class SupportController extends Controller
 			$ticket->messages()->whereNot('user_id', $this->user->id)->pluck('user_id')->toArray()
 		));
 
-		$notifyMessage = '<a href="/support/' . $ticket->id . '" target="_blank">Поступил ответ на тикет №' . $id . '</a>';
-
 		foreach ($usersId as $userId) {
 			User::findOne($userId)?->notify(
-				new MessageNotification(null, MessageType::System, $this->user->username, $notifyMessage)
+				new SystemMessage(MessageType::System, new SupportAnswerMessage(['ticket_id' => $ticket->id]), $this->user->username)
 			);
 		}
 	}
@@ -117,8 +115,8 @@ class SupportController extends Controller
 		foreach ($ticket->messages as $message) {
 			$result['messages'][] = [
 				'date' => $message->created_at?->utc()->toAtomString(),
-				'user' => $message->user?->username ?? null,
-				'user_id' => $message->user?->id ?? null,
+				'user' => $message->user->username ?? null,
+				'user_id' => $message->user->id ?? null,
 				'message' => $message->message,
 			];
 		}

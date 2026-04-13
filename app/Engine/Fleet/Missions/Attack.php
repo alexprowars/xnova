@@ -12,7 +12,8 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetEngine;
-use App\Engine\Fleet\Mission as MissionEnum;
+use App\Engine\Fleet\MissionType as MissionEnum;
+use App\Engine\Messages\Types\MissionAttackMessage;
 use App\Engine\QueueManager;
 use App\Facades\Galaxy;
 use App\Facades\Vars;
@@ -21,7 +22,7 @@ use App\Models\Fleet as FleetModel;
 use App\Models\LogsAttack;
 use App\Models\Planet;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use App\Services\FleetService;
 use Illuminate\Support\Facades\DB;
 
@@ -339,7 +340,6 @@ class Attack extends BaseMission
 		FleetService::checkHallBattle($combatReport);
 
 		$reportData = [
-			'type' => 'AttackMessage',
 			'report_id' => $combatReport->id,
 			'galaxy' => $this->fleet->end_galaxy,
 			'system' => $this->fleet->end_system,
@@ -359,7 +359,9 @@ class Attack extends BaseMission
 		};
 
 		foreach ($report->getAttackersId() as $userId) {
-			User::findOne($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $reportData));
+			User::findOne($userId)?->notify(
+				new SystemMessage(MessageType::Battle, new MissionAttackMessage($reportData))
+			);
 		}
 
 		unset(
@@ -375,7 +377,9 @@ class Attack extends BaseMission
 		};
 
 		foreach ($report->getDefendersId() as $userId) {
-			User::findOne($userId)?->notify(new MessageNotification(null, MessageType::Battle, 'Боевой доклад', $reportData));
+			User::findOne($userId)?->notify(
+				new SystemMessage(MessageType::Battle, new MissionAttackMessage($reportData))
+			);
 		}
 
 		LogsAttack::create([

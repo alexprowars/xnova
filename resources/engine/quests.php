@@ -1,6 +1,6 @@
 <?php
 
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 
 return [
 	1 => [
@@ -35,12 +35,12 @@ return [
 	],
 	7 => [
 		'required' => ['quest' => 6],
-		'task' => ['build' => [210 => 1], 'fleet_mission' => Mission::Spy],
+		'task' => ['build' => [210 => 1], 'fleet_mission' => MissionType::Spy],
 		'reward' => ['build' => [210 => 5]],
 	],
 	8 => [
 		'required' => ['quest' => 7],
-		'task' => ['fleet_mission' => Mission::Expedition],
+		'task' => ['fleet_mission' => MissionType::Expedition],
 		'reward' => ['build' => [202 => 5, 205 => 3]],
 	],
 	9 => [
@@ -50,7 +50,7 @@ return [
 	],
 	10 => [
 		'required' => ['quest' => 9],
-		'task' => ['fleet_mission' => Mission::Recycling],
+		'task' => ['fleet_mission' => MissionType::Recycling],
 		'reward' => ['build' => [209 => 3]],
 	]
 ];

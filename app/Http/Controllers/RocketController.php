@@ -7,7 +7,7 @@ use App\Engine\Entity\Model\FleetEntity;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 
 class RocketController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): void
 	{
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
@@ -68,7 +68,7 @@ class RocketController extends Controller
 		$fleet = Fleet::create([
 			'user_id' 			=> $this->user->id,
 			'user_name' 		=> $this->planet->name,
-			'mission' 			=> Mission::Rak,
+			'mission' 			=> MissionType::MissileAttack,
 			'entities' 			=> new FleetEntityCollection([FleetEntity::create(503, $count, ['target' => $destroyType])]),
 			'start_date' 		=> now()->addSeconds($time),
 			'start_galaxy' 		=> $this->planet->galaxy,

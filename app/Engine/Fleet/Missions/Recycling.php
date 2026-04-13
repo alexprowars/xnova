@@ -5,9 +5,10 @@ namespace App\Engine\Fleet\Missions;
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Messages\Types\MissionRecyclingMessage;
 use App\Models\Fleet;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
 class Recycling extends BaseMission
 {
@@ -48,16 +49,13 @@ class Recycling extends BaseMission
 
 		$this->return();
 
-		$message = [
-			'type' => 'RecyclingMessage',
+		$message = new MissionRecyclingMessage([
+			'target' => $this->fleet->getDestinationCoordinates()->toArray(),
 			'metal' => $recycled['metal'],
 			'crystal' => $recycled['crystal'],
-			'galaxy' => $this->fleet->end_galaxy,
-			'system' => $this->fleet->end_system,
-			'planet' => $this->fleet->end_planet,
-		];
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_spy_control'), $message));
+		$this->fleet->user->notify(new SystemMessage(MessageType::Fleet, $message));
 	}
 
 	protected function calculateRecycledGoods(?Planet $target): array

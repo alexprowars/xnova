@@ -4,9 +4,10 @@ namespace App\Engine\Fleet\Missions;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
-use App\Format;
+use App\Engine\Messages\Types\MissionStayMessage;
+use App\Engine\Messages\Types\MissionStayReturnMessage;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
 class Stay extends BaseMission
 {
@@ -25,27 +26,21 @@ class Stay extends BaseMission
 			$this->restoreFleetToPlanet(false);
 			$this->killFleet();
 
-			$TargetAddedGoods = '';
+			$message = [
+				...$this->fleet->getDestinationCoordinates()->toArray(),
+				'metal' => $this->fleet->resource_metal,
+				'crystal' => $this->fleet->resource_crystal,
+				'deuterium' => $this->fleet->resource_deuterium,
+				'units' => [],
+			];
 
 			foreach ($this->fleet->entities as $entity) {
-				$TargetAddedGoods .= ', ' . __('main.tech.' . $entity->id) . ': ' . $entity->count;
+				$message['units'][$entity->id] = $entity->count;
 			}
 
-			$targetMessage = __('fleet_engine.sys_stat_mess', [
-				'target' => $this->fleet->getDestinationCoordinates()->getLink(),
-				'm' => Format::number($this->fleet->resource_metal),
-				'mt' => __('main.metal'),
-				'c' => Format::number($this->fleet->resource_crystal),
-				'ct' => __('main.crystal'),
-				'd' => Format::number($this->fleet->resource_deuterium),
-				'dt' => __('main.deuterium')
-			]);
-
-			if ($TargetAddedGoods != '') {
-				$targetMessage .= '<br>' . trim(substr($TargetAddedGoods, 1));
-			}
-
-			$this->fleet->target->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $targetMessage));
+			$this->fleet->target->notify(
+				new SystemMessage(MessageType::Fleet, new MissionStayMessage($message))
+			);
 		}
 	}
 
@@ -59,22 +54,21 @@ class Stay extends BaseMission
 			$this->restoreFleetToPlanet();
 			$this->killFleet();
 
-			$targetAddedGoods = __('fleet_engine.sys_stay_mess_goods', [
-				'mt' => __('main.metal', locale: $this->fleet->user->locale),
-				'm' => Format::number($this->fleet->resource_metal),
-				'ct' => __('main.crystal', locale: $this->fleet->user->locale),
-				'c' => Format::number($this->fleet->resource_crystal),
-				'dt' => __('main.deuterium', locale: $this->fleet->user->locale),
-				'd' => Format::number($this->fleet->resource_deuterium),
-			], $this->fleet->user->locale);
+			$message = [
+				...$this->fleet->getDestinationCoordinates()->toArray(),
+				'metal' => $this->fleet->resource_metal,
+				'crystal' => $this->fleet->resource_crystal,
+				'deuterium' => $this->fleet->resource_deuterium,
+				'units' => [],
+			];
 
 			foreach ($this->fleet->entities as $entity) {
-				$targetAddedGoods .= ', ' . __('main.tech.' . $entity->id, locale: $this->fleet->user->locale) . ': ' . $entity->count;
+				$message['units'][$entity->id] = $entity->count;
 			}
 
-			$TargetMessage = __('fleet_engine.sys_stay_mess_back', locale: $this->fleet->user->locale) . $this->fleet->getDestinationCoordinates()->getLink() . __('fleet_engine.sys_stay_mess_bend', locale: $this->fleet->user->locale) . '<br>' . $targetAddedGoods;
-
-			$this->fleet->user->notify(new MessageNotification(null, MessageType::Fleet, __('fleet_engine.sys_mess_qg'), $TargetMessage));
+			$this->fleet->user->notify(
+				new SystemMessage(MessageType::Fleet, new MissionStayReturnMessage($message))
+			);
 		}
 	}
 }

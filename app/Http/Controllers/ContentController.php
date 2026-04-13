@@ -7,7 +7,7 @@ use App\Models\Content;
 
 class ContentController extends Controller
 {
-	public function index(string $slug)
+	public function index(string $slug): array
 	{
 		if (empty($slug)) {
 			throw new PageException('Страница не найдена!');

@@ -6,14 +6,16 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\MissionEspionageMessage;
+use App\Engine\Messages\Types\MissionEspionageNotifyMessage;
 use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Models\Fleet;
 use App\Models\Planet;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 
-class Spy extends BaseMission
+class Espionage extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
@@ -85,7 +87,6 @@ class Spy extends BaseMission
 			}
 
 			$resultMessage = [
-				'type' => 'SpyMessage',
 				'date' => now()->toAtomString(),
 				'rows' => [],
 			];
@@ -128,15 +129,21 @@ class Spy extends BaseMission
 				$resultMessage['chance'] = null;
 			}
 
-			$this->fleet->user->notify(new MessageNotification(null, MessageType::Spy, __('fleet_engine.sys_mess_spy_report'), $resultMessage));
+			$this->fleet->user->notify(
+				new SystemMessage(MessageType::Spy, new MissionEspionageMessage($resultMessage))
+			);
 
-			$TargetMessage  = __('fleet_engine.sys_mess_spy_ennemyfleet') . ' ' . $this->fleet->user_name . ' ';
-			$TargetMessage .= $this->fleet->getOriginCoordinates()->getLink();
-			$TargetMessage .= __('fleet_engine.sys_mess_spy_seen_at') . ' ' . $TargetPlanet->name;
-			$TargetMessage .= ' [' . $TargetPlanet->galaxy . ':' . $TargetPlanet->system . ':' . $TargetPlanet->planet . ']. ';
-			$TargetMessage .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $TargetChances) . '.';
+			$message = new MissionEspionageNotifyMessage([
+				'origin_name' => $this->fleet->user_name,
+				'origin' => $this->fleet->getOriginCoordinates()->getLink(),
+				'target_name' => $TargetPlanet->name,
+				'target' => (string) $TargetPlanet->coordinates,
+				'chance' => $TargetChances,
+			]);
 
-			$TargetPlanet->user->notify(new MessageNotification(null, MessageType::Spy, __('fleet_engine.sys_mess_spy_activity'), $TargetMessage));
+			$TargetPlanet->user->notify(
+				new SystemMessage(MessageType::Spy, $message)
+			);
 
 			if ($TargetChances > $SpyerChances) {
 				$mission = new Attack($this->fleet);
@@ -149,28 +156,28 @@ class Spy extends BaseMission
 		}
 	}
 
-	private function spyTarget(User|Planet $TargetPlanet, $Mode, $TitleString)
+	private function spyTarget(User|Planet $target, int $mode, string $title): array
 	{
-		if ($Mode == 0) {
+		if ($mode == 0 && $target instanceof Planet) {
 			$result = [
 				'type' => 'SpyMessageResourceRow',
-				'title' => $TitleString,
+				'title' => $title,
 				'planet' => [
-					'name' => $TargetPlanet->name,
-					'galaxy' => $TargetPlanet->galaxy,
-					'system' => $TargetPlanet->system,
-					'planet' => $TargetPlanet->planet,
-					'type' => $TargetPlanet->planet_type,
+					'name' => $target->name,
+					'galaxy' => $target->galaxy,
+					'system' => $target->system,
+					'planet' => $target->planet,
+					'type' => $target->planet_type,
 				],
 				'resources' => [
-					'metal' => $TargetPlanet->metal,
-					'crystal' => $TargetPlanet->crystal,
-					'deuterium' => $TargetPlanet->deuterium,
-					'energy' => $TargetPlanet->energy,
+					'metal' => $target->metal,
+					'crystal' => $target->crystal,
+					'deuterium' => $target->deuterium,
+					'energy' => $target->energy,
 				],
 			];
 
-			if ($targetUser = $TargetPlanet->user) {
+			if ($targetUser = $target->user) {
 				$result['user'] = [
 					'id' => $targetUser->id,
 					'name' => $targetUser->username,
@@ -182,21 +189,21 @@ class Spy extends BaseMission
 
 		$types = [];
 
-		if ($Mode == 1) {
+		if ($mode == 1) {
 			$types[] = ItemType::FLEET;
-		} elseif ($Mode == 2) {
+		} elseif ($mode == 2) {
 			$types[] = ItemType::DEFENSE;
-		} elseif ($Mode == 3) {
+		} elseif ($mode == 3) {
 			$types[] = ItemType::BUILDING;
-		} elseif ($Mode == 4) {
+		} elseif ($mode == 4) {
 			$types[] = ItemType::TECH;
-		} elseif ($Mode == 6) {
+		} elseif ($mode == 6) {
 			$types[] = ItemType::OFFICIER;
 		}
 
 		$result = [
 			'type' => 'SpyMessageUnitsRow',
-			'title' => $TitleString,
+			'title' => $title,
 			'items' => [],
 		];
 
@@ -207,13 +214,13 @@ class Spy extends BaseMission
 				$level = 0;
 
 				if ($type == ItemType::BUILDING) {
-					$level = $TargetPlanet->getLevel($item);
+					$level = $target->getLevel($item);
 				} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
-					$level = $TargetPlanet->getLevel($item);
+					$level = $target->getLevel($item);
 				} elseif ($type == ItemType::OFFICIER) {
-					$level = $TargetPlanet->{Vars::getName($item)}->timestamp ?? 0;
+					$level = $target->{Vars::getName($item)}->timestamp ?? 0;
 				} elseif ($type == ItemType::TECH) {
-					$level = $TargetPlanet->getTechLevel($item);
+					$level = $target->getTechLevel($item);
 				}
 
 				if (($level && $item < 600) || ($level > time() && $item > 600)) {

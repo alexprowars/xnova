@@ -7,7 +7,7 @@ use App\Engine\Entity\Model\FleetEntity;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ class Fleet extends Model
 		'start_date' => 'immutable_datetime',
 		'end_date' => 'immutable_datetime',
 		'end_stay' => 'immutable_datetime',
-		'mission' => Mission::class,
+		'mission' => MissionType::class,
 		'start_type' => PlanetType::class,
 		'end_type' => PlanetType::class,
 	];
@@ -71,15 +71,15 @@ class Fleet extends Model
 
 	public function canBack(): bool
 	{
-		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != Mission::Expedition) && $this->mission != Mission::Rak && $this->target_user_id != 1));
+		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != MissionType::Expedition) && $this->mission != MissionType::MissileAttack && $this->target_user_id != 1));
 	}
 
-	public function getOriginCoordinates($withType = true): Coordinates
+	public function getOriginCoordinates(bool $withType = true): Coordinates
 	{
 		return new Coordinates($this->start_galaxy, $this->start_system, $this->start_planet, $withType ? $this->start_type : null);
 	}
 
-	public function getDestinationCoordinates($withType = true): Coordinates
+	public function getDestinationCoordinates(bool $withType = true): Coordinates
 	{
 		return new Coordinates($this->end_galaxy, $this->end_system, $this->end_planet, $withType ? $this->end_type : null);
 	}

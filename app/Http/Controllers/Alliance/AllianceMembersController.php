@@ -16,7 +16,7 @@ class AllianceMembersController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -110,7 +110,7 @@ class AllianceMembersController extends Controller
 		return $result;
 	}
 
-	public function kick(Request $request)
+	public function kick(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -141,7 +141,7 @@ class AllianceMembersController extends Controller
 		AllianceMember::query()->whereBelongsTo($user)->delete();
 	}
 
-	public function rank(Request $request)
+	public function rank(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 

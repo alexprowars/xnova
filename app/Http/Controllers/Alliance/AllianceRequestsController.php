@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\AllianceMemberAcceptMessage;
+use App\Engine\Messages\Types\AllianceMemberRejectMessage;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;
@@ -15,7 +17,7 @@ class AllianceRequestsController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index()
+	public function index(): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -43,7 +45,7 @@ class AllianceRequestsController extends Controller
 		return $result;
 	}
 
-	public function accept(Request $request)
+	public function accept(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -64,7 +66,7 @@ class AllianceRequestsController extends Controller
 		}
 
 		if (!empty($request->post('message'))) {
-			$message = strip_tags($request->post('message'));
+			$requestMessage = strip_tags($request->post('message'));
 		}
 
 		$user = $req->user;
@@ -82,10 +84,20 @@ class AllianceRequestsController extends Controller
 		$user->alliance_name = $alliance->name;
 		$user->save();
 
-		$user->notify(new MessageNotification($this->user->id, MessageType::Alliance, $alliance->tag, 'Привет!<br>Альянс <b>' . $alliance->name . '</b> принял вас в свои ряды!' . ((isset($message)) ? '<br>Приветствие:<br>' . $message : '')));
+		$notification = new MessageNotification(
+			$this->user->id,
+			MessageType::Alliance,
+			$alliance->tag,
+			new AllianceMemberAcceptMessage([
+				'name' => $alliance->name,
+				'message' => $requestMessage ?? null,
+			])
+		);
+
+		$user->notify($notification);
 	}
 
-	public function reject(Request $request)
+	public function reject(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -102,14 +114,25 @@ class AllianceRequestsController extends Controller
 		}
 
 		if (!empty($request->post('message'))) {
-			$message = strip_tags($request->post('message'));
+			$requestMessage = strip_tags($request->post('message'));
 		}
 
 		$req->delete();
-		$req->user?->notify(new MessageNotification($this->user->id, MessageType::Alliance, $alliance->tag, 'Привет!<br>Альянс <b>' . $alliance->name . '</b> отклонил вашу кандидатуру!' . ((isset($message)) ? '<br>Причина:<br>' . $message : '')));
+
+		$notification = new MessageNotification(
+			$this->user->id,
+			MessageType::Alliance,
+			$alliance->tag,
+			new AllianceMemberRejectMessage([
+				'name' => $alliance->name,
+				'message' => $requestMessage ?? null,
+			])
+		);
+
+		$req->user?->notify($notification);
 	}
 
-	public function remove(int $id)
+	public function remove(int $id): void
 	{
 		if (!$id) {
 			throw new Exception('Не указан идентификатор заявки');

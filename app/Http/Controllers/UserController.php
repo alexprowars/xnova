@@ -8,7 +8,7 @@ use App\Models\UserAuthentication;
 
 class UserController extends Controller
 {
-	public function info()
+	public function info(): array
 	{
 		$result = [];
 		$result['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
@@ -32,12 +32,12 @@ class UserController extends Controller
 		return $result;
 	}
 
-	public function setPlanet(int $planetId)
+	public function setPlanet(int $planetId): void
 	{
 		$this->user->setSelectedPlanet($planetId);
 	}
 
-	public function dailyBonus()
+	public function dailyBonus(): array
 	{
 		if ($this->user->daily_bonus?->isFuture()) {
 			throw new Exception('Вы не можете получить ежедневный бонус в данное время');

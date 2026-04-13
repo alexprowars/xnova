@@ -11,7 +11,7 @@ use Illuminate\Contracts\Auth\Access\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
-	public function boot(Gate $gate)
+	public function boot(Gate $gate): void
 	{
 		$gate->before(function ($user) {
 			return $user->id === 1;

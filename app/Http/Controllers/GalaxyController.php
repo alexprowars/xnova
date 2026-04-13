@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class GalaxyController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$maxfleet_count = Models\Fleet::query()
 			->whereBelongsTo($this->user)

@@ -12,7 +12,7 @@ class UserQuest extends Model
 	protected $guarded = [];
 	public $table = 'users_quests';
 
-	public function checkFinished(User $user, Planet $planet)
+	public function checkFinished(User $user, Planet $planet): array
 	{
 		$quest = require resource_path('engine/quests.php');
 

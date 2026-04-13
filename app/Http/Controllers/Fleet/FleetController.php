@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Entity\Ship;
 use App\Engine\Enums\ItemType;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class FleetController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		if (!$this->planet) {
 			throw new Exception(__('fleet.fl_noplanetrow'));
@@ -26,7 +26,7 @@ class FleetController extends Controller
 		$maxExpeditions = 0;
 
 		if ($expeditionTech >= 1) {
-			$curExpeditions = Models\Fleet::query()->whereBelongsTo($this->user)->where('mission', Mission::Expedition)->count();
+			$curExpeditions = Models\Fleet::query()->whereBelongsTo($this->user)->where('mission', MissionType::Expedition)->count();
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
@@ -107,7 +107,7 @@ class FleetController extends Controller
 		return $result;
 	}
 
-	public function list()
+	public function list(): array
 	{
 		$fleets = Fleet::query()
 			->with(['user'])
@@ -128,8 +128,8 @@ class FleetController extends Controller
 					$result[] = FleetRow::make($fleet, 1, true);
 				}
 
-				if (!($fleet->mission == Mission::Colonization && $fleet->mess == 0)) {
-					if (($fleet->end_date->isFuture() && $fleet->mission != Mission::Stay) or ($fleet->mess == 1 && $fleet->mission == Mission::Stay)) {
+				if (!($fleet->mission == MissionType::Colonization && $fleet->mess == 0)) {
+					if (($fleet->end_date->isFuture() && $fleet->mission != MissionType::Stay) or ($fleet->mess == 1 && $fleet->mission == MissionType::Stay)) {
 						$result[] = FleetRow::make($fleet, 2, true);
 					}
 				}
@@ -147,12 +147,12 @@ class FleetController extends Controller
 
 					$aks[] = $fleet->assault_id;
 				}
-			} elseif ($fleet->mission != Mission::Recycling) {
+			} elseif ($fleet->mission != MissionType::Recycling) {
 				if ($fleet->start_date->isFuture()) {
 					$result[] = FleetRow::make($fleet, 0, false);
 				}
 
-				if ($fleet->mission == Mission::StayAlly && $fleet->end_stay?->isFuture()) {
+				if ($fleet->mission == MissionType::StayAlly && $fleet->end_stay?->isFuture()) {
 					$result[] = FleetRow::make($fleet, 1, false);
 				}
 			}

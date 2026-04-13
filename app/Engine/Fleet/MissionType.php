@@ -2,7 +2,7 @@
 
 namespace App\Engine\Fleet;
 
-enum Mission: int
+enum MissionType: int
 {
 	case Attack = 1;
 	case Assault = 2;
@@ -15,7 +15,7 @@ enum Mission: int
 	case Destruction = 9;
 	case CreateBase = 10;
 	case Expedition = 15;
-	case Rak = 20;
+	case MissileAttack = 20;
 
 	public function title(): string
 	{

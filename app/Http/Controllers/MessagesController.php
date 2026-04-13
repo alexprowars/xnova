@@ -3,21 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
-use App\Engine\Messages\MessageFormatter;
+use App\Engine\Messages\MessageFactory;
 use App\Exceptions\Exception;
 use App\Format;
 use App\Models\Message;
 use App\Models\User;
 use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Throwable;
 
 class MessagesController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$types = [1, 2, 3, 4, 5, 6, 15, 99, 100, 101];
 		$limits = [5, 10, 25, 50, 100, 200];
@@ -97,14 +99,30 @@ class MessagesController extends Controller
 
 		/** @var Message $item */
 		foreach ($items as $item) {
-			$result['items'][] = [
+			$row = [
 				'id' => $item->id,
 				'type' => $item->type,
 				'date' => $item->date->utc()->toAtomString(),
 				'from' => $item->from_id,
 				'subject' => $item->subject ? __($item->subject) : null,
-				'message' => MessageFormatter::format($item->message),
+				'message' => null,
 			];
+
+			$message = MessageFactory::get($item->message);
+
+			if ($message) {
+				if (empty($row['subject']) && $subject = $message->getSubject()) {
+					$row['subject'] = $subject;
+				}
+
+				try {
+					$row['message'] = $message->render();
+				} catch (Throwable $e) {
+					$row['message'] = 'render message error: ' . $e->getMessage();
+				}
+			}
+
+			$result['items'][] = $row;
 		}
 
 		$result['pagination'] = [
@@ -116,7 +134,7 @@ class MessagesController extends Controller
 		return $result;
 	}
 
-	public function write(int $userId, Request $request)
+	public function write(int $userId, Request $request): array
 	{
 		if (!$userId) {
 			throw new Exception(__('messages.mess_no_ownerid'));
@@ -128,7 +146,7 @@ class MessagesController extends Controller
 			throw new Exception(__('messages.mess_no_owner'));
 		}
 
-		$page = [
+		$result = [
 			'id' => $user->id,
 			'to' => $user->username . ' [' . $user->galaxy . ':' . $user->system . ':' . $user->planet . ']',
 			'message' => '',
@@ -144,14 +162,14 @@ class MessagesController extends Controller
 				->value('message');
 
 			if ($message) {
-				$page['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', '', $message) . '[/quote]';
+				$result['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', '', $message) . '[/quote]';
 			}
 		}
 
-		return $page;
+		return $result;
 	}
 
-	public function send(int $userId, Request $request)
+	public function send(int $userId, Request $request): void
 	{
 		$user = User::find($userId);
 
@@ -199,10 +217,10 @@ class MessagesController extends Controller
 		$message = preg_replace('/ +/', ' ', $message);
 		$message = strtr($message, __('messages.stopwords'));
 
-		$user->notify(new MessageNotification(null, MessageType::User, $this->user->username_formatted, $message));
+		$user->notify(new SystemMessage(MessageType::User, $message, $this->user->username_formatted));
 	}
 
-	public function delete(Request $request)
+	public function delete(Request $request): void
 	{
 		$items = Arr::wrap($request->post('id', []));
 		$items = array_map('intval', $items);
@@ -217,7 +235,7 @@ class MessagesController extends Controller
 			->delete();
 	}
 
-	public function abuse(int $messageId)
+	public function abuse(int $messageId): void
 	{
 		$message = Message::query()
 			->whereKey($messageId)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Fleet;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class FleetBackController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): void
 	{
 		$fleetId = (int) $request->post('id', 0);
 
@@ -40,7 +40,7 @@ class FleetBackController extends Controller
 
 		$returnTime = now()->toImmutable()->addSeconds($flyingTime);
 
-		if ($fleet->mission == Mission::Attack && $fleet->assault) {
+		if ($fleet->mission == MissionType::Attack && $fleet->assault) {
 			$fleet->assault->delete();
 		}
 

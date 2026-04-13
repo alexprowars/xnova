@@ -12,6 +12,18 @@ class Coordinates implements Arrayable
 	{
 	}
 
+	public static function fromArray(array $data): Coordinates
+	{
+		$planetType = $data['planet_type'] ?? ($data['type'] ?? null);
+
+		return new Coordinates(
+			$data['galaxy'] ?? 1,
+			$data['system'] ?? 1,
+			$data['planet'] ?? null,
+			PlanetType::tryFrom($planetType),
+		);
+	}
+
 	public function getGalaxy(): int
 	{
 		return $this->galaxy;
@@ -85,6 +97,11 @@ class Coordinates implements Arrayable
 		];
 	}
 
+	public function __toString(): string
+	{
+		return __('main.sys_adress_planet', $this->toArray());
+	}
+
 	public function getLink(): string
 	{
 		$uri = new Uri('/galaxy')
@@ -93,6 +110,6 @@ class Coordinates implements Arrayable
 				'system' => $this->system,
 			]);
 
-		return '<a href="' . $uri . '">[' . $this->galaxy . ':' . $this->system . ':' . $this->planet . ']</a>';
+		return '<a href="' . $uri . '">' . ((string) $this) . '</a>';
 	}
 }

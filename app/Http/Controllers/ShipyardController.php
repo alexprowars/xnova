@@ -15,7 +15,7 @@ class ShipyardController extends Controller
 {
 	protected string $mode = 'fleet';
 
-	public function index()
+	public function index(): array
 	{
 		$queueManager = new QueueManager($this->planet);
 
@@ -84,7 +84,7 @@ class ShipyardController extends Controller
 		return $items;
 	}
 
-	public function queue(Request $request)
+	public function queue(Request $request): void
 	{
 		if ($this->mode == 'defense') {
 			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);

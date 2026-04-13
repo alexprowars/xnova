@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Exceptions\Exception;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
@@ -37,17 +36,11 @@ class CreateUser extends CreateRecord
 
 	protected function handleRecordCreation(array $data): User
 	{
-		$user = User::creation([
+		return User::creation([
 			'name' => $data['username'],
 			'email' => $data['email'],
 			'password' => $data['password'],
 		]);
-
-		if (!$user) {
-			throw new Exception('Не удалось создать пользователя');
-		}
-
-		return $user;
 	}
 
 	protected function getCreatedNotificationTitle(): ?string

@@ -4,5 +4,7 @@ namespace App\Engine\Messages;
 
 interface MessageContract
 {
-	public function format(array $message): string;
+	public function render(): string;
+
+	public function toArray(): array;
 }

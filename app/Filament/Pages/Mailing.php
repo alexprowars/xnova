@@ -5,7 +5,7 @@ namespace App\Filament\Pages;
 use App\Engine\Enums\MessageType;
 use App\Filament\HasPageForm;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -102,11 +102,10 @@ class Mailing extends Page
 		$users = User::query()->get();
 
 		foreach ($users as $user) {
-			$user->notify(new MessageNotification(
-				null,
+			$user->notify(new SystemMessage(
 				MessageType::System,
+				$data['message'],
 				$data['subject'] ?: '<span style="color: ' . $color . '">Информационное сообщение (' . $currentUser->username . ')</span>',
-				$data['message']
 			));
 		}
 

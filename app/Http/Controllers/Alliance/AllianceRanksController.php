@@ -12,7 +12,7 @@ class AllianceRanksController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index()
+	public function index(): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -40,7 +40,7 @@ class AllianceRanksController extends Controller
 		return $parse;
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -64,7 +64,7 @@ class AllianceRanksController extends Controller
 		$alliance->save();
 	}
 
-	public function update(Request $request)
+	public function update(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -99,7 +99,7 @@ class AllianceRanksController extends Controller
 		$alliance->save();
 	}
 
-	public function remove(int $id)
+	public function remove(int $id): void
 	{
 		$alliance = $this->getAlliance();
 

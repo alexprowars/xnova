@@ -31,7 +31,10 @@ class FleetService
 		return $debris;
 	}
 
-	public static function getSteal(Planet $planet, int $capacity = 0)
+	/**
+	 * @return array<string, int>
+	 */
+	public static function getSteal(Planet $planet, int $capacity = 0): array
 	{
 		$steal = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
 

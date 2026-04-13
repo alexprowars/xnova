@@ -7,7 +7,7 @@ use App\Engine\Entity as PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Factories\PlanetServiceFactory;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Crypt;
 
 class FleetCheckoutController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
@@ -169,20 +169,20 @@ class FleetCheckoutController extends Controller
 		$acs = (int) $request->post('alliance', 0);
 
 		$mission = (int) $request->post('mission');
-		$mission = Mission::tryFrom($mission);
+		$mission = MissionType::tryFrom($mission);
 
 		$targetPlanet = Planet::findByCoordinates($target);
 
 		$missions = [];
 
-		foreach (Mission::cases() as $m) {
+		foreach (MissionType::cases() as $m) {
 			if (Fleet\MissionFactory::getMission($m)::isMissionPossible($this->planet, $target, $targetPlanet, $fleets, $acs > 0)) {
 				$missions[] = $m;
 			}
 		}
 
-		if (!$mission && $acs && in_array(Mission::Assault, $missions)) {
-			$mission = Mission::Assault;
+		if (!$mission && $acs && in_array(MissionType::Assault, $missions)) {
+			$mission = MissionType::Assault;
 		}
 
 		$result['missions'] = [];

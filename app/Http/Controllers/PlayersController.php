@@ -13,7 +13,7 @@ use App\Models\User;
 
 class PlayersController extends Controller
 {
-	public function index(int $userId)
+	public function index(int $userId): array
 	{
 		$user = User::find($userId);
 
@@ -93,7 +93,7 @@ class PlayersController extends Controller
 		return $result;
 	}
 
-	public function stats(int $id)
+	public function stats(int $id): array
 	{
 		$player = User::find($id);
 

@@ -7,19 +7,20 @@ use App\Engine\Entity\Model\TechnologiesEntity;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Locale;
+use App\Engine\Messages\Types\NewLevelMessage;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
 use App\Exceptions\Exception;
 use App\Facades\Galaxy;
-use App\Helpers;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use App\Notifications\UserRegistrationNotification;
 use App\Settings;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -45,7 +46,7 @@ use Throwable;
 /**
  * @property TechnologiesCollection $technologies
  */
-class User extends Authenticatable implements FilamentUser, HasName, HasMedia
+class User extends Authenticatable implements FilamentUser, HasName, HasMedia, HasLocalePreference
 {
 	use HasRoles;
 	use Notifiable;
@@ -181,7 +182,15 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		return Attribute::get(fn() => $this->username . ($this->galaxy ? ' [' . $this->galaxy . ':' . $this->system . ':' . $this->planet . ']' : ''));
 	}
 
-	public function isAdmin()
+	protected function ip(): Attribute
+	{
+		return Attribute::make(
+			get: fn($value) => long2ip($value),
+			set: fn($value) => sprintf("%u", ip2long($value)),
+		);
+	}
+
+	public function isAdmin(): bool
 	{
 		if ($this->id > 0) {
 			return $this->hasRole('admin');
@@ -200,14 +209,14 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		return $this->onlinetime->diffInSeconds() < 180;
 	}
 
-	public function getAllyInfo()
+	public function getAllyInfo(): void
 	{
 		if ($this->alliance) {
 			$this->alliance->member = $this->alliance->getMember($this);
 		}
 	}
 
-	public function checkLevel()
+	public function checkLevel(): void
 	{
 		$indNextXp = $this->lvl_minier ** 3;
 		$warNextXp = $this->lvl_raid ** 2;
@@ -221,7 +230,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 			$this->update();
 
-			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier/">Получен новый промышленный уровень</a>'));
+			$this->notify(new SystemMessage(MessageType::System, new NewLevelMessage(['type' => 'mine', 'level' => $this->lvl_minier])));
 
 			$giveCredits += config('game.level.credits', 10);
 		}
@@ -233,7 +242,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 
 			$this->update();
 
-			$this->notify(new MessageNotification(null, MessageType::System, '', '<a href="/officier">Получен новый военный уровень</a>'));
+			$this->notify(new SystemMessage(MessageType::System, new NewLevelMessage(['type' => 'raid', 'level' => $this->lvl_raid])));
 
 			$giveCredits += config('game.level.credits', 10);
 		}
@@ -262,7 +271,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		}
 	}
 
-	public function setMainPlanet(Planet $planet)
+	public function setMainPlanet(Planet $planet): void
 	{
 		$this->update([
 			'planet_id' => $planet->id,
@@ -294,7 +303,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		return true;
 	}
 
-	public function getPlanets(bool $withMoons = true)
+	/**
+	 * @return array<Planet>
+	 */
+	public function getPlanets(bool $withMoons = true): array
 	{
 		$query = Planet::query();
 
@@ -345,7 +357,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		return $this->currentPlanet;
 	}
 
-	public function getPlanetListSortQuery(Builder $query)
+	/**
+	 * @param Builder<Planet> $query
+	 */
+	public function getPlanetListSortQuery(Builder $query): void
 	{
 		$qryPlanets = match ($this->getOption('planet_sort')) {
 			1 => 'galaxy, system, planet, planet_type',
@@ -357,14 +372,14 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		$query->orderBy($qryPlanets, $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc');
 	}
 
-	public static function getRankId($lvl)
+	public static function getRankId(int $lvl): int
 	{
 		if ($lvl <= 1) {
 			$lvl = 0;
 		}
 
 		if ($lvl <= 80) {
-			return (ceil($lvl / 4) + 1);
+			return (int) (ceil($lvl / 4) + 1);
 		}
 
 		return 22;
@@ -376,7 +391,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 			->pluck('id')->all();
 	}
 
-	public static function creation(array $data)
+	public static function creation(array $data): self
 	{
 		if (empty($data['password'])) {
 			$data['password'] = Str::random(10);
@@ -387,7 +402,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 				'email' => $data['email'] ?? '',
 				'password' => Hash::make($data['password']),
 				'username' => $data['name'] ?? '',
-				'ip' => Helpers::convertIp(Request::ip()),
+				'ip' => Request::ip(),
 				'daily_bonus' => now(),
 				'onlinetime' => now(),
 				'locale' => Locale::getPreferredLocale(),
@@ -398,7 +413,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 			}
 
 			if (Session::has('ref')) {
-				$refer = User::query()->findOne((int) Session::get('ref'));
+				$refer = self::query()->findOne((int) Session::get('ref'));
 
 				if ($refer) {
 					Referal::insert([
@@ -459,5 +474,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia
 		$points = $this->getPoints();
 
 		return ($points->total_points ?? 0) < $protectionPoints;
+	}
+
+	public function preferredLocale(): ?string
+	{
+		return $this->locale;
 	}
 }

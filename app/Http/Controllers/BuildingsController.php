@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class BuildingsController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
@@ -65,7 +65,7 @@ class BuildingsController extends Controller
 		return $items;
 	}
 
-	public function build(Request $request, string $action)
+	public function build(Request $request, string $action): void
 	{
 		$elementId = (int) $request->post('element', 0);
 
@@ -91,7 +91,7 @@ class BuildingsController extends Controller
 		}
 	}
 
-	public function queue(Request $request, string $action)
+	public function queue(Request $request, string $action): void
 	{
 		$index = (int) $request->post('index', 0);
 

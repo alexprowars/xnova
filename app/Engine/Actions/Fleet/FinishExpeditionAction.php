@@ -10,15 +10,21 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\FleetEngine;
 use App\Engine\Fleet\Missions\Attack;
 use App\Engine\Game;
+use App\Engine\Messages\Types\MissionExpeditionAttackMessage;
+use App\Engine\Messages\Types\MissionExpeditionBattleMessage;
+use App\Engine\Messages\Types\MissionExpeditionDelayMessage;
+use App\Engine\Messages\Types\MissionExpeditionFailedMessage;
+use App\Engine\Messages\Types\MissionExpeditionFoundShipsMessage;
+use App\Engine\Messages\Types\MissionExpeditionGainCreditsMessage;
+use App\Engine\Messages\Types\MissionExpeditionGainResourcesMessage;
+use App\Engine\Messages\Types\MissionExpeditionLossFleetMessage;
 use App\Facades\Vars;
-use App\Format;
 use App\Models\Fleet;
 use App\Models\Report;
 use App\Models\Statistic;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class FinishExpeditionAction
@@ -27,7 +33,7 @@ class FinishExpeditionAction
 	{
 	}
 
-	public function handle()
+	public function handle(): void
 	{
 		switch (random_int(1, 10)) {
 			case 1:
@@ -45,8 +51,11 @@ class FinishExpeditionAction
 			case 5:
 				$this->fleet->delete();
 
-				$message = 'fleet_engine.sys_expe_lost_fleet_' . random_int(1, 4);
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+				$message = new MissionExpeditionLossFleetMessage(['type' => random_int(1, 4)]);
+
+				$this->fleet->user->notify(
+					new SystemMessage(MessageType::Expedition, $message)
+				);
 
 				break;
 
@@ -57,8 +66,11 @@ class FinishExpeditionAction
 			default:
 				$this->return();
 
-				$message = 'fleet_engine.sys_expe_nothing_' . random_int(1, 8);
-				$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+				$message = new MissionExpeditionFailedMessage(['type' => random_int(1, 8)]);
+
+				$this->fleet->user->notify(
+					new SystemMessage(MessageType::Expedition, $message)
+				);
 		}
 	}
 
@@ -121,15 +133,21 @@ class FinishExpeditionAction
 		switch ($this->determineEventSize()) {
 			case 2:
 				$factor = (random_int(100, 200) / $witchFound) * (1 + (Game::getSpeed('mine') - 1) / 10);
-				$message = 'fleet_engine.sys_expe_found_ress_3_' . random_int(1, 2);
+				$message = [
+					'type' => random_int(8, 9),
+				];
 				break;
 			case 1:
 				$factor = (random_int(50, 100) / $witchFound) * (1 + (Game::getSpeed('mine') - 1) / 10);
-				$message = 'fleet_engine.sys_expe_found_ress_2_' . random_int(1, 3);
+				$message = [
+					'type' => random_int(5, 7),
+				];
 				break;
 			default:
 				$factor = (random_int(10, 50) / $witchFound) *  (1 + (Game::getSpeed('mine') - 1) / 10);
-				$message = 'fleet_engine.sys_expe_found_ress_1_' . random_int(1, 4);
+				$message = [
+					'type' => random_int(1, 4),
+				];
 		}
 
 		$fleetPoints = $this->getFleetPoints();
@@ -159,7 +177,9 @@ class FinishExpeditionAction
 
 		$this->return();
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, new MissionExpeditionGainResourcesMessage($message))
+		);
 	}
 
 	protected function eventFindCredits(): void
@@ -173,9 +193,13 @@ class FinishExpeditionAction
 		$this->fleet->user->increment('credits', $size);
 		$this->return();
 
-		$message = 'fleet_engine.sys_expe_found_dm_1_' . random_int(1, 5);
+		$message = new MissionExpeditionGainCreditsMessage([
+			'type' => random_int(1, 5),
+		]);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, $message)
+		);
 	}
 
 	protected function eventFindShips(): void
@@ -186,22 +210,21 @@ class FinishExpeditionAction
 		$eventType = $this->determineEventSize();
 
 		$message = [
-			'type' => 'ExpeditionFoundShipsMessage',
-			'event_type' => $eventType,
+			'type' => $eventType,
 		];
 
 		switch ($this->determineEventSize()) {
 			case 2:
 				$size = random_int(102, 200);
-				$message['event_subtype'] = random_int(1, 2);
+				$message['event'] = random_int(1, 2);
 				break;
 			case 1:
 				$size = random_int(52, 100);
-				$message['event_subtype'] = random_int(1, 2);
+				$message['event'] = random_int(1, 2);
 				break;
 			default:
 				$size = random_int(10, 50);
-				$message['event_subtype'] = random_int(1, 4);
+				$message['event'] = random_int(1, 4);
 		}
 
 		$foundShips = max(round($size * min($fleetPoints, ($upperLimit / 2))), 10000);
@@ -245,7 +268,9 @@ class FinishExpeditionAction
 		$this->fleet->entities = $newFleetArray;
 		$this->return();
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, new MissionExpeditionFoundShipsMessage($message))
+		);
 	}
 
 	protected function eventAttack(): void
@@ -255,10 +280,8 @@ class FinishExpeditionAction
 		if ($chance == 1) {
 			$points = [-3, -5, -8];
 			$which = 1;
-			$def = -3;
 			$mame = __('fleet_engine.sys_expe_attackname_1');
 			$add = 0;
-			$rand = [5, 3, 2];
 			$defenderFleetArray = [
 				[204 => 5],
 				[206 => 3],
@@ -267,10 +290,8 @@ class FinishExpeditionAction
 		} else {
 			$points = [-4, -6, -9];
 			$which = 2;
-			$def = 3;
 			$mame = __('fleet_engine.sys_expe_attackname_2');
 			$add = 0.1;
-			$rand = [4, 3, 2];
 			$defenderFleetArray = [
 				[205 => 5],
 				[207 => 5],
@@ -280,16 +301,30 @@ class FinishExpeditionAction
 
 		switch ($this->determineEventSize()) {
 			case 2:
-				$message = __('fleet_engine.sys_expe_attack_' . $which . '_3_' . $rand[2]);
 				$maxAttackerPoints = 0.3 + $add + (random_int($points[2], abs($points[2])) * 0.01);
+
+				$message = [
+					'which' => $which,
+					'type' => random_int(8, 9),
+				];
+
 				break;
 			case 1:
-				$message = __('fleet_engine.sys_expe_attack_' . $which . '_2_' . $rand[1]);
 				$maxAttackerPoints = 0.3 + $add + (random_int($points[1], abs($points[1])) * 0.01);
+
+				$message = [
+					'which' => $which,
+					'type' => random_int(5, 7),
+				];
+
 				break;
 			default:
-				$message = __('fleet_engine.sys_expe_attack_' . $which . '_1_' . $rand[0]);
 				$maxAttackerPoints = 0.3 + $add + (random_int($points[0], abs($points[0])) * 0.01);
+
+				$message = [
+					'which' => $which,
+					'type' => random_int(1, 4),
+				];
 		}
 
 		foreach ($this->fleet->entities as $entity) {
@@ -378,38 +413,23 @@ class FinishExpeditionAction
 				break;
 		}
 
-		$messageAtt = sprintf(
-			'<a href="%s" target="_blank"><center><span style="color: %s">%s %s</span></a><br><br><span style="color: %s">%s: %s</span> <span style="color: %s">%s: %s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span> %s:<span style="color: #f77542">%s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span><br></center>',
-			'/rw/' . $report->id . '?signature=' . Crypt::encrypt($report->id),
-			$colorAtt,
-			'Боевой доклад',
-			__('main.sys_adress_planet', [
-				'galaxy' => $this->fleet->end_galaxy,
-				'system' => $this->fleet->end_system,
-				'planet' => $this->fleet->end_planet,
-			]),
-			$colorAtt,
-			__('fleet_engine.sys_perte_attaquant'),
-			Format::number($result['lost']['att']),
-			$colorDef,
-			__('fleet_engine.sys_perte_defenseur'),
-			Format::number($result['lost']['def']),
-			__('fleet_engine.sys_gain'),
-			__('main.metal'),
-			0,
-			__('main.crystal'),
-			0,
-			__('main.deuterium'),
-			0,
-			__('fleet_engine.sys_debris'),
-			__('main.metal'),
-			0,
-			__('main.crystal'),
-			0
+		$messageAtt = [
+			'report_id' => $report->id,
+			...$this->fleet->getDestinationCoordinates()->toArray(),
+			'color_att' => $colorAtt,
+			'color_def' => $colorDef,
+			'lost' => $result['lost'],
+			'steal' => ['metal' => 0, 'crystal' => 0, 'deuterium' => 0],
+			'debris' => ['metal' => 0, 'crystal' => 0],
+		];
+
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Battle, new MissionExpeditionAttackMessage($messageAtt))
 		);
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Battle, 'fleet_engine.sys_mess_tower', $messageAtt));
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, new MissionExpeditionBattleMessage($message))
+		);
 	}
 
 	protected function eventExtendTime(): void
@@ -420,14 +440,23 @@ class FinishExpeditionAction
 		if ($MoreTime < 75) {
 			$this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * (array_rand($Wrapper) - 1));
 
-			$message = 'fleet_engine.sys_expe_time_slow_' . random_int(1, 6);
+			$message = new MissionExpeditionDelayMessage([
+				'time' => 'slow',
+				'type' => random_int(1, 6),
+			]);
 		} else {
 			$this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * array_rand($Wrapper))));
 
-			$message = 'fleet_engine.sys_expe_time_fast_' . random_int(1, 3);
+			$message = new MissionExpeditionDelayMessage([
+				'time' => 'fast',
+				'type' => random_int(1, 6),
+			]);
 		}
 
-		$this->fleet->user->notify(new MessageNotification(null, MessageType::Expedition, 'fleet_engine.sys_expe_report', $message));
+		$this->fleet->user->notify(
+			new SystemMessage(MessageType::Expedition, $message)
+		);
+
 		$this->return();
 	}
 }

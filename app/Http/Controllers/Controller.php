@@ -26,7 +26,7 @@ class Controller extends BaseController
 		});
 	}
 
-	private function init()
+	private function init(): void
 	{
 		if (!Auth::check()) {
 			Game::checkReferLink();

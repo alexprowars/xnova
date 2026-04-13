@@ -88,12 +88,12 @@ class Planet extends Model
 		return $this->hasMany(Queue::class, 'planet_id')->chaperone();
 	}
 
-	public function prunable()
+	public function prunable(): Builder
 	{
 		return static::query()->withTrashed()->where('deleted_at', '<', now()->subWeek());
 	}
 
-	public function checkOwnerPlanet()
+	public function checkOwnerPlanet(): bool
 	{
 		if ($this->user_id != $this->user->id) {
 			return false;
@@ -106,7 +106,7 @@ class Planet extends Model
 		return true;
 	}
 
-	public function checkUsedFields()
+	public function checkUsedFields(): void
 	{
 		$count = 0;
 
@@ -119,7 +119,7 @@ class Planet extends Model
 		}
 	}
 
-	public function getMaxFields()
+	public function getMaxFields(): int
 	{
 		$fields = $this->field_max;
 
@@ -164,7 +164,7 @@ class Planet extends Model
 		return EntityFactory::get($entity->id, $entity->level, $this);
 	}
 
-	public function updateAmount(int|string|null $entityId, int $amount, bool $isDifferent = false)
+	public function updateAmount(int|string|null $entityId, int $amount, bool $isDifferent = false): void
 	{
 		$entity = $this->getEntity($entityId);
 

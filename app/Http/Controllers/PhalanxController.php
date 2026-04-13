@@ -6,7 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class PhalanxController extends Controller
 {
-	public function index(Request $request)
+	public function index(Request $request): array
 	{
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
@@ -104,7 +104,7 @@ class PhalanxController extends Controller
 				];
 			}
 
-			if ($row->mission != Mission::Stay && !$end && $row->start_type != PlanetType::MOON) {
+			if ($row->mission != MissionType::Stay && !$end && $row->start_type != PlanetType::MOON) {
 				$items[] = [
 					'time' => $row->end_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),

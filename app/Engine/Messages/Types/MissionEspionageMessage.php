@@ -1,23 +1,30 @@
 <?php
 
-namespace App\Engine\Messages\Messages;
+namespace App\Engine\Messages\Types;
 
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
 use App\Engine\Game;
-use App\Engine\Messages\MessageContract;
+use App\Engine\Messages\AbstractMessage;
 use App\Format;
 use Illuminate\Support\Uri;
 
-class SpyMessage implements MessageContract
+class MissionEspionageMessage extends AbstractMessage
 {
-	public function format(array $message): string
+	protected string $type = 'MissionEspionage';
+
+	public function getSubject(): ?string
+	{
+		return __('fleet_engine.sys_mess_spy_report');
+	}
+
+	public function render(): string
 	{
 		$result = '';
 		$units = [];
 
-		foreach ($message['rows'] as $row) {
+		foreach ($this->data['rows'] as $row) {
 			if ($row['type'] == 'SpyMessageResourceRow') {
-				$result .= $this->getProductionBlock($row, $message['date']);
+				$result .= $this->getProductionBlock($row, $this->data['date']);
 			} elseif ($row['type'] == 'SpyMessageUnitsRow') {
 				$result .= $this->getUnitsBlock($row);
 
@@ -27,13 +34,13 @@ class SpyMessage implements MessageContract
 			}
 		}
 
-		if (array_key_exists('chance', $message)) {
+		if (array_key_exists('chance', $this->data)) {
 			$result .= '<div class="text-center mt-2">';
 
-			if ($message['chance'] === null) {
+			if ($this->data['chance'] === null) {
 				$result .= '<span style="color: red">' . __('fleet_engine.sys_mess_spy_destroyed') . '</span>';
 			} else {
-				$result .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $message['chance']);
+				$result .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $this->data['chance']);
 			}
 
 			$result .= '</div>';
@@ -55,7 +62,7 @@ class SpyMessage implements MessageContract
 			$result .= '</div>';
 		}
 
-		$planet = $message['rows'][0]['planet'];
+		$planet = $this->data['rows'][0]['planet'];
 
 		$uri = new Uri('/fleet')
 			->withQuery([
@@ -63,7 +70,7 @@ class SpyMessage implements MessageContract
 				'system' => $planet['system'] ?? null,
 				'planet' => $planet['planet'] ?? null,
 				'type' => $planet['type'] ?? null,
-				'mission' => Mission::Attack->value,
+				'mission' => MissionType::Attack->value,
 			]);
 
 		$result .= '<div class="text-center mt-2">';

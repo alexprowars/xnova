@@ -12,7 +12,7 @@ use Throwable;
 
 class RwController extends Controller
 {
-	public function index(int $id, Request $request)
+	public function index(int $id, Request $request): array
 	{
 		try {
 			$signature = Crypt::decrypt($request->input('signature'));

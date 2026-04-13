@@ -9,7 +9,7 @@ use App\Facades\Vars;
 
 class TechController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$groups = [[
 			'title' => __('main.tech.0'),
@@ -88,7 +88,7 @@ class TechController extends Controller
 		return $items;
 	}
 
-	public function info(int $id)
+	public function info(int $id): array
 	{
 		if (!Vars::getName($id)) {
 			throw new PageException('Элемент не существует');

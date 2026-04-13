@@ -75,7 +75,7 @@ class Alliance extends Model implements HasMedia
 		$this->addMediaConversion('thumb')->width(500)->height(500);
 	}
 
-	public function getRanks()
+	public function getRanks(): void
 	{
 		if (empty($this->ranks)) {
 			$this->setAttribute('ranks', []);
@@ -121,7 +121,7 @@ class Alliance extends Model implements HasMedia
 		return $this->rights[$method->value] ?? false;
 	}
 
-	public function deleteMember(int $userId)
+	public function deleteMember(int $userId): void
 	{
 		$this->decrement('members');
 		AllianceMember::query()->where('user_id', $userId)->delete();

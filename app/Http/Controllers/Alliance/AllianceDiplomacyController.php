@@ -14,7 +14,7 @@ class AllianceDiplomacyController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index()
+	public function index(): array
 	{
 		$alliance = $this->getAlliance();
 
@@ -51,7 +51,7 @@ class AllianceDiplomacyController extends Controller
 		return $parse;
 	}
 
-	public function accept(Request $request)
+	public function accept(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -75,7 +75,7 @@ class AllianceDiplomacyController extends Controller
 			->update(['status' => 1]);
 	}
 
-	public function reject(Request $request)
+	public function reject(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -99,7 +99,7 @@ class AllianceDiplomacyController extends Controller
 			->delete();
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 

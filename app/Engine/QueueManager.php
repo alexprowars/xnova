@@ -6,15 +6,15 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Messages\Types\QueueDestroyNotExistMessage;
+use App\Engine\Messages\Types\QueueNoResourcesMessage;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
 use App\Facades\Vars;
-use App\Format;
-use App\Helpers;
 use App\Models;
 use App\Models\LogsHistory;
 use App\Models\Planet;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Support\Collection;
 
 class QueueManager
@@ -284,26 +284,37 @@ class QueueManager
 				}
 			} else {
 				if ($haveNoMoreLevel) {
-					$message = __('main.sys_nomore_level', ['item' => __('main.tech.' . $buildItem->object_id)]);
+					$this->planet->user->notify(
+						new SystemMessage(MessageType::Queue, new QueueDestroyNotExistMessage(['object' => $buildItem->object_id]))
+					);
 				} elseif (!$haveRessources) {
-					$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.' . $buildItem->object_id) . '" на планете ' . $this->planet->name . ' ' . Helpers::buildPlanetAdressLink($this->planet->toArray()) . '.<br>Вам необходимо ещё: <br>';
+					$message = [
+						'object' => $buildItem->object_id,
+						'planet' => [
+							'name' => $this->planet->name,
+							...$this->planet->coordinates->toArray(),
+						],
+					];
 
 					if ($cost['metal'] > $this->planet->metal) {
-						$message .= Format::number($cost['metal'] - $this->planet->metal) . ' металла<br>';
+						$message['metal'] = $cost['metal'] - $this->planet->metal;
 					}
-					if ($cost['crystal'] > $this->planet->crystal) {
-						$message .= Format::number($cost['crystal'] - $this->planet->crystal) . ' кристалла<br>';
-					}
-					if ($cost['deuterium'] > $this->planet->deuterium) {
-						$message .= Format::number($cost['deuterium'] - $this->planet->deuterium) . ' дейтерия<br>';
-					}
-					if (isset($cost['energy']) && $cost['energy'] > $this->planet->energy) {
-						$message .= Format::number($cost['energy'] - $this->planet->energy) . ' энергии<br>';
-					}
-				}
 
-				if (isset($message)) {
-					$this->planet->user->notify(new MessageNotification(null, MessageType::Queue, __('main.sys_buildlist'), $message));
+					if ($cost['crystal'] > $this->planet->crystal) {
+						$message['crystal'] = $cost['crystal'] - $this->planet->crystal;
+					}
+
+					if ($cost['deuterium'] > $this->planet->deuterium) {
+						$message['deuterium'] = $cost['deuterium'] - $this->planet->deuterium;
+					}
+
+					if (isset($cost['energy']) && $cost['energy'] > $this->planet->energy) {
+						$message['energy'] = $cost['energy'] - $this->planet->energy;
+					}
+
+					$this->planet->user->notify(
+						new SystemMessage(MessageType::Queue, new QueueNoResourcesMessage($message))
+					);
 				}
 
 				$queueArray->shift();

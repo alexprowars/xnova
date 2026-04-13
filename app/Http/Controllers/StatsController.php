@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class StatsController extends Controller
 {
-	private $field;
-	private $page;
+	private string $field;
+	private int $page;
 
 	public function __construct(Request $request)
 	{
@@ -38,7 +38,7 @@ class StatsController extends Controller
 		};
 	}
 
-	public function index(Settings $settings, Request $request)
+	public function index(Settings $settings, Request $request): array
 	{
 		$type = (int) $request->input('type', 1);
 
@@ -102,7 +102,7 @@ class StatsController extends Controller
 		return $result;
 	}
 
-	public function alliances(Settings $settings, Request $request)
+	public function alliances(Settings $settings, Request $request): array
 	{
 		$type = (int) $request->input('type', 1);
 
@@ -148,7 +148,7 @@ class StatsController extends Controller
 		return $result;
 	}
 
-	public function races(Settings $settings)
+	public function races(Settings $settings): array
 	{
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use App\Engine\Coordinates;
 use App\Engine\Enums\MessageType;
-use App\Engine\Fleet\Mission;
+use App\Engine\Fleet\MissionType;
+use App\Engine\Messages\Types\AcsRequestMessage;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
@@ -12,15 +12,15 @@ use App\Models\Fleet;
 use App\Models\Friend;
 use App\Models\Planet;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Http\Request;
 use Throwable;
 
 class FleetVerbandController extends Controller
 {
-	public function index(int $fleetId)
+	public function index(int $id): array
 	{
-		$fleet = $this->getFleet($fleetId);
+		$fleet = $this->getFleet($id);
 
 		$assault = $fleet->assault;
 
@@ -98,7 +98,7 @@ class FleetVerbandController extends Controller
 		return $result;
 	}
 
-	public function create(int $fleetId, Request $request)
+	public function create(int $fleetId, Request $request): void
 	{
 		$fleet = $this->getFleet($fleetId);
 
@@ -128,7 +128,7 @@ class FleetVerbandController extends Controller
 		$fleet->update();
 	}
 
-	public function user(int $fleetId, Request $request)
+	public function user(int $fleetId, Request $request): void
 	{
 		$fleet = $this->getFleet($fleetId);
 
@@ -160,7 +160,9 @@ class FleetVerbandController extends Controller
 			throw new Exception('Игрок не найден');
 		}
 
-		$assaultUser = $assault->users()->whereBelongsTo($user)->first();
+		$assaultUser = $assault->users()
+			->whereBelongsTo($user)
+			->first();
 
 		if ($assaultUser) {
 			throw new Exception('Игрок уже приглашён для нападения');
@@ -170,16 +172,22 @@ class FleetVerbandController extends Controller
 			'user_id' => $user->id,
 		]);
 
-		$planet = Planet::findByCoordinates(
-			new Coordinates($assault->galaxy, $assault->system, $assault->planet, $assault->planet_type)
-		);
+		$planet = Planet::findByCoordinates($assault->coordinates);
 
-		$message = 'Игрок ' . $this->user->username . ' приглашает вас произвести совместное нападение на планету ' . $planet->name . ' [' . $assault->galaxy . ':' . $assault->system . ':' . $assault->planet . '] игрока ' . $planet->user->username . '. Имя ассоциации: ' . $assault->name . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
+		$message = new AcsRequestMessage([
+			'assault' => $assault->name,
+			'user' => $this->user->username,
+			'planet' => [
+				'name' => $planet->name,
+				'user' => $planet->user->username,
+				...$planet->coordinates->toArray(),
+			]
+		]);
 
-		$user->notify(new MessageNotification(null, MessageType::User, 'Флот', $message));
+		$user->notify(new SystemMessage(MessageType::User, $message));
 	}
 
-	public function name(int $fleetId, Request $request)
+	public function name(int $fleetId, Request $request): void
 	{
 		$fleet = $this->getFleet($fleetId);
 
@@ -217,7 +225,7 @@ class FleetVerbandController extends Controller
 		$assault->save();
 	}
 
-	protected function getFleet(int $id)
+	protected function getFleet(int $id): Fleet
 	{
 		if ($id <= 0) {
 			throw new Exception('Флот не выбран');
@@ -225,7 +233,7 @@ class FleetVerbandController extends Controller
 
 		$fleet = Fleet::query()
 			->whereBelongsTo($this->user)
-			->where('mission', Mission::Attack)
+			->where('mission', MissionType::Attack)
 			->findOne($id);
 
 		if (!$fleet) {

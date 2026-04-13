@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 
 class ResourcesController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$result = [];
 		$result['resources'] = Vars::getResources();
@@ -70,7 +70,7 @@ class ResourcesController extends Controller
 		return $result;
 	}
 
-	public function buy()
+	public function buy(): array
 	{
 		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
 			throw new Exception('На этой планете нельзя купить ресурсы');
@@ -106,7 +106,7 @@ class ResourcesController extends Controller
 		return $resources;
 	}
 
-	public function shutdown(Request $request)
+	public function shutdown(Request $request): void
 	{
 		$production = $request->post('active', 'Y') == 'Y' ? 10 : 0;
 
@@ -121,7 +121,7 @@ class ResourcesController extends Controller
 		});
 	}
 
-	public function state(Request $request)
+	public function state(Request $request): void
 	{
 		$state = Arr::wrap($request->post('state', []));
 
@@ -140,7 +140,7 @@ class ResourcesController extends Controller
 		$this->planet->save();
 	}
 
-	protected function getBuyResourcesAmount()
+	protected function getBuyResourcesAmount(): array
 	{
 		if ($this->planet->user->isVacation()) {
 			return [];

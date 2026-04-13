@@ -18,7 +18,7 @@ class AllianceController extends Controller
 {
 	use AllianceControllerTrait;
 
-	protected function noAlly()
+	protected function noAlly(): array
 	{
 		$result = [
 			'requests' => [],
@@ -56,7 +56,7 @@ class AllianceController extends Controller
 		return $result;
 	}
 
-	public function index()
+	public function index(): array
 	{
 		if (!$this->user->alliance_id) {
 			return $this->noAlly();
@@ -106,7 +106,7 @@ class AllianceController extends Controller
 		return $result;
 	}
 
-	public function exit()
+	public function exit(): void
 	{
 		$alliance = $this->getAlliance();
 
@@ -117,7 +117,7 @@ class AllianceController extends Controller
 		$alliance->deleteMember($this->user->id);
 	}
 
-	public function info($id)
+	public function info(int|string $id): array
 	{
 		if ($id != '' && !is_numeric($id)) {
 			$allyrow = Alliance::whereTag(addslashes(htmlspecialchars($id)))->first();
@@ -152,7 +152,7 @@ class AllianceController extends Controller
 		return $parse;
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): void
 	{
 		$ally_request = AllianceRequest::query()->whereBelongsTo($this->user)->count();
 
@@ -205,7 +205,7 @@ class AllianceController extends Controller
 		$this->user->update();
 	}
 
-	public function search(Request $request)
+	public function search(Request $request): array
 	{
 		$query = $request->post('query', '');
 
@@ -230,7 +230,7 @@ class AllianceController extends Controller
 		return $items;
 	}
 
-	public function join(int $id)
+	public function join(int $id): array
 	{
 		if ($this->user->alliance_id) {
 			throw new Exception(__('alliance.Denied_access'));
@@ -254,7 +254,7 @@ class AllianceController extends Controller
 		];
 	}
 
-	public function joinSend(int $id, Request $request)
+	public function joinSend(int $id, Request $request): void
 	{
 		if ($this->user->alliance_id) {
 			throw new Exception(__('alliance.Denied_access'));
@@ -283,9 +283,9 @@ class AllianceController extends Controller
 		]);
 	}
 
-	public function stat(int $id)
+	public function stat(int $id): array
 	{
-		$alliance = Alliance::find($id);
+		$alliance = Alliance::findOne($id);
 
 		if (!$alliance) {
 			throw new PageException('Информация о данном альянсе не найдена');

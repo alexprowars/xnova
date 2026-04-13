@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Enums\MessageType;
+use App\Engine\Messages\Types\FriendsRequestMessage;
 use App\Exceptions\Exception;
 use App\Models;
 use App\Models\Friend;
 use App\Models\User;
-use App\Notifications\MessageNotification;
+use App\Notifications\SystemMessage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class FriendsController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$result = [];
 
@@ -63,7 +64,7 @@ class FriendsController extends Controller
 		return $result;
 	}
 
-	public function requests(Request $request)
+	public function requests(Request $request): array
 	{
 		$isMyRequests = $request->input('my', 'N') == 'Y';
 
@@ -111,7 +112,7 @@ class FriendsController extends Controller
 		return $result;
 	}
 
-	public function new(int $userId)
+	public function new(int $userId): array
 	{
 		$user = User::find($userId);
 
@@ -129,7 +130,7 @@ class FriendsController extends Controller
 		];
 	}
 
-	public function create(int $userId, Request $request)
+	public function create(int $userId, Request $request): void
 	{
 		$user = User::find($userId);
 
@@ -167,10 +168,12 @@ class FriendsController extends Controller
 			'message' => $message,
 		]);
 
-		$user->notify(new MessageNotification(null, MessageType::System, 'Запрос дружбы', 'Игрок ' . $this->user->username . ' отправил вам запрос на добавление в друзья. <a href="/friends/requests"><< просмотреть >></a>'));
+		$user->notify(
+			new SystemMessage(MessageType::System, new FriendsRequestMessage(['name' => $this->user->username]))
+		);
 	}
 
-	public function delete(int $id)
+	public function delete(int $id): void
 	{
 		$friend = Models\Friend::find($id);
 
@@ -185,7 +188,7 @@ class FriendsController extends Controller
 		}
 	}
 
-	public function approve(int $id)
+	public function approve(int $id): void
 	{
 		$friend = Models\Friend::find($id);
 

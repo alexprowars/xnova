@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class MerchantController extends Controller
 {
-	public function exchange(Request $request)
+	public function exchange(Request $request): array
 	{
 		if ($this->user->credits <= 0) {
 			throw new Exception('Недостаточно кредитов для проведения обменной операции');

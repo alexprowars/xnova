@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class FleetShortcutController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$items = [];
 
@@ -28,7 +28,7 @@ class FleetShortcutController extends Controller
 		return $items;
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): array
 	{
 		$galaxy = (int) $request->query('g', 0);
 		$system = (int) $request->query('s', 0);
@@ -51,7 +51,7 @@ class FleetShortcutController extends Controller
 		];
 	}
 
-	public function store(Request $request)
+	public function store(Request $request): void
 	{
 		$name = $request->post('name');
 
@@ -81,7 +81,7 @@ class FleetShortcutController extends Controller
 		]);
 	}
 
-	public function view(int $id)
+	public function view(int $id): array
 	{
 		$shortcut = FleetShortcut::where('user_id', $this->user->id)
 			->where('id', $id)
@@ -101,7 +101,7 @@ class FleetShortcutController extends Controller
 		];
 	}
 
-	public function update(int $id, Request $request)
+	public function update(int $id, Request $request): void
 	{
 		$shortcut = FleetShortcut::where('user_id', $this->user->id)
 			->where('id', $id)
@@ -133,7 +133,7 @@ class FleetShortcutController extends Controller
 		$shortcut->save();
 	}
 
-	public function delete(int $id)
+	public function delete(int $id): void
 	{
 		$shortcut = FleetShortcut::where('user_id', $this->user->id)
 			->where('id', $id)

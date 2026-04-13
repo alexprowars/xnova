@@ -6,13 +6,13 @@ use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Exceptions\RedirectException;
-use App\Helpers;
 use App\Models;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class StartController extends Controller
 {
-	public function save(Request $request)
+	public function save(Request $request): void
 	{
 		if ($this->user->sex && $this->user->avatar) {
 			throw new RedirectException('/');
@@ -40,7 +40,7 @@ class StartController extends Controller
 
 		$this->user->username = $data['name'];
 
-		$face = Helpers::checkString($data['avatar']);
+		$face = Str::sanitize($data['avatar']);
 
 		if (!empty($face)) {
 			$face = explode('_', $face);
@@ -64,7 +64,7 @@ class StartController extends Controller
 		$this->user->update();
 	}
 
-	public function race(Request $request)
+	public function race(Request $request): void
 	{
 		if ($this->user->race) {
 			throw new RedirectException('/');

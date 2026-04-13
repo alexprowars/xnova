@@ -14,7 +14,7 @@ class LogUserIP
 	{
 		$response = $next($request);
 
-		$ip = Helpers::convertIp($request->ip());
+		$ip = $request->ip();
 
 		if (($user = $request->user()) && $user->ip != $ip && $request->ip() != '127.0.0.1') {
 			$user->ip = $ip;
@@ -22,7 +22,7 @@ class LogUserIP
 
 			LogsIp::create([
 				'user_id' => $user->id,
-				'ip' => $ip,
+				'ip' => Helpers::convertIp($ip),
 			]);
 		}
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 
 class NotesController extends Controller
 {
-	public function index()
+	public function index(): array
 	{
 		$notes = $this->user->notes()
 			->latest('updated_at')->get();
@@ -38,7 +38,7 @@ class NotesController extends Controller
 		return $items;
 	}
 
-	public function delete(Request $request)
+	public function delete(Request $request): void
 	{
 		$deleteIds = array_map('intval', Arr::wrap($request->post('id', [])));
 
@@ -47,7 +47,7 @@ class NotesController extends Controller
 		}
 	}
 
-	public function create(Request $request)
+	public function create(Request $request): array
 	{
 		$priority = (int) $request->post('priority', 0);
 
@@ -74,7 +74,7 @@ class NotesController extends Controller
 		];
 	}
 
-	public function edit(int $id)
+	public function edit(int $id): array
 	{
 		$note = $this->user->notes()->findOne($id);
 
@@ -90,7 +90,7 @@ class NotesController extends Controller
 		];
 	}
 
-	public function update(int $id, Request $request)
+	public function update(int $id, Request $request): void
 	{
 		$note = $this->user->notes()->findOne($id);
 

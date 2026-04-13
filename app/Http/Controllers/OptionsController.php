@@ -20,14 +20,14 @@ use Throwable;
 
 class OptionsController extends Controller
 {
-	public function email(ChangeEmailRequest $request)
+	public function email(ChangeEmailRequest $request): void
 	{
 		$this->user->email = $request->input('email');
 		$this->user->email_verified_at = null;
 		$this->user->save();
 	}
 
-	public function save(Request $request)
+	public function save(Request $request): void
 	{
 		if ($this->user->vacation?->isPast() && $request->has('vacation') && !((int) $request->post('vacation', 0))) {
 			$this->user->vacation = null;
@@ -176,7 +176,7 @@ class OptionsController extends Controller
 		cache()->forget('app::planetlist_' . $this->user->id);
 	}
 
-	public function password(ChangePasswordRequest $request)
+	public function password(ChangePasswordRequest $request): void
 	{
 		$this->user->password = Hash::make($request->input('password'));
 		$this->user->save();
@@ -184,7 +184,7 @@ class OptionsController extends Controller
 		Auth::logout();
 	}
 
-	public function vacation()
+	public function vacation(): void
 	{
 		if ($this->user->isVacation()) {
 			return;
