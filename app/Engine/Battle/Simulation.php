@@ -36,27 +36,7 @@ class Simulation
 
 		$report = $battle->run();
 
-		$result = [
-			'result' => $report->convertToArray(),
-		];
-
-		$result['attackers'] = $report->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
-		$result['defenders'] = $report->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
-
-		$result['steal'] = ['metal' => 0, 'crystal' => 0, 'deuterium' => 0];
-		$result['moon_chance'] = $report->getMoonProb();
-		$result['moon'] = 0;
-		$result['repair'] = [];
-
-		foreach ($report->getDefendersRepaired()->getPlayers() as $player) {
-			foreach ($player->getFleets() as $fleet) {
-				foreach ($fleet->getShips() as $ship) {
-					$result['repair'][$fleet->getId()][$ship->getId()] = $ship->getCount();
-				}
-			}
-		}
-
-		$this->result = $result;
+		$this->result = $report->toArray();
 	}
 
 	public function getMaxSlots(): int
@@ -73,7 +53,7 @@ class Simulation
 
 		$statistics = [];
 
-		for ($i = 0; $i < 50; $i++) {
+		for ($i = 0; $i < 5; $i++) {
 			$report = $battle->run();
 
 			$statistics[] = [
@@ -108,7 +88,7 @@ class Simulation
 					$units[$shipArr['id']] = $shipArr['count'];
 				}
 
-				$user = new User(['id' => $i, 'username' => 'Игрок ' . ($i + 1)]);
+				$user = new User(['id' => 1000 + $i, 'username' => 'Игрок ' . ($i + 1)]);
 
 				foreach ($units as $id => $lvl) {
 					if (Vars::getItemType($id) !== ItemType::TECH) {
@@ -120,7 +100,7 @@ class Simulation
 				}
 
 				$fleet = new Fleet();
-				$fleet->id = $i;
+				$fleet->id = 1000 + $i;
 				$fleet->entities = FleetEntityCollection::createFromArray($fleets);
 				$fleet->user()->associate($user);
 				$fleet->end_galaxy = 1;

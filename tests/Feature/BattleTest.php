@@ -1,7 +1,6 @@
 <?php
 
-use App\Engine\Battle\Battle;
-use App\Engine\Battle\Engine\BattleCombat;
+use App\Engine\Battle\Result\Result;
 use App\Engine\Coordinates;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Facades\Galaxy;
@@ -74,5 +73,5 @@ test('battle combat', function () {
 
 	$report = $battle->run();
 
-	expect($report)->toBeInstanceOf(BattleCombat::class);
+	expect($report)->toBeInstanceOf(Result::class);
 });

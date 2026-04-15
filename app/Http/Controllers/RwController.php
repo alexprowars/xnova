@@ -41,7 +41,7 @@ class RwController extends Controller
 		}
 
 		try {
-			$html = BattleReport::fromArray($report->data)->report();
+			$html = new BattleReport($report->data)->report();
 		} catch (Throwable) {
 			throw new PageException('Ошибка обработки боевого отчета');
 		}

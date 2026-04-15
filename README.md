@@ -1,6 +1,6 @@
 ## Description
 
-Ogame clone writen on php/laravel and vue.js/NuxtJs
+Classic Ogame clone writen on php/laravel and vue.js/NuxtJS
 
 ## Frameworks
 

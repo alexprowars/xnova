@@ -79,42 +79,44 @@ class Unit
 
 		$count = min($count, $entity->getMaxConstructible());
 
-		if ($count > 0) {
-			$cost = $entity->getPrice();
+		if ($count <= 0) {
+			return;
+		}
 
-			$planet->metal 		-= $cost['metal'];
-			$planet->crystal 	-= $cost['crystal'];
-			$planet->deuterium 	-= $cost['deuterium'];
-			$planet->update();
+		$cost = $entity->getPrice();
 
-			$buildTime = $entity->getTime();
+		$planet->metal 		-= $cost['metal'] * $count;
+		$planet->crystal 	-= $cost['crystal'] * $count;
+		$planet->deuterium 	-= $cost['deuterium'] * $count;
+		$planet->update();
 
-			Models\Queue::create([
-				'type' => QueueType::SHIPYARD,
-				'operation' => QueueConstructionType::BUILDING,
-				'user_id' => $user->id,
-				'planet_id' => $planet->id,
-				'object_id' => $elementId,
-				'date' => now(),
-				'date_end' => now()->addSeconds($buildTime),
-				'level' => $count
+		$buildTime = $entity->getTime();
+
+		Models\Queue::create([
+			'type' => QueueType::SHIPYARD,
+			'operation' => QueueConstructionType::BUILDING,
+			'user_id' => $user->id,
+			'planet_id' => $planet->id,
+			'object_id' => $elementId,
+			'date' => now(),
+			'date_end' => now()->addSeconds($buildTime),
+			'level' => $count
+		]);
+
+		if (config('game.log.units', false)) {
+			LogsHistory::create([
+				'user_id' 			=> $user->id,
+				'operation' 		=> 7,
+				'planet' 			=> $planet->id,
+				'from_metal' 		=> $planet->metal + $cost['metal'],
+				'from_crystal' 		=> $planet->crystal + $cost['crystal'],
+				'from_deuterium' 	=> $planet->deuterium + $cost['deuterium'],
+				'to_metal' 			=> $planet->metal,
+				'to_crystal' 		=> $planet->crystal,
+				'to_deuterium' 		=> $planet->deuterium,
+				'entity_id' 		=> $elementId,
+				'amount' 			=> $count
 			]);
-
-			if (config('game.log.units', false)) {
-				LogsHistory::create([
-					'user_id' 			=> $user->id,
-					'operation' 		=> 7,
-					'planet' 			=> $planet->id,
-					'from_metal' 		=> $planet->metal + $cost['metal'],
-					'from_crystal' 		=> $planet->crystal + $cost['crystal'],
-					'from_deuterium' 	=> $planet->deuterium + $cost['deuterium'],
-					'to_metal' 			=> $planet->metal,
-					'to_crystal' 		=> $planet->crystal,
-					'to_deuterium' 		=> $planet->deuterium,
-					'entity_id' 		=> $elementId,
-					'amount' 			=> $count
-				]);
-			}
 		}
 	}
 }

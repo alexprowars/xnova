@@ -8,7 +8,6 @@ use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\FleetEngine;
-use App\Engine\Fleet\Missions\Attack;
 use App\Engine\Game;
 use App\Engine\Messages\Types\MissionExpeditionAttackMessage;
 use App\Engine\Messages\Types\MissionExpeditionBattleMessage;
@@ -24,7 +23,6 @@ use App\Models\Report;
 use App\Models\Statistic;
 use App\Models\User;
 use App\Notifications\SystemMessage;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class FinishExpeditionAction
@@ -344,56 +342,34 @@ class FinishExpeditionAction
 		$defenderFleet->end_planet = $this->fleet->end_planet;
 
 		$battle->addDefenderFleet($defenderFleet);
-		$battle->setRounds(6);
-
-		Config::set('settings.repairDefenceFactor', 0);
-		Config::set('settings.battleRounds', 6);
 
 		$report = $battle->run();
+		$result = $report->toArray();
 
-		$result = $report->convertToArray();
+		foreach ($report->getAttackersResultUnits()->getPlayers() as $player) {
+			foreach ($player->getFleets() as $fleet) {
+				$units = FleetEntityCollection::createFromArray($fleet->getUnitsCount());
 
-		$attackUsers 	= $report->convertPlayerGroupToArray($report->getResultAttackersFleetOnRound('START'));
-		$defenseUsers 	= $report->convertPlayerGroupToArray($report->getResultDefendersFleetOnRound('START'));
+				$query = Fleet::query()
+					->whereKey($fleet->getId());
 
-		$result['debris']['att'] = [0, 0];
-		$result['debris']['def'] = [0, 0];
-
-		$attackFleets = (new Attack($this->fleet))
-			->getResultFleetArray($report->getPresentationAttackersFleetOnRound('START'), $report->getAfterBattleAttackers());
-
-		foreach ($attackFleets as $fleetID => $attacker) {
-			$fleetArray = FleetEntityCollection::createFromArray($attacker);
-
-			$query = Fleet::query()
-				->whereKey($fleetID);
-
-			if ($fleetArray->isEmpty()) {
-				$query->delete();
-			} else {
-				$query->update([
-					'entities'		=> $fleetArray,
-					'updated_at' 	=> DB::raw('end_date'),
-					'mess'			=> 1,
-					'won'			=> $result['won'],
-				]);
+				if ($units->isEmpty()) {
+					$query->delete();
+				} else {
+					$query->update([
+						'entities'		=> $units,
+						'updated_at' 	=> DB::raw('end_date'),
+						'mess'			=> 1,
+						'won'			=> $result['won'],
+					]);
+				}
 			}
 		}
 
-		$raport = [
-			'result' => $result,
-			'attackers' => $attackUsers,
-			'defenders' => $defenseUsers,
-			'steal' => ['metal' => 0, 'crystal' => 0, 'deuterium' => 0],
-			'moon_chance' => 0,
-			'moon' => null,
-			'repair' => [],
-		];
-
 		$report = Report::create([
-			'users_id' => $report->getAttackersId(),
+			'users_id' => $report->getFirstRound()->getBattleAttackers()->getPlayersId(),
 			'no_contact' => false,
-			'data' => $raport,
+			'data' => $result,
 		]);
 
 		$colorAtt = $colorDef = '';

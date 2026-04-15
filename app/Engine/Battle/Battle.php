@@ -2,21 +2,17 @@
 
 namespace App\Engine\Battle;
 
-use App\Engine\Battle\Engine\BattleCombat;
-use App\Engine\Battle\Engine\BattleResult;
-use App\Engine\Battle\Engine\Models\Defense;
-use App\Engine\Battle\Engine\Models\Fleet;
-use App\Engine\Battle\Engine\Models\HomeFleet;
-use App\Engine\Battle\Engine\Models\Player;
-use App\Engine\Battle\Engine\Models\PlayerGroup;
-use App\Engine\Battle\Engine\Models\Ship;
-use App\Engine\Battle\Engine\Models\ShipType;
-use App\Engine\Battle\Engine\Round;
+use App\Engine\Battle\Entities\Fleet;
+use App\Engine\Battle\Entities\Player;
+use App\Engine\Battle\Entities\PlayerGroup;
+use App\Engine\Battle\Entities\Unit;
+use App\Engine\Battle\Result\Result;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Models\Fleet as FleetModel;
 use App\Models\Planet;
 use App\Models\User;
+use FFI;
 
 class Battle
 {
@@ -42,6 +38,62 @@ class Battle
 
 	public function addPlanet(Planet $planet): void
 	{
+		$this->addPlanetToGroup($this->defenders, $planet);
+	}
+
+	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet): void
+	{
+		if ($fleet->entities->isEmpty()) {
+			return;
+		}
+
+		$res = [];
+
+		foreach ($fleet->entities as $entity) {
+			if (Vars::getItemType($entity->id) != ItemType::FLEET && Vars::getItemType($entity->id) != ItemType::DEFENSE) {
+				continue;
+			}
+
+			$res[$entity->id] = $entity->count;
+		}
+
+		$playerObj = $group->getPlayer($fleet->user->id);
+
+		if (!$playerObj) {
+			$playerObj = new Player($fleet->user->id)
+				->setName($fleet->user->username);
+		}
+
+		$playerObj->setTechnologies(
+			$res + $this->getUserTechs($fleet->user)
+		);
+
+		$fleetObj = new Fleet($fleet->id)
+			->setPosition($fleet->getDestinationCoordinates(false));
+
+		foreach ($fleet->entities as $entity) {
+			if ((Vars::getItemType($entity->id) != ItemType::FLEET && Vars::getItemType($entity->id) != ItemType::DEFENSE) || empty($entity->count)) {
+				continue;
+			}
+
+			$fleetObj->addUnit(
+				$this->getUnitData(
+					$entity->id,
+					$entity->count,
+					$playerObj->getTechnologies()
+				)
+			);
+		}
+
+		if (!$fleetObj->isEmpty()) {
+			$playerObj->addFleet($fleetObj);
+		}
+
+		$group->addPlayerIfNotExist($playerObj);
+	}
+
+	public function addPlanetToGroup(PlayerGroup $group, Planet $planet): void
+	{
 		$res = [];
 
 		$units = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
@@ -64,92 +116,52 @@ class Battle
 			}
 		}
 
-		$fleet = new HomeFleet(0)
+		$fleet = new Fleet(0)
 			->setPosition($planet->coordinates);
 
 		foreach ($units as $i) {
 			if ($planet->getLevel($i) > 0) {
-				$shipType = $this->getShipType($i, $planet->getLevel($i), $res);
+				$unit = $this->getUnitData($i, $planet->getLevel($i), $res);
 
-				if ($planet->user->rpg_ingenieur && $shipType->getType() == 'Ship') {
-					$shipType->setRepairProb(0.8);
+				if ($planet->user->rpg_ingenieur && Vars::getItemType($unit->getId()) == ItemType::FLEET) {
+					$unit->setRepairProb(0.8);
 				}
 
-				$fleet->addShip($shipType);
+				$fleet->addUnit($unit);
 			}
 		}
 
-		$playerObj = $this->defenders->getPlayer($planet->user->id);
+		$playerObj = $group->getPlayer($planet->user->id);
 
 		if (!$playerObj) {
 			$playerObj = new Player($planet->user->id, [$fleet])
 				->setName($planet->user->username)
 				->setTechnologies($res);
 
-			$this->defenders->addPlayer($playerObj);
-		}
-
-		$playerObj->addDefense($fleet);
-	}
-
-	public function setRounds(int $rounds): self
-	{
-		$this->rounds = $rounds;
-
-		return $this;
-	}
-
-	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet): void
-	{
-		if ($fleet->entities->isEmpty()) {
-			return;
-		}
-
-		$res = [];
-
-		foreach ($fleet->entities as $entity) {
-			if (Vars::getItemType($entity->id) != ItemType::FLEET) {
-				continue;
-			}
-
-			$res[$entity->id] = $entity->count;
-		}
-
-		$playerObj = $group->getPlayer($fleet->user->id);
-
-		if (!$playerObj) {
-			$playerObj = new Player($fleet->user->id)
-				->setName($fleet->user->username);
-		}
-
-		$playerObj->setTechnologies(
-			$res + $this->getUserTechs($fleet->user)
-		);
-
-		$fleetObj = new Fleet($fleet->id)
-			->setPosition($fleet->getDestinationCoordinates(false));
-
-		foreach ($fleet->entities as $entity) {
-			if (Vars::getItemType($entity->id) != ItemType::FLEET || empty($entity->count)) {
-				continue;
-			}
-
-			$fleetObj->addShip(
-				$this->getShipType(
-					$entity->id,
-					$entity->count,
-					$playerObj->getTechnologies()
-				)
-			);
-		}
-
-		if (!$fleetObj->isEmpty()) {
-			$playerObj->addFleet($fleetObj);
-		}
-
-		if (!$group->existPlayer($playerObj->getId())) {
 			$group->addPlayer($playerObj);
 		}
+
+		$playerObj->addFleet($fleet);
+	}
+
+	public function run()
+	{
+		$ffi = FFI::cdef(
+			"char* fight_battle_rounds(const char* input_json);",
+			base_path('storage/libbattle_engine_ffi.so')
+		);
+
+		$inputJson = json_encode([
+			'attacker_fleets' => $this->attackers->convertToBattleInput(),
+			'defender_fleets' => $this->defenders->convertToBattleInput(),
+		]);
+
+		/** @noinspection PhpUndefinedMethodInspection, @phpstan-ignore-next-line */
+		$outputPtr = $ffi->fight_battle_rounds($inputJson);
+		$output = FFI::string($outputPtr);
+		$output = json_decode($output, true);
+
+		return new Result($this->attackers, $this->defenders, $output);
 	}
 
 	protected function getUserTechs(User $user): array
@@ -180,7 +192,7 @@ class Battle
 		return $result;
 	}
 
-	public function getShipType($id, int $count, $res): ShipType
+	protected function getUnitData(int|string $id, int $count, array $res = []): Unit
 	{
 		$shipData = Vars::getUnitData($id);
 
@@ -199,81 +211,13 @@ class Battle
 
 		$cost = [$price['metal'], $price['crystal']];
 
-		if (Vars::getItemType($id) == ItemType::FLEET) {
-			return new Ship($id, $count, $shipData['sd'], $shipData['shield'], $cost, $shipData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
-		}
-
-		return new Defense($id, $count, $shipData['sd'], $shipData['shield'], $cost, $shipData['attack'], $attTech, (($res[110] ?? 0) * 0.05), $attDef);
-	}
-
-	protected function checkWhoWon(PlayerGroup $attackers, PlayerGroup $defenders): void
-	{
-		$attLose = $attackers->isEmpty();
-		$defLose = $defenders->isEmpty();
-
-		if ($attLose && !$defLose) {
-			$attackers->battleResult = BattleResult::LOSE;
-			$defenders->battleResult = BattleResult::WIN;
-		} elseif (!$attLose && $defLose) {
-			$attackers->battleResult = BattleResult::WIN;
-			$defenders->battleResult = BattleResult::LOSE;
-		} else {
-			$attackers->battleResult = BattleResult::DRAW;
-			$defenders->battleResult = BattleResult::DRAW;
-		}
-	}
-
-	public function run(bool $debug = false): BattleCombat
-	{
-		if (!$debug) {
-			ob_start();
-		}
-
-		log_var('attackers', print_r($this->attackers, true));
-		log_var('defenders', print_r($this->defenders, true));
-
-		$attackers = clone $this->attackers;
-		$defenders = clone $this->defenders;
-
-		$report = new BattleCombat();
-		$report->addRound(
-			new Round($attackers, $defenders, 0)
+		return new Unit(
+			$id,
+			$count,
+			(int) round($shipData['attack'] * (1 + $attTech)),
+			(int) round((array_sum($cost) * (1 + $attDef)) / 10),
+			(int) round($shipData['shield'] * (1 + (($res[110] ?? 0) * 0.05))),
+			$shipData['sd'] ?? []
 		);
-
-		for ($i = 1; $i <= $this->rounds; $i++) {
-			$attLose = $attackers->isEmpty();
-			$defLose = $defenders->isEmpty();
-
-			if ($attLose || $defLose) {
-				$this->checkWhoWon($attackers, $defenders);
-
-				$report->setBattleResult(
-					$attackers->battleResult,
-					$defenders->battleResult
-				);
-
-				if (!$debug) {
-					ob_get_clean();
-				}
-
-				return $report;
-			}
-
-			$round = new Round($attackers, $defenders, $i);
-			$round->startRound();
-
-			$report->addRound($round);
-
-			$attackers = $round->getAfterBattleAttackers();
-			$defenders = $round->getAfterBattleDefenders();
-		}
-
-		$this->checkWhoWon($attackers, $defenders);
-
-		if (!$debug) {
-			ob_get_clean();
-		}
-
-		return $report;
 	}
 }

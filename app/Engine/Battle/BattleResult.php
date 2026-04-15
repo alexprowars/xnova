@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Battle\Engine;
+namespace App\Engine\Battle;
 
 enum BattleResult: int
 {

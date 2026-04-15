@@ -24,7 +24,7 @@ class MissionAttackMessage extends AbstractMessage
 
 		if (isset($this->data['lost'])) {
 			$result .= '<div class="text-center mt-4">';
-			$result .= '<div class="negative">' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($this->data['lost']['att']) . '</span><span class="positive">   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($this->data['lost']['def']) . '</div>';
+			$result .= '<div class="negative">' . __('fleet_engine.sys_perte_attaquant') . ': ' . Format::number($this->data['lost']['attackers']) . '</span><span class="positive">   ' . __('fleet_engine.sys_perte_defenseur') . ': ' . Format::number($this->data['lost']['defenders']) . '</div>';
 			$result .= '<div>' . __('fleet_engine.sys_gain') . ' м: <span style="color:#adaead">' . Format::number($this->data['steal']['metal']) . '</span>, к: <span style="color:#ef51ef">' . Format::number($this->data['steal']['crystal']) . '</span>, д: <span style="color:#f77542">' . Format::number($this->data['steal']['deuterium']) . '</span></div>';
 			$result .= '<div>' . __('fleet_engine.sys_debris') . ' м: <span style="color:#adaead">' . Format::number($this->data['debris']['metal']) . '</span>, к: <span style="color:#ef51ef">' . Format::number($this->data['debris']['crystal']) . '</span></div>';
 			$result .= '</div>';

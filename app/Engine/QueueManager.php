@@ -297,19 +297,19 @@ class QueueManager
 					];
 
 					if ($cost['metal'] > $this->planet->metal) {
-						$message['metal'] = $cost['metal'] - $this->planet->metal;
+						$message['metal'] = (int) ceil($cost['metal'] - $this->planet->metal);
 					}
 
 					if ($cost['crystal'] > $this->planet->crystal) {
-						$message['crystal'] = $cost['crystal'] - $this->planet->crystal;
+						$message['crystal'] = (int) ceil($cost['crystal'] - $this->planet->crystal);
 					}
 
 					if ($cost['deuterium'] > $this->planet->deuterium) {
-						$message['deuterium'] = $cost['deuterium'] - $this->planet->deuterium;
+						$message['deuterium'] = (int) ceil($cost['deuterium'] - $this->planet->deuterium);
 					}
 
 					if (isset($cost['energy']) && $cost['energy'] > $this->planet->energy) {
-						$message['energy'] = $cost['energy'] - $this->planet->energy;
+						$message['energy'] = (int) ceil($cost['energy'] - $this->planet->energy);
 					}
 
 					$this->planet->user->notify(

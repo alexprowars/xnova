@@ -70,7 +70,7 @@ class FleetService
 
 	public static function checkHallBattle(Report $report): void
 	{
-		$lost = $report['data']['result']['lost']['att'] + $report['data']['result']['lost']['def'];
+		$lost = array_sum($report->data['lost']);
 
 		if (config('game.hallPoints') !== null && $lost < config('game.hallPoints')) {
 			return;
@@ -81,8 +81,8 @@ class FleetService
 		$userList = [];
 
 		foreach ($report['data']['attackers'] as $info) {
-			if (!in_array($info['username'], $userList)) {
-				$userList[] = $info['username'];
+			if (!in_array($info['name'], $userList)) {
+				$userList[] = $info['name'];
 			}
 		}
 
@@ -95,8 +95,8 @@ class FleetService
 		$userList = [];
 
 		foreach ($report['data']['defenders'] as $info) {
-			if (!in_array($info['username'], $userList)) {
-				$userList[] = $info['username'];
+			if (!in_array($info['name'], $userList)) {
+				$userList[] = $info['name'];
 			}
 		}
 
@@ -117,7 +117,7 @@ class FleetService
 				'title' 	=> $title,
 				'debris' 	=> floor($lost / 1000),
 				'date' 		=> now(),
-				'won' 		=> $report['data']['result']['won'],
+				'won' 		=> $report['data']['won'],
 				'type' 		=> $type,
 				'report_id' => $battleLog->id,
 			]);

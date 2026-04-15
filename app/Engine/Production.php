@@ -12,9 +12,9 @@ use Carbon\CarbonImmutable;
 
 class Production
 {
-	protected $basic;
-	protected $storage;
-	protected $production;
+	protected ?Resources $basic = null;
+	protected ?Resources $storage = null;
+	protected ?Resources $production = null;
 
 	public function __construct(protected Planet $planet, protected ?CarbonImmutable $updateTime = null)
 	{

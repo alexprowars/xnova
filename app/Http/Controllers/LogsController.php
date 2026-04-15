@@ -108,7 +108,7 @@ class LogsController extends Controller
 		}
 
 		try {
-			$html = BattleReport::fromArray($raport->data)->report();
+			$html = new BattleReport($raport->data)->report();
 		} catch (Throwable) {
 			throw new PageException('Ошибка обработки боевого отчета');
 		}

@@ -77,9 +77,9 @@ class SimController extends Controller
 		$result = $log->data;
 
 		try {
-			$report = BattleReport::fromArray($result)->report();
-		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			$report = new BattleReport($result)->report();
+		} catch (Throwable $e) {
+			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
 		return [
@@ -118,9 +118,9 @@ class SimController extends Controller
 		$result = $sim->getResult();
 
 		try {
-			$report = BattleReport::fromArray($result)->report();
-		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			$report = new BattleReport($result)->report();
+		} catch (Throwable $e) {
+			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
 		$log = LogsSimulation::create([
@@ -129,7 +129,6 @@ class SimController extends Controller
 
 		return [
 			'report' => $report,
-			'statistics' => $sim->getStatistics(),
 			'uuid' => $log->id,
 		];
 	}

@@ -4,7 +4,7 @@ namespace App\Engine\Traits\User;
 
 trait HasBonuses
 {
-	protected $bonusData;
+	protected array $bonusData = [];
 
 	protected function fillBobusData()
 	{
