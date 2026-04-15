@@ -354,7 +354,7 @@ class QueueManager
 			throw new Exception('Queue::checkTechQueue::check::Planet object not found');
 		}
 
-		$entity = Entity\Research::createEntity($queueItem->object_id, $queueItem->level, $planet);
+		$entity = Entity\Research::createEntity($queueItem->object_id, $queueItem->level - 1, $planet);
 
 		$buildTime = $entity->getTime();
 

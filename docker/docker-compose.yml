@@ -66,6 +66,11 @@ services:
     command: [ "php", "artisan", "schedule:work" ]
     user: "web"
 
+  daemon:
+    <<: *base-image
+    command: [ "php", "artisan", "game:daemon" ]
+    user: "web"
+
   redis:
     image: redis:latest
     restart: unless-stopped
