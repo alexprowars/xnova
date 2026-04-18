@@ -15,10 +15,6 @@ class ApiResponse
 		/** @var JsonResponse|RedirectResponse|mixed $response */
 		$response = $next($request);
 
-		if (!$request->expectsJson()) {
-			return $response;
-		}
-
 		if ($response instanceof RedirectResponse) {
 			return new JsonResponse([
 				'redirect' => $response->getTargetUrl(),

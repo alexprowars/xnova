@@ -8,7 +8,6 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Game;
 use App\Events\FleetSended;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Format;
 use App\Models\AllianceDiplomacy;
 use App\Models\Assault;
@@ -85,7 +84,7 @@ class FleetSend
 		}
 
 		if (in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::Spy, MissionType::Destruction]) && config('game.disableAttacks', 0) > 0 && time() < config('game.disableAttacks', 0)) {
-			throw new PageException('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)), '/fleet');
+			throw new Exception('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)));
 		}
 
 		if (!in_array($this->fleetSpeed, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1])) {
@@ -93,12 +92,12 @@ class FleetSend
 		}
 
 		if (empty(array_filter($this->fleetArray))) {
-			throw new PageException('Недостаточно флота для отправки на планете!');
+			throw new Exception('Недостаточно флота для отправки на планете!');
 		}
 
 		foreach ($this->fleetArray as $ShipId => $count) {
 			if ($count > $this->planet->getLevel($ShipId)) {
-				throw new PageException('Недостаточно флота для отправки на планете!');
+				throw new Exception('Недостаточно флота для отправки на планете!');
 			}
 		}
 
@@ -111,7 +110,7 @@ class FleetSend
 		}
 
 		if ($maxFleets <= $flyingFleets) {
-			throw new PageException('Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.');
+			throw new Exception('Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.');
 		}
 
 		if ($this->planet->coordinates->isSame($this->target)) {
@@ -140,9 +139,9 @@ class FleetSend
 			}
 
 			if (!$this->planet->user->getTechLevel('expedition')) {
-				throw new PageException('Вами не изучена "Экспедиционная технология"!');
+				throw new Exception('Вами не изучена "Экспедиционная технология"!');
 			} elseif ($ExpeditionEnCours >= $MaxExpedition) {
-				throw new PageException('Вы уже отправили максимальное количество экспедиций!');
+				throw new Exception('Вы уже отправили максимальное количество экспедиций!');
 			}
 
 			if ($this->expeditionTime <= 0 || $this->expeditionTime > (round($this->planet->user->getTechLevel('expedition') / 2) + 1)) {
@@ -163,25 +162,25 @@ class FleetSend
 		}
 
 		if ($this->mission == MissionType::Recycling && $this->targetPlanet->debris_metal <= 0 && $this->targetPlanet->debris_crystal <= 0) {
-			throw new PageException('Нет обломков для сбора.');
+			throw new Exception('Нет обломков для сбора.');
 		}
 
 		if ($this->targetPlanet) {
 			$targerUser = $this->targetPlanet->user;
 
 			if (!$targerUser) {
-				throw new PageException('Неизвестная ошибка #FLTNFU' . $this->targetPlanet->user_id);
+				throw new Exception('Неизвестная ошибка #FLTNFU' . $this->targetPlanet->user_id);
 			}
 		} else {
 			$targerUser = $this->planet->user;
 		}
 
 		if (($targerUser->roles->isNotEmpty() && $this->planet->user->roles->isEmpty()) && ($this->mission != MissionType::Stay && $this->mission != MissionType::Transport)) {
-			throw new PageException('На этого игрока запрещено нападать');
+			throw new Exception('На этого игрока запрещено нападать');
 		}
 
 		if ($targerUser->isVacation() && $this->mission != MissionType::Recycling && !$this->planet->user->isAdmin()) {
-			throw new PageException('Игрок в режиме отпуска!');
+			throw new Exception('Игрок в режиме отпуска!');
 		}
 
 		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $this->mission == MissionType::Attack) {
@@ -193,7 +192,7 @@ class FleetSend
 				->first();
 
 			if ($this->diplomacy) {
-				throw new PageException('Заключён мир или перемирие с альянсом атакуемого игрока.');
+				throw new Exception('Заключён мир или перемирие с альянсом атакуемого игрока.');
 			}
 		}
 
@@ -229,11 +228,11 @@ class FleetSend
 					->value('total_points') ?? 0;
 
 				if ($HePoints < $protectionPoints) {
-					throw new PageException('Игрок находится под защитой новичков!');
+					throw new Exception('Игрок находится под защитой новичков!');
 				}
 
 				if ($protectionFactor && $MyPoints > $HePoints * $protectionFactor) {
-					throw new PageException('Этот игрок слишком слабый для вас!');
+					throw new Exception('Этот игрок слишком слабый для вас!');
 				}
 			}
 		}
@@ -442,7 +441,7 @@ class FleetSend
 				->first();
 
 			if ($log && $log->amount > 2 && (!$this->diplomacy || $this->diplomacy->type != 3)) {
-				throw new PageException('Баш-контроль. Лимит ваших нападений на планету исчерпан.');
+				throw new Exception('Баш-контроль. Лимит ваших нападений на планету исчерпан.');
 			}
 
 			if ($log) {

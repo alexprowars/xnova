@@ -6,7 +6,6 @@ use App\Engine\Battle\BattleReport;
 use App\Engine\Battle\Simulation;
 use App\Engine\Enums\ItemType;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Models\LogsSimulation;
 use Illuminate\Http\Request;
@@ -79,7 +78,7 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report();
 		} catch (Throwable $e) {
-			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
+			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
 		return [
@@ -120,7 +119,7 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report();
 		} catch (Throwable $e) {
-			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
+			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
 		$log = LogsSimulation::create([

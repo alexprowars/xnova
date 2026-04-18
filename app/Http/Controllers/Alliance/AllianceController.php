@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models;
 use App\Models\Alliance;
@@ -288,7 +287,7 @@ class AllianceController extends Controller
 		$alliance = Alliance::findOne($id);
 
 		if (!$alliance) {
-			throw new PageException('Информация о данном альянсе не найдена');
+			throw new Exception('Информация о данном альянсе не найдена');
 		}
 
 		$result = [

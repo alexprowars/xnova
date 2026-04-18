@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\RedirectException;
 use App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,7 +14,7 @@ class StartController extends Controller
 	public function save(Request $request): void
 	{
 		if ($this->user->sex && $this->user->avatar) {
-			throw new RedirectException('/');
+			throw new Exception('Уже выбрано');
 		}
 
 		$data = $request->validate([
@@ -67,7 +66,7 @@ class StartController extends Controller
 	public function race(Request $request): void
 	{
 		if ($this->user->race) {
-			throw new RedirectException('/');
+			throw new Exception('Фракция уже выбрана');
 		}
 
 		$request->validate([

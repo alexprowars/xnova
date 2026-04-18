@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Middleware\CheckReferral;
 use App\Http\Middleware\IsVacationMode;
 use Illuminate\Support\Facades\Route;
 
-Route::get('state', [Controllers\StateController::class, 'index']);
+Route::get('state', [Controllers\StateController::class, 'index'])->middleware(CheckReferral::class);
 Route::get('blocked', [Controllers\BlockedController::class, 'index']);
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);

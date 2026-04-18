@@ -2,12 +2,7 @@
 
 namespace App\Engine;
 
-use App\Helpers;
-use App\Models\Money;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Session;
 
 class Game
 {
@@ -53,49 +48,6 @@ class Game
 		}
 
 		return 1.0;
-	}
-
-	public static function checkReferLink()
-	{
-		if (Session::has('uid')) {
-			return;
-		}
-
-		$id = (int) Request::server('QUERY_STRING', 0);
-
-		if (!$id) {
-			return;
-		}
-
-		$user = User::findOne($id);
-
-		if (!$user) {
-			return;
-		}
-
-		$ip = Helpers::convertIp(Request::ip());
-
-		$exist = Money::query()
-			->where('ip', $ip)
-			->where('date', '>', now()->subDay())
-			->exists();
-
-		if ($exist) {
-			return;
-		}
-
-		Money::create([
-			'user_id' => $user->id,
-			'ip' => $ip,
-			'referer' => Request::server('HTTP_REFERER'),
-			'user_agent' => Request::server('HTTP_USER_AGENT'),
-		]);
-
-		$user->links++;
-		$user->refers++;
-		$user->update();
-
-		Session::put('ref', $user->id);
 	}
 
 	public static function getMerchantExchangeRate(): array

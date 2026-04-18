@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Battle\BattleReport;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Models\LogsBattle;
 use App\Models\Report;
 use Illuminate\Http\Request;
@@ -96,21 +95,21 @@ class LogsController extends Controller
 		$raport = LogsBattle::find($id);
 
 		if (!$raport) {
-			throw new PageException('Запрашиваемого лога не существует в базе данных');
+			throw new Exception('Запрашиваемого лога не существует в базе данных');
 		}
 
 		if ($raport->data['result'] === null) {
-			throw new PageException('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
+			throw new Exception('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
 		}
 
 		if (!$raport->user_id && Carbon::parse($raport->data['result']['date'])->isAfter(now()->subHours(2)) && !$this->user->isAdmin()) {
-			throw new PageException('Данный лог боя пока недоступен для просмотра!');
+			throw new Exception('Данный лог боя пока недоступен для просмотра!');
 		}
 
 		try {
 			$html = new BattleReport($raport->data)->report();
 		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			throw new Exception('Ошибка обработки боевого отчета');
 		}
 
 		return [

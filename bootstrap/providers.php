@@ -7,6 +7,6 @@ return [
 	App\Providers\AuthServiceProvider::class,
 	App\Providers\EventServiceProvider::class,
 	App\Providers\ValidationServiceProvider::class,
-	App\Providers\AdminPanelProvider::class,
+	//App\Providers\AdminPanelProvider::class,
 	Spatie\Permission\PermissionServiceProvider::class,
 ];

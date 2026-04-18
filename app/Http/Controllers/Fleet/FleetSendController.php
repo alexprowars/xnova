@@ -8,8 +8,8 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\MissionType;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
-use App\Exceptions\PageException;
 use App\Factories\PlanetServiceFactory;
 use App\Format;
 use App\Http\Controllers\Controller;
@@ -84,8 +84,8 @@ class FleetSendController extends Controller
 
 		try {
 			$fleet = DB::transaction(fn() => $sender->send());
-		} catch (PageException $e) {
-			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>', '/fleet');
+		} catch (Exception $e) {
+			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
 		$fleetCollection = FleetCollection::createFromArray($fleetArray, $this->planet);
@@ -122,13 +122,13 @@ class FleetSendController extends Controller
 			->make($planet);
 
 		if (!$planetService->isAvailableJumpGate()) {
-			throw new PageException(__('fleet.gate_no_dest_g'), '/fleet/');
+			throw new Exception(__('fleet.gate_no_dest_g'));
 		}
 
 		$nextJumpTime = $planetService->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
-			throw new PageException(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime), '/fleet/');
+			throw new Exception(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime));
 		}
 
 		$targetPlanet = Planet::findOne($planet);
@@ -137,13 +137,13 @@ class FleetSendController extends Controller
 			->make($targetPlanet);
 
 		if (!$targetPlanetService->isAvailableJumpGate()) {
-			throw new PageException(__('fleet.gate_no_dest_g'), '/fleet/');
+			throw new Exception(__('fleet.gate_no_dest_g'));
 		}
 
 		$nextJumpTime = $targetPlanetService->getNextJumpTime();
 
 		if ($nextJumpTime > 0) {
-			throw new PageException(__('fleet.gate_wait_dest') . ' - ' . Format::time($nextJumpTime), '/fleet/');
+			throw new Exception(__('fleet.gate_wait_dest') . ' - ' . Format::time($nextJumpTime));
 		}
 
 		$success = false;
@@ -172,7 +172,7 @@ class FleetSendController extends Controller
 		}
 
 		if (!$success) {
-			throw new PageException(__('fleet.gate_wait_data'), '/fleet/');
+			throw new Exception(__('fleet.gate_wait_data'));
 		}
 
 		$this->planet->last_jump_time = now();
@@ -183,6 +183,6 @@ class FleetSendController extends Controller
 
 		$this->user->update(['planet_current' => $targetPlanet->id]);
 
-		throw new PageException(__('fleet.gate_jump_done') . ' ' . Format::time($planetService->getNextJumpTime()), '/fleet/');
+		throw new Exception(__('fleet.gate_jump_done') . ' ' . Format::time($planetService->getNextJumpTime()));
 	}
 }

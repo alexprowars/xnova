@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Engine\Game;
-use App\Exceptions\PageException;
+use App\Exceptions\Exception;
 use App\Models\Blocked;
 use App\Models\User;
 use Illuminate\Auth\Events\Authenticated;
@@ -25,7 +25,7 @@ class UserAuthenticated
 
 		if ($user->blocked_at) {
 			if ($user->blocked_at->isFuture()) {
-				throw new PageException('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->blocked_at->timezone($user->getOption('timezone'))) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('/banned') . '">сюда</a>');
+				throw new Exception('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->blocked_at->timezone($user->getOption('timezone'))) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('/banned') . '">сюда</a>');
 			}
 
 			$user->blocked_at = null;

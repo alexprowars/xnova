@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Models\LogsStat;
 use App\Models\Planet;
 use App\Models\Statistic;
@@ -18,7 +17,7 @@ class PlayersController extends Controller
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new PageException('Профиль не найден');
+			throw new Exception('Профиль не найден');
 		}
 
 		$result = [

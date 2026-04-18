@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Format;
 
 class QuestController extends Controller
@@ -59,13 +58,13 @@ class QuestController extends Controller
 	public function info(int $id): array
 	{
 		if ($id <= 0) {
-			throw new PageException('Не выбрано задание', '/quests');
+			throw new Exception('Не выбрано задание');
 		}
 
 		$quest = require resource_path('engine/quests.php');
 
 		if (!isset($quest[$id])) {
-			throw new PageException('Задание не существует', '/quests');
+			throw new Exception('Задание не существует');
 		}
 
 		$result = [

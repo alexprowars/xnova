@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Fleet;
-use App\Engine\Game;
-use App\Exceptions\RedirectException;
 use App\Models\Planet;
 use App\Models\User;
+use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Nubs\RandomNameGenerator;
 
 class Controller extends BaseController
@@ -19,21 +17,30 @@ class Controller extends BaseController
 
 	public function __construct()
 	{
-		$this->middleware(function ($request, $next) {
-			$this->init();
+		$this->middleware(function (Request $request, Closure $next) {
+			$controller = $request->route()->getController();
+
+			if ($request->user() && (!$request->user()->race || !$request->user()->sex) && $controller && !in_array($controller::class, [StateController::class, InfoController::class, ContentController::class, StartController::class, LogoutController::class])) {
+				return redirect()->away('/start');
+			}
+
+			return $next($request);
+		});
+
+		$this->middleware(function (Request $request, Closure $next) {
+			$this->init($request->user());
 
 			return $next($request);
 		});
 	}
 
-	private function init(): void
+	private function init(?User $user)
 	{
-		if (!Auth::check()) {
-			Game::checkReferLink();
+		if (!$user) {
 			return;
 		}
 
-		$this->user = Auth::user();
+		$this->user = $user;
 
 		if (empty($this->user->username)) {
 			$this->user->username = RandomNameGenerator\All::create()->getName();
@@ -45,10 +52,6 @@ class Controller extends BaseController
 
 		$this->user->getAllyInfo();
 		$this->user->checkLevel();
-
-		if ((!$this->user->race || !$this->user->avatar) && !in_array(Route::current()->controller::class, [StateController::class, InfoController::class, ContentController::class, StartController::class, LogoutController::class])) {
-			throw new RedirectException('/start');
-		}
 
 		$this->planet = $this->user->getCurrentPlanet();
 

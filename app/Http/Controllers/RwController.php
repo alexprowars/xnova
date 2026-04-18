@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Engine\Battle\BattleReport;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -21,29 +20,29 @@ class RwController extends Controller
 				throw new Exception();
 			}
 		} catch (Throwable) {
-			throw new PageException('Недействительная подпись');
+			throw new Exception('Недействительная подпись');
 		}
 
 		$report = Report::find($id);
 
 		if (!$report) {
-			throw new PageException('Данный боевой отчет не найден или удалён');
+			throw new Exception('Данный боевой отчет не найден или удалён');
 		}
 
 		if (!$this->user->isAdmin()) {
 			if (!in_array($this->user->id, $report->users_id)) {
-				throw new PageException('Вы не можете просматривать этот боевой доклад');
+				throw new Exception('Вы не можете просматривать этот боевой доклад');
 			}
 
 			if ($report->users_id[0] == $this->user->id && $report->no_contact == 1) {
-				throw new PageException('Контакт с вашим флотом потерян<br>(Ваш флот был уничтожен в первой волне атаки)');
+				throw new Exception('Контакт с вашим флотом потерян<br>(Ваш флот был уничтожен в первой волне атаки)');
 			}
 		}
 
 		try {
 			$html = new BattleReport($report->data)->report();
 		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			throw new Exception('Ошибка обработки боевого отчета');
 		}
 
 		$logCode = md5(config('app.key') . $report->id) . $report->id;

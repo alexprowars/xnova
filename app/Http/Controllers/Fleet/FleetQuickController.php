@@ -8,7 +8,6 @@ use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\MissionType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
-use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\Planet;
 use Illuminate\Http\Request;
@@ -76,8 +75,8 @@ class FleetQuickController extends Controller
 
 		try {
 			$fleet = DB::transaction(fn() => $sender->send());
-		} catch (PageException $e) {
-			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>', '/fleet');
+		} catch (Exception $e) {
+			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
 		return [

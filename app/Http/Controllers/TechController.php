@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
-use App\Exceptions\PageException;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
 
 class TechController extends Controller
@@ -91,7 +91,7 @@ class TechController extends Controller
 	public function info(int $id): array
 	{
 		if (!Vars::getName($id)) {
-			throw new PageException('Элемент не существует');
+			throw new Exception('Элемент не существует');
 		}
 
 		$entity = EntityFactory::get($id, 1, $this->planet);
