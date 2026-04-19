@@ -24,6 +24,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,6 +52,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	use HasRoles;
 	use Notifiable;
 	use InteractsWithMedia;
+	/** @use HasFactory<UserFactory> */
 	use HasFactory;
 	use SoftDeletes;
 
@@ -78,13 +80,13 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 		'onlinetime' => 'immutable_datetime',
 		'vacation' => 'immutable_datetime',
 		'delete_time' => 'immutable_datetime',
-		'rpg_geologue' => 'immutable_datetime',
-		'rpg_admiral' => 'immutable_datetime',
-		'rpg_ingenieur' => 'immutable_datetime',
-		'rpg_technocrate' => 'immutable_datetime',
-		'rpg_constructeur' => 'immutable_datetime',
-		'rpg_meta' => 'immutable_datetime',
-		'rpg_komandir' => 'immutable_datetime',
+		'officier_geologist' => 'immutable_datetime',
+		'officier_admiral' => 'immutable_datetime',
+		'officier_engineer' => 'immutable_datetime',
+		'officier_technocrat' => 'immutable_datetime',
+		'officier_architect' => 'immutable_datetime',
+		'officier_metaphysician' => 'immutable_datetime',
+		'officier_mercenary' => 'immutable_datetime',
 		'daily_bonus' => 'immutable_datetime',
 		'message_block' => 'immutable_datetime',
 	];
@@ -116,7 +118,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 		});
 	}
 
-	protected static function newFactory()
+	/**
+	 * @return UserFactory
+	 */
+	protected static function newFactory(): Factory
 	{
 		return UserFactory::new();
 	}
@@ -182,6 +187,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 		return Attribute::get(fn() => $this->username . ($this->galaxy ? ' [' . $this->galaxy . ':' . $this->system . ':' . $this->planet . ']' : ''));
 	}
 
+	/** @return Attribute<string, string> */
 	protected function ip(): Attribute
 	{
 		return Attribute::make(

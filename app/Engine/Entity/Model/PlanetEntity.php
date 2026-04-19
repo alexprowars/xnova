@@ -5,6 +5,9 @@ namespace App\Engine\Entity\Model;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class PlanetEntity implements Arrayable, JsonSerializable
 {
 	public int $id;

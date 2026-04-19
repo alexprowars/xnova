@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
+use App\Engine\Objects\ObjectsFactory;
 use App\Exceptions\Exception;
 use App\Facades\Vars;
 
@@ -43,10 +44,10 @@ class TechController extends Controller
 					'required' => null,
 				];
 
-				$requeriments = Vars::getItemRequirements($item);
+				$itemObject = ObjectsFactory::get($item);
 
-				foreach ($requeriments as $resClass => $level) {
-					if ($resClass != 700) {
+				foreach ($itemObject->getRequeriments() as $resClass => $level) {
+					if ($resClass != 'race') {
 						$type = Vars::getItemType($resClass);
 
 						if ($type == ItemType::TECH && $this->user->getTechLevel($resClass) >= $level) {
@@ -98,33 +99,31 @@ class TechController extends Controller
 
 		$result = [
 			'id' => $id,
-			'name' => __('main.tech.' . $id),
-			'code' => Vars::getName($id),
+			'name' => $entity->getObject()->getName(),
+			'code' => $entity->getObject()->getCode(),
 			'level' => $this->user->getTechLevel($id) ?: $this->planet->getLevel($id),
 			'available' => $entity->isAvailable(),
-			'requirments' => Vars::getItemRequirements($id),
+			'requirments' => $entity->getObject()->getRequeriments(),
 			'items' => [],
 		];
 
-		$storage = Vars::getStorage();
+		$elements = Vars::getObjectsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
 
-		foreach ($storage['resource'] as $element => $code) {
+		foreach ($elements as $element) {
 			$item = [
-				'id' => $element,
-				'name' => __('main.tech.' . $element),
+				'id' => $element->getId(),
+				'name' => $element->getName(),
 				'requirments' => [],
 			];
 
-			if (isset($storage['requeriments'][$element]) && count($storage['requeriments'][$element])) {
-				foreach ($storage['requeriments'][$element] as $ids => $level) {
-					$item['requirments'][] = [
-						'id' => $ids,
-						'name' => __('main.tech.' . $ids),
-						'current' => $this->user->getTechLevel($ids) ?: $this->planet->getLevel($ids),
-						'level' => $level,
-						'queue' => -1,
-					];
-				}
+			foreach ($element->getRequeriments() as $ids => $level) {
+				$item['requirments'][] = [
+					'id' => $ids,
+					'name' => __('main.tech.' . $ids),
+					'current' => $this->user->getTechLevel($ids) ?: $this->planet->getLevel($ids),
+					'level' => $level,
+					'queue' => -1,
+				];
 			}
 
 			$result['items'][] = $item;

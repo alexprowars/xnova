@@ -6,6 +6,7 @@ use App\Engine\Building;
 use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\ObjectsFactory;
 use App\Engine\QueueManager;
 use App\Facades\Vars;
 use Illuminate\Http\Request;
@@ -20,9 +21,9 @@ class ShipyardController extends Controller
 		$queueManager = new QueueManager($this->planet);
 
 		if ($this->mode == 'defense') {
-			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
+			$elements = Vars::getObjectsByType(ItemType::DEFENSE);
 		} else {
-			$elementIds = Vars::getItemsByType(ItemType::FLEET);
+			$elements = Vars::getObjectsByType(ItemType::FLEET);
 		}
 
 		$queueArray = $queueManager->get(QueueType::SHIPYARD);
@@ -32,8 +33,8 @@ class ShipyardController extends Controller
 
 		$items = [];
 
-		foreach ($elementIds as $elementId) {
-			$entity = EntityFactory::get($elementId);
+		foreach ($elements as $element) {
+			$entity = EntityFactory::get($element->getId());
 
 			$available = $entity->isAvailable();
 
@@ -41,14 +42,14 @@ class ShipyardController extends Controller
 				continue;
 			}
 
-			if (!Building::checkTechnologyRace($this->user, $elementId)) {
+			if (!Building::checkTechnologyRace($this->user, $element->getId())) {
 				continue;
 			}
 
 			$row = [
-				'id' => $elementId,
-				'name' => __('main.tech.' . $elementId),
-				'code' => Vars::getName($elementId),
+				'id' => $element->getId(),
+				'name' => $element->getName(),
+				'code' => $element->getCode(),
 				'available' => $available,
 				'price' => $entity->getPrice(),
 				'effects' => null,
@@ -58,13 +59,13 @@ class ShipyardController extends Controller
 				$row['time'] = $entity->getTime();
 				$row['is_max'] = false;
 
-				$price = Vars::getItemPrice($elementId);
+				$price = $entity->getObject()->getPrice();
 
 				if (isset($price['max'])) {
-					$total = $this->planet->getLevel($elementId);
+					$total = $this->planet->getLevel($element->getId());
 
-					if (isset($buildArray[$elementId])) {
-						$total += $buildArray[$elementId];
+					if (isset($buildArray[$element->getId()])) {
+						$total += $buildArray[$element->getId()];
 					}
 
 					if ($total >= $price['max']) {
@@ -73,9 +74,9 @@ class ShipyardController extends Controller
 				}
 
 				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
-				$row['effects'] = Building::getNextProduction($elementId, 0, $this->planet);
+				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
 			} else {
-				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
 
 			$items[] = $row;
@@ -104,7 +105,9 @@ class ShipyardController extends Controller
 				continue;
 			}
 
-			$queueManager->add($element, $count);
+			$object = ObjectsFactory::get($element);
+
+			$queueManager->add($object, $count);
 		}
 	}
 }

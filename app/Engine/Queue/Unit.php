@@ -6,8 +6,9 @@ use App\Engine\EntityFactory;
 use App\Engine\Entity;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Engine\QueueManager;
-use App\Facades\Vars;
 use App\Models;
 use App\Models\LogsHistory;
 
@@ -17,12 +18,12 @@ class Unit
 	{
 	}
 
-	public function add($elementId, $count)
+	public function add(BaseObject $element, int $count): void
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
-		$entity = EntityFactory::get($elementId, 1, $planet);
+		$entity = EntityFactory::get($element->getId(), 1, $planet);
 
 		if (!$entity->isAvailable() || !($entity instanceof Entity\Unit)) {
 			return;
@@ -30,7 +31,21 @@ class Unit
 
 		$buildItems = $this->queue->get(QueueType::SHIPYARD);
 
-		if ($elementId == 502 || $elementId == 503) {
+		$price = $element->getPrice();
+
+		if (isset($price['max'])) {
+			$total = $planet->getLevel($element->getId());
+
+			foreach ($buildItems as $item) {
+				if ($item->object_id == $element->getId()) {
+					$total += $item->level;
+				}
+			}
+
+			$count = min($count, max(($price['max'] - $total), 0));
+		}
+
+		if ($element->getId() == 502 || $element->getId() == 503) {
 			$Missiles = [];
 			$Missiles[502] = $planet->getLevel('interceptor_misil');
 			$Missiles[503] = $planet->getLevel('interplanetary_misil');
@@ -42,28 +57,12 @@ class Unit
 					$Missiles[$item->object_id] += $item->level;
 				}
 			}
-		}
 
-		$price = Vars::getItemPrice($elementId);
-
-		if (isset($price['max'])) {
-			$total = $planet->getLevel($elementId);
-
-			foreach ($buildItems as $item) {
-				if ($item->object_id == $elementId) {
-					$total += $item->level;
-				}
-			}
-
-			$count = min($count, max(($price['max'] - $total), 0));
-		}
-
-		if (($elementId == 502 || $elementId == 503) && isset($Missiles) && isset($maxMissiles)) {
 			$ActuMissiles 	= $Missiles[502] + (2 * $Missiles[503]);
 			$MissilesSpace 	= $maxMissiles - $ActuMissiles;
 
 			if ($MissilesSpace > 0) {
-				if ($elementId == 502) {
+				if ($element->getId() == 502) {
 					$count = min($count, $MissilesSpace);
 				} else {
 					$count = min($count, floor($MissilesSpace / 2));
@@ -97,7 +96,7 @@ class Unit
 			'operation' => QueueConstructionType::BUILDING,
 			'user_id' => $user->id,
 			'planet_id' => $planet->id,
-			'object_id' => $elementId,
+			'object_id' => $element->getId(),
 			'date' => now(),
 			'date_end' => now()->addSeconds($buildTime),
 			'level' => $count
@@ -114,7 +113,7 @@ class Unit
 				'to_metal' 			=> $planet->metal,
 				'to_crystal' 		=> $planet->crystal,
 				'to_deuterium' 		=> $planet->deuterium,
-				'entity_id' 		=> $elementId,
+				'entity_id' 		=> $element->getId(),
 				'amount' 			=> $count
 			]);
 		}

@@ -49,7 +49,7 @@ class Player
 		return $this;
 	}
 
-	public function addFleet(Fleet $fleet)
+	public function addFleet(Fleet $fleet): void
 	{
 		$this->items[$fleet->getId()] = $fleet;
 	}

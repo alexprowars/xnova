@@ -7,145 +7,33 @@ use App\Engine\Entity\Ship;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\Resources;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\DefenceObject;
+use App\Engine\Objects\ObjectsFactory;
+use App\Engine\Objects\ShipObject;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models;
 use App\Models\Fleet;
 use Illuminate\Http\Request;
+use Throwable;
 
 class InfoController extends Controller
 {
-	public function index(int $element): array
+	public function index(int $itemId): array
 	{
-		return $this->showBuildingInfoPage($element);
-	}
-
-	private function showRapidFireTo($BuildID)
-	{
-		$result = '';
-
-		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
-
-		foreach ($res as $Type) {
-			$unitData = Vars::getUnitData($BuildID);
-
-			if (isset($unitData['sd'][$Type]) && $unitData['sd'][$Type] > 1) {
-				$result .= __('info.nfo_rf_again') . ' <span style="color: #00ff00">' . $unitData['sd'][$Type] . '</span> единиц ' . __('main.tech.' . $Type) . '<br>';
-			}
-		}
-
-		return $result;
-	}
-
-	private function showRapidFireFrom($BuildID)
-	{
-		$result = '';
-
-		$res = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
-
-		foreach ($res as $Type) {
-			$unitData = Vars::getUnitData($Type);
-
-			if (isset($unitData['sd'][$BuildID]) && $unitData['sd'][$BuildID] > 1) {
-				$result .= __('main.tech.' . $Type) . ' ' . __('info.nfo_rf_from') . ' <span style="color: #ff0000">' . $unitData['sd'][$BuildID] . '</span> единиц<br>';
-			}
-		}
-
-		return $result;
-	}
-
-	private function showProductionTable($buildId)
-	{
-		$CurrentBuildtLvl = $this->planet->getLevel($buildId);
-
-		$ActualNeed = $ActualProd = 0;
-
-		if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-			$res = $this->planet->getEntityUnit($buildId)->getProduction();
-
-			$Prod[1] = $res->get(Resources::METAL);
-			$Prod[2] = $res->get(Resources::CRYSTAL);
-			$Prod[3] = $res->get(Resources::DEUTERIUM);
-			$Prod[4] = $res->get(Resources::ENERGY);
-
-			if ($buildId != 12) {
-				$ActualNeed = floor($Prod[4]);
-				$ActualProd = floor($Prod[$buildId]);
-			} else {
-				$ActualNeed = floor($Prod[3]);
-				$ActualProd = floor($Prod[4]);
-			}
-		}
-
-		$BuildStartLvl = $CurrentBuildtLvl - 2;
-
-		if ($BuildStartLvl < 1) {
-			$BuildStartLvl = 1;
-		}
-
-		$items = [];
-
-		$ProdFirst = 0;
-
-		for ($BuildLevel = $BuildStartLvl; $BuildLevel < $BuildStartLvl + 10; $BuildLevel++) {
-			$row = [];
-
-			if ($buildId != 42 && !($buildId >= 22 && $buildId <= 24)) {
-				$entity = $this->planet->getEntityUnit($buildId);
-				$entity->setLevel($BuildLevel);
-
-				$res = $entity->getProduction();
-
-				$Prod[1] = $res->get(Resources::METAL);
-				$Prod[2] = $res->get(Resources::CRYSTAL);
-				$Prod[3] = $res->get(Resources::DEUTERIUM);
-				$Prod[4] = $res->get(Resources::ENERGY);
-
-				if ($buildId != 12) {
-					$row['prod'] = floor($Prod[$buildId]);
-					$row['prod_diff'] = floor($Prod[$buildId] - $ActualProd);
-					$row['need'] = floor($Prod[4]);
-					$row['need_diff'] = floor($Prod[4] - $ActualNeed);
-				} else {
-					$row['prod'] = floor($Prod[4]);
-					$row['prod_diff'] = floor($Prod[4] - $ActualProd);
-					$row['need'] = floor($Prod[3]);
-					$row['need_diff'] = floor($Prod[3] - $ActualNeed);
-				}
-
-				if ($ProdFirst == 0) {
-					if ($buildId != 12) {
-						$ProdFirst = floor($Prod[$buildId]);
-					} else {
-						$ProdFirst = floor($Prod[4]);
-					}
-				}
-			} elseif ($buildId >= 22 && $buildId <= 24) {
-				$row['range'] = floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $BuildLevel))) * $this->user->bonus('storage')) / 1000;
-			} else {
-				$row['range'] = ($BuildLevel * $BuildLevel) - 1;
-			}
-
-			$row['current'] = $CurrentBuildtLvl == $BuildLevel;
-			$row['level'] = $BuildLevel;
-
-			$items[] = $row;
-		}
-
-		return $items;
-	}
-
-	private function showBuildingInfoPage(int $itemId)
-	{
-		if (!Vars::getName($itemId)) {
+		try {
+			$itemObject = ObjectsFactory::get($itemId);
+		} catch (Throwable) {
 			throw new Exception('Мы не сможем дать вам эту информацию');
 		}
 
-		$price = Vars::getItemPrice($itemId);
+		$price = $itemObject->getPrice();
 
 		$result = [
 			'id' => $itemId,
-			'name' => __('main.tech.' . $itemId),
+			'name' => $itemObject->getName(),
+			'code' => $itemObject->getCode(),
 			'description' => __('info.description.' . $itemId),
 			'production' => null,
 			'destroy' => null,
@@ -154,8 +42,12 @@ class InfoController extends Controller
 			'missile' => null,
 		];
 
-		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12 || $itemId == 42 || ($itemId >= 22 && $itemId <= 24)) {
-			$result['production'] = $this->showProductionTable($itemId);
+		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12) {
+			$result['production'] = $this->getProductionTable($itemObject);
+		} elseif ($itemId >= 22 && $itemId <= 24) {
+			$result['production'] = $this->getStorageProduction($itemObject);
+		} elseif ($itemId == 42) {
+			$result['production'] = $this->getPhalanxRange($itemObject);
 		} elseif ($itemId == 34) {
 			if ($this->planet->getLevel($itemId) > 0) {
 				$list = [];
@@ -184,37 +76,28 @@ class InfoController extends Controller
 					'cost' => $this->planet->getLevel($itemId) * 10000,
 				];
 			}
-		} elseif (Vars::getItemType($itemId) == ItemType::FLEET) {
+		} elseif ($itemObject instanceof ShipObject) {
 			$fleet = [];
-
 			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
 			$fleet['armor_full'] = round($fleet['armor'] * (1 + $this->user->getTechLevel('defence') * 0.05));
 
 			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
-			$unitData = Vars::getUnitData($itemId);
-
-			if ($unitData['type_gun'] == 1) {
+			if ($itemObject->getWeaponType() == 1) {
 				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($unitData['type_gun'] == 2) {
+			} elseif ($itemObject->getWeaponType() == 2) {
 				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($unitData['type_gun'] == 3) {
+			} elseif ($itemObject->getWeaponType() == 3) {
 				$attTech += $this->user->getTechLevel('buster') * 0.05;
 			}
 
-			$fleet['rapidfire'] = [
-				'to' => $this->showRapidFireTo($itemId),
-				'from' => $this->showRapidFireFrom($itemId),
-			];
-
-			$fleet['attack'] = $unitData['attack'];
-			$fleet['attack_full'] = round($unitData['attack'] * $attTech);
-			$fleet['shield'] = $unitData['shield'];
-			$fleet['capacity'] = $unitData['capacity'];
-			$fleet['speed'] = $unitData['speed'];
+			$fleet['attack'] = $itemObject->getAttack();
+			$fleet['attack_full'] = round($itemObject->getAttack() * $attTech);
+			$fleet['shield'] = $itemObject->getShield();
+			$fleet['capacity'] = $itemObject->getCapacity();
+			$fleet['speed'] = $itemObject->getSpeed();
 			$fleet['speed_full'] = Ship::createEntity($itemId, 1, $this->planet)->getSpeed();
-			$fleet['consumption'] = $unitData['consumption'];
-
+			$fleet['consumption'] = $itemObject->getConsumption();
 			$fleet['resources'] = [];
 
 			foreach ($price as $res => $value) {
@@ -224,84 +107,42 @@ class InfoController extends Controller
 				];
 			}
 
-			$engine = ['', 'Ракетный', 'Импульсный', 'Гиперпространственный'];
-			$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
-			$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
-
-			$fleet['type_engine'] = $engine[$unitData['type_engine']];
-			$fleet['type_gun'] = $gun[$unitData['type_gun']];
-			$fleet['type_armour'] = $armour[$unitData['type_armour']];
+			$fleet['type_engine'] = $itemObject->getEngineType();
+			$fleet['type_weapon'] = $itemObject->getWeaponType();
+			$fleet['type_armour'] = $itemObject->getArmorType();
+			$fleet['rapidfire'] = $this->getRapidfire($itemObject);
 
 			$result['fleet'] = $fleet;
-		} elseif (Vars::getItemType($itemId) == ItemType::DEFENSE) {
+		} elseif ($itemObject instanceof DefenceObject) {
 			$fleet = [];
-
 			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
 			$fleet['armor_full'] = round($fleet['armor'] * (1 + $this->user->getTechLevel('defence') * 0.05));
-
-			$unitData = Vars::getUnitData($itemId);
-
-			if (isset($unitData['shield'])) {
-				$fleet['shield'] = $unitData['shield'];
-			} else {
-				$fleet['shield'] = 0;
-			}
+			$fleet['shield'] = $itemObject->getShield();
 
 			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
 
-			if ($unitData['type_gun'] == 1) {
+			if ($itemObject->getWeaponType() == 1) {
 				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($unitData['type_gun'] == 2) {
+			} elseif ($itemObject->getWeaponType() == 2) {
 				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($unitData['type_gun'] == 3) {
+			} elseif ($itemObject->getWeaponType() == 3) {
 				$attTech += $this->user->getTechLevel('buster') * 0.05;
 			}
 
-			$fleet['attack'] = $unitData['attack'];
-			$fleet['attack_full'] = round($unitData['attack'] * $attTech);
-
+			$fleet['attack'] = $itemObject->getAttack();
+			$fleet['attack_full'] = round($itemObject->getAttack() * $attTech);
 			$fleet['resources'] = [];
 
 			foreach ($price as $res => $value) {
-				$fleet['resources'][$res] = $value;
+				$fleet['resources'][$res] = [
+					'base' => $value,
+					'full' => $value * $this->user->bonus('res_fleet'),
+				];
 			}
 
-			$fleet['type_gun'] = false;
-			$fleet['type_armour'] = false;
-			$fleet['rapidfire'] = false;
-
-			if ($itemId >= 400 && $itemId < 500) {
-				$gun = ['', 'Лазерное', 'Ионное', 'Плазменное'];
-				$armour = ['', 'Легкая', 'Средняя', 'Тяжелая', 'Монолитная'];
-
-				$fleet['type_gun'] = $gun[$unitData['type_gun']];
-				$fleet['type_armour'] = $armour[$unitData['type_armour']];
-				$fleet['rapidfire'] = [];
-
-				foreach (Vars::getItemsByType(ItemType::FLEET) as $Type) {
-					$rfUnitData = Vars::getUnitData($Type);
-
-					if (!$rfUnitData) {
-						continue;
-					}
-
-					$enemyPrice = Vars::getItemPrice($Type);
-
-					$enemy_durability = ($enemyPrice['metal'] + $enemyPrice['crystal']) / 10;
-
-					$rapid = $unitData['attack'] * ($unitData['amplify'][$Type] ?? 1) / $enemy_durability;
-
-					if ($rapid >= 1) {
-						$fleet['rapidfire'][$Type]['TO'] = floor($rapid);
-					}
-
-					$rapid = $rfUnitData['attack'] * ($rfUnitData['amplify'][$itemId] ?? 1) / $fleet['armor'];
-
-					if ($rapid >= 1) {
-						$fleet['rapidfire'][$Type]['FROM'] = floor($rapid);
-					}
-				}
-			}
+			$fleet['rapidfire'] = $this->getRapidfire($itemObject);
+			$fleet['type_weapon'] = $itemObject->getWeaponType();
+			$fleet['type_armour'] = $itemObject->getArmorType();
 
 			$result['defence'] = $fleet;
 		}
@@ -327,7 +168,7 @@ class InfoController extends Controller
 		return $result;
 	}
 
-	public function missiles(Request $request)
+	public function missiles(Request $request): void
 	{
 		$icm = abs((int) $request->post('interceptor', 0));
 		$ipm = abs((int) $request->post('interplanetary', 0));
@@ -344,7 +185,7 @@ class InfoController extends Controller
 		$this->planet->update();
 	}
 
-	public function alliance($itemId, Request $request)
+	public function alliance(int $itemId, Request $request): void
 	{
 		$fleetId = (int) $request->post('fleet', 0);
 
@@ -365,10 +206,10 @@ class InfoController extends Controller
 		$tt = 0;
 
 		foreach ($fleet->entities as $entity) {
-			if ($entity->id > 100) {
-				$unitData = Vars::getUnitData($entity->id);
+			$unitObject = ObjectsFactory::get($entity->id);
 
-				$tt += $unitData['stay'] * $entity->count;
+			if ($unitObject instanceof ShipObject) {
+				$tt += $unitObject->getStayConsumption() * $entity->count;
 			}
 		}
 
@@ -388,5 +229,125 @@ class InfoController extends Controller
 		$fleet->end_stay->addSeconds($times);
 		$fleet->end_date->addSeconds($times);
 		$fleet->update();
+	}
+
+	private function getProductionTable(BaseObject $itemObject): array
+	{
+		$ActualNeed = $ActualProd = 0;
+		$entityUnit = $this->planet->getEntityUnit($itemObject);
+
+		if ($entityProduction = $entityUnit->getProduction()) {
+			$Prod[1] = $entityProduction->get(Resources::METAL);
+			$Prod[2] = $entityProduction->get(Resources::CRYSTAL);
+			$Prod[3] = $entityProduction->get(Resources::DEUTERIUM);
+			$Prod[4] = $entityProduction->get(Resources::ENERGY);
+
+			if ($itemObject->getId() != 12) {
+				$ActualNeed = floor($Prod[4]);
+				$ActualProd = floor($Prod[$itemObject->getId()]);
+			} else {
+				$ActualNeed = floor($Prod[3]);
+				$ActualProd = floor($Prod[4]);
+			}
+		}
+
+		$startLevel = max(1, $entityUnit->getLevel() - 2);
+
+		$items = [];
+
+		for ($level = $startLevel; $level < $startLevel + 10; $level++) {
+			$production = $entityUnit->setLevel($level)
+				->getProduction();
+
+			if (!$production) {
+				break;
+			}
+
+			$row = [
+				'level' => $level,
+			];
+
+			$Prod[1] = $production->get(Resources::METAL);
+			$Prod[2] = $production->get(Resources::CRYSTAL);
+			$Prod[3] = $production->get(Resources::DEUTERIUM);
+			$Prod[4] = $production->get(Resources::ENERGY);
+
+			if ($itemObject->getId() != 12) {
+				$row['prod'] = (int) floor($Prod[$itemObject->getId()]);
+				$row['prod_diff'] = (int) floor($Prod[$itemObject->getId()] - $ActualProd);
+				$row['need'] = (int) floor($Prod[4]);
+				$row['need_diff'] = (int) floor($Prod[4] - $ActualNeed);
+			} else {
+				$row['prod'] = (int) floor($Prod[4]);
+				$row['prod_diff'] = (int) floor($Prod[4] - $ActualProd);
+				$row['need'] = (int) floor($Prod[3]);
+				$row['need_diff'] = (int) floor($Prod[3] - $ActualNeed);
+			}
+
+			$items[] = $row;
+		}
+
+		return $items;
+	}
+
+	private function getStorageProduction(BaseObject $itemObject): array
+	{
+		$currentLevel = $this->planet->getLevel($itemObject->getId());
+		$startLevel = max(1, $currentLevel - 2);
+
+		$items = [];
+
+		for ($level = $startLevel; $level < $startLevel + 10; $level++) {
+			$row = [
+				'level' => $level,
+			];
+
+			$row['prod'] = floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $level))) * $this->user->bonus('storage')) / 1000;
+			$row['prod_diff'] = $row['prod'] - floor((config('game.baseStorageSize') + floor(50000 * round(1.6 ** $currentLevel))) * $this->user->bonus('storage')) / 1000;
+
+			$items[] = $row;
+		}
+
+		return $items;
+	}
+
+	private function getPhalanxRange(BaseObject $itemObject): array
+	{
+		$currentLevel = $this->planet->getLevel($itemObject->getId());
+		$startLevel = max(1, $currentLevel - 2);
+
+		$items = [];
+
+		for ($level = $startLevel; $level < $startLevel + 10; $level++) {
+			$items[] = [
+				'level' => $level,
+				'range' => ($level * $level) - 1,
+			];
+		}
+
+		return $items;
+	}
+
+	private function getRapidfire(ShipObject|DefenceObject $item): array
+	{
+		$result = ['to' => [], 'from' => []];
+
+		$objects = Vars::getObjectsByType([ItemType::FLEET, ItemType::DEFENSE]);
+		$unitRapidfire = $item->getRapidfire();
+
+		/** @var ShipObject|DefenceObject $object */
+		foreach ($objects as $object) {
+			$rapidfire = $object->getRapidfire();
+
+			if (isset($unitRapidfire[$object->getId()]) && $unitRapidfire[$object->getId()] > 1) {
+				$result['to'][$object->getId()] = $unitRapidfire[$object->getId()];
+			}
+
+			if (isset($rapidfire[$item->getId()]) && $rapidfire[$item->getId()] > 1) {
+				$result['from'][$item->getId()] = $rapidfire[$item->getId()];
+			}
+		}
+
+		return $result;
 	}
 }

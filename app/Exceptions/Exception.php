@@ -11,11 +11,17 @@ class Exception extends \Exception
 		parent::__construct($message, $code);
 	}
 
-	public function render()
+	public function render(): JsonResponse
 	{
-		return new JsonResponse([
+		$result = [
 			'code' => $this->getCode(),
 			'message' => $this->getMessage(),
-		], $this->getCode());
+		];
+
+		if (!app()->isProduction()) {
+			$result['trace'] = $this->getTrace();
+		}
+
+		return new JsonResponse($result, $this->getCode());
 	}
 }

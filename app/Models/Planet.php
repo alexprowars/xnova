@@ -8,8 +8,12 @@ use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Entity\Model\PlanetEntityCollection;
 use App\Engine\EntityFactory;
 use App\Engine\Enums\AllianceAccess;
+use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\BuildingObject;
 use App\Engine\Production;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
 use Carbon\CarbonImmutable;
@@ -88,9 +92,13 @@ class Planet extends Model
 		return $this->hasMany(Queue::class, 'planet_id')->chaperone();
 	}
 
+	/**
+	 * @return Builder<static>
+	 */
 	public function prunable(): Builder
 	{
-		return static::query()->withTrashed()->where('deleted_at', '<', now()->subWeek());
+		/** @phpstan-ignore-next-line  */
+		return static::query()->where('deleted_at', '<', now()->subWeek())->withTrashed();
 	}
 
 	public function checkOwnerPlanet(): bool
@@ -110,8 +118,13 @@ class Planet extends Model
 	{
 		$count = 0;
 
-		foreach (Vars::getAllowedBuilds($this->planet_type) as $type) {
-			$count += $this->getLevel($type);
+		$objects = Vars::getObjectsByType(ItemType::BUILDING);
+
+		/** @var BuildingObject $object */
+		foreach ($objects as $object) {
+			if ($object->hasAllowedBuild($this->planet_type)) {
+				$count += $this->getLevel($object->getId());
+			}
 		}
 
 		if ($this->field_current != $count) {
@@ -135,13 +148,17 @@ class Planet extends Model
 		return Attribute::get(fn() => new Coordinates($this->galaxy, $this->system, $this->planet, $this->planet_type));
 	}
 
-	public function getLevel(int|string|null $entityId): int
+	public function getLevel(int|string|BaseObject $entityId): int
 	{
 		return $this->getEntity($entityId)->level ?? 0;
 	}
 
-	public function getEntity(int|string|null $entityId): ?PlanetEntity
+	public function getEntity(int|string|BaseObject $entityId): ?PlanetEntity
 	{
+		if ($entityId instanceof BaseObject) {
+			return $this->entities->getByEntityId($entityId->getId());
+		}
+
 		if (!is_numeric($entityId)) {
 			$entityId = Vars::getIdByName($entityId);
 		}
@@ -153,7 +170,7 @@ class Planet extends Model
 		return $this->entities->getByEntityId($entityId);
 	}
 
-	public function getEntityUnit(int|string|null $entityId): ?Entity
+	public function getEntityUnit(int|string|BaseObject $entityId): ?Entity
 	{
 		$entity = $this->getEntity($entityId);
 
@@ -164,9 +181,13 @@ class Planet extends Model
 		return EntityFactory::get($entity->id, $entity->level, $this);
 	}
 
-	public function updateAmount(int|string|null $entityId, int $amount, bool $isDifferent = false): void
+	public function updateAmount(int|string|BaseObject $entityId, int $amount, bool $isDifferent = false): void
 	{
 		$entity = $this->getEntity($entityId);
+
+		if (!$entity) {
+			throw new Exception('update unknown entity');
+		}
 
 		if ($isDifferent) {
 			$entity->level += $amount;

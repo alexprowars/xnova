@@ -8,6 +8,9 @@ use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Engine\Messages\Types\QueueDestroyNotExistMessage;
 use App\Engine\Messages\Types\QueueNoResourcesMessage;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\BuildingObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
 use App\Facades\Vars;
@@ -27,7 +30,7 @@ class QueueManager
 		$this->loadQueue();
 	}
 
-	public function loadQueue()
+	public function loadQueue(): void
 	{
 		$this->queue = $this->planet->user->queue()
 			->orderBy('id')
@@ -37,37 +40,37 @@ class QueueManager
 			->collect();
 	}
 
-	public function getPlanet()
+	public function getPlanet(): Planet
 	{
 		return $this->planet;
 	}
 
-	public function getUser()
+	public function getUser(): Models\User
 	{
 		return $this->planet->user;
 	}
 
-	public function add(int|string $elementId, int $count = 1, bool $destroy = false): void
+	public function add(BaseObject $element, int $count = 1, bool $destroy = false): void
 	{
-		$type = Vars::getItemType($elementId);
+		$type = Vars::getItemType($element->getId());
 
 		if ($type == ItemType::BUILDING) {
-			(new Queue\Build($this))->add($elementId, $destroy);
+			(new Queue\Build($this))->add($element, $destroy);
 		} elseif ($type == ItemType::TECH) {
-			(new Queue\Tech($this))->add($elementId);
+			(new Queue\Tech($this))->add($element);
 		} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
-			(new Queue\Unit($this))->add($elementId, $count);
+			(new Queue\Unit($this))->add($element, $count);
 		}
 	}
 
-	public function delete(int|string $elementId, $listId = 0)
+	public function delete(BaseObject $element, int $listId = 0): void
 	{
-		$type = Vars::getItemType($elementId);
+		$type = Vars::getItemType($element->getId());
 
 		if ($type == ItemType::BUILDING) {
 			(new Queue\Build($this))->delete($listId);
 		} elseif ($type == ItemType::TECH) {
-			(new Queue\Tech($this))->delete($elementId);
+			(new Queue\Tech($this))->delete($element);
 		}
 	}
 
@@ -83,7 +86,7 @@ class QueueManager
 		return new Collection();
 	}
 
-	public function getCount(?QueueType $type = null)
+	public function getCount(?QueueType $type = null): int
 	{
 		if (!$type) {
 			return $this->queue->count();
@@ -94,7 +97,7 @@ class QueueManager
 		return 0;
 	}
 
-	public function deleteInQueue(Models\Queue $queueItem)
+	public function deleteInQueue(Models\Queue $queueItem): bool
 	{
 		if (!$this->queue->firstWhere('id', $queueItem->id)) {
 			return false;
@@ -109,7 +112,7 @@ class QueueManager
 		return false;
 	}
 
-	public function update()
+	public function update(): void
 	{
 		$buildingsCount = $this->getCount(QueueType::BUILDING);
 
@@ -130,11 +133,9 @@ class QueueManager
 
 		$this->checkTechQueue();
 		$this->checkUnitQueue();
-
-		return true;
 	}
 
-	protected function checkBuildQueue()
+	protected function checkBuildQueue(): bool
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
@@ -205,7 +206,7 @@ class QueueManager
 		return false;
 	}
 
-	public function nextBuildingQueue()
+	public function nextBuildingQueue(): bool
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
@@ -334,7 +335,7 @@ class QueueManager
 		return true;
 	}
 
-	public function checkTechQueue()
+	public function checkTechQueue(): void
 	{
 		$queueItem = $this->planet->user->queue()
 			->where('type', QueueType::RESEARCH)->first();
@@ -394,7 +395,7 @@ class QueueManager
 		}
 	}
 
-	public function checkUnitQueue()
+	public function checkUnitQueue(): bool
 	{
 		$queue = $this->get(QueueType::SHIPYARD);
 
@@ -406,13 +407,13 @@ class QueueManager
 			($this->planet->getLevel('interceptor_misil') + (2 * $this->planet->getLevel('interplanetary_misil')));
 
 		$max = [];
-		$buildTypes = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
+		$buildTypes = Vars::getObjectsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
-		foreach ($buildTypes as $id) {
-			$price = Vars::getItemPrice($id);
+		foreach ($buildTypes as $object) {
+			$price = $object->getPrice();
 
 			if (isset($price['max'])) {
-				$max[$id] = $this->planet->getLevel($id);
+				$max[$object->getId()] = $this->planet->getLevel($object->getId());
 			}
 		}
 
@@ -433,7 +434,7 @@ class QueueManager
 				}
 			}
 
-			$price = Vars::getItemPrice($item->object_id);
+			$price = ObjectsFactory::get($item->object_id)->getPrice();
 
 			if (isset($price['max'])) {
 				if ($item->level > $price['max']) {
@@ -502,11 +503,14 @@ class QueueManager
 		return $builded > 0;
 	}
 
-	public function addExp(Entity\Building $entity, $destroy = false)
+	public function addExp(Entity\Building $entity, bool $destroy = false): void
 	{
 		$xp = 0;
 
-		if (in_array($entity->entityId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
+		/** @var BuildingObject $object */
+		$object = $entity->getObject();
+
+		if ($object->hasExperience()) {
 			if (!$destroy) {
 				$xp += $entity->getExp();
 			} else {

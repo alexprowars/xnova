@@ -72,7 +72,7 @@ class AllianceMembersController extends Controller
 			} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
 				$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
 			} elseif ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$hours = floor((time() - strtotime($member->user->onlinetime)) / 3600);
+				$hours = (int) floor((time() - strtotime($member->user->onlinetime)) / 3600);
 
 				$item['online'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
 			}

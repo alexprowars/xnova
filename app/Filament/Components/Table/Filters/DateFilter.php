@@ -10,6 +10,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
@@ -79,6 +80,11 @@ class DateFilter extends BaseFilter
 			});
 	}
 
+	/**
+	 * @param Builder<Model> $query
+	 * @param array $data
+	 * @return Builder<Model>
+	 */
 	public function apply(Builder $query, array $data = []): Builder
 	{
 		if ($this->hasQueryModificationCallback()) {
@@ -131,7 +137,7 @@ class DateFilter extends BaseFilter
 		return $this;
 	}
 
-	protected function afterStateHydrated(DateTimePicker $component, $state): void
+	protected function afterStateHydrated(DateTimePicker $component, mixed $state): void
 	{
 		if (blank($state)) {
 			return;

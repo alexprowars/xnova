@@ -4,6 +4,9 @@ includes:
 parameters:
     paths:
         - app/
-    level: 5
+    level: 6
     checkOctaneCompatibility: true
     checkModelProperties: true
+    ignoreErrors:
+    	-
+    		identifier: missingType.iterableValue

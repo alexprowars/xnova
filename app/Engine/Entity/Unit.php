@@ -4,7 +4,6 @@ namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityUnitInterface;
 use App\Engine\Enums\Resources;
-use App\Facades\Vars;
 
 class Unit extends Entity implements EntityUnitInterface
 {
@@ -34,7 +33,9 @@ class Unit extends Entity implements EntityUnitInterface
 			$max = min($max ?? $count, $count);
 		}
 
-		$price = Vars::getItemPrice($this->entityId);
+
+
+		$price = $this->object->getPrice();
 
 		if (isset($price['max'])) {
 			$max = min($max, $price['max']);

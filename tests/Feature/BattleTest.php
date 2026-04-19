@@ -1,5 +1,6 @@
 <?php
 
+use App\Engine\Battle\Battle;
 use App\Engine\Battle\Result\Result;
 use App\Engine\Coordinates;
 use App\Engine\Entity\Model\FleetEntityCollection;
@@ -13,6 +14,7 @@ uses(TestCase::class);
 test('battle combat', function () {
 	$battle = new Battle();
 
+	/** @var User $user */
 	$user = User::factory()->createOne(['username' => 'Attacker']);
 
 	$fleets = [
@@ -43,6 +45,7 @@ test('battle combat', function () {
 
 	$battle->addAttackerFleet($fleet);
 
+	/** @var User $user */
 	$user = User::factory()->createOne(['username' => 'Defender']);
 
 	$fleets = [

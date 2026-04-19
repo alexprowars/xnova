@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class Game
 {
-	public static function datezone($format, int|string|Carbon|null $time = null)
+	public static function datezone(string $format, int|string|Carbon|null $time = null): string
 	{
 		$date = null;
 

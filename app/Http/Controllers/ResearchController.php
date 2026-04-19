@@ -6,6 +6,8 @@ use App\Engine\Building;
 use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\ObjectsFactory;
+use App\Engine\Objects\ResearchObject;
 use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Models\Planet;
@@ -33,8 +35,11 @@ class ResearchController extends Controller
 
 		$items = [];
 
-		foreach (Vars::getItemsByType(ItemType::TECH) as $elementId) {
-			$entity = EntityFactory::get($elementId, $this->user->getTechLevel($elementId), $this->planet);
+		$elements = Vars::getObjectsByType(ItemType::TECH);
+
+		/** @var ResearchObject $element */
+		foreach ($elements as $element) {
+			$entity = EntityFactory::get($element->getId(), $this->user->getTechLevel($element->getId()), $this->planet);
 
 			$available = $entity->isAvailable();
 
@@ -42,16 +47,16 @@ class ResearchController extends Controller
 				continue;
 			}
 
-			if (!Building::checkTechnologyRace($this->user, $elementId)) {
+			if (!Building::checkTechnologyRace($this->user, $element->getId())) {
 				continue;
 			}
 
-			$price = Vars::getItemPrice($elementId);
+			$price = $entity->getObject()->getPrice();
 
 			$row = [
-				'id' => $elementId,
-				'name' => __('main.tech.' . $elementId),
-				'code' => Vars::getName($elementId),
+				'id' => $element->getId(),
+				'name' => $element->getName(),
+				'code' => $element->getCode(),
 				'available' => $available && $labInQueue,
 				'max' => $price['max'] ?? 0,
 				'price' => $entity->getPrice(),
@@ -60,32 +65,32 @@ class ResearchController extends Controller
 			];
 
 			if ($available) {
-				if ($elementId >= 120 && $elementId <= 122) {
+				if ($element->getId() >= 120 && $element->getId() <= 122) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 115) {
+				} elseif ($element->getId() == 115) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 117) {
+				} elseif ($element->getId() == 117) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 118) {
+				} elseif ($element->getId() == 118) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 108) {
+				} elseif ($element->getId() == 108) {
 					$row['effects'] = '<div class="tech-effects-row">+' . ($entity->getLevel() + 1) . ' слотов флота</div>';
-				} elseif ($elementId == 109) {
+				} elseif ($element->getId() == 109) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 110) {
+				} elseif ($element->getId() == 110) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 111) {
+				} elseif ($element->getId() == 111) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
-				} elseif ($elementId == 123) {
+				} elseif ($element->getId() == 123) {
 					$row['effects'] = '<div class="tech-effects-row">+' . $entity->getLevel() . '% лабораторий</div>';
-				} elseif ($elementId == 113) {
+				} elseif ($element->getId() == 113) {
 					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($entity->getLevel() * 2) . '%</span></div>';
 				}
 
 				$row['time'] = $entity->getTime();
 
 				if ($techHandle) {
-					if ($techHandle->object_id == $elementId) {
+					if ($techHandle->object_id == $element->getId()) {
 						$row['build'] = [
 							'planet_id' => $techHandle->planet_id,
 							'item' => $techHandle->object_id,
@@ -108,7 +113,7 @@ class ResearchController extends Controller
 					}
 				}
 			} else {
-				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
 
 			$items[] = $row;
@@ -125,7 +130,13 @@ class ResearchController extends Controller
 
 		$elementId = (int) $request->post('element', 0);
 
-		if (!$elementId || !in_array($elementId, Vars::getItemsByType(ItemType::TECH))) {
+		if (!$elementId) {
+			return;
+		}
+
+		$object = ObjectsFactory::get($elementId);
+
+		if (!($object instanceof ResearchObject)) {
 			return;
 		}
 
@@ -133,10 +144,10 @@ class ResearchController extends Controller
 
 		switch ($action) {
 			case 'cancel':
-				$queueManager->delete($elementId);
+				$queueManager->delete($object);
 				break;
 			case 'search':
-				$queueManager->add($elementId);
+				$queueManager->add($object);
 				break;
 		}
 	}

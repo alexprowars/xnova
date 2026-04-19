@@ -3,7 +3,8 @@
 namespace App\Engine\Battle;
 
 use App\Engine\Game;
-use App\Facades\Vars;
+use App\Engine\Objects\DefenceObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Format;
 use Illuminate\Support\Facades\URL;
 
@@ -127,36 +128,42 @@ class BattleReport
 					$raport4 = '<tr><th>Корпус</th>';
 
 					foreach ($data2 as $ship_id => $ship_count) {
-						if ($ship_count > 0) {
-							$raport1 .= '<th>' . __('main.tech.' . $ship_id) . '</th>';
-
-							if ($round == 0) {
-								$raport2 .= '<th>' . Format::number(ceil($ship_count)) . '</th>';
-							} else {
-								$raport2 .= '<th>' . Format::number(ceil($ship_count));
-
-								if (ceil($this->resultData['rounds'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
-									$raport2 .= ' <small><span style="color: red">-' . (ceil($this->resultData['rounds'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count)) . '</span></small>';
-								}
-
-								$raport2 .= '</th>';
-							}
-
-							$attTech = 1 + $this->resultData['attackers'][$user]['tech']['military_tech'] * 0.05;
-
-							$fleetData = Vars::getUnitData($ship_id);
-
-							if ($fleetData['type_gun'] == 1) {
-								$attTech += $this->resultData['attackers'][$user]['tech']['laser_tech'] * 0.05;
-							} elseif ($fleetData['type_gun'] == 2) {
-								$attTech += $this->resultData['attackers'][$user]['tech']['ionic_tech'] * 0.05;
-							} elseif ($fleetData['type_gun'] == 3) {
-								$attTech += $this->resultData['attackers'][$user]['tech']['buster_tech'] * 0.05;
-							}
-
-							$raport3 .= '<th>' . Format::number(round($fleetData['attack'] * $attTech)) . '</th>';
-							$raport4 .= '<th>' . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + $this->resultData['attackers'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
+						if ($ship_count <= 0) {
+							continue;
 						}
+
+						$fleetObject = ObjectsFactory::get($ship_id);
+
+						$raport1 .= '<th>' . __('main.tech.' . $ship_id) . '</th>';
+
+						if ($round == 0) {
+							$raport2 .= '<th>' . Format::number(ceil($ship_count)) . '</th>';
+						} else {
+							$raport2 .= '<th>' . Format::number(ceil($ship_count));
+
+							if (ceil($this->resultData['rounds'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
+								$raport2 .= ' <small><span style="color: red">-' . (ceil($this->resultData['rounds'][$round - 1]['attackers'][$fleet_id][$ship_id]) - ceil($ship_count)) . '</span></small>';
+							}
+
+							$raport2 .= '</th>';
+						}
+
+						if (!($fleetObject instanceof DefenceObject)) {
+							continue;
+						}
+
+						$attTech = 1 + $this->resultData['attackers'][$user]['tech']['military_tech'] * 0.05;
+
+						if ($fleetObject->getWeaponType() == 1) {
+							$attTech += $this->resultData['attackers'][$user]['tech']['laser_tech'] * 0.05;
+						} elseif ($fleetObject->getWeaponType() == 2) {
+							$attTech += $this->resultData['attackers'][$user]['tech']['ionic_tech'] * 0.05;
+						} elseif ($fleetObject->getWeaponType() == 3) {
+							$attTech += $this->resultData['attackers'][$user]['tech']['buster_tech'] * 0.05;
+						}
+
+						$raport3 .= '<th>' . Format::number(round($fleetObject->getAttack() * $attTech)) . '</th>';
+						$raport4 .= '<th>' . Format::number(round(($fleetObject->getTotalPrice() / 10) * (1 + $this->resultData['attackers'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
 					}
 
 					$raport1 .= '</tr>';
@@ -196,36 +203,42 @@ class BattleReport
 					$raport4 = '<tr><th>Корпус</th>';
 
 					foreach ($data2 as $ship_id => $ship_count) {
-						if ($ship_count > 0) {
-							$raport1 .= '<th>' . __('main.tech.' . $ship_id) . '</th>';
-
-							if ($round == 0) {
-								$raport2 .= '<th>' . Format::number(ceil($ship_count)) . '</th>';
-							} else {
-								$raport2 .= '<th>' . Format::number(ceil($ship_count));
-
-								if (ceil($this->resultData['rounds'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
-									$raport2 .= ' <small><span style="color: red">-' . (ceil($this->resultData['rounds'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count)) . '</span></small>';
-								}
-
-								$raport2 .= '</th>';
-							}
-
-							$attTech = 1 + $this->resultData['defenders'][$user]['tech']['military_tech'] * 0.05;
-
-							$fleetData = Vars::getUnitData($ship_id);
-
-							if ($fleetData['type_gun'] == 1) {
-								$attTech += $this->resultData['defenders'][$user]['tech']['laser_tech'] * 0.05;
-							} elseif ($fleetData['type_gun'] == 2) {
-								$attTech += $this->resultData['defenders'][$user]['tech']['ionic_tech'] * 0.05;
-							} elseif ($fleetData['type_gun'] == 3) {
-								$attTech += $this->resultData['defenders'][$user]['tech']['buster_tech'] * 0.05;
-							}
-
-							$raport3 .= '<th>' . Format::number(round($fleetData['attack'] * $attTech)) . '</th>';
-							$raport4 .= '<th>' . Format::number(round((Vars::getItemTotalPrice($ship_id) / 10) * (1 + $this->resultData['defenders'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
+						if ($ship_count <= 0) {
+							continue;
 						}
+
+						$fleetObject = ObjectsFactory::get($ship_id);
+
+						$raport1 .= '<th>' . __('main.tech.' . $ship_id) . '</th>';
+
+						if ($round == 0) {
+							$raport2 .= '<th>' . Format::number(ceil($ship_count)) . '</th>';
+						} else {
+							$raport2 .= '<th>' . Format::number(ceil($ship_count));
+
+							if (ceil($this->resultData['rounds'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count) > 0) {
+								$raport2 .= ' <small><span style="color: red">-' . (ceil($this->resultData['rounds'][$round - 1]['defenders'][$fleet_id][$ship_id]) - ceil($ship_count)) . '</span></small>';
+							}
+
+							$raport2 .= '</th>';
+						}
+
+						if (!($fleetObject instanceof DefenceObject)) {
+							continue;
+						}
+
+						$attTech = 1 + $this->resultData['defenders'][$user]['tech']['military_tech'] * 0.05;
+
+						if ($fleetObject->getWeaponType() == 1) {
+							$attTech += $this->resultData['defenders'][$user]['tech']['laser_tech'] * 0.05;
+						} elseif ($fleetObject->getWeaponType() == 2) {
+							$attTech += $this->resultData['defenders'][$user]['tech']['ionic_tech'] * 0.05;
+						} elseif ($fleetObject->getWeaponType() == 3) {
+							$attTech += $this->resultData['defenders'][$user]['tech']['buster_tech'] * 0.05;
+						}
+
+						$raport3 .= '<th>' . Format::number(round($fleetObject->getAttack() * $attTech)) . '</th>';
+						$raport4 .= '<th>' . Format::number(round(($fleetObject->getTotalPrice() / 10) * (1 + $this->resultData['defenders'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
 					}
 
 					$raport1 .= '</tr>';

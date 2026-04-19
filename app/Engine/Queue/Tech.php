@@ -4,8 +4,8 @@ namespace App\Engine\Queue;
 
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\BaseObject;
 use App\Engine\QueueManager;
-use App\Facades\Vars;
 use App\Engine\Entity;
 use App\Models;
 use App\Models\LogsHistory;
@@ -17,7 +17,7 @@ class Tech
 	{
 	}
 
-	public function add($elementId)
+	public function add(BaseObject $element): void
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
@@ -28,12 +28,12 @@ class Tech
 			->exists();
 
 		if (!$techHandle) {
-			$entity = Entity\Research::createEntity($elementId, $user->getTechLevel($elementId), $planet);
+			$entity = Entity\Research::createEntity($element->getId(), $user->getTechLevel($element->getId()), $planet);
 			$cost = $entity->getPrice();
 
-			$price = Vars::getItemPrice($elementId);
+			$price = $entity->getObject()->getPrice();
 
-			if ($entity->isAvailable() && $entity->canConstruct() && !(isset($price['max']) && $user->getTechLevel($elementId) >= $price['max'])) {
+			if ($entity->isAvailable() && $entity->canConstruct() && !(isset($price['max']) && $user->getTechLevel($element->getId()) >= $price['max'])) {
 				$planet->metal 		-= $cost['metal'];
 				$planet->crystal 	-= $cost['crystal'];
 				$planet->deuterium 	-= $cost['deuterium'];
@@ -46,10 +46,10 @@ class Tech
 					'operation' => QueueConstructionType::BUILDING,
 					'user_id' => $user->id,
 					'planet_id' => $planet->id,
-					'object_id' => $elementId,
+					'object_id' => $element->getId(),
 					'date' => now(),
 					'date_end' => now()->addSeconds($buildTime),
-					'level' => $user->getTechLevel($elementId) + 1,
+					'level' => $user->getTechLevel($element->getId()) + 1,
 				]);
 
 				if (config('game.log.research', false)) {
@@ -63,25 +63,25 @@ class Tech
 						'to_metal' 			=> $planet->metal,
 						'to_crystal' 		=> $planet->crystal,
 						'to_deuterium' 		=> $planet->deuterium,
-						'entity_id' 		=> $elementId,
-						'amount' 			=> $user->getTechLevel($elementId) + 1
+						'entity_id' 		=> $element->getId(),
+						'amount' 			=> $user->getTechLevel($element->getId()) + 1
 					]);
 				}
 			}
 		}
 	}
 
-	public function delete($elementId)
+	public function delete(BaseObject $element): void
 	{
 		$user = $this->queue->getUser();
 
 		$techHandle = $user->queue->firstWhere('type', QueueType::RESEARCH);
 
-		if ($techHandle && $techHandle->object_id == $elementId) {
+		if ($techHandle && $techHandle->object_id == $element->getId()) {
 			$planet = Planet::query()
 				->find((int) $techHandle->planet_id);
 
-			$entity = Entity\Research::createEntity($elementId, $techHandle->level, $planet);
+			$entity = Entity\Research::createEntity($element->getId(), $techHandle->level, $planet);
 
 			$cost = $entity->getPrice();
 
@@ -104,8 +104,8 @@ class Tech
 					'to_metal' 			=> $planet->metal,
 					'to_crystal' 		=> $planet->crystal,
 					'to_deuterium' 		=> $planet->deuterium,
-					'entity_id' 		=> $elementId,
-					'amount' 			=> $user->getTechLevel($elementId) + 1
+					'entity_id' 		=> $element->getId(),
+					'amount' 			=> $user->getTechLevel($element->getId()) + 1
 				]);
 			}
 		}

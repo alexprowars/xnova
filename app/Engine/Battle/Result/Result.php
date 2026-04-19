@@ -3,7 +3,9 @@
 namespace App\Engine\Battle\Result;
 
 use App\Engine\Battle\BattleResult;
+use App\Engine\Battle\Entities\Player;
 use App\Engine\Battle\Entities\PlayerGroup;
+use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
 use App\Helpers;
 
@@ -122,7 +124,9 @@ class Result
 						$repairedAmount = $repairShip->getCount();
 					}
 
-					$costs = Vars::getItemPrice($ship->getId());
+					$shipObject = ObjectsFactory::get($ship->getId());
+
+					$costs = $shipObject->getPrice();
 					$count = $ship->getCount() - $repairedAmount;
 
 					if ($count > 0) {
@@ -194,22 +198,10 @@ class Result
 		$result = [0, 0];
 
 		foreach ($this->getAttackersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $player) {
-			foreach ($player as $fleet) {
-				foreach ($fleet as $role => $values) {
-					$metal = 0;
-					$crystal = 0;
+			$debris = $this->getDebrisForPlayer($player);
 
-					foreach ($values as $lost) {
-						$metal += $lost[0];
-						$crystal += $lost[1];
-					}
-
-					$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
-
-					$result[0] += (int) floor($metal * $factor);
-					$result[1] += (int) floor($crystal * $factor);
-				}
-			}
+			$result[0] += $debris[0];
+			$result[1] += $debris[1];
 		}
 
 		return $result;
@@ -220,21 +212,33 @@ class Result
 		$result = [0, 0];
 
 		foreach ($this->getDefendersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $player) {
-			foreach ($player as $fleet) {
-				foreach ($fleet as $role => $values) {
-					$metal = 0;
-					$crystal = 0;
+			$debris = $this->getDebrisForPlayer($player);
 
-					foreach ($values as $lost) {
-						$metal += $lost[0];
-						$crystal += $lost[1];
-					}
+			$result[0] += $debris[0];
+			$result[1] += $debris[1];
+		}
 
-					$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
+		return $result;
+	}
 
-					$result[0] += (int) floor($metal * $factor);
-					$result[1] += (int) floor($crystal * $factor);
+	protected function getDebrisForPlayer(array $player): array
+	{
+		$result = [0, 0];
+
+		foreach ($player as $fleet) {
+			foreach ($fleet as $role => $values) {
+				$metal = 0;
+				$crystal = 0;
+
+				foreach ($values as $lost) {
+					$metal += $lost[0];
+					$crystal += $lost[1];
 				}
+
+				$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
+
+				$result[0] += (int) floor($metal * $factor);
+				$result[1] += (int) floor($crystal * $factor);
 			}
 		}
 

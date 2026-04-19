@@ -13,7 +13,7 @@ class Simulation
 	protected array $slots = [];
 	protected ?array $result = null;
 
-	public function addSlot(array $items)
+	public function addSlot(array $items): void
 	{
 		$this->slots[] = $items;
 	}

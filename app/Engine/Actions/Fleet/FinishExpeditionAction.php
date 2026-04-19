@@ -111,8 +111,8 @@ class FinishExpeditionAction
 	{
 		$expowert = [];
 
-		foreach (Vars::getItemsByType(ItemType::FLEET) as $id) {
-			$expowert[$id] = Vars::getItemTotalPrice($id) / 200;
+		foreach (Vars::getObjectsByType(ItemType::FLEET) as $object) {
+			$expowert[$object->getId()] = $object->getTotalPrice() / 200;
 		}
 
 		$points = 0;
@@ -231,12 +231,14 @@ class FinishExpeditionAction
 
 		$found = [];
 
-		foreach (Vars::getItemsByType(ItemType::FLEET) as $id) {
-			if (!$this->fleet->entities->getByEntityId($id) || $id == 208 || $id == 209 || $id == 214) {
+		$objects = Vars::getObjectsByType(ItemType::FLEET);
+
+		foreach ($objects as $object) {
+			if (!$this->fleet->entities->getByEntityId($object->getId()) || $object->getId() == 208 || $object->getId() == 209 || $object->getId() == 214) {
 				continue;
 			}
 
-			$maxFound = (int) floor($foundShips / Vars::getItemTotalPrice($id));
+			$maxFound = (int) floor($foundShips / $object->getTotalPrice());
 
 			if ($maxFound <= 0) {
 				continue;
@@ -248,9 +250,9 @@ class FinishExpeditionAction
 				continue;
 			}
 
-			$found[$id]	= $count;
+			$found[$object->getId()] = $count;
 
-			$foundShips -= $count * Vars::getItemTotalPrice($id);
+			$foundShips -= $count * $object->getTotalPrice();
 
 			if ($foundShips <= 0) {
 				break;

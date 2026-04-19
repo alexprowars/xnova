@@ -8,6 +8,7 @@ use App\Models\UserAuthentication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LoginController extends Controller
 {
@@ -34,7 +35,7 @@ class LoginController extends Controller
 		}
 	}
 
-	public function services($service)
+	public function services(string $service): RedirectResponse
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return redirect()->away('/');
@@ -43,7 +44,7 @@ class LoginController extends Controller
 		return Socialite::driver($service)->redirect();
 	}
 
-	public function callback($service)
+	public function callback(string $service): RedirectResponse
 	{
 		if (!in_array($service, $this->socialDrivers)) {
 			return redirect()->away('/');

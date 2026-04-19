@@ -99,7 +99,7 @@ class UserBan extends Page
 		];
 	}
 
-	protected function submit(array $data)
+	protected function submit(array $data): void
 	{
 		$user = User::query()->where('username', $data['username'])
 			->orWhere('email', $data['username'])

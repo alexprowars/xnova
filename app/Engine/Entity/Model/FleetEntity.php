@@ -2,10 +2,15 @@
 
 namespace App\Engine\Entity\Model;
 
-use App\Facades\Vars;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\ObjectsFactory;
+use App\Engine\Objects\ShipObject;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class FleetEntity implements Arrayable, JsonSerializable
 {
 	public int $id;
@@ -24,7 +29,7 @@ class FleetEntity implements Arrayable, JsonSerializable
 		return new self(['i' => $id, 'c' => $count, 'p' => $params]);
 	}
 
-	public function getParam(string $key, $default = null): mixed
+	public function getParam(string $key, mixed $default = null): mixed
 	{
 		return $this->params[$key] ?? $default;
 	}
@@ -48,10 +53,19 @@ class FleetEntity implements Arrayable, JsonSerializable
 		return $this->toArray();
 	}
 
+	public function getObjectData(): BaseObject
+	{
+		return ObjectsFactory::get($this->id);
+	}
+
 	public function getCapacity(): int
 	{
-		$unitData = Vars::getUnitData($this->id);
+		$object = $this->getObjectData();
 
-		return $this->count * $unitData['capacity'];
+		if (!($object instanceof ShipObject)) {
+			return 0;
+		}
+
+		return $this->count * $object->getCapacity();
 	}
 }

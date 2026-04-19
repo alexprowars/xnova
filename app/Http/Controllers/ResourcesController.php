@@ -6,6 +6,7 @@ use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
+use App\Engine\Objects\BaseObject;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
@@ -116,7 +117,11 @@ class ResourcesController extends Controller
 		}
 
 		$this->user->planets->each(function (Planet $planet) use ($production) {
-			$planet->entities->whereIn('id', Vars::getItemsByType(ItemType::PRODUCTION))->each(fn(PlanetEntity $entity) => $entity->factor = $production);
+			$itemsId = collect(Vars::getObjectsByType([ItemType::BUILDING, ItemType::FLEET]))
+				->filter(fn(BaseObject $object) => $object->getProduction() !== null)
+				->pluck(fn(BaseObject $object) => $object->getId());
+
+			$planet->entities->whereIn('id', $itemsId)->each(fn(PlanetEntity $entity) => $entity->factor = $production);
 			$planet->save();
 		});
 	}
@@ -126,7 +131,11 @@ class ResourcesController extends Controller
 		$state = Arr::wrap($request->post('state', []));
 
 		foreach ($state as $entityId => $value) {
-			if (empty($entityId) || !in_array($entityId, Vars::getItemsByType(ItemType::PRODUCTION))) {
+			if (empty($entityId)) {
+				continue;
+			}
+
+			if (!Vars::getItemObject($entityId)->getProduction()) {
 				continue;
 			}
 
@@ -153,7 +162,7 @@ class ResourcesController extends Controller
 		$resources = new \App\Engine\Resources();
 		$resources->add($this->planet->getProduction()->getBasicProduction());
 
-		foreach (Vars::getItemsByType(ItemType::PRODUCTION) as $itemId) {
+		foreach (Vars::getItemsByType([ItemType::BUILDING, ItemType::FLEET]) as $itemId) {
 			$entity = $this->planet->getEntityUnit($itemId);
 
 			if (!$entity || $entity->getLevel() <= 0) {

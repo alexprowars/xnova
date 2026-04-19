@@ -7,6 +7,8 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Messages\Types\MissionMissileAttackMessage;
+use App\Engine\Objects\DefenceObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
 use App\Models\Planet;
 use App\Notifications\SystemMessage;
@@ -95,7 +97,7 @@ class MissileAttack extends BaseMission
 	{
 	}
 
-	private function raketenangriff($targetDefTech, $ownerAttTech, $missiles, $targetDefensive, $firstTarget = 0)
+	private function raketenangriff(int $targetDefTech, int $ownerAttTech, int $missiles, array $targetDefensive, ?int $firstTarget = null): array
 	{
 		if (!$missiles) {
 			return [];
@@ -103,13 +105,14 @@ class MissileAttack extends BaseMission
 
 		unset($targetDefensive[502]);
 
-		$fleetData = Vars::getUnitData(503);
+		/** @var DefenceObject $fleetObject */
+		$fleetObject = ObjectsFactory::get(503);
 
-		$totalDamage = $missiles * $fleetData['attack'] * ($ownerAttTech / 10 + 1);
+		$totalDamage = $missiles * $fleetObject->getAttack() * ($ownerAttTech / 10 + 1);
 
 		$result = [];
 
-		if (isset($targetDefensive[$firstTarget])) {
+		if ($firstTarget && isset($targetDefensive[$firstTarget])) {
 			$c = $targetDefensive[$firstTarget];
 
 			unset($targetDefensive[$firstTarget]);
@@ -121,9 +124,10 @@ class MissileAttack extends BaseMission
 				continue;
 			}
 
-			$price = Vars::getItemTotalPrice($target);
+			/** @var DefenceObject $targetObject */
+			$targetObject = ObjectsFactory::get($target);
 
-			$structure = ($price / 10 * ($targetDefTech / 10 + 1));
+			$structure = ($targetObject->getTotalPrice() / 10 * ($targetDefTech / 10 + 1));
 
 			$destroyCount = floor($totalDamage / $structure);
 			$destroyCount = min($destroyCount, $count);

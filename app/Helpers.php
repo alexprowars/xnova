@@ -7,7 +7,7 @@ use RecursiveIteratorIterator;
 
 class Helpers
 {
-	public static function convertIp($ip)
+	public static function convertIp(string|int $ip): string
 	{
 		if (!is_numeric($ip)) {
 			return sprintf("%u", ip2long($ip));
@@ -16,7 +16,7 @@ class Helpers
 		return long2ip($ip);
 	}
 
-	public static function recursiveSum(array $array)
+	public static function recursiveSum(array $array): int|float
 	{
 		$sum = 0;
 		$array_obj = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));

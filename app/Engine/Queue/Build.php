@@ -5,6 +5,7 @@ namespace App\Engine\Queue;
 use App\Engine\Entity;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\BaseObject;
 use App\Engine\QueueManager;
 use App\Models;
 
@@ -14,14 +15,14 @@ class Build
 	{
 	}
 
-	public function add($elementId, $destroy = false)
+	public function add(BaseObject $element, bool $destroy = false): void
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
 		$maxBuidSize = config('game.maxBuildingQueue', 1);
 
-		if ($user->rpg_constructeur?->isFuture()) {
+		if ($user->officier_architect?->isFuture()) {
 			$maxBuidSize += 2;
 		}
 
@@ -40,7 +41,7 @@ class Build
 				$inArray = 0;
 
 				foreach ($this->queue->get(QueueType::BUILDING) as $item) {
-					if ($item->object_id == $elementId) {
+					if ($item->object_id == $element->getId()) {
 						$inArray++;
 					}
 				}
@@ -48,10 +49,10 @@ class Build
 				$inArray = 0;
 			}
 
-			$build = $planet->getEntity($elementId);
+			$build = $planet->getEntity($element->getId());
 
 			if (!$build) {
-				return false;
+				return;
 			}
 
 			Models\Queue::create([
@@ -59,7 +60,7 @@ class Build
 				'operation' => $destroy ? QueueConstructionType::DESTROY : QueueConstructionType::BUILDING,
 				'user_id' => $user->id,
 				'planet_id' => $planet->id,
-				'object_id' => $elementId,
+				'object_id' => $element->getId(),
 				'date' => null,
 				'date_end' => null,
 				'level' => $build->level + (!$destroy ? 1 : 0) + $inArray
@@ -68,11 +69,9 @@ class Build
 			$this->queue->loadQueue();
 			$this->queue->nextBuildingQueue();
 		}
-
-		return true;
 	}
 
-	public function delete($indexId)
+	public function delete(int $indexId): void
 	{
 		$queueArray = $this->queue->get(QueueType::BUILDING);
 

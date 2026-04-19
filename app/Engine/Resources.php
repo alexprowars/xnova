@@ -5,6 +5,9 @@ namespace App\Engine;
 use App\Engine\Enums\Resources as ResourcesEnum;
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @implements Arrayable<string, float>
+ */
 class Resources implements Arrayable
 {
 	protected array $resources;
@@ -35,7 +38,7 @@ class Resources implements Arrayable
 		return $this->resources[$type] ?? 0;
 	}
 
-	public function set(string|ResourcesEnum $type, float $value)
+	public function set(string|ResourcesEnum $type, float $value): void
 	{
 		if ($type instanceof ResourcesEnum) {
 			$type = $type->value;
@@ -44,8 +47,12 @@ class Resources implements Arrayable
 		$this->resources[$type] = $value;
 	}
 
-	public function add(self $resources)
+	public function add(?self $resources): self
 	{
+		if (!$resources) {
+			return $this;
+		}
+
 		foreach (ResourcesEnum::cases() as $res) {
 			$this->resources[$res->value] += $resources->get($res);
 		}
@@ -53,8 +60,12 @@ class Resources implements Arrayable
 		return $this;
 	}
 
-	public function sub(self $resources)
+	public function sub(?self $resources): self
 	{
+		if (!$resources) {
+			return $this;
+		}
+
 		foreach (ResourcesEnum::cases() as $res) {
 			$this->resources[$res->value] -= $resources->get($res);
 		}
@@ -62,7 +73,7 @@ class Resources implements Arrayable
 		return $this;
 	}
 
-	public function multiply(float $value, array $except = [])
+	public function multiply(float $value, array $except = []): self
 	{
 		foreach (ResourcesEnum::cases() as $res) {
 			if (!empty($except) && in_array($res, $except)) {

@@ -2,7 +2,7 @@
 
 namespace App\Engine\Entity;
 
-use App\Facades\Vars;
+use App\Engine\Objects;
 
 class Ship extends Unit
 {
@@ -16,17 +16,22 @@ class Ship extends Unit
 
 	public function getConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		if (!($this->object instanceof Objects\ShipObject)) {
+			return 0;
+		}
 
-		return (int) floor($shipData['consumption'] * $this->planet->user->bonus('fleet_fuel'));
+		return (int) floor($this->object->getConsumption() * $this->planet->user->bonus('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
+		if (!($this->object instanceof Objects\ShipObject)) {
+			return 0;
+		}
+
 		$user = $this->planet->user;
 
-		$speed = $shipData['speed'] * match ($shipData['type_engine']) {
+		$speed = $this->object->getSpeed() * match ($this->object->getEngineType()) {
 			1 => 1 + ($user->getTechLevel('combustion') * 0.1),
 			2 => 1 + ($user->getTechLevel('impulse_motor') * 0.2),
 			3 => 1 + ($user->getTechLevel('hyperspace_motor') * 0.3),
@@ -42,28 +47,24 @@ class Ship extends Unit
 
 	public function getStorage(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
-
-		if (!$shipData) {
+		if (!($this->object instanceof Objects\ShipObject)) {
 			return 0;
 		}
 
-		return (int) $shipData['capacity'];
+		return $this->object->getCapacity();
 	}
 
 	public function getStayConsumption(): int
 	{
-		$shipData = Vars::getUnitData($this->entityId);
-
-		if (!$shipData) {
+		if (!($this->object instanceof Objects\ShipObject)) {
 			return 0;
 		}
 
-		if ($this->planet->user->rpg_meta?->isFuture()) {
-			return (int) ceil($shipData['stay'] * 0.9);
-		} else {
-			return (int) $shipData['stay'];
+		if ($this->planet->user->officier_metaphysician?->isFuture()) {
+			return (int) ceil($this->object->getStayConsumption() * 0.9);
 		}
+
+		return $this->object->getStayConsumption();
 	}
 
 	public function getInfo(): array

@@ -3,6 +3,7 @@
 namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
+use App\Engine\Objects\ShipObject;
 use App\Facades\Vars;
 use App\Format;
 use App\Models;
@@ -10,18 +11,13 @@ use App\Models\User;
 
 class Fleet extends Building
 {
-	public static function setShipsEngine(User $user)
+	public static function setShipsEngine(User $user): void
 	{
-		$storage = Vars::getStorage();
+		$objects = Vars::getObjectsByType(ItemType::FLEET);
 
-		foreach (Vars::getItemsByType(ItemType::FLEET) as $ship) {
-			if (isset($storage['CombatCaps'][$ship]['engine_up']) && $user->getTechLevel($storage['CombatCaps'][$ship]['engine_up']['tech']) >= $storage['CombatCaps'][$ship]['engine_up']['lvl']) {
-				$tmp = $storage['CombatCaps'][$ship];
-				$tmp['type_engine']++;
-				$tmp['speed'] = $tmp['engine_up']['speed'];
-				unset($tmp['engine_up']);
-
-				Vars::updateStorage('CombatCaps.' . $ship, $tmp);
+		foreach ($objects as $ship) {
+			if ($ship instanceof ShipObject && ($upgrade = $ship->getEngineUpgrade()) && $user->getTechLevel($upgrade['tech']) >= $upgrade['lvl']) {
+				$ship->upgradeEngine();
 			}
 		}
 	}
@@ -49,26 +45,24 @@ class Fleet extends Building
 		return $result;
 	}
 
-	public static function createFleetPopupedMissionLink(Models\Fleet $FleetRow, string $Texte, $FleetType)
+	public static function createFleetPopupedMissionLink(Models\Fleet $fleet, string $text, string $fleetType): string
 	{
-		$FleetTotalC = $FleetRow->resource_metal + $FleetRow->resource_crystal + $FleetRow->resource_deuterium;
+		$totalCount = $fleet->resource_metal + $fleet->resource_crystal + $fleet->resource_deuterium;
 
-		if ($FleetTotalC != 0) {
-			$FRessource = '<table width=200>';
-			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.metal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_metal) . '<span></td></tr>';
-			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.crystal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_crystal) . '<span></td></tr>';
-			$FRessource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.deuterium') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($FleetRow->resource_deuterium) . '<span></td></tr>';
-			$FRessource .= '</table>';
+		if ($totalCount != 0) {
+			$ressource = '<table width=200>';
+			$ressource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.metal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($fleet->resource_metal) . '<span></td></tr>';
+			$ressource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.crystal') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($fleet->resource_crystal) . '<span></td></tr>';
+			$ressource .= '<tr><td width=50% align=left><span style="color: white">' . __('main.deuterium') . '<span></td><td width=50% align=right><span style="color: white">' . Format::number($fleet->resource_deuterium) . '<span></td></tr>';
+			$ressource .= '</table>';
 		} else {
-			$FRessource = '';
+			$ressource = '';
 		}
 
-		if ($FRessource <> '') {
-			$MissionPopup = '<a href="javascript:;" data-content="' . $FRessource . '" class="tooltip ' . $FleetType . '">' . $Texte . '</a>';
+		if ($ressource <> '') {
+			return '<a href="javascript:;" data-content="' . $ressource . '" class="tooltip ' . $fleetType . '">' . $text . '</a>';
 		} else {
-			$MissionPopup = $Texte;
+			return $text;
 		}
-
-		return $MissionPopup;
 	}
 }

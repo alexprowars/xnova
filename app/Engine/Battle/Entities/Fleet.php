@@ -39,7 +39,7 @@ class Fleet
 		return $this;
 	}
 
-	public function addUnit(Unit $unit)
+	public function addUnit(Unit $unit): void
 	{
 		if (isset($this->items[$unit->getId()])) {
 			$this->items[$unit->getId()]->increment($unit->getCount());

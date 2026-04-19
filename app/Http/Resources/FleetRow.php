@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class FleetRow extends JsonResource
 {
-	public function __construct(Models\Fleet $fleetRow, protected int $status, protected $owner)
+	public function __construct(Models\Fleet $fleetRow, protected int $status, protected bool $owner)
 	{
 		parent::__construct($fleetRow);
 	}

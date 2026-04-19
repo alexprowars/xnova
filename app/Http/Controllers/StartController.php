@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models;
@@ -83,8 +82,8 @@ class StartController extends Controller
 		$this->user->race = $r;
 		$this->user->daily_bonus = now()->addDay();
 
-		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $oId) {
-			$this->user->{Vars::getName($oId)} = now()->addDay();
+		foreach (Vars::getOfficiers() as $code) {
+			$this->user->setAttribute('officier_' . $code, now()->addDay());
 		}
 
 		$this->user->update();

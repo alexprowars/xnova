@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Engine\Entity\Model\FleetEntityCollection;
-use App\Facades\Vars;
 use App\Format;
 use App\Models\HallOfFame;
 use App\Models\LogsBattle;
@@ -17,7 +16,7 @@ class FleetService
 		$debris = ['metal' => 0, 'crystal' => 0];
 
 		foreach ($fleets as $entity) {
-			$res = Vars::getItemPrice($entity->id);
+			$res = $entity->getObjectData()->getPrice();
 
 			if (!empty($res['metal']) && $res['metal'] > 0) {
 				$debris['metal'] += floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));

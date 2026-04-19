@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
@@ -14,12 +13,12 @@ class OfficiersController extends Controller
 	{
 		$items = [];
 
-		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $id) {
+		foreach (Vars::getOfficiers() as $code) {
 			$items[] = [
-				'id' => $id,
-				'name' => __('main.tech.' . $id),
-				'description' => __('info.description.' . $id),
-				'power' => __('officier.power.' . $id),
+				'code' => $code,
+				'name' => __('officier.items.' . $code),
+				'description' => __('officier.description.' . $code),
+				'power' => __('officier.power.' . $code),
 			];
 		}
 
@@ -28,10 +27,10 @@ class OfficiersController extends Controller
 
 	public function buy(Request $request): void
 	{
-		$id = (int) $request->post('id');
-		$duration = (int) $request->post('duration');
+		$code = $request->post('code');
+		$duration = (int) $request->post('duration', 0);
 
-		if (!$id || !$duration) {
+		if (!$code || !$duration) {
 			throw new Exception('Ошибка входных параметров');
 		}
 
@@ -48,16 +47,17 @@ class OfficiersController extends Controller
 			throw new Exception(__('officier.NoPoints'));
 		}
 
-		if (Vars::getItemType($id) != ItemType::OFFICIER) {
+		if (!in_array($code, Vars::getOfficiers())) {
 			throw new Exception('Выбран неверный элемент');
 		}
 
-		if ($this->user->{Vars::getName($id)}?->isFuture()) {
-			$this->user->{Vars::getName($id)} = $this->user->{Vars::getName($id)}->addSeconds($time);
+		if ($this->user->{'officier_' . $code}?->isFuture()) {
+			$date = $this->user->{'officier_' . $code};
 		} else {
-			$this->user->{Vars::getName($id)} = now()->addSeconds($time);
+			$date = now();
 		}
 
+		$this->user->{'officier_' . $code} = $date->addSeconds($time);
 		$this->user->credits -= $credits;
 		$this->user->update();
 

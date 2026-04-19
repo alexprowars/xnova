@@ -59,19 +59,19 @@ class EditUser extends EditRecord
 				Section::make()
 					->heading('Офицеры')
 					->schema([
-						DateTimePicker::make('rpg_geologue')
+						DateTimePicker::make('officier_geologist')
 							->label(__('main.tech.601')),
-						DateTimePicker::make('rpg_admiral')
+						DateTimePicker::make('officier_admiral')
 							->label(__('main.tech.602')),
-						DateTimePicker::make('rpg_ingenieur')
+						DateTimePicker::make('officier_engineer')
 							->label(__('main.tech.603')),
-						DateTimePicker::make('rpg_technocrate')
+						DateTimePicker::make('officier_technocrat')
 							->label(__('main.tech.604')),
-						DateTimePicker::make('rpg_constructeur')
+						DateTimePicker::make('officier_architect')
 							->label(__('main.tech.605')),
-						DateTimePicker::make('rpg_meta')
+						DateTimePicker::make('officier_metaphysician')
 							->label(__('main.tech.606')),
-						DateTimePicker::make('rpg_komandir')
+						DateTimePicker::make('officier_mercenary')
 							->label(__('main.tech.607')),
 					])
 			]);

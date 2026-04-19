@@ -5,6 +5,7 @@ namespace App\Engine;
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
+use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
@@ -13,6 +14,7 @@ use App\Models\Statistic;
 use App\Models\User;
 use App\Notifications\UserDeleteNotification;
 use App\Settings;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -21,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 class UpdateStatistics
 {
 	private array $maxinfos = [];
-	public int $start = 0;
+	public CarbonInterface $start;
 
 	private array $StatRace = [
 		1 => ['count' => 0, 'total' => 0, 'fleet' => 0, 'tech' => 0, 'defs' => 0, 'build' => 0],
@@ -32,10 +34,10 @@ class UpdateStatistics
 
 	public function __construct()
 	{
-		$this->start = time();
+		$this->start = now();
 	}
 
-	private function setMaxInfo($ID, $Count, Models\User $Data)
+	private function setMaxInfo(int $ID, int $Count, Models\User $Data): void
 	{
 		if ($Data->isAdmin() || $Data->blocked_at) {
 			return;
@@ -50,7 +52,7 @@ class UpdateStatistics
 		}
 	}
 
-	private function getTechnoPoints(Models\User $user)
+	private function getTechnoPoints(Models\User $user): array
 	{
 		$TechCounts = 0;
 		$TechPoints = 0;
@@ -66,9 +68,10 @@ class UpdateStatistics
 				$this->setMaxInfo($item->id, $item->level, $user);
 			}
 
-			$price = Vars::getItemPrice($item->id);
+			$object = ObjectsFactory::get($item->id);
 
-			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+			$price = $object->getPrice();
+			$Units = $object->getTotalPrice(true);
 
 			for ($Level = 1; $Level <= $item->level; $Level++) {
 				$TechPoints += $Units * ($price['factor'] ** $Level);
@@ -83,7 +86,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getBuildPoints(Models\Planet $planet, Models\User $user)
+	private function getBuildPoints(Models\Planet $planet, Models\User $user): array
 	{
 		$BuildCounts = 0;
 		$BuildPoints = 0;
@@ -101,9 +104,10 @@ class UpdateStatistics
 				$this->setMaxInfo($item->id, $item->level, $user);
 			}
 
-			$price = Vars::getItemPrice($item->id);
+			$object = ObjectsFactory::get($item->id);
 
-			$Units = $price['metal'] + $price['crystal'] + $price['deuterium'];
+			$price = ObjectsFactory::get($item->id)->getPrice();
+			$Units = $object->getTotalPrice(true);
 
 			for ($Level = 1; $Level <= $item->level; $Level++) {
 				$BuildPoints += $Units * ($price['factor'] ** $Level);
@@ -118,7 +122,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getDefensePoints(Models\Planet $planet, &$RecordArray)
+	private function getDefensePoints(Models\Planet $planet, array &$RecordArray): array
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -135,9 +139,9 @@ class UpdateStatistics
 			$RecordArray[$item->id] ??= 0;
 			$RecordArray[$item->id] += $item->level;
 
-			$Units = Vars::getItemTotalPrice($item->id, true);
+			$itemObject = ObjectsFactory::get($item->id);
 
-			$UnitsPoints += ($Units * $item->level);
+			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->level);
 			$UnitsCounts += $item->level;
 		}
 
@@ -147,7 +151,7 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getFleetPoints(Models\Planet $planet, &$RecordArray)
+	private function getFleetPoints(Models\Planet $planet, array &$RecordArray): array
 	{
 		$UnitsCounts = 0;
 		$UnitsPoints = 0;
@@ -164,9 +168,9 @@ class UpdateStatistics
 			$RecordArray[$item->id] ??= 0;
 			$RecordArray[$item->id] += $item->level;
 
-			$Units = Vars::getItemTotalPrice($item->id, true);
+			$itemObject = ObjectsFactory::get($item->id);
 
-			$UnitsPoints += ($Units * $item->level);
+			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->level);
 
 			if ($item->id != 212) {
 				$UnitsCounts += $item->level;
@@ -179,15 +183,16 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	private function getFleetPointsOnTour(FleetEntityCollection $entities)
+	private function getFleetPointsOnTour(FleetEntityCollection $entities): array
 	{
 		$FleetCounts = 0;
 		$FleetPoints = 0;
 		$FleetArray = [];
 
 		foreach ($entities as $entity) {
-			$Units = Vars::getItemTotalPrice($entity->id, true);
-			$FleetPoints += ($Units * $entity->count);
+			$itemObject = ObjectsFactory::get($entity->id);
+
+			$FleetPoints += $itemObject->getTotalPrice(true) * $entity->count;
 
 			if ($entity->id != 212) {
 				$FleetCounts += $entity->count;
@@ -207,28 +212,20 @@ class UpdateStatistics
 		return $RetValue;
 	}
 
-	public function deleteUsers()
+	public function deleteUsers(): void
 	{
-		$result = [];
-
 		$list = Models\User::query()
 			->whereNotNull('delete_time')
-			->where('delete_time', '<', now())
+			->wherePast('delete_time')
 			->get(['id', 'username']);
 
 		foreach ($list as $user) {
-			if ($user->delete()) {
-				$result[] = $user->username;
-			}
+			$user->delete();
 		}
-
-		return $result;
 	}
 
-	public function inactiveUsers()
+	public function inactiveUsers(): void
 	{
-		$result = [];
-
 		$users = User::query()
 			->where('onlinetime', '<', now()->addDays(config('game.inactiveTime', 21)))
 			->whereNotNull('onlinetime')
@@ -254,20 +251,16 @@ class UpdateStatistics
 			if (filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
 				$user->notify(new UserDeleteNotification());
 			}
-
-			$result[] = $user->username;
 		}
-
-		return $result;
 	}
 
-	public function clearOldStats()
+	public function clearOldStats(): void
 	{
 		Statistic::query()->where('stat_code', '>=', 2)->delete();
 		Statistic::query()->increment('stat_code');
 	}
 
-	public function getTotalFleetPoints()
+	public function getTotalFleetPoints(): array
 	{
 		$fleetPoints = [];
 
@@ -291,7 +284,7 @@ class UpdateStatistics
 		return $fleetPoints;
 	}
 
-	public function update()
+	public function update(): void
 	{
 		$active_users = 0;
 
@@ -513,14 +506,14 @@ class UpdateStatistics
 		DB::statement("OPTIMIZE TABLE " . app(Statistic::class)->getTable());
 	}
 
-	public function addToLog()
+	public function addToLog(): void
 	{
 		DB::statement("INSERT INTO " . app(LogsStat::class)->getTable() . "
 			(`tech_points`, `tech_rank`, `build_points`, `build_rank`, `defs_points`, `defs_rank`, `fleet_points`, `fleet_rank`, `total_points`, `total_rank`, `object_id`, `type`, `date`)
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`user_id`, 1, '" . Date::createFromTimestamp($this->start) . "'
+		        u.`user_id`, 1, '" . $this->start . "'
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 1 AND u.stat_code = 1");
@@ -530,7 +523,7 @@ class UpdateStatistics
 			SELECT
 				u.`tech_points`, u.`tech_rank`, u.`build_points`, u.`build_rank`, u.`defs_points`,
 		        u.`defs_rank`, u.`fleet_points`, u.`fleet_rank`, u.`total_points`, u.`total_rank`,
-		        u.`alliance_id`, 2, '" . Date::createFromTimestamp($this->start) . "'
+		        u.`alliance_id`, 2, '" . $this->start . "'
 		    FROM statistics as u
 		    WHERE
 		    	u.`stat_type` = 2 AND u.stat_code = 1");
@@ -538,13 +531,13 @@ class UpdateStatistics
 
 	public function buildRecordsCache(): void
 	{
-		$Elements = Vars::getItemsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
+		$elements = Vars::getItemsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
 
-		$array = "";
+		$array = '';
 
-		foreach ($Elements as $ElementID) {
-			if ($ElementID != 407 && $ElementID != 408) {
-				$array .= $ElementID . " => array('username' => '" . ($this->maxinfos[$ElementID]['username'] ?? '') . "', 'maxlvl' => " . ($this->maxinfos[$ElementID]['maxlvl'] ?? 0) . "),\n";
+		foreach ($elements as $elementId) {
+			if ($elementId != 407 && $elementId != 408) {
+				$array .= $elementId . " => array('username' => '" . ($this->maxinfos[$elementId]['username'] ?? '') . "', 'maxlvl' => " . ($this->maxinfos[$elementId]['maxlvl'] ?? 0) . "),\n";
 			}
 		}
 

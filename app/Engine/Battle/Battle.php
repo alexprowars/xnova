@@ -8,6 +8,9 @@ use App\Engine\Battle\Entities\PlayerGroup;
 use App\Engine\Battle\Entities\Unit;
 use App\Engine\Battle\Result\Result;
 use App\Engine\Enums\ItemType;
+use App\Engine\Objects\DefenceObject;
+use App\Engine\Objects\ObjectsFactory;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
 use App\Models\Fleet as FleetModel;
 use App\Models\Planet;
@@ -76,13 +79,16 @@ class Battle
 				continue;
 			}
 
-			$fleetObj->addUnit(
-				$this->getUnitData(
-					$entity->id,
-					$entity->count,
-					$playerObj->getTechnologies()
-				)
-			);
+			try {
+				$fleetObj->addUnit(
+					$this->getUnitData(
+						$entity->id,
+						$entity->count,
+						$playerObj->getTechnologies()
+					)
+				);
+			} catch (Exception) {
+			}
 		}
 
 		if (!$fleetObj->isEmpty()) {
@@ -107,7 +113,7 @@ class Battle
 		foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
 			$level = $planet->user->getTechLevel($techId);
 
-			if ($planet->user->rpg_komandir?->isFuture() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
+			if ($planet->user->officier_mercenary?->isFuture() && in_array(Vars::getName($techId), ['military_tech', 'defence_tech', 'shield_tech'])) {
 				$level += 2;
 			}
 
@@ -121,13 +127,16 @@ class Battle
 
 		foreach ($units as $i) {
 			if ($planet->getLevel($i) > 0) {
-				$unit = $this->getUnitData($i, $planet->getLevel($i), $res);
+				try {
+					$unit = $this->getUnitData($i, $planet->getLevel($i), $res);
 
-				if ($planet->user->rpg_ingenieur && Vars::getItemType($unit->getId()) == ItemType::FLEET) {
-					$unit->setRepairProb(0.8);
+					if ($planet->user->officier_engineer && Vars::getItemType($unit->getId()) == ItemType::FLEET) {
+						$unit->setRepairProb(0.8);
+					}
+
+					$fleet->addUnit($unit);
+				} catch (Exception) {
 				}
-
-				$fleet->addUnit($unit);
 			}
 		}
 
@@ -144,7 +153,7 @@ class Battle
 		$playerObj->addFleet($fleet);
 	}
 
-	public function run()
+	public function run(): Result
 	{
 		$ffi = FFI::cdef(
 			"char* fight_battle_rounds(const char* input_json);",
@@ -175,7 +184,7 @@ class Battle
 			'buster_tech' 	=> $user->getTechLevel('buster'),
 		];
 
-		if ($user->rpg_komandir?->isFuture()) {
+		if ($user->officier_mercenary?->isFuture()) {
 			$info['military_tech'] 	+= 2;
 			$info['defence_tech'] 	+= 2;
 			$info['shield_tech'] 	+= 2;
@@ -183,9 +192,9 @@ class Battle
 
 		$result = [];
 
-		foreach (Vars::getItemsByType(ItemType::TECH) as $techId) {
-			if (isset($info[Vars::getName($techId)])) {
-				$result[$techId] = $info[Vars::getName($techId)];
+		foreach (Vars::getObjectsByType(ItemType::TECH) as $tech) {
+			if (isset($info[$tech->getCode()])) {
+				$result[$tech->getId()] = $info[$tech->getCode()];
 			}
 		}
 
@@ -194,30 +203,34 @@ class Battle
 
 	protected function getUnitData(int|string $id, int $count, array $res = []): Unit
 	{
-		$shipData = Vars::getUnitData($id);
+		$shipObject = ObjectsFactory::get($id);
+
+		if (!($shipObject instanceof DefenceObject)) {
+			throw new Exception('Ship object not found');
+		}
 
 		$attDef 	= ($res[111] ?? 0) * 0.05;
 		$attTech 	= ($res[109] ?? 0) * 0.05;
 
-		if ($shipData['type_gun'] == 1) {
+		if ($shipObject->getWeaponType() == 1) {
 			$attTech += ($res[120] ?? 0) * 0.05;
-		} elseif ($shipData['type_gun'] == 2) {
+		} elseif ($shipObject->getWeaponType() == 2) {
 			$attTech += ($res[121] ?? 0) * 0.05;
-		} elseif ($shipData['type_gun'] == 3) {
+		} elseif ($shipObject->getWeaponType() == 3) {
 			$attTech += ($res[122] ?? 0) * 0.05;
 		}
 
-		$price = Vars::getItemPrice($id);
+		$price = $shipObject->getPrice();
 
 		$cost = [$price['metal'], $price['crystal']];
 
 		return new Unit(
 			$id,
 			$count,
-			(int) round($shipData['attack'] * (1 + $attTech)),
+			(int) round($shipObject->getAttack() * (1 + $attTech)),
 			(int) round((array_sum($cost) * (1 + $attDef)) / 10),
-			(int) round($shipData['shield'] * (1 + (($res[110] ?? 0) * 0.05))),
-			$shipData['sd'] ?? []
+			(int) round($shipObject->getShield() * (1 + (($res[110] ?? 0) * 0.05))),
+			$shipObject->getRapidfire()
 		);
 	}
 }

@@ -55,13 +55,13 @@ class Destruction extends BaseMission
 
 				$moonDestroyChance = Formulas::getMoonDestructionChance($targetMoon->diameter, $rips);
 
-				if ($this->fleet->user->rpg_admiral?->isFuture()) {
+				if ($this->fleet->user->officier_admiral?->isFuture()) {
 					$moonDestroyChance *= 1.1;
 				}
 
 				$fleetDestroyChance = Formulas::getDeathStarsDestructionChance($targetMoon->diameter, $rips);
 
-				if ($this->fleet->user->rpg_ingenieur?->isFuture()) {
+				if ($this->fleet->user->officier_engineer?->isFuture()) {
 					$fleetDestroyChance *= 0.5;
 				}
 

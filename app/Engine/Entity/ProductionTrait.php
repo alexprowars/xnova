@@ -9,19 +9,19 @@ use App\Facades\Vars;
 
 trait ProductionTrait
 {
-	public function getProduction(?int $factor = null): Resources
+	public function getProduction(?int $factor = null): ?Resources
 	{
+		$production = $this->object->getProduction();
+
+		if (!$production) {
+			return null;
+		}
+
 		if ($factor === null) {
 			$factor = $this->planet?->entities->getByEntityId($this->entityId)->factor ?? 10;
 		}
 
 		$factor = min(max($factor, 0), 10);
-
-		$production = Vars::getBuildProduction($this->entityId);
-
-		if (!$production) {
-			return new Resources();
-		}
 
 		$planet = $this->planet;
 		$user = $planet->user;

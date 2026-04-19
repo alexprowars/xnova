@@ -9,6 +9,4 @@ enum ItemType: string
 	case FLEET = 'fleet';
 	case DEFENSE = 'defense';
 	case OFFICIER = 'officier';
-	case PRODUCTION = 'prod';
-	case BUILING_EXP = 'build_exp';
 }

@@ -221,7 +221,7 @@ class Attack extends BaseMission
 			}
 		}
 
-		$moonProbability = $report->getMoonProbability($targetUser->rpg_admiral?->isFuture() ? 10 : 0);
+		$moonProbability = $report->getMoonProbability($targetUser->officier_admiral?->isFuture() ? 10 : 0);
 
 		if ($target->planet_type != PlanetType::PLANET) {
 			$moonProbability = 0;

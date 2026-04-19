@@ -4,21 +4,27 @@ namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityInterface;
 use App\Engine\Contracts\EntityProductionInterface;
-use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
 use App\Engine\Game;
-use App\Facades\Vars;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\BuildingObject;
+use App\Engine\Objects\DefenceObject;
+use App\Engine\Objects\ObjectsFactory;
+use App\Engine\Objects\ResearchObject;
+use App\Engine\Objects\ShipObject;
 use App\Models\Planet;
 
-class Entity implements EntityInterface, EntityProductionInterface
+abstract class Entity implements EntityInterface, EntityProductionInterface
 {
 	use ProductionTrait;
 
 	protected ?Planet $planet;
+	protected BaseObject $object;
 
 	protected function __construct(public int $entityId, public int $level = 0)
 	{
+		$this->object = ObjectsFactory::get($this->entityId);
 	}
 
 	public static function createEntity(int $entityId, int $level = 1, ?Planet $planet = null): static
@@ -33,6 +39,11 @@ class Entity implements EntityInterface, EntityProductionInterface
 	public function getEntityId(): int
 	{
 		return $this->entityId;
+	}
+
+	public function getObject(): BaseObject
+	{
+		return $this->object;
 	}
 
 	public function getLevel(): int
@@ -50,7 +61,7 @@ class Entity implements EntityInterface, EntityProductionInterface
 	/** @return array<value-of<Resources>, int> */
 	protected function getBasePrice(): array
 	{
-		$price = Vars::getItemPrice($this->entityId);
+		$price = $this->getObject()->getPrice();
 
 		$cost = [];
 
@@ -70,20 +81,18 @@ class Entity implements EntityInterface, EntityProductionInterface
 		$cost = $this->getBasePrice();
 		$user = $this->planet->user;
 
-		$elementType = Vars::getItemType($this->entityId);
-
 		foreach ($cost as $resType => $value) {
-			switch ($elementType) {
-				case ItemType::BUILDING:
+			switch ($this->object::class) {
+				case BuildingObject::class:
 					$cost[$resType] *= $user->bonus('res_building');
 					break;
-				case ItemType::TECH:
+				case ResearchObject::class:
 					$cost[$resType] *= $user->bonus('res_research');
 					break;
-				case ItemType::FLEET:
+				case ShipObject::class:
 					$cost[$resType] *= $user->bonus('res_fleet');
 					break;
-				case ItemType::DEFENSE:
+				case DefenceObject::class:
 					$cost[$resType] *= $user->bonus('res_defence');
 					break;
 				default:
@@ -107,31 +116,31 @@ class Entity implements EntityInterface, EntityProductionInterface
 
 	public function isAvailable(): bool
 	{
-		$requeriments = Vars::getItemRequirements($this->entityId);
+		$requeriments = $this->object->getRequeriments();
 
-		if (!count($requeriments)) {
+		if (empty($requeriments)) {
 			return true;
 		}
 
 		foreach ($requeriments as $reqElement => $level) {
-			if ($reqElement == 700) {
-				if ($this->planet->user->race != $level) {
-					return false;
-				}
-			} elseif (Vars::getItemType($reqElement) == ItemType::TECH) {
-				if ($this->planet->user->getTechLevel($reqElement) < $level) {
-					return false;
-				}
-			} elseif (Vars::getItemType($reqElement) == ItemType::BUILDING) {
-				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503]) && in_array($reqElement, [21, 41])) {
+			if ($reqElement == 'race') {
+				return $this->planet->user->race == $level;
+			}
+
+			$object = ObjectsFactory::get($reqElement);
+
+			if ($object instanceof ResearchObject) {
+				return $this->planet->user->getTechLevel($object->getId()) >= $level;
+			}
+
+			if ($object instanceof BuildingObject) {
+				if ($this->planet->planet_type == PlanetType::MILITARY_BASE && in_array($this->entityId, [43, 502, 503]) && in_array($object->getId(), [21, 41])) {
 					continue;
 				}
 
-				if ($this->planet->getLevel($reqElement) < $level) {
+				if ($this->planet->getLevel($object->getId()) < $level) {
 					return false;
 				}
-			} else {
-				return false;
 			}
 		}
 

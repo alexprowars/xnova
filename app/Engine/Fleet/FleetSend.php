@@ -36,42 +36,42 @@ class FleetSend
 			->first();
 	}
 
-	public function setMission(MissionType $mission)
+	public function setMission(MissionType $mission): void
 	{
 		$this->mission = $mission;
 	}
 
-	public function setFleets(array $fleets)
+	public function setFleets(array $fleets): void
 	{
 		$this->fleetArray = $fleets;
 	}
 
-	public function setAssault(Assault $assault)
+	public function setAssault(Assault $assault): void
 	{
 		$this->assault = $assault;
 	}
 
-	public function setExpeditionTime(int $time)
+	public function setExpeditionTime(int $time): void
 	{
 		$this->expeditionTime = $time;
 	}
 
-	public function setStayTime(int $time)
+	public function setStayTime(int $time): void
 	{
 		$this->stayTime = $time;
 	}
 
-	public function setResources(array $resources)
+	public function setResources(array $resources): void
 	{
 		$this->resources = array_map('intval', $resources);
 	}
 
-	public function setFleetSpeed(int $value)
+	public function setFleetSpeed(int $value): void
 	{
 		$this->fleetSpeed = $value;
 	}
 
-	protected function verify()
+	protected function verify(): void
 	{
 		if ($this->target->getGalaxy() > (int) config('game.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
 			throw new Exception('Ошибочная галактика!');
@@ -105,7 +105,7 @@ class FleetSend
 
 		$maxFleets = 1 + $this->planet->user->getTechLevel('computer');
 
-		if ($this->planet->user->rpg_admiral?->isFuture()) {
+		if ($this->planet->user->officier_admiral?->isFuture()) {
 			$maxFleets += 2;
 		}
 
@@ -272,7 +272,7 @@ class FleetSend
 		}
 	}
 
-	public function send()
+	public function send(): Fleet
 	{
 		$this->verify();
 

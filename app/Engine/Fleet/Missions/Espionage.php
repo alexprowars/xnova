@@ -47,13 +47,13 @@ class Espionage extends BaseMission
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');
 
-		if ($owner->rpg_technocrate->isFuture()) {
+		if ($owner->officier_technocrat->isFuture()) {
 			$CurrentSpyLvl += 2;
 		}
 
 		$TargetSpyLvl = $targetUser->getTechLevel('spy');
 
-		if ($targetUser->rpg_technocrate->isFuture()) {
+		if ($targetUser->officier_technocrat->isFuture()) {
 			$TargetSpyLvl += 2;
 		}
 
@@ -197,8 +197,6 @@ class Espionage extends BaseMission
 			$types[] = ItemType::BUILDING;
 		} elseif ($mode == 4) {
 			$types[] = ItemType::TECH;
-		} elseif ($mode == 6) {
-			$types[] = ItemType::OFFICIER;
 		}
 
 		$result = [
@@ -217,16 +215,27 @@ class Espionage extends BaseMission
 					$level = $target->getLevel($item);
 				} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 					$level = $target->getLevel($item);
-				} elseif ($type == ItemType::OFFICIER) {
-					$level = $target->{Vars::getName($item)}->timestamp ?? 0;
 				} elseif ($type == ItemType::TECH) {
 					$level = $target->getTechLevel($item);
 				}
 
-				if (($level && $item < 600) || ($level > time() && $item > 600)) {
+				if ($level) {
 					$result['items'][] = [
 						'id' => $item,
-						'lv' => $item < 600 ? $level : '+',
+						'lv' => $level,
+					];
+				}
+			}
+		}
+
+		if ($mode == 6) {
+			$items = Vars::getOfficiers();
+
+			foreach ($items as $item) {
+				if ($target->{'officier_' . $item}?->isFuture()) {
+					$result['items'][] = [
+						'id' => $item,
+						'lv' => '+',
 					];
 				}
 			}

@@ -3,14 +3,13 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Game;
-use App\Facades\Vars;
 
 class Research extends Entity
 {
 	protected function getBasePrice(): array
 	{
 		$cost  = parent::getBasePrice();
-		$price = Vars::getItemPrice($this->entityId);
+		$price = $this->object->getPrice();
 
 		return array_map(
 			fn (int $value) => (int) floor($value * (($price['factor'] ?? 1) ** $this->level)),
@@ -26,7 +25,7 @@ class Research extends Entity
 			$lablevel = 0;
 
 			foreach ($networkLevel as $level) {
-				$req = Vars::getItemRequirements($this->entityId);
+				$req = $this->object->getRequeriments();
 
 				if (!isset($req[31]) || $level >= $req[31]) {
 					$lablevel += $level;

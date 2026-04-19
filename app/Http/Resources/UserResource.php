@@ -55,14 +55,14 @@ class UserResource extends JsonResource
 			'deleted_at' => $this->resource->delete_time?->utc()->toAtomString(),
 		];
 
-		if ($this->resource->rpg_admiral?->isFuture()) {
+		if ($this->resource->officier_admiral?->isFuture()) {
 			$data['fleets_max'] += 2;
 		}
 
-		foreach (Vars::getItemsByType(ItemType::OFFICIER) as $officier) {
+		foreach (Vars::getOfficiers() as $code) {
 			$data['officiers'][] = [
-				'id' => $officier,
-				'date' => $this->resource->{Vars::getName($officier)}?->isFuture() ? $this->resource->{Vars::getName($officier)}->utc()->toAtomString() : null,
+				'code' => $code,
+				'date' => $this->resource->{'officier_' . $code}?->isFuture() ? $this->resource->{'officier_' . $code}->utc()->toAtomString() : null,
 			];
 		}
 

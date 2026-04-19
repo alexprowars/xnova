@@ -4,6 +4,8 @@ namespace App\Engine;
 
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\BaseObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\User;
@@ -12,14 +14,16 @@ class Building
 {
 	public static function checkTechnologyRace(User $user, int $element): bool
 	{
-		$requeriments = Vars::getItemRequirements($element);
+		$object = ObjectsFactory::get($element);
 
-		if (!count($requeriments)) {
+		$requeriments = $object->getRequeriments();
+
+		if (empty($requeriments)) {
 			return true;
 		}
 
 		foreach ($requeriments as $reqElement => $level) {
-			if ($reqElement == 700 && $user->race != $level) {
+			if ($reqElement == 'race' && $user->race != $level) {
 				return false;
 			}
 		}
@@ -43,11 +47,11 @@ class Building
 		return true;
 	}
 
-	public static function getTechTree(int $element, User $user, Planet $planet): ?array
+	public static function getTechTree(BaseObject $object, User $user, Planet $planet): ?array
 	{
-		$requirements = Vars::getItemRequirements($element);
+		$requirements = $object->getRequeriments();
 
-		if (!count($requirements)) {
+		if (empty($requirements)) {
 			return null;
 		}
 
@@ -56,7 +60,7 @@ class Building
 		foreach ($requirements as $reqId => $level) {
 			$minus = 0;
 
-			if ($reqId != 700) {
+			if ($reqId != 'race') {
 				$elementType = Vars::getItemType($reqId);
 
 				if ($elementType === ItemType::TECH && $user->getTechLevel($reqId) >= $level) {
@@ -90,15 +94,19 @@ class Building
 		return $result;
 	}
 
-	public static function getNextProduction(int $elementId, int $level, ?Planet $planet = null): ?Resources
+	public static function getNextProduction(BaseObject $object, int $level, ?Planet $planet = null): ?Resources
 	{
-		if (!in_array($elementId, Vars::getItemsByType(ItemType::PRODUCTION))) {
+		if (!$object->getProduction()) {
 			return null;
 		}
 
-		$entity = EntityFactory::get($elementId, $level + 1, $planet);
+		$entity = EntityFactory::get($object->getId(), $level + 1, $planet);
 
 		$resources = $entity->getProduction();
+
+		if (!$resources) {
+			return null;
+		}
 
 		$entity->setLevel($level);
 

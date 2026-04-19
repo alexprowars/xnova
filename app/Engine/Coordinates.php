@@ -6,6 +6,9 @@ use App\Engine\Enums\PlanetType;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Uri;
 
+/**
+ * @implements Arrayable<string, int>
+ */
 class Coordinates implements Arrayable
 {
 	public function __construct(protected int $galaxy, protected int $system, protected ?int $planet = null, protected ?PlanetType $type = null)

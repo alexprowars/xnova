@@ -25,7 +25,7 @@ class Production
 		$this->calculate();
 	}
 
-	protected function calculate()
+	protected function calculate(): void
 	{
 		if (!$this->planet->user instanceof User) {
 			return;
@@ -44,7 +44,7 @@ class Production
 		}
 	}
 
-	public function reset()
+	public function reset(): void
 	{
 		$this->updateTime = now()->toImmutable();
 		$this->basic = null;
@@ -54,7 +54,7 @@ class Production
 		$this->calculate();
 	}
 
-	public function update(bool $simulation = false)
+	public function update(bool $simulation = false): void
 	{
 		if (!$simulation) {
 			$this->planet->update();
@@ -122,10 +122,10 @@ class Production
 
 		$result = [];
 
-		$itemsId = Vars::getItemsByType(ItemType::PRODUCTION);
+		$objects = Vars::getObjectsByType([ItemType::BUILDING, ItemType::FLEET]);
 
-		foreach ($itemsId as $itemId) {
-			$entity = $this->planet->getEntityUnit($itemId);
+		foreach ($objects as $object) {
+			$entity = $this->planet->getEntityUnit($object->getId());
 
 			if (!$entity || $entity->getLevel() <= 0) {
 				continue;
@@ -133,13 +133,17 @@ class Production
 
 			$factor = null;
 
-			if ($itemId == 12 && $this->planet->deuterium < 100) {
+			if ($object->getId() == 12 && $this->planet->deuterium < 100) {
 				$factor = 0;
 			}
 
 			$production = $entity->getProduction($factor);
 
-			$result[$itemId] = $production;
+			if (!$production) {
+				continue;
+			}
+
+			$result[$object->getId()] = $production;
 		}
 
 		return $result;
@@ -180,7 +184,7 @@ class Production
 		return $this->production;
 	}
 
-	protected function updatePlanetResources()
+	protected function updatePlanetResources(): void
 	{
 		$time = $this->planet->last_update->diffInSeconds($this->updateTime);
 

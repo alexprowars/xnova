@@ -89,7 +89,7 @@ class Mailing extends Page
 		];
 	}
 
-	protected function submit(array $data)
+	protected function submit(array $data): void
 	{
 		$currentUser = auth()->user();
 

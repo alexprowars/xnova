@@ -14,7 +14,7 @@ class GravatarProvider implements AvatarProvider
 		return self::generateGravatarUrl($record->email);
 	}
 
-	public static function generateGravatarUrl($email, $size = null): string
+	public static function generateGravatarUrl(string $email, ?string $size = null): string
 	{
 		$hash = md5(strtolower(trim($email)));
 

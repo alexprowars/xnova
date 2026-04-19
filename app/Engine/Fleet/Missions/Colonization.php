@@ -80,7 +80,7 @@ class Colonization extends BaseMission
 		}
 	}
 
-	protected function sendNotify(AbstractMessage $message)
+	protected function sendNotify(AbstractMessage $message): void
 	{
 		$this->fleet->user->notify(new SystemMessage(MessageType::Fleet, $message));
 	}

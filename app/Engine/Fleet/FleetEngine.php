@@ -13,16 +13,16 @@ class FleetEngine
 	{
 	}
 
-	public function killFleet($fleetId = null): void
+	public function killFleet(?int $fleetId = null): void
 	{
 		if (!$fleetId) {
 			$fleetId = $this->fleet->id;
 		}
 
-		Fleet::find($fleetId)?->delete();
+		Fleet::findOne($fleetId)?->delete();
 	}
 
-	public function restoreFleetToPlanet($start = true, $fleet = true): void
+	public function restoreFleetToPlanet(bool $start = true, bool $fleet = true): void
 	{
 		if (empty($this->fleet->id)) {
 			return;

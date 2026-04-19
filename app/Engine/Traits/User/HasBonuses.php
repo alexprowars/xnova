@@ -6,7 +6,7 @@ trait HasBonuses
 {
 	protected array $bonusData = [];
 
-	protected function fillBobusData()
+	protected function fillBonusData(): void
 	{
 		$bonusArrays = [
 			'storage', 'metal', 'crystal', 'deuterium', 'energy', 'solar',
@@ -25,31 +25,31 @@ trait HasBonuses
 		$this->bonusData['queue'] = 0;
 
 		// Расчет бонусов от офицеров
-		if ($this->rpg_geologue?->isFuture()) {
+		if ($this->officier_geologist?->isFuture()) {
 			$this->bonusData['metal'] 			+= 0.25;
 			$this->bonusData['crystal'] 		+= 0.25;
 			$this->bonusData['deuterium'] 		+= 0.25;
 			$this->bonusData['storage'] 		+= 0.25;
 		}
-		if ($this->rpg_ingenieur?->isFuture()) {
+		if ($this->officier_engineer?->isFuture()) {
 			$this->bonusData['energy'] 			+= 0.15;
 			$this->bonusData['solar'] 			+= 0.15;
 			$this->bonusData['res_defence'] 	-= 0.1;
 		}
-		if ($this->rpg_admiral?->isFuture()) {
+		if ($this->officier_admiral?->isFuture()) {
 			$this->bonusData['res_fleet'] 		-= 0.1;
 			$this->bonusData['fleet_speed'] 	+= 0.25;
 		}
-		if ($this->rpg_constructeur?->isFuture()) {
+		if ($this->officier_architect?->isFuture()) {
 			$this->bonusData['time_fleet'] 		-= 0.25;
 			$this->bonusData['time_defence'] 	-= 0.25;
 			$this->bonusData['time_building'] 	-= 0.25;
 			$this->bonusData['queue'] 			+= 2;
 		}
-		if ($this->rpg_technocrate?->isFuture()) {
+		if ($this->officier_technocrat?->isFuture()) {
 			$this->bonusData['time_research'] 	-= 0.25;
 		}
-		if ($this->rpg_meta?->isFuture()) {
+		if ($this->officier_metaphysician?->isFuture()) {
 			$this->bonusData['fleet_fuel'] 		-= 0.2;
 		}
 
@@ -77,23 +77,21 @@ trait HasBonuses
 			$this->bonusData['res_research'] 	-= 0.1;
 			$this->bonusData['fleet_speed'] 	+= 0.1;
 		}
-
-		return true;
 	}
 
-	public function bonus($key, $default = null): float
+	public function bonus(string $key, ?float $default = null): float
 	{
 		if (!$this->bonusData) {
-			$this->fillBobusData();
+			$this->fillBonusData();
 		}
 
 		return $this->bonusData[$key] ?? ($default ?? 1.0);
 	}
 
-	public function setBonus($key, $value)
+	public function setBonus(string $key, ?float $value): void
 	{
 		if (!$this->bonusData) {
-			$this->fillBobusData();
+			$this->fillBonusData();
 		}
 
 		$this->bonusData[$key] = $value;

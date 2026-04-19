@@ -3,14 +3,13 @@
 namespace App\Engine\Entity;
 
 use App\Engine\Contracts\EntityBuildingInterface;
-use App\Facades\Vars;
 
 class Building extends Entity implements EntityBuildingInterface
 {
 	protected function getBasePrice(): array
 	{
 		$cost  = parent::getBasePrice();
-		$price = Vars::getItemPrice($this->entityId);
+		$price = $this->object->getPrice();
 
 		return array_map(
 			fn (int $value) => (int) floor($value * (($price['factor'] ?? 1) ** $this->level)),

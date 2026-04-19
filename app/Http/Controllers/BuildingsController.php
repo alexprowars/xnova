@@ -6,7 +6,10 @@ use App\Engine\Building;
 use App\Engine\Entity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
+use App\Engine\Objects\BuildingObject;
+use App\Engine\Objects\ObjectsFactory;
 use App\Engine\QueueManager;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
 use Illuminate\Http\Request;
 
@@ -18,15 +21,15 @@ class BuildingsController extends Controller
 
 		$items = [];
 
-		foreach (Vars::getItemsByType(ItemType::BUILDING) as $elementId) {
-			if (
-				!in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type))
-				|| !Building::checkTechnologyRace($this->user, $elementId)
-			) {
+		$elements = Vars::getObjectsByType(ItemType::BUILDING);
+
+		/** @var \App\Engine\Objects\BuildingObject $element */
+		foreach ($elements as $element) {
+			if (!$element->hasAllowedBuild($this->planet->planet_type) || !Building::checkTechnologyRace($this->user, $element->getId())) {
 				continue;
 			}
 
-			$entity = $this->planet->getEntityUnit($elementId);
+			$entity = $this->planet->getEntityUnit($element->getId());
 
 			if (!($entity instanceof Entity\Building)) {
 				continue;
@@ -41,22 +44,22 @@ class BuildingsController extends Controller
 			$price = $entity->getPrice();
 
 			$row = [
-				'id' => $elementId,
-				'name' => __('main.tech.' . $elementId),
-				'code' => Vars::getName($elementId),
+				'id' => $element->getId(),
+				'name' => $element->getName(),
+				'code' => $element->getCode(),
 				'available' => $available,
 				'price' => $price,
 			];
 
 			if ($available) {
-				if (in_array($elementId, Vars::getItemsByType(ItemType::BUILING_EXP))) {
+				if ($element->hasExperience()) {
 					$row['exp'] = $entity->getExp();
 				}
 
 				$row['time'] = $entity->getTime();
-				$row['effects'] = Building::getNextProduction($elementId, $entity->getLevel(), $this->planet)?->toArray();
+				$row['effects'] = Building::getNextProduction($element, $entity->getLevel(), $this->planet)?->toArray();
 			} else {
-				$row['requirements'] = Building::getTechTree($elementId, $this->user, $this->planet);
+				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
 
 			$items[] = $row;
@@ -69,8 +72,14 @@ class BuildingsController extends Controller
 	{
 		$elementId = (int) $request->post('element', 0);
 
-		if (!in_array($elementId, Vars::getAllowedBuilds($this->planet->planet_type))) {
-			return;
+		$object = ObjectsFactory::get($elementId);
+
+		if (!($object instanceof BuildingObject)) {
+			throw new Exception('Invalid building object');
+		}
+
+		if (!$object->hasAllowedBuild($this->planet->planet_type)) {
+			throw new Exception('Not allowed');
 		}
 
 		$queueManager = new QueueManager($this->planet);
@@ -83,10 +92,10 @@ class BuildingsController extends Controller
 
 		switch ($action) {
 			case 'insert':
-				$queueManager->add($elementId);
+				$queueManager->add($object);
 				break;
 			case 'destroy':
-				$queueManager->add($elementId, 1, true);
+				$queueManager->add($object, 1, true);
 				break;
 		}
 	}
@@ -103,10 +112,10 @@ class BuildingsController extends Controller
 
 		switch ($action) {
 			case 'cancel':
-				$queueManager->delete(1);
+				$queueManager->delete(ObjectsFactory::get(1));
 				break;
 			case 'remove':
-				$queueManager->delete(1, $index);
+				$queueManager->delete(ObjectsFactory::get(1), $index);
 				break;
 		}
 	}

@@ -139,15 +139,6 @@ return [
 		502 => 'Anti-ballistic missile',
 		503 => 'Interplanetary missile',
 
-		600 => 'Officiers',
-		601 => 'Geologist',
-		602 => 'Admiral',
-		603 => 'Engineer',
-		604 => 'Technocrat',
-		605 => 'Architect',
-		606 => 'Metaphysician',
-		607 => 'Mercenary',
-
 		700 => 'Fraction',
 
 		701 => 'Confederation',

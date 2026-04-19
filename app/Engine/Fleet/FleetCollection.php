@@ -8,11 +8,20 @@ use App\Engine\Game;
 use App\Models\Planet;
 use Illuminate\Support\Collection;
 
+/**
+ * @extends Collection<int, Ship>
+ */
 class FleetCollection extends Collection
 {
 	public static function createFromArray(array $items, Planet $planet): self
 	{
-		return (new self($items))->map(fn($count, $item) => Ship::createEntity($item, $count, $planet));
+		$map = [];
+
+		foreach ($items as $item => $count) {
+			$map[] = Ship::createEntity($item, $count, $planet);
+		}
+
+		return (new self($map));
 	}
 
 	public function getSpeed(): int

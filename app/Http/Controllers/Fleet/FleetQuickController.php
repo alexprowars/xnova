@@ -6,7 +6,8 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\MissionType;
-use App\Facades\Vars;
+use App\Engine\Objects\ObjectsFactory;
+use App\Engine\Objects\ShipObject;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Planet;
@@ -55,9 +56,10 @@ class FleetQuickController extends Controller
 			$recyclerNeeded = 0;
 
 			if ($this->planet->getLevel('recycler')) {
-				$fleetData = Vars::getUnitData(Vars::getIdByName('recycler'));
+				/** @var ShipObject $fleetObject */
+				$fleetObject = ObjectsFactory::get('recycler');
 
-				$recyclerNeeded = floor($debrisSize / ($fleetData['capacity'])) + 1;
+				$recyclerNeeded = floor($debrisSize / ($fleetObject->getCapacity())) + 1;
 				$recyclerNeeded = min($recyclerNeeded, $this->planet->getLevel('recycler'));
 			}
 

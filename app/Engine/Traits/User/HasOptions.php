@@ -21,17 +21,17 @@ trait HasOptions
 		'spy'				=> 1,
 	];
 
-	public function getOptions()
+	public function getOptions(): array
 	{
 		return array_merge($this->optionsDefault, $this->options ?? []);
 	}
 
-	public function getOption($key)
+	public function getOption(string $key): mixed
 	{
 		return ($this->options[$key] ?? ($this->optionsDefault[$key] ?? 0));
 	}
 
-	public function setOption($key, $value)
+	public function setOption(string $key, mixed $value): void
 	{
 		$options = $this->options ?? [];
 		$options[$key] = $value;

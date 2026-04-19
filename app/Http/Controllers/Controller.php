@@ -34,7 +34,7 @@ class Controller extends BaseController
 		});
 	}
 
-	private function init(?User $user)
+	private function init(?User $user): void
 	{
 		if (!$user) {
 			return;

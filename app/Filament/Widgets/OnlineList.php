@@ -48,11 +48,15 @@ class OnlineList extends TableWidget
 					->sortable(),
 				TextColumn::make('onlinetime')
 					->label('Активность')
-					->formatStateUsing(fn (User $record) => Format::time($record->onlinetime->diffInSeconds(now())))
+					->formatStateUsing(fn (User $record) => Format::time((int) $record->onlinetime->diffInSeconds(now())))
 					->sortable(),
 			]);
 	}
 
+	/**
+	 * @param Builder<User> $query
+	 * @return Paginator<int, User>|CursorPaginator<int, User>
+	 */
 	protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
 	{
 		return $query->paginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());

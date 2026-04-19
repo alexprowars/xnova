@@ -31,7 +31,7 @@ class Fleet extends Command
 			->get();
 
 		foreach ($fleets as $fleet) {
-			dispatch(new FleetMissionJob($fleet));
+			dispatch_sync(new FleetMissionJob($fleet));
 		}
 	}
 }

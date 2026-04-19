@@ -68,7 +68,7 @@ class PlanetService
 		$jumpGate = $this->planet->getLevel('jumpgate');
 
 		if ($jumpGate > 0) {
-			$waitTime = 3600 * (1 / $jumpGate);
+			$waitTime = (int) floor(3600 * (1 / $jumpGate));
 			$jumpDiff = (int) $this->planet->last_jump_time->diffInSeconds(absolute: true);
 
 			if ($jumpDiff < $waitTime) {
