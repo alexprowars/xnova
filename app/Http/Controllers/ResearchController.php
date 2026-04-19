@@ -51,14 +51,12 @@ class ResearchController extends Controller
 				continue;
 			}
 
-			$price = $entity->getObject()->getPrice();
-
 			$row = [
 				'id' => $element->getId(),
 				'name' => $element->getName(),
 				'code' => $element->getCode(),
 				'available' => $available && $labInQueue,
-				'max' => $price['max'] ?? 0,
+				'max' => $element->getMaxConstructable() ?? 0,
 				'price' => $entity->getPrice(),
 				'build' => false,
 				'effects' => '',

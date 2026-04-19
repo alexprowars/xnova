@@ -391,6 +391,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 		return 22;
 	}
 
+	/**
+	 * @param User $user
+	 * @return array<int>
+	 */
 	public static function getPlanetsId(self $user): array
 	{
 		return Planet::query()->whereBelongsTo($user)
@@ -419,7 +423,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 			}
 
 			if (Session::has('ref')) {
-				$refer = self::query()->findOne((int) Session::get('ref'));
+				$refer = User::query()->findOne((int) Session::get('ref'));
 
 				if ($refer) {
 					Referal::insert([

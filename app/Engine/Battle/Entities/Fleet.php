@@ -55,6 +55,9 @@ class Fleet
 		return $this->items[$id] ?? null;
 	}
 
+	/**
+	 * @return Unit[]
+	 */
 	public function getUnits(): array
 	{
 		return $this->items;
@@ -70,6 +73,9 @@ class Fleet
 		return $this->getUnit($id)?->getCount() ?? 0;
 	}
 
+	/**
+	 * @return array<int, int>
+	 */
 	public function getUnitsCount(): array
 	{
 		$result = [];

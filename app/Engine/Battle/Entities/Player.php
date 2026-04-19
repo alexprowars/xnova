@@ -6,6 +6,7 @@ class Player
 {
 	private int $id;
 	private ?string $name;
+	/** @var array<int, int> */
 	private array $techs = [];
 	/** @var Fleet[] */
 	protected array $items = [];
@@ -37,11 +38,18 @@ class Player
 		return $this;
 	}
 
+	/**
+	 * @return array<int, int>
+	 */
 	public function getTechnologies(): array
 	{
 		return $this->techs;
 	}
 
+	/**
+	 * @param array<int, int> $items
+	 * @return $this
+	 */
 	public function setTechnologies(array $items): self
 	{
 		$this->techs = $items;

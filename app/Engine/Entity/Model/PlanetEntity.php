@@ -26,6 +26,9 @@ class PlanetEntity implements Arrayable, JsonSerializable
 		return new self(['i' => $id, 'l' => $level, 'f' => $factor]);
 	}
 
+	/**
+	 * @return array{i: int, l: int, f: int}
+	 */
 	public function toArray(): array
 	{
 		return [
@@ -42,6 +45,9 @@ class PlanetEntity implements Arrayable, JsonSerializable
 		return $this;
 	}
 
+	/**
+	 * @return array{i: int, l: int, f: int}
+	 */
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();

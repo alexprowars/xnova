@@ -9,8 +9,7 @@ use App\Engine\Battle\Entities\Unit;
 use App\Engine\Battle\Result\Result;
 use App\Engine\Enums\ItemType;
 use App\Engine\Objects\DefenceObject;
-use App\Engine\Objects\ObjectsFactory;
-use App\Exceptions\Exception;
+use App\Engine\Objects\ShipObject;
 use App\Facades\Vars;
 use App\Models\Fleet as FleetModel;
 use App\Models\Planet;
@@ -75,20 +74,19 @@ class Battle
 			->setPosition($fleet->getDestinationCoordinates(false));
 
 		foreach ($fleet->entities as $entity) {
-			if ((Vars::getItemType($entity->id) != ItemType::FLEET && Vars::getItemType($entity->id) != ItemType::DEFENSE) || empty($entity->count)) {
+			$object = $entity->getObjectData();
+
+			if (!($object instanceof DefenceObject) || empty($entity->count)) {
 				continue;
 			}
 
-			try {
-				$fleetObj->addUnit(
-					$this->getUnitData(
-						$entity->id,
-						$entity->count,
-						$playerObj->getTechnologies()
-					)
-				);
-			} catch (Exception) {
-			}
+			$fleetObj->addUnit(
+				$this->getUnitData(
+					$object,
+					$entity->count,
+					$playerObj->getTechnologies()
+				)
+			);
 		}
 
 		if (!$fleetObj->isEmpty()) {
@@ -102,11 +100,11 @@ class Battle
 	{
 		$res = [];
 
-		$units = Vars::getItemsByType([ItemType::FLEET, ItemType::DEFENSE]);
+		$units = Vars::getObjectsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
-		foreach ($units as $i) {
-			if ($planet->getLevel($i) > 0) {
-				$res[$i] = $planet->getLevel($i);
+		foreach ($units as $unit) {
+			if ($planet->getLevel($unit) > 0) {
+				$res[$unit->getId()] = $planet->getLevel($unit);
 			}
 		}
 
@@ -125,18 +123,15 @@ class Battle
 		$fleet = new Fleet(0)
 			->setPosition($planet->coordinates);
 
-		foreach ($units as $i) {
-			if ($planet->getLevel($i) > 0) {
-				try {
-					$unit = $this->getUnitData($i, $planet->getLevel($i), $res);
+		foreach ($units as $object) {
+			if ($planet->getLevel($object) > 0 && $object instanceof DefenceObject) {
+				$unit = $this->getUnitData($object, $planet->getLevel($object), $res);
 
-					if ($planet->user->officier_engineer && Vars::getItemType($unit->getId()) == ItemType::FLEET) {
-						$unit->setRepairProb(0.8);
-					}
-
-					$fleet->addUnit($unit);
-				} catch (Exception) {
+				if ($planet->user->officier_engineer?->isFuture() && $object instanceof ShipObject) {
+					$unit->setRepairProb(0.8);
 				}
+
+				$fleet->addUnit($unit);
 			}
 		}
 
@@ -173,6 +168,10 @@ class Battle
 		return new Result($this->attackers, $this->defenders, $output);
 	}
 
+	/**
+	 * @param User $user
+	 * @return array<int, int>
+	 */
 	protected function getUserTechs(User $user): array
 	{
 		$info = [
@@ -201,14 +200,8 @@ class Battle
 		return $result;
 	}
 
-	protected function getUnitData(int|string $id, int $count, array $res = []): Unit
+	protected function getUnitData(DefenceObject $shipObject, int $count, array $res = []): Unit
 	{
-		$shipObject = ObjectsFactory::get($id);
-
-		if (!($shipObject instanceof DefenceObject)) {
-			throw new Exception('Ship object not found');
-		}
-
 		$attDef 	= ($res[111] ?? 0) * 0.05;
 		$attTech 	= ($res[109] ?? 0) * 0.05;
 
@@ -225,7 +218,7 @@ class Battle
 		$cost = [$price['metal'], $price['crystal']];
 
 		return new Unit(
-			$id,
+			$shipObject->getId(),
 			$count,
 			(int) round($shipObject->getAttack() * (1 + $attTech)),
 			(int) round((array_sum($cost) * (1 + $attDef)) / 10),

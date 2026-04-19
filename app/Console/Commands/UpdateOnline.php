@@ -9,7 +9,6 @@ use App\Models;
 class UpdateOnline extends Command
 {
 	protected $signature = 'game:update.online';
-	protected $description = '';
 
 	public function handle(): void
 	{

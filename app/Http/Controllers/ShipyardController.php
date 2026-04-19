@@ -59,21 +59,21 @@ class ShipyardController extends Controller
 				$row['time'] = $entity->getTime();
 				$row['is_max'] = false;
 
-				$price = $entity->getObject()->getPrice();
+				$maxConstructable = $element->getMaxConstructable();
 
-				if (isset($price['max'])) {
+				if ($maxConstructable) {
 					$total = $this->planet->getLevel($element->getId());
 
 					if (isset($buildArray[$element->getId()])) {
 						$total += $buildArray[$element->getId()];
 					}
 
-					if ($total >= $price['max']) {
+					if ($total >= $maxConstructable) {
 						$row['is_max'] = true;
 					}
 				}
 
-				$row['max'] = isset($price['max']) ? (int) $price['max'] : 0;
+				$row['max'] = $maxConstructable ?: 0;
 				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
 			} else {
 				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);

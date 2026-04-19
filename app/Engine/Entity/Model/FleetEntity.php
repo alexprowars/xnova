@@ -34,6 +34,9 @@ class FleetEntity implements Arrayable, JsonSerializable
 		return $this->params[$key] ?? $default;
 	}
 
+	/**
+	 * @return array{i: int, c: int, p: array}
+	 */
 	public function toArray(): array
 	{
 		$result = [
@@ -48,6 +51,9 @@ class FleetEntity implements Arrayable, JsonSerializable
 		return $result;
 	}
 
+	/**
+	 * @return array{i: int, c: int, p: array}
+	 */
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();

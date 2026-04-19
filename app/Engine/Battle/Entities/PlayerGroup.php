@@ -49,6 +49,9 @@ class PlayerGroup
 		return $this->items;
 	}
 
+	/**
+	 * @return array<int>
+	 */
 	public function getPlayersId(): array
 	{
 		$result = [];

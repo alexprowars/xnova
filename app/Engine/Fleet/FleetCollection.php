@@ -74,11 +74,11 @@ class FleetCollection extends Collection
 
 	public function getStorage(): int
 	{
-		return $this->reduce(fn(int $total, Ship $item) => $total + ($item->getStorage() * $item->getLevel()), 0);
+		return (int) $this->reduce(fn(int $total, Ship $item) => $total + ($item->getStorage() * $item->getLevel()), 0);
 	}
 
 	public function getStayConsumption(): int
 	{
-		return $this->reduce(fn(int $total, Ship $item) => $total + ($item->getStayConsumption() * $item->getLevel()), 0);
+		return (int) $this->reduce(fn(int $total, Ship $item) => $total + ($item->getStayConsumption() * $item->getLevel()), 0);
 	}
 }

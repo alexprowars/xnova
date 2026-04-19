@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 	Route::post('logout', [Controllers\LogoutController::class, 'index']);
 
-	Route::get('info/{id}', [Controllers\InfoController::class, 'index'])->whereNumber('id');
+	Route::get('info/{id}', [Controllers\InfoController::class, 'detail'])->whereNumber('id');
 	Route::post('info/{id}/missiles', [Controllers\InfoController::class, 'missiles'])->whereNumber('id');
 	Route::post('info/{id}/alliance', [Controllers\InfoController::class, 'alliance'])->whereNumber('id');
 

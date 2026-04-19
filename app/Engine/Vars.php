@@ -69,13 +69,17 @@ class Vars
 		return null;
 	}
 
+	/**
+	 * @param array<ItemType>|ItemType $types
+	 * @return array<int>
+	 */
 	public function getItemsByType(array | ItemType $types): array
 	{
 		return array_map(fn(BaseObject $item) => $item->getId(), $this->getObjectsByType($types));
 	}
 
 	/**
-	 * @param array|ItemType $types
+	 * @param array<ItemType>|ItemType $types
 	 * @return array<BaseObject>
 	 */
 	public function getObjectsByType(array | ItemType $types): array
@@ -100,6 +104,9 @@ class Vars
 		];
 	}
 
+	/**
+	 * @return array<'metal'|'crystal'|'deuterium'>
+	 */
 	public function getResources(): array
 	{
 		return ['metal', 'crystal', 'deuterium'];

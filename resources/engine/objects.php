@@ -255,7 +255,8 @@ return [
 		'id' => 123,
 		'code' => 'intergalactic_tech',
 		'type' => 'research',
-		'price' => ['metal' => 240000, 'crystal' => 400000, 'deuterium' => 160000, 'factor' => 2, 'max' => 8],
+		'max' => 8,
+		'price' => ['metal' => 240000, 'crystal' => 400000, 'deuterium' => 160000, 'factor' => 2],
 		'requeriments' => [31 => 10, 108 => 8, 114 => 8],
 	],
 	124 => [
@@ -269,7 +270,8 @@ return [
 		'id' => 150,
 		'code' => 'colonization_tech',
 		'type' => 'research',
-		'price' => ['metal' => 2000, 'crystal' => 8000, 'deuterium' => 2000, 'factor' => 2, 'max' => 8],
+		'max' => 8,
+		'price' => ['metal' => 2000, 'crystal' => 8000, 'deuterium' => 2000, 'factor' => 2],
 		'requeriments' => [31 => 3, 111 => 2, 113 => 5],
 	],
 	161 => [
@@ -283,7 +285,8 @@ return [
 		'id' => 199,
 		'code' => 'graviton_tech',
 		'type' => 'research',
-		'price' => ['metal' => 0, 'crystal' => 0, 'deuterium' => 0, 'energy' => 300000, 'factor' => 3, 'max' => 1],
+		'max' => 1,
+		'price' => ['metal' => 0, 'crystal' => 0, 'deuterium' => 0, 'energy' => 300000, 'factor' => 3],
 		'requeriments' => [31 => 12],
 	],
 	202 => [
@@ -740,7 +743,8 @@ return [
 		'id' => 407,
 		'code' => 'small_protection_shield',
 		'type' => 'defense',
-		'price' => ['metal' => 10000, 'crystal' => 10000, 'deuterium' => 0, 'factor' => 1, 'max' => 1],
+		'max' => 1,
+		'price' => ['metal' => 10000, 'crystal' => 10000, 'deuterium' => 0, 'factor' => 1],
 		'requeriments' => [110 => 2, 21 => 1],
 		'combat' => [
 			'attack' => 1,
@@ -754,7 +758,8 @@ return [
 		'id' => 408,
 		'code' => 'big_protection_shield',
 		'type' => 'defense',
-		'price' => ['metal' => 30000, 'crystal' => 30000, 'deuterium' => 0, 'factor' => 1, 'max' => 1],
+		'max' => 1,
+		'price' => ['metal' => 30000, 'crystal' => 30000, 'deuterium' => 0, 'factor' => 1],
 		'requeriments' => [110 => 6, 21 => 6],
 		'combat' => [
 			'attack' => 1,

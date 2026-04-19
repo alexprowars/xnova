@@ -6,7 +6,7 @@ use App\Engine\Enums\Resources as ResourcesEnum;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * @implements Arrayable<string, float>
+ * @implements Arrayable<'metal'|'crystal'|'deuterium'|'energy', float>
  */
 class Resources implements Arrayable
 {
@@ -86,6 +86,9 @@ class Resources implements Arrayable
 		return $this;
 	}
 
+	/**
+	 * @return array<value-of<ResourcesEnum>, float>
+	 */
 	public function toArray(): array
 	{
 		return $this->resources;

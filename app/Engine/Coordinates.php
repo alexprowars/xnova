@@ -90,6 +90,9 @@ class Coordinates implements Arrayable
 		return $this->planet <= 15;
 	}
 
+	/**
+	 * @return array{galaxy: int, system: int, planet: int, planet_type: int|null}
+	 */
 	public function toArray(): array
 	{
 		return [

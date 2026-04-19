@@ -9,7 +9,6 @@ use App\Engine\Enums\QueueType;
 use App\Engine\Messages\Types\QueueDestroyNotExistMessage;
 use App\Engine\Messages\Types\QueueNoResourcesMessage;
 use App\Engine\Objects\BaseObject;
-use App\Engine\Objects\BuildingObject;
 use App\Engine\Objects\ObjectsFactory;
 use App\Events\PlanetEntityUpdated;
 use App\Exceptions\Exception;
@@ -410,9 +409,7 @@ class QueueManager
 		$buildTypes = Vars::getObjectsByType([ItemType::FLEET, ItemType::DEFENSE]);
 
 		foreach ($buildTypes as $object) {
-			$price = $object->getPrice();
-
-			if (isset($price['max'])) {
+			if ($object->getMaxConstructable()) {
 				$max[$object->getId()] = $this->planet->getLevel($object->getId());
 			}
 		}
@@ -434,15 +431,13 @@ class QueueManager
 				}
 			}
 
-			$price = ObjectsFactory::get($item->object_id)->getPrice();
+			$object = ObjectsFactory::get($item->object_id);
 
-			if (isset($price['max'])) {
-				if ($item->level > $price['max']) {
-					$item->level = $price['max'];
-				}
+			if ($object->getMaxConstructable()) {
+				$item->level = min($item->level, $object->getMaxConstructable());
 
-				if ($max[$item->object_id] + $item->level > $price['max']) {
-					$item->level = $price['max'] - $max[$item->object_id];
+				if ($max[$item->object_id] + $item->level > $object->getMaxConstructable()) {
+					$item->level = $object->getMaxConstructable() - $max[$item->object_id];
 				}
 
 				if ($item->level > 0) {
@@ -507,7 +502,6 @@ class QueueManager
 	{
 		$xp = 0;
 
-		/** @var BuildingObject $object */
 		$object = $entity->getObject();
 
 		if ($object->hasExperience()) {

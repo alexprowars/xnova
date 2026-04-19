@@ -7,7 +7,6 @@ use App\Engine\Entity;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Engine\Objects\BaseObject;
-use App\Engine\Objects\ObjectsFactory;
 use App\Engine\QueueManager;
 use App\Models;
 use App\Models\LogsHistory;
@@ -25,15 +24,13 @@ class Unit
 
 		$entity = EntityFactory::get($element->getId(), 1, $planet);
 
-		if (!$entity->isAvailable() || !($entity instanceof Entity\Unit)) {
+		if (!$entity->isAvailable() || (!($entity instanceof Entity\Ship) && !($entity instanceof Entity\Defence))) {
 			return;
 		}
 
 		$buildItems = $this->queue->get(QueueType::SHIPYARD);
 
-		$price = $element->getPrice();
-
-		if (isset($price['max'])) {
+		if ($element->getMaxConstructable()) {
 			$total = $planet->getLevel($element->getId());
 
 			foreach ($buildItems as $item) {
@@ -42,7 +39,7 @@ class Unit
 				}
 			}
 
-			$count = min($count, max(($price['max'] - $total), 0));
+			$count = min($count, max(($element->getMaxConstructable() - $total), 0));
 		}
 
 		if ($element->getId() == 502 || $element->getId() == 503) {

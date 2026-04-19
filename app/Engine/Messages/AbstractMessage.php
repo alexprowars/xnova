@@ -15,6 +15,9 @@ abstract class AbstractMessage implements MessageContract
 		return null;
 	}
 
+	/**
+	 * @return array{type: string, data: array}
+	 */
 	public function toArray(): array
 	{
 		return [

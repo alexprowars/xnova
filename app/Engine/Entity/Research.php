@@ -2,14 +2,22 @@
 
 namespace App\Engine\Entity;
 
+use App\Engine\Enums\Resources;
 use App\Engine\Game;
+use App\Engine\Objects\ResearchObject;
 
+/**
+ * @extends Entity<ResearchObject>
+ */
 class Research extends Entity
 {
+	/**
+	 * @return array<value-of<Resources>, int>
+	 */
 	protected function getBasePrice(): array
 	{
 		$cost  = parent::getBasePrice();
-		$price = $this->object->getPrice();
+		$price = $this->getObject()->getPrice();
 
 		return array_map(
 			fn (int $value) => (int) floor($value * (($price['factor'] ?? 1) ** $this->level)),
@@ -25,7 +33,7 @@ class Research extends Entity
 			$lablevel = 0;
 
 			foreach ($networkLevel as $level) {
-				$req = $this->object->getRequeriments();
+				$req = $this->getObject()->getRequeriments();
 
 				if (!isset($req[31]) || $level >= $req[31]) {
 					$lablevel += $level;

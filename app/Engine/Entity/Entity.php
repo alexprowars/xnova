@@ -15,11 +15,15 @@ use App\Engine\Objects\ResearchObject;
 use App\Engine\Objects\ShipObject;
 use App\Models\Planet;
 
+/**
+ * @template TObject of BaseObject
+ */
 abstract class Entity implements EntityInterface, EntityProductionInterface
 {
 	use ProductionTrait;
 
 	protected ?Planet $planet;
+	/** @var TObject */
 	protected BaseObject $object;
 
 	protected function __construct(public int $entityId, public int $level = 0)
@@ -27,6 +31,12 @@ abstract class Entity implements EntityInterface, EntityProductionInterface
 		$this->object = ObjectsFactory::get($this->entityId);
 	}
 
+	/**
+	 * @param int $entityId
+	 * @param int $level
+	 * @param Planet|null $planet
+	 * @return static<BaseObject>
+	 */
 	public static function createEntity(int $entityId, int $level = 1, ?Planet $planet = null): static
 	{
 		/** @phpstan-ignore new.static */
@@ -41,6 +51,9 @@ abstract class Entity implements EntityInterface, EntityProductionInterface
 		return $this->entityId;
 	}
 
+	/**
+	 * @return TObject
+	 */
 	public function getObject(): BaseObject
 	{
 		return $this->object;
@@ -51,6 +64,9 @@ abstract class Entity implements EntityInterface, EntityProductionInterface
 		return $this->level;
 	}
 
+	/**
+	 * @return $this
+	 */
 	public function setLevel(int $level): self
 	{
 		$this->level = $level;
@@ -76,6 +92,9 @@ abstract class Entity implements EntityInterface, EntityProductionInterface
 		return $cost;
 	}
 
+	/**
+	 * @return array<value-of<Resources>, int>
+	 */
 	public function getPrice(): array
 	{
 		$cost = $this->getBasePrice();

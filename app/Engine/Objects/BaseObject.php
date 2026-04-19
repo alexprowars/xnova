@@ -3,6 +3,7 @@
 namespace App\Engine\Objects;
 
 use App\Engine\Enums\ItemType;
+use App\Engine\Enums\Resources;
 use App\Exceptions\Exception;
 
 abstract class BaseObject
@@ -37,6 +38,9 @@ abstract class BaseObject
 		};
 	}
 
+	/**
+	 * @return array<value-of<Resources>|'factor', int|float>
+	 */
 	public function getPrice(): array
 	{
 		return $this->data['price'] ?? [];
@@ -57,13 +61,24 @@ abstract class BaseObject
 		return $price['metal'] + $price['crystal'] + $price['deuterium'];
 	}
 
+	/**
+	 * @return array<int|string, int>
+	 */
 	public function getRequeriments(): array
 	{
 		return $this->data['requeriments'] ?? [];
 	}
 
+	/**
+	 * @return array<value-of<Resources>, \Closure>|null
+	 */
 	public function getProduction(): ?array
 	{
 		return $this->data['production'] ?? null;
+	}
+
+	public function getMaxConstructable(): ?int
+	{
+		return $this->data['max'] ?? null;
 	}
 }

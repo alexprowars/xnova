@@ -7,18 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
 	public function up()
 	{
-		Schema::create('moneys', function (Blueprint $table) {
+		Schema::create('referrals_clicks', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_id')->constrained('users');
-			$table->string('ip', 50)->default('')->index();
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+			$table->bigInteger('ip')->nullable()->index();
 			$table->timestamp('date')->useCurrent()->index();
-			$table->string('referer', 250)->default('');
-			$table->string('user_agent', 250)->default('');
+			$table->string('referer', 255)->nullable();
+			$table->string('user_agent', 255)->nullable();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('moneys');
+		Schema::drop('referrals_clicks');
 	}
 };

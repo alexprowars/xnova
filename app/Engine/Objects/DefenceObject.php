@@ -19,6 +19,9 @@ class DefenceObject extends BaseObject
 		return (int) floor($this->getTotalPrice() / 10);
 	}
 
+	/**
+	 * @return array<int, int>
+	 */
 	public function getRapidfire(): array
 	{
 		return $this->data['combat']['rapidfire'] ?? [];

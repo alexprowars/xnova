@@ -3,7 +3,6 @@
 namespace App\Engine\Battle\Result;
 
 use App\Engine\Battle\BattleResult;
-use App\Engine\Battle\Entities\Player;
 use App\Engine\Battle\Entities\PlayerGroup;
 use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
@@ -185,6 +184,9 @@ class Result
 		return $this->getPlayerRepaired($defendersBefore, $defendersAfter);
 	}
 
+	/**
+	 * @return array<'metal'|'crystal', int>
+	 */
 	public function getDebris(): array
 	{
 		$aDebris = $this->getAttackerDebris();
@@ -193,6 +195,9 @@ class Result
 		return ['metal' => $aDebris[0] + $dDebris[0], 'crystal' => $aDebris[1] + $dDebris[1]];
 	}
 
+	/**
+	 * @return array<int>
+	 */
 	public function getAttackerDebris(): array
 	{
 		$result = [0, 0];
@@ -207,6 +212,9 @@ class Result
 		return $result;
 	}
 
+	/**
+	 * @return array<int>
+	 */
 	public function getDefenderDebris(): array
 	{
 		$result = [0, 0];
@@ -221,6 +229,10 @@ class Result
 		return $result;
 	}
 
+	/**
+	 * @param array $player
+	 * @return array<int>
+	 */
 	protected function getDebrisForPlayer(array $player): array
 	{
 		$result = [0, 0];

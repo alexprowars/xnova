@@ -163,7 +163,7 @@ class BattleReport
 						}
 
 						$raport3 .= '<th>' . Format::number(round($fleetObject->getAttack() * $attTech)) . '</th>';
-						$raport4 .= '<th>' . Format::number(round(($fleetObject->getTotalPrice() / 10) * (1 + $this->resultData['attackers'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
+						$raport4 .= '<th>' . Format::number(round($fleetObject->getArmor() * (1 + $this->resultData['attackers'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
 					}
 
 					$raport1 .= '</tr>';
@@ -238,7 +238,7 @@ class BattleReport
 						}
 
 						$raport3 .= '<th>' . Format::number(round($fleetObject->getAttack() * $attTech)) . '</th>';
-						$raport4 .= '<th>' . Format::number(round(($fleetObject->getTotalPrice() / 10) * (1 + $this->resultData['defenders'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
+						$raport4 .= '<th>' . Format::number(round($fleetObject->getArmor() * (1 + $this->resultData['defenders'][$user]['tech']['defence_tech'] * 0.05))) . '</th>';
 					}
 
 					$raport1 .= '</tr>';
@@ -332,85 +332,52 @@ class BattleReport
 	{
 		$usersInfo = [];
 
-		foreach ($attackUsers as $userId => $u) {
-			foreach ($u['fleet'] as $f) {
-				if (!is_numeric($f['id'])) {
+		foreach ([$attackUsers, $defenseUsers] as $group) {
+			foreach ($group as $userId => $u) {
+				foreach ($u['fleet'] as $f) {
+					if (!is_numeric($f['id'])) {
+						continue;
+					}
+
+					$usersInfo[$f['id']] = $userId;
+				}
+			}
+		}
+
+		$processSide = static function (array $sideData, array $users, array $usersInfo): array {
+			$formatted = [];
+			$count = 0;
+
+			foreach ($sideData as $id => $data) {
+				$userId = $usersInfo[$id] ?? null;
+				if ($userId === null || !isset($users[$userId])) {
 					continue;
 				}
 
-				$usersInfo[$f['id']] = $userId;
-			}
-		}
+				$parts = [];
 
-		foreach ($defenseUsers as $userId => $u) {
-			foreach ($u['fleet'] as $f) {
-				if (!is_numeric($f['id'])) {
-					continue;
+				foreach ($users[$userId]['units'] as $unitId => $unitCount) {
+					if ($unitId < 200) {
+						$parts[] = $unitId . ',' . $unitCount;
+					}
 				}
 
-				$usersInfo[$f['id']] = $userId;
-			}
-		}
+				foreach ($data as $shipId => $shipCount) {
+					$parts[] = $shipId . ',' . $shipCount;
+				}
 
-		$att = [];
+				$formatted[] = implode(';', $parts);
 
-		$j = 0;
-
-		foreach ($resultData['rounds'][0]['attackers'] as $i => $a) {
-			$j++;
-
-			$t = [];
-
-			foreach ($attackUsers[$usersInfo[$i]]['units'] as $j => $l) {
-				if ($j < 200) {
-					$t[] = $j . ',' . $l;
+				if (++$count === 10) {
+					break;
 				}
 			}
 
-			foreach ($a as $s => $c) {
-				$t[] = $s . ',' . $c;
-			}
+			return array_pad($formatted, 10, '');
+		};
 
-			$att[] = implode(';', $t);
-
-			if ($j == 10) {
-				break;
-			}
-		}
-
-		for ($i = count($att); $i < 10; $i++) {
-			$att[] = '';
-		}
-
-		$def = [];
-
-		$j = 0;
-
-		foreach ($resultData['rounds'][0]['defenders'] as $i => $a) {
-			$j++;
-
-			$t = [];
-
-			foreach ($defenseUsers[$usersInfo[$i]]['units'] as $j => $l) {
-				if ($j < 200) {
-					$t[] = $j . ',' . $l;
-				}
-			}
-
-			foreach ($a as $s => $c) {
-				$t[] = $s . ',' . $c;
-			}
-
-			$def[] = implode(';', $t);
-
-			if ($j == 10) {
-				break;
-			}
-		}
-
-		for ($i = count($def); $i < 10; $i++) {
-			$def[] = '';
-		}
+		$att = $processSide($resultData['rounds'][0]['attackers'], $attackUsers, $usersInfo);
+		$def = $processSide($resultData['rounds'][0]['defenders'], $defenseUsers, $usersInfo);
 
 		return URL::to('/sim/report?r=' . implode('|', $att) . '|' . implode('|', $def));
 	}

@@ -58,6 +58,10 @@ class Recycling extends BaseMission
 		$this->fleet->user->notify(new SystemMessage(MessageType::Fleet, $message));
 	}
 
+	/**
+	 * @param Planet|null $target
+	 * @return array<'metal'|'crystal', int>
+	 */
 	protected function calculateRecycledGoods(?Planet $target): array
 	{
 		$result = [

@@ -170,6 +170,10 @@ class Planet extends Model
 		return $this->entities->getByEntityId($entityId);
 	}
 
+	/**
+	 * @param int|string|BaseObject $entityId
+	 * @return Entity<BaseObject>|null
+	 */
 	public function getEntityUnit(int|string|BaseObject $entityId): ?Entity
 	{
 		$entity = $this->getEntity($entityId);

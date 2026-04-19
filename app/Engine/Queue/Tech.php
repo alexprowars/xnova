@@ -31,9 +31,7 @@ class Tech
 			$entity = Entity\Research::createEntity($element->getId(), $user->getTechLevel($element->getId()), $planet);
 			$cost = $entity->getPrice();
 
-			$price = $entity->getObject()->getPrice();
-
-			if ($entity->isAvailable() && $entity->canConstruct() && !(isset($price['max']) && $user->getTechLevel($element->getId()) >= $price['max'])) {
+			if ($entity->isAvailable() && $entity->canConstruct() && !($element->getMaxConstructable() && $user->getTechLevel($element->getId()) >= $element->getMaxConstructable())) {
 				$planet->metal 		-= $cost['metal'];
 				$planet->crystal 	-= $cost['crystal'];
 				$planet->deuterium 	-= $cost['deuterium'];

@@ -29,15 +29,15 @@ class Build
 		$actualCount = $this->queue->getCount(QueueType::BUILDING);
 
 		if ($actualCount < $maxBuidSize) {
-			$queueID = $actualCount + 1;
+			$queueId = $actualCount + 1;
 		} else {
-			$queueID = false;
+			$queueId = false;
 		}
 
 		$currentMaxFields = $planet->getMaxFields();
 
 		if ($planet->field_current < ($currentMaxFields - $actualCount) || $destroy) {
-			if ($queueID > 1) {
+			if ($queueId > 1) {
 				$inArray = 0;
 
 				foreach ($this->queue->get(QueueType::BUILDING) as $item) {

@@ -2,13 +2,19 @@
 
 namespace App\Engine\Entity;
 
-use App\Engine\Objects;
+use App\Engine\Contracts\EntityUnitInterface;
+use App\Engine\Objects\ShipObject;
 
-class Ship extends Unit
+/**
+ * @extends Entity<ShipObject>
+ */
+class Ship extends Entity implements EntityUnitInterface
 {
+	use Unit;
+
 	public function getTime(): int
 	{
-		$time = parent::getTime();
+		$time = $this->getBaseTime();
 		$time *= $this->planet->user->bonus('time_fleet');
 
 		return max(1, (int) floor($time));
@@ -16,22 +22,14 @@ class Ship extends Unit
 
 	public function getConsumption(): int
 	{
-		if (!($this->object instanceof Objects\ShipObject)) {
-			return 0;
-		}
-
-		return (int) floor($this->object->getConsumption() * $this->planet->user->bonus('fleet_fuel'));
+		return (int) floor($this->getObject()->getConsumption() * $this->planet->user->bonus('fleet_fuel'));
 	}
 
 	public function getSpeed(): int
 	{
-		if (!($this->object instanceof Objects\ShipObject)) {
-			return 0;
-		}
-
 		$user = $this->planet->user;
 
-		$speed = $this->object->getSpeed() * match ($this->object->getEngineType()) {
+		$speed = $this->getObject()->getSpeed() * match ($this->getObject()->getEngineType()) {
 			1 => 1 + ($user->getTechLevel('combustion') * 0.1),
 			2 => 1 + ($user->getTechLevel('impulse_motor') * 0.2),
 			3 => 1 + ($user->getTechLevel('hyperspace_motor') * 0.3),
@@ -47,24 +45,16 @@ class Ship extends Unit
 
 	public function getStorage(): int
 	{
-		if (!($this->object instanceof Objects\ShipObject)) {
-			return 0;
-		}
-
-		return $this->object->getCapacity();
+		return $this->getObject()->getCapacity();
 	}
 
 	public function getStayConsumption(): int
 	{
-		if (!($this->object instanceof Objects\ShipObject)) {
-			return 0;
-		}
-
 		if ($this->planet->user->officier_metaphysician?->isFuture()) {
-			return (int) ceil($this->object->getStayConsumption() * 0.9);
+			return (int) ceil($this->getObject()->getStayConsumption() * 0.9);
 		}
 
-		return $this->object->getStayConsumption();
+		return $this->getObject()->getStayConsumption();
 	}
 
 	public function getInfo(): array

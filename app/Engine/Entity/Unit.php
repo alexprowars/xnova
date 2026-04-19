@@ -2,12 +2,11 @@
 
 namespace App\Engine\Entity;
 
-use App\Engine\Contracts\EntityUnitInterface;
 use App\Engine\Enums\Resources;
 
-class Unit extends Entity implements EntityUnitInterface
+trait Unit
 {
-	public function getTime(): int
+	public function getBaseTime(): int
 	{
 		$time = parent::getTime();
 
@@ -33,14 +32,34 @@ class Unit extends Entity implements EntityUnitInterface
 			$max = min($max ?? $count, $count);
 		}
 
-
-
-		$price = $this->object->getPrice();
-
-		if (isset($price['max'])) {
-			$max = min($max, $price['max']);
+		if ($this->getObject()->getMaxConstructable()) {
+			$max = min($max, $this->getObject()->getMaxConstructable());
 		}
 
 		return $max ?? 0;
+	}
+
+	public function getAttack(): int
+	{
+		$user = $this->planet->user;
+
+		$tech = 1 + $user->getTechLevel('military') * 0.05;
+
+		if ($this->getObject()->getWeaponType() == 1) {
+			$tech += $user->getTechLevel('laser') * 0.05;
+		} elseif ($this->getObject()->getWeaponType() == 2) {
+			$tech += $user->getTechLevel('ionic') * 0.05;
+		} elseif ($this->getObject()->getWeaponType() == 3) {
+			$tech += $user->getTechLevel('buster') * 0.05;
+		}
+
+		return (int) round($this->getObject()->getAttack() * (1 + $tech));
+	}
+
+	public function getArmor(): int
+	{
+		$user = $this->planet->user;
+
+		return (int) round($this->getObject()->getArmor() * (1 + $user->getTechLevel('defence') * 0.05));
 	}
 }

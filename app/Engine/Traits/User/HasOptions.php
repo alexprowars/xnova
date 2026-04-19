@@ -7,6 +7,9 @@ namespace App\Engine\Traits\User;
  */
 trait HasOptions
 {
+	/**
+	 * @var array<string, mixed>
+	 */
 	protected array $optionsDefault = [
 		'bb_parser' 		=> true,
 		'planetlist' 		=> false,
@@ -21,6 +24,9 @@ trait HasOptions
 		'spy'				=> 1,
 	];
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function getOptions(): array
 	{
 		return array_merge($this->optionsDefault, $this->options ?? []);

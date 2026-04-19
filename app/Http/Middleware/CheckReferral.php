@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers;
-use App\Models\Money;
+use App\Models\ReferalClick;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class CheckReferral
 
 		$ip = Helpers::convertIp($request->ip());
 
-		$exist = Money::query()
+		$exist = ReferalClick::query()
 			->where('ip', $ip)
 			->where('date', '>', now()->subDay())
 			->exists();
@@ -41,7 +41,7 @@ class CheckReferral
 			return $next($request);
 		}
 
-		Money::create([
+		ReferalClick::create([
 			'user_id' => $user->id,
 			'ip' => $ip,
 			'referer' => $request->server('HTTP_REFERER', ''),

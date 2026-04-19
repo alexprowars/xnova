@@ -29,19 +29,21 @@ class AppServiceProvider extends ServiceProvider
 			return htmlspecialchars($string);
 		});
 
-		Builder::macro('findOne', /** @return Model|null */ function ($key) {
+		Builder::macro('findOne', function ($key) {
 			if (empty($key)) {
 				return null;
 			}
 
+			/** @var Builder<Model> $this */
 			return $this->whereKey($key)->first();
 		});
 
-		Builder::macro('findOneOrFail', /** @return Model */ function ($key) {
+		Builder::macro('findOneOrFail', function ($key) {
 			if (empty($key)) {
 				return null;
 			}
 
+			/** @var Builder<Model> $this */
 			return $this->whereKey($key)->firstOrFail();
 		});
 

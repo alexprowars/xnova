@@ -11,6 +11,7 @@ use App\Models\User;
 class Simulation
 {
 	protected array $slots = [];
+	/** @var array<string|mixed>|null */
 	protected ?array $result = null;
 
 	public function addSlot(array $items): void
@@ -18,6 +19,9 @@ class Simulation
 		$this->slots[] = $items;
 	}
 
+	/**
+	 * @return array<string|mixed>
+	 */
 	public function getResult(): array
 	{
 		if (empty($this->result)) {

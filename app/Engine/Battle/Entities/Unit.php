@@ -48,6 +48,9 @@ class Unit
 		return $this->shield;
 	}
 
+	/**
+	 * @return array<int, int>
+	 */
 	public function getRapidFire(): array
 	{
 		return $this->rapidfire;

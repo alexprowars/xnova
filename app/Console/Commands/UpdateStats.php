@@ -8,7 +8,6 @@ use Illuminate\Console\Command;
 class UpdateStats extends Command
 {
 	protected $signature = 'game:update.stats';
-	protected $description = '';
 
 	public function handle(): void
 	{

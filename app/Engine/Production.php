@@ -114,6 +114,9 @@ class Production
 		return $this->basic;
 	}
 
+	/**
+	 * @return array<int, Resources>
+	 */
 	public function getEnitityProductions(): array
 	{
 		if (in_array($this->planet->planet_type, [PlanetType::MOON, PlanetType::MILITARY_BASE])) {
@@ -170,9 +173,9 @@ class Production
 			$resources->add($production);
 
 			if ($entityId < 4) {
-				$this->planet->energy_used += abs($production->get(ResourcesEnum::ENERGY));
+				$this->planet->energy_used += (int) abs($production->get(ResourcesEnum::ENERGY));
 			} else {
-				$this->planet->energy += $production->get(ResourcesEnum::ENERGY);
+				$this->planet->energy += (int) $production->get(ResourcesEnum::ENERGY);
 			}
 		}
 

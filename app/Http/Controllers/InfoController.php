@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Entity\Building;
+use App\Engine\Entity\Defence;
 use App\Engine\Entity\Ship;
+use App\Engine\EntityFactory;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\Resources;
@@ -20,7 +22,7 @@ use Throwable;
 
 class InfoController extends Controller
 {
-	public function index(int $itemId): array
+	public function detail(int $itemId): array
 	{
 		try {
 			$itemObject = ObjectsFactory::get($itemId);
@@ -28,17 +30,15 @@ class InfoController extends Controller
 			throw new Exception('Мы не сможем дать вам эту информацию');
 		}
 
-		$price = $itemObject->getPrice();
-
 		$result = [
 			'id' => $itemId,
 			'name' => $itemObject->getName(),
 			'code' => $itemObject->getCode(),
+			'type' => $itemObject->getType()->value,
 			'description' => __('info.description.' . $itemId),
 			'production' => null,
 			'destroy' => null,
-			'fleet' => null,
-			'defence' => null,
+			'combat' => null,
 			'missile' => null,
 		];
 
@@ -64,7 +64,7 @@ class InfoController extends Controller
 				foreach ($fleets as $item) {
 					$list[] = [
 						'id' => $item->id,
-						'start_galaxy' => $item->start_galaxy,
+						'galaxy' => $item->start_galaxy,
 						'system' => $item->start_system,
 						'planet' => $item->start_planet,
 						'name' => $item->user_name,
@@ -76,75 +76,41 @@ class InfoController extends Controller
 					'cost' => $this->planet->getLevel($itemId) * 10000,
 				];
 			}
-		} elseif ($itemObject instanceof ShipObject) {
-			$fleet = [];
-			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
-			$fleet['armor_full'] = round($fleet['armor'] * (1 + $this->user->getTechLevel('defence') * 0.05));
-
-			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
-
-			if ($itemObject->getWeaponType() == 1) {
-				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($itemObject->getWeaponType() == 2) {
-				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($itemObject->getWeaponType() == 3) {
-				$attTech += $this->user->getTechLevel('buster') * 0.05;
-			}
-
-			$fleet['attack'] = $itemObject->getAttack();
-			$fleet['attack_full'] = round($itemObject->getAttack() * $attTech);
-			$fleet['shield'] = $itemObject->getShield();
-			$fleet['capacity'] = $itemObject->getCapacity();
-			$fleet['speed'] = $itemObject->getSpeed();
-			$fleet['speed_full'] = Ship::createEntity($itemId, 1, $this->planet)->getSpeed();
-			$fleet['consumption'] = $itemObject->getConsumption();
-			$fleet['resources'] = [];
-
-			foreach ($price as $res => $value) {
-				$fleet['resources'][$res] = [
-					'base' => $value,
-					'full' => $value * $this->user->bonus('res_fleet'),
-				];
-			}
-
-			$fleet['type_engine'] = $itemObject->getEngineType();
-			$fleet['type_weapon'] = $itemObject->getWeaponType();
-			$fleet['type_armour'] = $itemObject->getArmorType();
-			$fleet['rapidfire'] = $this->getRapidfire($itemObject);
-
-			$result['fleet'] = $fleet;
 		} elseif ($itemObject instanceof DefenceObject) {
-			$fleet = [];
-			$fleet['armor'] = floor(($price['metal'] + $price['crystal']) / 10);
-			$fleet['armor_full'] = round($fleet['armor'] * (1 + $this->user->getTechLevel('defence') * 0.05));
-			$fleet['shield'] = $itemObject->getShield();
+			/** @var Ship|Defence $entity */
+			$entity = EntityFactory::get($itemObject->getId(), planet: $this->planet);
 
-			$attTech = 1 + $this->user->getTechLevel('military') * 0.05;
+			$combat = [
+				'armor' => $itemObject->getArmor(),
+				'armor_full' => $entity->getArmor(),
+				'attack' => $itemObject->getAttack(),
+				'attack_full' => $entity->getAttack(),
+				'shield' => $itemObject->getShield(),
+				'type_engine' => null,
+				'type_weapon' => $itemObject->getWeaponType(),
+				'type_armour' => $itemObject->getArmorType(),
+				'rapidfire' => $this->getRapidfire($itemObject),
+				'resources' => [],
+			];
 
-			if ($itemObject->getWeaponType() == 1) {
-				$attTech += $this->user->getTechLevel('laser') * 0.05;
-			} elseif ($itemObject->getWeaponType() == 2) {
-				$attTech += $this->user->getTechLevel('ionic') * 0.05;
-			} elseif ($itemObject->getWeaponType() == 3) {
-				$attTech += $this->user->getTechLevel('buster') * 0.05;
-			}
+			$basePrice = $itemObject->getPrice();
 
-			$fleet['attack'] = $itemObject->getAttack();
-			$fleet['attack_full'] = round($itemObject->getAttack() * $attTech);
-			$fleet['resources'] = [];
-
-			foreach ($price as $res => $value) {
-				$fleet['resources'][$res] = [
-					'base' => $value,
-					'full' => $value * $this->user->bonus('res_fleet'),
+			foreach ($entity->getPrice() as $res => $value) {
+				$combat['resources'][$res] = [
+					'base' => $basePrice[$res] ?? 0,
+					'full' => $value,
 				];
 			}
 
-			$fleet['rapidfire'] = $this->getRapidfire($itemObject);
-			$fleet['type_weapon'] = $itemObject->getWeaponType();
-			$fleet['type_armour'] = $itemObject->getArmorType();
+			if ($itemObject instanceof ShipObject && $entity instanceof Ship) {
+				$combat['capacity'] = $itemObject->getCapacity();
+				$combat['speed'] = $itemObject->getSpeed();
+				$combat['speed_full'] = $entity->getSpeed();
+				$combat['consumption'] = $itemObject->getConsumption();
+				$combat['type_engine'] = $itemObject->getEngineType();
+			}
 
-			$result['defence'] = $fleet;
+			$result['combat'] = $combat;
 		}
 
 		if ($itemId <= 44 && $itemId != 33 && $itemId != 41) {

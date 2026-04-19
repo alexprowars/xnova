@@ -11,6 +11,10 @@ use App\Models\Report;
 
 class FleetService
 {
+	/**
+	 * @param FleetEntityCollection $fleets
+	 * @return array<'metal'|'crystal', int>
+	 */
 	public static function convertFleetToDebris(FleetEntityCollection $fleets): array
 	{
 		$debris = ['metal' => 0, 'crystal' => 0];
@@ -19,11 +23,11 @@ class FleetService
 			$res = $entity->getObjectData()->getPrice();
 
 			if (!empty($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));
+				$debris['metal'] += (int) floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));
 			}
 
 			if (!empty($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += floor($entity->count * $res['crystal'] * config('game.fleetDebrisRate', 0));
+				$debris['crystal'] += (int) floor($entity->count * $res['crystal'] * config('game.fleetDebrisRate', 0));
 			}
 		}
 

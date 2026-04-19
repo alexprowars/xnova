@@ -127,7 +127,7 @@ class MissileAttack extends BaseMission
 			/** @var DefenceObject $targetObject */
 			$targetObject = ObjectsFactory::get($target);
 
-			$structure = ($targetObject->getTotalPrice() / 10 * ($targetDefTech / 10 + 1));
+			$structure = $targetObject->getArmor() * ($targetDefTech / 10 + 1);
 
 			$destroyCount = floor($totalDamage / $structure);
 			$destroyCount = min($destroyCount, $count);
