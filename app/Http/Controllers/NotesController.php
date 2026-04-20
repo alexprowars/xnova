@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Exception;
-use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -17,22 +16,17 @@ class NotesController extends Controller
 		$items = [];
 
 		foreach ($notes as $note) {
-			$item = [
+			$items[] = [
 				'id' => $note->id,
-				'time' => $note->updated_at?->utc()->toAtomString(),
+				'date' => $note->updated_at?->utc()->toAtomString(),
 				'title' => $note->title,
-				'color' => '',
+				'color' => match ($note->priority) {
+					0 => 'lime',
+					1 => 'yellow',
+					2 => 'red',
+					default => null,
+				},
 			];
-
-			if ($note->priority == 0) {
-				$item['color'] = 'lime';
-			} elseif ($note->priority == 1) {
-				$item['color'] = 'yellow';
-			} elseif ($note->priority == 2) {
-				$item['color'] = 'red';
-			}
-
-			$items[] = $item;
 		}
 
 		return $items;
@@ -55,15 +49,14 @@ class NotesController extends Controller
 		$message = $request->post('message');
 
 		if (empty($title)) {
-			$title = __('notes.NoTitle');
+			$title = __('notes.no_title');
 		}
 
 		if (empty($message)) {
-			$message = __('notes.NoText');
+			$message = __('notes.no_text');
 		}
 
-		$note = new Note();
-		$note->user()->associate($this->user);
+		$note = $this->user->notes()->make();
 		$note->priority = $priority;
 		$note->title = $title;
 		$note->text = $message;
@@ -79,7 +72,7 @@ class NotesController extends Controller
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new Exception('Заметка не найдена');
+			throw new Exception(__('notes.not_found'));
 		}
 
 		return [
@@ -95,7 +88,7 @@ class NotesController extends Controller
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new Exception('Заметка не найдена');
+			throw new Exception(__('notes.not_found'));
 		}
 
 		$priority = (int) $request->post('priority', 0);
@@ -104,11 +97,11 @@ class NotesController extends Controller
 		$message = $request->post('message');
 
 		if (empty($title)) {
-			$title = __('notes.NoTitle');
+			$title = __('notes.no_title');
 		}
 
 		if (empty($message)) {
-			$message = __('notes.NoText');
+			$message = __('notes.no_text');
 		}
 
 		$note->priority = $priority;

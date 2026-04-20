@@ -33,7 +33,7 @@ class PlanetController extends Controller
 			->exists();
 
 		if ($checkFleets) {
-			throw new Exception('Нельзя удалять планету если с/на неё летит флот');
+			throw new Exception(__('overview.planet_delete_fleet_in_transit'));
 		}
 
 		$destruyed = now()->addDay();
@@ -64,15 +64,15 @@ class PlanetController extends Controller
 		$name = strip_tags(trim($request->post('name', '')));
 
 		if (empty($name)) {
-			throw new Exception('Ввведите новое название планеты');
+			throw new Exception(__('overview.planet_rename_prompt'));
 		}
 
 		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			throw new Exception('Введённое название содержит недопустимые символы');
+			throw new Exception(__('overview.planet_name_invalid_chars'));
 		}
 
 		if (mb_strlen($name) <= 1 || mb_strlen($name) >= 20) {
-			throw new Exception('Введённо слишком длинное или короткое название планеты');
+			throw new Exception(__('overview.planet_name_invalid_length'));
 		}
 
 		$this->planet->name = $name;
@@ -82,7 +82,7 @@ class PlanetController extends Controller
 	public function image(Request $request): void
 	{
 		if ($this->user->credits < 1) {
-			throw new Exception('Недостаточно кредитов');
+			throw new Exception(__('overview.insufficient_credits'));
 		}
 
 		$image = (int) $request->post('image', 0);
@@ -95,7 +95,7 @@ class PlanetController extends Controller
 		}
 
 		if ($image <= 0 || $image > $this->planetImages[$type]) {
-			throw new Exception('Недостаточно читерских навыков');
+			throw new Exception(__('overview.insufficient_cheat_skills'));
 		}
 
 		$this->planet->image = $type . 'planet' . ($image < 10 ? '0' : '') . $image;

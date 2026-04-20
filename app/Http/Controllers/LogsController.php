@@ -71,13 +71,9 @@ class LogsController extends Controller
 		}
 
 		if ($log->users_id[0] == $this->user->id && $log->no_contact) {
-			$dataLog = [null];
+			$dataLog = [];
 		} else {
 			$dataLog = $log->data;
-
-			foreach ($dataLog['result']['rw'] as $round => $data1) {
-				unset($dataLog['result']['rw'][$round]['logA'], $dataLog['result']['rw'][$round]['logD']);
-			}
 		}
 
 		$new = new LogsBattle();
@@ -90,7 +86,7 @@ class LogsController extends Controller
 		}
 	}
 
-	public function info(int $id): array
+	public function detail(int $id): array
 	{
 		$raport = LogsBattle::find($id);
 
@@ -98,11 +94,11 @@ class LogsController extends Controller
 			throw new Exception('Запрашиваемого лога не существует в базе данных');
 		}
 
-		if ($raport->data['result'] === null) {
+		if (empty($raport->data)) {
 			throw new Exception('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
 		}
 
-		if (!$raport->user_id && Carbon::parse($raport->data['result']['date'])->isAfter(now()->subHours(2)) && !$this->user->isAdmin()) {
+		if (!$raport->user_id && Carbon::parse($raport->data['date'])->isAfter(now()->subHours(2)) && !$this->user->isAdmin()) {
 			throw new Exception('Данный лог боя пока недоступен для просмотра!');
 		}
 

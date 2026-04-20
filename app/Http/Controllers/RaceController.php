@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\LogsCredit;
@@ -67,10 +66,10 @@ class RaceController extends Controller
 		$this->user->update();
 
 		foreach ($this->user->planets as $planet) {
-			$planet->updateAmount(Vars::getIdByName('corvete'), 0);
-			$planet->updateAmount(Vars::getIdByName('interceptor'), 0);
-			$planet->updateAmount(Vars::getIdByName('dreadnought'), 0);
-			$planet->updateAmount(Vars::getIdByName('corsair'), 0);
+			$planet->updateAmount('corvete', 0);
+			$planet->updateAmount('interceptor', 0);
+			$planet->updateAmount('dreadnought', 0);
+			$planet->updateAmount('corsair', 0);
 
 			$planet->update();
 		}

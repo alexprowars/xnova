@@ -202,7 +202,7 @@ class Result
 	{
 		$result = [0, 0];
 
-		foreach ($this->getAttackersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $player) {
+		foreach ($this->getAttackersLostUnits(!config('game.combat.repairedToDebris')) as $player) {
 			$debris = $this->getDebrisForPlayer($player);
 
 			$result[0] += $debris[0];
@@ -219,7 +219,7 @@ class Result
 	{
 		$result = [0, 0];
 
-		foreach ($this->getDefendersLostUnits(!config('battle.REPAIRED_DO_DEBRIS')) as $player) {
+		foreach ($this->getDefendersLostUnits(!config('game.combat.repairedToDebris')) as $player) {
 			$debris = $this->getDebrisForPlayer($player);
 
 			$result[0] += $debris[0];
@@ -247,7 +247,7 @@ class Result
 					$crystal += $lost[1];
 				}
 
-				$factor = config('battle.' . strtoupper($role) . '_DEBRIS_FACTOR');
+				$factor = config('game.combat.debrisFactor_' . strtoupper($role), 0);
 
 				$result[0] += (int) floor($metal * $factor);
 				$result[1] += (int) floor($crystal * $factor);
@@ -274,7 +274,7 @@ class Result
 
 	public function getMoonProbability(int $addChance = 0): int
 	{
-		return min(floor(array_sum($this->getDebris()) / config('battle.MOON_UNIT_PROB')), (config('battle.MAX_MOON_PROB') + $addChance));
+		return min(floor(array_sum($this->getDebris()) / config('game.combat.moonUnitsProbability')), (config('game.combat.maxMoonProbability') + $addChance));
 	}
 
 	public function getBattleResult(): BattleResult

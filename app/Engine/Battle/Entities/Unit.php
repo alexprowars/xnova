@@ -73,9 +73,9 @@ class Unit
 		}
 
 		if (Vars::getItemType($this->id) == ItemType::DEFENSE) {
-			return config('battle.DEFENSE_REPAIR_PROB', 0);
+			return config('game.combat.defenseRepairProbability', 0);
 		}
 
-		return config('battle.SHIP_REPAIR_PROB', 0);
+		return config('game.combat.shipRepairProbability', 0);
 	}
 }

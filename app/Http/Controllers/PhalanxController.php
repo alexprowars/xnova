@@ -36,18 +36,24 @@ class PhalanxController extends Controller
 
 		$phalanx = $this->planet->getLevel('phalanx');
 
-		$systemdol 	= $this->planet->system - ($phalanx ** 2);
-		$systemgora = $this->planet->system + ($phalanx ** 2);
+		$systemFrom = $this->planet->system - ($phalanx ** 2);
+		$systemTo 	= $this->planet->system + ($phalanx ** 2);
 
 		$target = new Coordinates($galaxy, $system, $planet);
 
 		if ($this->planet->planet_type != PlanetType::MOON) {
 			throw new Exception('Вы можете использовать фалангу только на луне!');
-		} elseif ($phalanx == 0) {
+		}
+
+		if ($phalanx == 0) {
 			throw new Exception('Постройте сначало сенсорную фалангу');
-		} elseif ($this->planet->deuterium < $consumption) {
+		}
+
+		if ($this->planet->deuterium < $consumption) {
 			throw new Exception('Недостаточно дейтерия для использования. Необходимо: ' . $consumption . '.');
-		} elseif (($target->getSystem() <= $systemdol or $target->getSystem() >= $systemgora) || $target->getGalaxy() != $this->planet->galaxy) {
+		}
+
+		if (($target->getSystem() <= $systemFrom || $target->getSystem() >= $systemTo) || $target->getGalaxy() != $this->planet->galaxy) {
 			throw new Exception('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
 		}
 

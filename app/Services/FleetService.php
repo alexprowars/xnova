@@ -23,11 +23,11 @@ class FleetService
 			$res = $entity->getObjectData()->getPrice();
 
 			if (!empty($res['metal']) && $res['metal'] > 0) {
-				$debris['metal'] += (int) floor($entity->count * $res['metal'] * config('game.fleetDebrisRate', 0));
+				$debris['metal'] += (int) floor($entity->count * $res['metal'] * config('game.combat.debrisFactor_FLEET', 0));
 			}
 
 			if (!empty($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += (int) floor($entity->count * $res['crystal'] * config('game.fleetDebrisRate', 0));
+				$debris['crystal'] += (int) floor($entity->count * $res['crystal'] * config('game.combat.debrisFactor_DEFENSE', 0));
 			}
 		}
 
@@ -66,16 +66,20 @@ class FleetService
 		}
 
 		return array_map(
-			fn(int $value) => (int) max($value, 0),
+			static fn(int $value) => (int) max($value, 0),
 			$steal
 		);
 	}
 
 	public static function checkHallBattle(Report $report): void
 	{
+		if (!config('game.combat.hallPoints')) {
+			return;
+		}
+
 		$lost = array_sum($report->data['lost']);
 
-		if (config('game.hallPoints') !== null && $lost < config('game.hallPoints')) {
+		if ($lost < config('game.combat.hallPoints')) {
 			return;
 		}
 
