@@ -47,13 +47,13 @@ class Espionage extends BaseMission
 
 		$CurrentSpyLvl = $owner->getTechLevel('spy');
 
-		if ($owner->officier_technocrat->isFuture()) {
+		if ($owner->officier_technocrat?->isFuture()) {
 			$CurrentSpyLvl += 2;
 		}
 
 		$TargetSpyLvl = $targetUser->getTechLevel('spy');
 
-		if ($targetUser->officier_technocrat->isFuture()) {
+		if ($targetUser->officier_technocrat?->isFuture()) {
 			$TargetSpyLvl += 2;
 		}
 

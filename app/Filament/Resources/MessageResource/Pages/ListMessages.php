@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources\MessageResource\Pages;
 
+use App\Engine\Messages\MessageFactory;
 use App\Filament\Components\Table\Filters\DateFilter;
 use App\Filament\Resources\MessageResource;
 use App\Models\Message;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Throwable;
 
 class ListMessages extends ListRecords
 {
@@ -27,26 +30,47 @@ class ListMessages extends ListRecords
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
-				TextColumn::make('time')
-					->label('Время')
+				TextColumn::make('date')
+					->label('Дата')
 					->dateTime()
 					->sortable(),
 				TextColumn::make('type')
 					->label('Тип')
 					->sortable(),
-				TextColumn::make('from_id')
+				TextColumn::make('from')
 					->label('От')
-					->formatStateUsing(fn(Message $record) => $record->from ? $record->from->username_formatted . ' ID:' . $record->from_id : '-')
+					->getStateUsing(fn(Message $record) => $record->from ? $record->from->username_formatted . ' ID:' . $record->from_id : 'SYSTEM')
 					->sortable(),
-				TextColumn::make('user_id')
+				TextColumn::make('user')
 					->label('Кому')
-					->formatStateUsing(fn(Message $record) => $record->user ? $record->user->username_formatted . ' ID:' . $record->user_id : '-')
+					->getStateUsing(fn(Message $record) => $record->user ? $record->user->username_formatted . ' ID:' . $record->user_id : 'SYSTEM')
 					->sortable(),
-				TextColumn::make('text')
+				TextColumn::make('subject')
+					->label('Тема')
+					->html()
+					->getStateUsing(function (Message $record) {
+						if ($message = MessageFactory::get($record->message)) {
+							return $message->getSubject();
+						}
+
+						return null;
+					}),
+				TextColumn::make('message')
 					->label('Текст')
 					->html()
 					->sortable()
-					->searchable(),
+					->searchable()
+					->getStateUsing(function (Message $record) {
+						if ($message = MessageFactory::get($record->message)) {
+							try {
+								return $message->render();
+							} catch (Throwable $e) {
+								return 'render message error: ' . $e->getMessage();
+							}
+						}
+
+						return null;
+					}),
 			])
 			->filters([
 				SelectFilter::make('from_id')
@@ -64,6 +88,8 @@ class ListMessages extends ListRecords
 			])
 			->recordActions([
 				EditAction::make()
+					->iconButton(),
+				DeleteAction::make()
 					->iconButton(),
 			])
 			->toolbarActions([

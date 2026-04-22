@@ -139,7 +139,7 @@ class QuestController extends Controller
 			}
 
 			if ($taskKey == 'fleet_mission') {
-				$result['task'][] = ['Отправить флот в миссию: ' . __('main.type_mission.' . $taskVal), $check];
+				$result['task'][] = ['Отправить флот в миссию: ' . __('main.type_mission.' . $taskVal->value), $check];
 			}
 
 			if ($taskKey == 'planets') {
@@ -178,7 +178,7 @@ class QuestController extends Controller
 						$result['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
 					}
 				}
-			} elseif ($rewardKey == 'STORAGE_RAND') {
+			} elseif ($rewardKey == 'storage_rand') {
 				$result['rewd'][] = '+1 уровень одного из хранилищ ресурсов';
 			}
 		}

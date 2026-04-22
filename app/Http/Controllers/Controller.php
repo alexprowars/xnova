@@ -51,7 +51,6 @@ class Controller extends BaseController
 		}
 
 		$this->user->getAllyInfo();
-		$this->user->checkLevel();
 
 		$this->planet = $this->user->getCurrentPlanet();
 

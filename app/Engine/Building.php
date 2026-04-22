@@ -31,20 +31,20 @@ class Building
 		return true;
 	}
 
-	public static function checkLabSettingsInQueue(Planet $planet): bool
+	public static function checkLabInQueue(Planet $planet): bool
 	{
 		$BuildQueue = (new QueueManager($planet))
 			->get(QueueType::BUILDING);
 
 		if ($BuildQueue->isNotEmpty()) {
 			if ($BuildQueue->first()->object_id == 31 && config('game.BuildLabWhileRun', 0) != 1) {
-				return false;
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	public static function getTechTree(BaseObject $object, User $user, Planet $planet): ?array

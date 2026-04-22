@@ -51,24 +51,20 @@ class QueueManager
 
 	public function add(BaseObject $element, int $count = 1, bool $destroy = false): void
 	{
-		$type = Vars::getItemType($element->getId());
-
-		if ($type == ItemType::BUILDING) {
+		if ($element->getType() == ItemType::BUILDING) {
 			(new Queue\Build($this))->add($element, $destroy);
-		} elseif ($type == ItemType::TECH) {
+		} elseif ($element->getType() == ItemType::TECH) {
 			(new Queue\Tech($this))->add($element);
-		} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
+		} elseif ($element->getType() == ItemType::FLEET || $element->getType() == ItemType::DEFENSE) {
 			(new Queue\Unit($this))->add($element, $count);
 		}
 	}
 
 	public function delete(BaseObject $element, int $listId = 0): void
 	{
-		$type = Vars::getItemType($element->getId());
-
-		if ($type == ItemType::BUILDING) {
+		if ($element->getType() == ItemType::BUILDING) {
 			(new Queue\Build($this))->delete($listId);
-		} elseif ($type == ItemType::TECH) {
+		} elseif ($element->getType() == ItemType::TECH) {
 			(new Queue\Tech($this))->delete($element);
 		}
 	}
@@ -451,7 +447,7 @@ class QueueManager
 		$isUpdated = false;
 
 		foreach ($queue as $i => $item) {
-			if (!in_array($item->object_id, $buildTypes)) {
+			if (!isset($buildTypes[$item->object_id])) {
 				continue;
 			}
 

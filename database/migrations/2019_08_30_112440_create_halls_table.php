@@ -14,7 +14,6 @@ return new class extends Migration {
 			$table->timestamp('date')->index();
 			$table->boolean('won');
 			$table->enum('type', ['single', 'team'])->default('single')->index();
-			$table->foreignId('report_id')->nullable()->constrained('reports')->nullOnDelete();
 		});
 	}
 

@@ -18,12 +18,12 @@ class ResearchController extends Controller
 {
 	public function index(): array
 	{
-		$labInQueue = true;
+		$labInQueue = false;
 
-		if (!Building::checkLabSettingsInQueue($this->planet)) {
+		if (Building::checkLabInQueue($this->planet)) {
 			session()->flash('error-static', __('buildings.labo_on_update'));
 
-			$labInQueue = false;
+			$labInQueue = true;
 		}
 
 		$techHandle = QueueModel::query()
@@ -55,7 +55,7 @@ class ResearchController extends Controller
 				'id' => $element->getId(),
 				'name' => $element->getName(),
 				'code' => $element->getCode(),
-				'available' => $available && $labInQueue,
+				'available' => $available && !$labInQueue,
 				'max' => $element->getMaxConstructable() ?? 0,
 				'price' => $entity->getPrice(),
 				'build' => false,
@@ -122,7 +122,7 @@ class ResearchController extends Controller
 
 	public function action(Request $request, string $action): void
 	{
-		if (!Building::checkLabSettingsInQueue($this->planet)) {
+		if (Building::checkLabInQueue($this->planet)) {
 			return;
 		}
 

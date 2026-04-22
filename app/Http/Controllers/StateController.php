@@ -7,6 +7,7 @@ use App\Engine\Locale;
 use App\Http\Resources\PlanetResource;
 use App\Http\Resources\QueueResource;
 use App\Http\Resources\UserResource;
+use App\Services\UserService;
 use App\Settings;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,6 +38,8 @@ class StateController extends Controller
 		];
 
 		if ($user) {
+			UserService::checkLevelXp($user);
+
 			$data['user'] = UserResource::make($user);
 
 			if ($planet) {

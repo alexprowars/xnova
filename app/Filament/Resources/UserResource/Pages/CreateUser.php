@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
@@ -36,11 +37,11 @@ class CreateUser extends CreateRecord
 
 	protected function handleRecordCreation(array $data): User
 	{
-		return User::creation([
+		return UserService::creation([
 			'name' => $data['username'],
 			'email' => $data['email'],
 			'password' => $data['password'],
-		]);
+		], true);
 	}
 
 	protected function getCreatedNotificationTitle(): ?string

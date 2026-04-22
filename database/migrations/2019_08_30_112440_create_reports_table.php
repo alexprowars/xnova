@@ -14,6 +14,10 @@ return new class extends Migration {
 			$table->boolean('no_contact')->default(false);
 			$table->timestamps();
 		});
+
+		Schema::table('halls_of_fame', function (Blueprint $table) {
+			$table->foreignId('report_id')->nullable()->constrained('reports')->nullOnDelete();
+		});
 	}
 
 	public function down()

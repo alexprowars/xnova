@@ -116,7 +116,8 @@ class AdminPanelProvider extends PanelProvider
 				->reorderableColumns()
 				->deferColumnManager(false)
 				->defaultDateDisplayFormat('d.m.Y')
-				->defaultDateTimeDisplayFormat('d.m.Y H:i:s');
+				->defaultDateTimeDisplayFormat('d.m.Y H:i:s')
+				->recordUrl(null);
 		});
 
 		CreateAction::configureUsing(function (CreateAction $action): void {

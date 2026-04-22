@@ -4,11 +4,13 @@ namespace App\Filament\Resources\MessageResource\Pages;
 
 use App\Engine\Enums\MessageType;
 use App\Filament\Resources\MessageResource;
+use App\Models\Message;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -53,9 +55,9 @@ class EditMessage extends EditRecord
 							->required(),
 						TextInput::make('subject')
 							->label('Тема'),
-						RichEditor::make('message')
+						TextEntry::make('message')
 							->label('Текст')
-							->required(),
+							->getStateUsing(fn(Message $record) => json_encode($record->message)),
 					]),
 			]);
 	}

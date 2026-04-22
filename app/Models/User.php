@@ -4,18 +4,11 @@ namespace App\Models;
 
 use App\Engine\Entity\Model\TechnologiesCollection;
 use App\Engine\Entity\Model\TechnologiesEntity;
-use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
-use App\Engine\Locale;
-use App\Engine\Messages\Types\NewLevelMessage;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
-use App\Exceptions\Exception;
 use App\Facades\Galaxy;
-use App\Notifications\SystemMessage;
-use App\Notifications\UserRegistrationNotification;
-use App\Settings;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
@@ -33,16 +26,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
-use Throwable;
 
 /**
  * @property TechnologiesCollection $technologies
@@ -105,7 +92,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 
 	protected static function booted(): void
 	{
-		static::deleting(function (User $model) {
+		static::deleting(static function (User $model) {
 			if ($model->alliance) {
 				if ($model->alliance->user_id != $model->id) {
 					$model->alliance->deleteMember($model->id);
@@ -191,8 +178,8 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	protected function ip(): Attribute
 	{
 		return Attribute::make(
-			get: fn($value) => long2ip($value),
-			set: fn($value) => sprintf("%u", ip2long($value)),
+			get: static fn($value) => long2ip($value),
+			set: static fn($value) => sprintf("%u", ip2long($value)),
 		);
 	}
 
@@ -219,61 +206,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	{
 		if ($this->alliance) {
 			$this->alliance->member = $this->alliance->getMember($this);
-		}
-	}
-
-	public function checkLevel(): void
-	{
-		$indNextXp = $this->lvl_minier ** 3;
-		$warNextXp = $this->lvl_raid ** 2;
-
-		$giveCredits = 0;
-
-		if ($this->xpminier >= $indNextXp && $this->lvl_minier < config('game.level.max_ind', 100)) {
-			$this->setAttribute('lvl_minier', $this->lvl_minier + 1);
-			$this->setAttribute('credits', $this->credits + config('game.level.credits', 10));
-			$this->setAttribute('xpminier', $this->xpminier - $indNextXp);
-
-			$this->update();
-
-			$this->notify(new SystemMessage(MessageType::System, new NewLevelMessage(['type' => 'mine', 'level' => $this->lvl_minier])));
-
-			$giveCredits += config('game.level.credits', 10);
-		}
-
-		if ($this->xpraid >= $warNextXp && $this->lvl_raid < config('game.level.max_war', 100)) {
-			$this->setAttribute('lvl_raid', $this->lvl_raid + 1);
-			$this->setAttribute('credits', $this->credits + config('game.level.credits', 10));
-			$this->setAttribute('xpraid', $this->xpraid - $warNextXp);
-
-			$this->update();
-
-			$this->notify(new SystemMessage(MessageType::System, new NewLevelMessage(['type' => 'raid', 'level' => $this->lvl_raid])));
-
-			$giveCredits += config('game.level.credits', 10);
-		}
-
-		if ($giveCredits > 0) {
-			LogsCredit::create([
-				'user_id' 	=> $this->id,
-				'amount' 	=> $giveCredits,
-				'type' 		=> 4,
-			]);
-
-			$reffer = Referal::query()
-				->whereBelongsTo($this, 'referal')
-				->first();
-
-			if ($reffer) {
-				$credits = round($giveCredits / 2);
-				$reffer->user()->increment('credits', $credits);
-
-				LogsCredit::create([
-					'user_id'	=> $reffer->user_id,
-					'amount' 	=> $credits,
-					'type' 		=> 3,
-				]);
-			}
 		}
 	}
 
@@ -399,53 +331,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	{
 		return Planet::query()->whereBelongsTo($user)
 			->pluck('id')->all();
-	}
-
-	public static function creation(array $data): self
-	{
-		if (empty($data['password'])) {
-			$data['password'] = Str::random(10);
-		}
-
-		return DB::transaction(function () use ($data) {
-			$user = User::create([
-				'email' => $data['email'] ?? '',
-				'password' => Hash::make($data['password']),
-				'username' => $data['name'] ?? '',
-				'ip' => Request::ip(),
-				'daily_bonus' => now(),
-				'onlinetime' => now(),
-				'locale' => Locale::getPreferredLocale(),
-			]);
-
-			if (!$user->id) {
-				throw new Exception('create user error');
-			}
-
-			if (Session::has('ref')) {
-				$refer = User::query()->findOne((int) Session::get('ref'));
-
-				if ($refer) {
-					Referal::insert([
-						'referal_id' => $user->id,
-						'user_id' => $refer->id,
-					]);
-				}
-			}
-
-			$settings = app(Settings::class);
-			$settings->usersTotal++;
-			$settings->save();
-
-			if (!empty($user->email)) {
-				try {
-					$user->notify(new UserRegistrationNotification($data['password']));
-				} catch (Throwable) {
-				}
-			}
-
-			return $user;
-		});
 	}
 
 	public function canAccessPanel(Panel $panel): bool

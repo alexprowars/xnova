@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\Exception;
 use App\Models\User;
 use App\Models\UserAuthentication;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -74,10 +75,10 @@ class LoginController extends Controller
 			$user = User::query()->where('email', $email)->first();
 
 			if (!$user) {
-				$user = User::creation([
+				$user = UserService::creation([
 					'name' => $profile->getNickname() ?: $profile->getName(),
 					'email' => $email,
-				]);
+				], true);
 			}
 
 			UserAuthentication::create([

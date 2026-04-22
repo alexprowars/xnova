@@ -41,14 +41,13 @@ class OnlineList extends TableWidget
 					->sortable(),
 				TextColumn::make('ip')
 					->label('Ip')
-					->formatStateUsing(fn($state) => Helpers::convertIp($state))
 					->sortable(),
 				TextColumn::make('alliance_name')
 					->label('Альянс')
 					->sortable(),
 				TextColumn::make('onlinetime')
 					->label('Активность')
-					->formatStateUsing(fn (User $record) => Format::time((int) $record->onlinetime->diffInSeconds(now())))
+					->formatStateUsing(fn (User $record) => Format::time((int) $record->onlinetime->diffInSeconds()))
 					->sortable(),
 			]);
 	}
