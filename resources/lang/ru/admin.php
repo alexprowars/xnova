@@ -24,6 +24,7 @@ return [
 			'server' => 'Сервер',
 			'mailing' => 'Рассылка',
 			'dashboard' => 'Панель управления',
+			'ai' => 'AI',
 		],
 	],
 	'roles' => [
