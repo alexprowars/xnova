@@ -27,7 +27,6 @@ class StateController extends Controller
 			],
 			'settings' => [
 				'language' => Locale::getPreferredLocale(),
-				'merchant' => Game::getMerchantExchangeRate(),
 			],
 			'stats' => [
 				'online' => $settings->usersOnline ?: 0,

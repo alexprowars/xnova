@@ -17,6 +17,7 @@ Thumbs.db
 /_ide_helper*.php
 /.phpstorm.meta.php
 /public/assets/build/
+/public/build/
 /public/packages/
 /database/database.sqlite
 /public/storage
@@ -25,3 +26,5 @@ Thumbs.db
 /public/css/malzariey
 /public/js/malzariey
 /public/fonts/filament
+/bootstrap/ssr/
+/public/hot

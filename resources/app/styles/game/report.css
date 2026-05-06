@@ -1,0 +1,40 @@
+.report {
+	margin: 0 auto;
+	padding: 14px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 14px;
+
+	.report_user {
+		margin: 0 5px;
+
+		th {
+			padding: 4px 5px;
+		}
+	}
+
+	.report_fleet {
+		padding: 8px;
+		background-color: #344566;
+		display: inline-block;
+		text-align: center;
+
+		table {
+			border: 0;
+			border-spacing: 0;
+			border-collapse: collapse;
+			margin: 0 auto;
+
+			td, th {
+				border-spacing: 0;
+				padding: 3px 5px;
+			}
+		}
+	}
+
+	.report_result {
+		margin: 0 auto;
+	}
+}

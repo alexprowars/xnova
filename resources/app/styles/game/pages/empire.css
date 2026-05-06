@@ -1,0 +1,9 @@
+.page-empire .table {
+	min-width: 65%;
+	width: auto;
+}
+
+.page-empire {
+	max-width: 785px;
+	@apply xs:max-xl:max-w-160 xl:max-2xl:max-w-165;
+}

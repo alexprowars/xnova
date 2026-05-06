@@ -7,10 +7,16 @@ use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class StartController extends Controller
 {
-	public function save(Request $request): void
+	public function index()
+	{
+		return Inertia::render('Start');
+	}
+
+	public function save(Request $request)
 	{
 		if ($this->user->sex && $this->user->avatar) {
 			throw new Exception('Уже выбрано');
@@ -62,7 +68,7 @@ class StartController extends Controller
 		$this->user->update();
 	}
 
-	public function race(Request $request): void
+	public function race(Request $request)
 	{
 		if ($this->user->race) {
 			throw new Exception('Фракция уже выбрана');

@@ -1,0 +1,38 @@
+.officiers-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.powers {
+		border-spacing: 0 !important;
+		border-collapse: collapse;
+		margin-top: 10px;
+		margin-bottom: 5px;
+
+		td {
+			padding: 0 5px 2px 5px;
+			color: #84CFEF;
+		}
+	}
+
+	.officiers-item {
+		padding-bottom: 5px;
+		background: var(--main-color);
+		border: 1px solid var(--border-color);
+		color: #d7d7d7;
+		@apply p-2;
+	}
+
+	&:last-child {
+		border-bottom: 0;
+	}
+
+	.officiers-item-image img {
+		width: 100%;
+	}
+
+	.officiers-item-title {
+		background: #253046;
+		@apply -m-2 mb-2 p-2 text-sm leading-none;
+	}
+}

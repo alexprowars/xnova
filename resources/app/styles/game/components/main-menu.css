@@ -1,0 +1,54 @@
+.main-menu {
+	width: var(--menu-width);
+	margin-right: 15px;
+	order: 1;
+	@apply max-xs:m-0 max-xs:w-0 xs:max-lg:mr-1.25 xs:max-lg:w-25;
+
+	.menu-sidebar {
+		@apply top-2.5 sticky transition-all ease-out max-xs:fixed max-xs:w-60 max-xs:h-full max-xs:top-0 max-xs:left-0 max-xs:-translate-x-60 max-xs:pt-15 max-xs:z-190 max-xs:bg-black/90;
+
+		&.active {
+			@apply translate-0;
+		}
+	}
+
+	ul {
+		@apply m-0 p-0 max-xs:divide-y max-xs:divide-[#324a6a];
+		@apply max-xs:bg-inherit max-xs:overflow-scroll max-xs:overflow-x-hidden max-xs:overflow-y-auto max-xs:w-full max-xs:h-full max-xs:p-0 max-xs:m-0 max-xs:top-0 max-xs:left-full max-xs:z-0;
+	}
+
+	li {
+		@apply inline max-xs:block max-xs:list-none max-xs:p-0 max-xs:m-0;
+
+		&:first-child > a {
+			border-radius: 3px 3px 0 0;
+		}
+
+		&:last-child > a {
+			border-radius: 0 0 3px 3px;
+			border-bottom: 1px solid var(--menu-border-color);
+		}
+
+		> a {
+			background: var(--menu-bg-color);
+			display: block;
+			text-align: center;
+			border: 1px solid var(--menu-border-color);
+			border-bottom: none;
+			margin: 0;
+			color: var(--text-color);
+			font-weight: normal;
+			padding: 7px;
+			transition-property: background;
+			transition-duration: .25s;
+			font-size: 1.05em;
+			@apply max-xs:text-ellipsis max-xs:whitespace-nowrap max-xs:overflow-hidden max-xs:block max-xs:m-0 max-xs:relative max-xs:text-white max-xs:text-base max-xs:bg-transparent max-xs:border-0! max-xs:text-left max-xs:px-3 max-xs:pr-5 max-xs:pl-2.5;
+
+
+			&.active, &.active-link, &:hover {
+				background: var(--menu-bg-a-color);
+				text-decoration: none;
+			}
+		}
+	}
+}

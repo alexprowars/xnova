@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Game;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class OfficiersController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$items = [];
 
@@ -22,7 +24,9 @@ class OfficiersController extends Controller
 			];
 		}
 
-		return $items;
+		return Inertia::render('Officiers', [
+			'items' => $items,
+		]);
 	}
 
 	public function buy(Request $request): void

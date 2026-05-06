@@ -20,7 +20,7 @@ class CheckReferral
 
 		$id = (int) $request->server('QUERY_STRING', 0);
 
-		if (!$id) {
+		if (empty($id)) {
 			return $next($request);
 		}
 

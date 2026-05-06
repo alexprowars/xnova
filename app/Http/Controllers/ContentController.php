@@ -7,7 +7,7 @@ use App\Models\Content;
 
 class ContentController extends Controller
 {
-	public function index(string $slug): array
+	public function index(string $slug)
 	{
 		if (empty($slug)) {
 			throw new Exception('Страница не найдена!');
@@ -21,9 +21,9 @@ class ContentController extends Controller
 			throw new Exception('Страница не найдена!');
 		}
 
-		return [
+		return response()->json([
 			'title' => $content->title,
 			'html' => stripslashes($content->html)
-		];
+		]);
 	}
 }

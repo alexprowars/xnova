@@ -19,20 +19,6 @@ x-base-image: &base-image
     - "../:/app"
 
 services:
-  frontend:
-    build: frontend
-    environment:
-      NUXT_PUBLIC_I18N_BASE_URL: '${BASE_URL:-}'
-      NUXT_PUBLIC_GTM_ID: '${GTM_ID:-}'
-      NUXT_PUBLIC_RECAPTCHA_KEY: '${RECAPTCHA_KEY:-}'
-      NUXT_PUBLIC_REVERB_APP_KEY: '${REVERB_APP_KEY:-}'
-      NUXT_PUBLIC_REVERB_HOST: '${REVERB_HOST:-localhost}'
-      NUXT_PUBLIC_REVERB_PORT: '${REVERB_PORT:-80}'
-      NUXT_PUBLIC_REVERB_SCHEME: '${REVERB_SCHEME:-http}'
-    restart: unless-stopped
-    networks:
-      - xnova
-
   backend:
     <<: *base-image
     expose:
@@ -46,6 +32,15 @@ services:
       - reverb
       - queue
       - schedule
+
+  frontend:
+    <<: *base-image
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    command: [ "php", "artisan", "inertia:start-ssr" ]
+    user: "web"
 
   reverb:
     <<: *base-image

@@ -6,6 +6,7 @@ use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\MissionType;
+use App\Engine\Game;
 use App\Engine\Objects\ObjectsFactory;
 use App\Engine\Objects\ShipObject;
 use App\Exceptions\Exception;
@@ -13,10 +14,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Planet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class FleetQuickController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$mission = (int) $request->post('mission', 0);
 		$mission = MissionType::tryFrom($mission);
@@ -81,10 +83,6 @@ class FleetQuickController extends Controller
 			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
-		return [
-			'target' => $target->coordinates->toArray(),
-			'mission' => $mission->value,
-			'time' => $fleet->start_date->utc()->toAtomString(),
-		];
+		Inertia::flash('Флот отправлен на координаты [' . $target->coordinates . '] с миссией ' . $mission->title() . ' и прибудет к цели ' . Game::datezone('d.m.Y H:i:s', $fleet->start_date));
 	}
 }

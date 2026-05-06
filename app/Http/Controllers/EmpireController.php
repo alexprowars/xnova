@@ -8,10 +8,11 @@ use App\Engine\QueueManager;
 use App\Facades\Vars;
 use App\Models\Fleet;
 use App\Models\Planet;
+use Inertia\Inertia;
 
 class EmpireController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$result = [];
 
@@ -158,6 +159,8 @@ class EmpireController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Empire', [
+			'data' => $result,
+		]);
 	}
 }

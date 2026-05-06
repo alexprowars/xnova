@@ -9,8 +9,8 @@ class LocaleDetect
 {
 	public function handle(Request $request, Closure $next): mixed
 	{
-		if ($request->header('Locale')) {
-			app()->setLocale($request->header('Locale'));
+		if ($request->header('locale')) {
+			app()->setLocale($request->header('locale'));
 		}
 
 		if ($request->user()) {

@@ -1,0 +1,41 @@
+{
+    "name": "xnova-game",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite --host 0.0.0.0",
+        "watch": "vite build --watch",
+        "build": "vite build",
+        "build:ssr": "vite build && vite build --ssr"
+    },
+    "devDependencies": {
+        "@fancyapps/ui": "^6.1.14",
+        "@popperjs/core": "^2.11.8",
+        "@tailwindcss/vite": "^4.2.4",
+        "laravel-echo": "^2.3.4",
+        "laravel-vite-plugin": "^3.1",
+        "mini-svg-data-uri": "^1.4.4",
+        "pusher-js": "^8.5.0",
+        "vite": "^8.0"
+    },
+    "dependencies": {
+        "@inertiajs/vite": "^3.1.0",
+        "@inertiajs/vue3": "^3.1.0",
+        "@vitejs/plugin-vue": "^6.0.6",
+        "@vuelidate/core": "^2.0.3",
+        "@vuelidate/validators": "^2.0.4",
+        "@vueuse/core": "^14.3.0",
+        "@vueuse/shared": "^14.3.0",
+        "animated-scroll-to": "^2.3.2",
+        "dayjs": "^1.11.20",
+        "floating-vue": "^5.2.2",
+        "js-animate-scroll": "^1.0.8",
+        "lodash-es": "^4.18.1",
+        "vite-svg-loader": "^5.1.1",
+        "vue": "^3.5.34",
+        "vue-final-modal": "^4.5.5",
+        "vue-i18n": "^11.4.0",
+        "vue3-toastify": "^0.2.9",
+        "vue3-touch-events": "^5.0.15"
+    }
+}

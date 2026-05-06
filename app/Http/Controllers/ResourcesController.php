@@ -13,10 +13,11 @@ use App\Models\LogsCredit;
 use App\Models\Planet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class ResourcesController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$result = [];
 		$result['resources'] = Vars::getResources();
@@ -68,10 +69,12 @@ class ResourcesController extends Controller
 
 		$result['production_level'] = $productionLevel;
 
-		return $result;
+		return Inertia::render('Resources', [
+			'data' => $result,
+		]);
 	}
 
-	public function buy(): array
+	public function buy()
 	{
 		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
 			throw new Exception('На этой планете нельзя купить ресурсы');

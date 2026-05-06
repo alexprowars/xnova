@@ -6,9 +6,17 @@ use App\Engine\Game;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MerchantController extends Controller
 {
+	public function index()
+	{
+		return Inertia::render('Merchant', [
+			'rate' => Game::getMerchantExchangeRate(),
+		]);
+	}
+
 	public function exchange(Request $request): array
 	{
 		if ($this->user->credits <= 0) {

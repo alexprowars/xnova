@@ -1,0 +1,103 @@
+.menu-toggle, .planet-toggle {
+	width: 45px;
+	height: 45px;
+	position: fixed;
+	text-align: center;
+	background-color: rgba(0, 0, 0, .60);
+	left: 5px;
+	top: 5px;
+	transition: all ease-out 0.2s;
+	z-index: 200;
+
+	@apply xs:hidden;
+}
+
+.planet-toggle {
+	right: 5px;
+	left: auto;
+
+	@apply xs:hidden;
+}
+
+.menu-toggle span span, .planet-toggle span span {
+	position: absolute;
+	width: 24px;
+	height: 2px;
+	left: 0;
+	background-color: #ffffff;
+	transition: all ease-out 0.2s;
+}
+
+.planet-toggle > span {
+	left: auto;
+	right: 12px;
+}
+
+.planet-toggle:before {
+	transition: all ease-out 0.2s;
+	content: '';
+	position: absolute;
+	width: 17px;
+	height: 16px;
+	background: transparent url('../../../images/icon-city.svg') 0 0 no-repeat;
+	left: 14px;
+	top: 14px;
+	opacity: 1;
+}
+
+.menu-toggle:active span span, .planet-toggle:active span span {
+	background-color: #fbbe69;
+}
+
+.menu-toggle > span, .planet-toggle > span {
+	top: 50%;
+	margin-top: -11px;
+	position: absolute;
+	left: 12px;
+	width: 24px;
+	height: 22px;
+}
+
+.planet-toggle > span, .planet-toggle.active:before {
+	opacity: 0;
+}
+
+.planet-toggle.active > span {
+	opacity: 1;
+}
+
+.menu-toggle span.first, .planet-toggle span.first {
+	top: 0;
+}
+
+.menu-toggle span.second, .planet-toggle span.second {
+	top: 10px;
+}
+
+.menu-toggle span.third, .planet-toggle span.third {
+	top: 20px;
+}
+
+.menu-toggle.active span.second, .planet-toggle.active span.second {
+	opacity: 0;
+	left: -5px;
+}
+
+.menu-toggle.active span.first,
+.planet-toggle.active span.first {
+	top: 2px;
+	transform: rotate(45deg);
+}
+
+.menu-toggle.active span.third,
+.planet-toggle.active span.third {
+	top: 2px;
+	transform: rotate(-45deg);
+}
+
+.menu-toggle.active span.first,
+.menu-toggle.active span.third,
+.planet-toggle.active span.first,
+.planet-toggle.active span.third {
+	top: 10px
+}

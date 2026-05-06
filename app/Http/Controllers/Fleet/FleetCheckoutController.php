@@ -20,7 +20,12 @@ use Illuminate\Support\Facades\Crypt;
 
 class FleetCheckoutController extends Controller
 {
-	public function index(Request $request): array
+	public function index()
+	{
+		return to_route('fleet');
+	}
+
+	public function send(Request $request)
 	{
 		$galaxy = (int) $request->post('galaxy', 0);
 		$system = (int) $request->post('system', 0);
@@ -67,7 +72,7 @@ class FleetCheckoutController extends Controller
 				$result['ships'][] = $ship;
 			}
 		}
-
+		throw new Exception('Не выбран флот');
 		if (empty($fleets)) {
 			throw new Exception('Не выбран флот');
 		}
@@ -203,6 +208,6 @@ class FleetCheckoutController extends Controller
 
 		$result['mission'] = $mission;
 
-		return $result;
+		return response()->json($result);
 	}
 }

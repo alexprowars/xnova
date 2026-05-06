@@ -13,6 +13,7 @@ use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\Planet;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RocketController extends Controller
 {
@@ -89,5 +90,7 @@ class RocketController extends Controller
 			$this->planet->updateAmount('interplanetary_misil', -$count, true);
 			$this->planet->update();
 		}
+
+		Inertia::flash('toast', '<b>' . $count . '</b> межпланетные ракеты запущены для атаки удалённой планеты!');
 	}
 }

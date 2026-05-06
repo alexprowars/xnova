@@ -7,10 +7,11 @@ use App\Engine\Enums\ItemType;
 use App\Engine\Objects\ObjectsFactory;
 use App\Exceptions\Exception;
 use App\Facades\Vars;
+use Inertia\Inertia;
 
 class TechController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$groups = [[
 			'title' => __('main.tech.0'),
@@ -86,10 +87,12 @@ class TechController extends Controller
 			$items[] = $row;
 		}
 
-		return $items;
+		return Inertia::render('Tech', [
+			'items' => $items,
+		]);
 	}
 
-	public function info(int $id): array
+	public function info(int $id)
 	{
 		if (!Vars::getName($id)) {
 			throw new Exception('Элемент не существует');
@@ -129,6 +132,8 @@ class TechController extends Controller
 			$result['items'][] = $item;
 		}
 
-		return $result;
+		return Inertia::render('TechDetail', [
+			'data' => $result,
+		]);
 	}
 }

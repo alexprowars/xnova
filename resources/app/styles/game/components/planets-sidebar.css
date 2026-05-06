@@ -1,0 +1,82 @@
+.main-planets {
+	order: 3;
+	margin-left: 15px;
+	width: var(--planets-width);
+	@apply flex max-xs:m-0 max-xs:w-0 xs:max-lg:w-15 xs:max-lg:ml-2.5;
+
+	.planet-sidebar {
+		@apply w-full transition-all ease-out max-xs:fixed max-xs:w-60 max-xs:h-full max-xs:top-0 max-xs:right-0 max-xs:translate-x-60 max-xs:px-2.5 max-xs:pt-15 max-xs:z-190 max-xs:bg-black/90;
+
+		&.active {
+			@apply translate-0;
+		}
+	}
+
+	.list {
+		overflow-y: auto;
+		overflow-x: hidden;
+		height: auto;
+		position: sticky;
+		top: 10px;
+		@apply flex flex-col gap-1.5 xs:max-lg:w-15;
+
+		.planet {
+			background: var(--main-color);
+			color: var(--text-color);
+			border: 1px solid var(--border-color);
+			text-align: center;
+			font-size: 0.9em;
+			padding: 3px;
+			border-radius: 3px;
+			@apply flex gap-1.5 justify-between flex-row xs:flex-col lg:flex-row cursor-pointer;
+			@apply max-xs:overflow-scroll max-xs:overflow-x-hidden max-xs:overflow-y-auto max-xs:w-full max-xs:h-full max-xs:text-base;
+
+			.planet-image img {
+				@apply xs:max-lg:w-13 xs:max-lg:h-13;
+			}
+
+			.planet-name {
+				@apply grow;
+
+				> div {
+					@apply block xs:hidden md:block;
+				}
+			}
+
+			> div {
+				overflow: hidden;
+			}
+
+			.reload {
+				background: url("../../../images/reload-icon.png") 0 0 no-repeat;
+				width: 20px;
+				height: 20px;
+				cursor: pointer;
+				position: absolute;
+				top: 2px;
+				left: 3px;
+			}
+
+			&.type_5 {
+				@apply bg-red-900;
+			}
+
+			&.type_3 {
+				background: #707a73;
+			}
+
+			&.current {
+				@apply border border-solid border-green-500;
+
+				.reload {
+					top: 0;
+					left: 1px;
+				}
+			}
+
+			> span {
+				margin-top: 3px;
+			}
+		}
+	}
+}

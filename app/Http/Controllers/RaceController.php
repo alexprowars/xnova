@@ -6,21 +6,24 @@ use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\LogsCredit;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RaceController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$isChangeAvailable = ($this->user->race_change_count > 0 || $this->user->credits >= 100)
 			&& !$this->user->isVacation();
 
-		return [
-			'change' => $this->user->race_change_count,
-			'change_available' => $isChangeAvailable,
-		];
+		return Inertia::render('Race', [
+			'data' => [
+				'change' => $this->user->race_change_count,
+				'change_available' => $isChangeAvailable,
+			],
+		]);
 	}
 
-	public function change(Request $request): void
+	public function change(Request $request)
 	{
 		if (!$this->user->race) {
 			throw new Exception('Нельзя изменить фракцию в данный момент');
@@ -73,5 +76,7 @@ class RaceController extends Controller
 
 			$planet->update();
 		}
+
+		Inertia::flash('toast', 'Фракция изменена');
 	}
 }

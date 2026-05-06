@@ -7,10 +7,11 @@ use App\Engine\Formulas;
 use App\Models;
 use App\Models\AllianceDiplomacy;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class GalaxyController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$maxfleet_count = Models\Fleet::query()
 			->whereBelongsTo($this->user)
@@ -217,6 +218,8 @@ class GalaxyController extends Controller
 			$result['items'][] = $row;
 		}
 
-		return $result;
+		return Inertia::render('Galaxy', [
+			'data' => $result,
+		]);
 	}
 }

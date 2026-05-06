@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'version' => '5.0',
+	'version' => '7.0',
 	'spyReportRow' => 2,
 	'fieldsByMoonBase'  => env('GAME_MOONBASE_FIELDS', 4),
 	'maxPlanets' => env('GAME_MAX_PLANETS', 9),

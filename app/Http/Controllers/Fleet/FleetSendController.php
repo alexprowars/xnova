@@ -23,30 +23,35 @@ use Illuminate\Support\Facades\DB;
 
 class FleetSendController extends Controller
 {
-	public function index(Request $request): array
+	public function index()
 	{
-		$moon = (int) $request->post('moon', 0);
+		return to_route('fleet');
+	}
+
+	public function send(Request $request)
+	{
+		$moon = $request->integer('moon');
 
 		if ($moon && $moon != $this->planet->id) {
 			$this->checkJumpGate(Planet::findOne($moon));
 		}
 
-		$galaxy = (int) $request->post('galaxy', 0);
-		$system = (int) $request->post('system', 0);
-		$planet = (int) $request->post('planet', 0);
+		$galaxy = $request->integer('galaxy');
+		$system = $request->integer('system');
+		$planet = $request->integer('planet');
 
-		$planetType = (int) $request->post('planet_type', 0);
+		$planetType = $request->integer('planet_type');
 		$planetType = PlanetType::tryFrom($planetType);
 
-		$fleetMission = (int) $request->post('mission', 0);
+		$fleetMission = $request->integer('mission');
 		$fleetMission = MissionType::tryFrom($fleetMission);
 
-		$assaultId = (int) $request->post('alliance', 0);
+		$assaultId = $request->integer('alliance');
 
 		$resources = $request->post('resource', []);
 		$resources = array_map('intval', $resources);
 
-		$fleetSpeedFactor = $request->post('speed', 10);
+		$fleetSpeedFactor = $request->integer('speed', 10);
 
 		$fleetArray = Crypt::decrypt($request->post('fleet', '')) ?: [];
 
@@ -113,7 +118,7 @@ class FleetSendController extends Controller
 			$result['units'][Vars::getName($unitId)] = $count;
 		}
 
-		return $result;
+		return response()->json($result);
 	}
 
 	private function checkJumpGate(Planet $planet): void

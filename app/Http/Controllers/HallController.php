@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\HallOfFame;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HallController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$type = $request->input('type', 'single');
 
@@ -29,6 +30,8 @@ class HallController extends Controller
 
 		$result['last'] = $items->sortByDesc('date')->first()->id ?? null;
 
-		return $result;
+		return Inertia::render('Hall', [
+			'data' => $result,
+		]);
 	}
 }

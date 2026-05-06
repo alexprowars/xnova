@@ -13,10 +13,11 @@ use App\Facades\Vars;
 use App\Models\Planet;
 use App\Models\Queue as QueueModel;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ResearchController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$labInQueue = false;
 
@@ -64,25 +65,25 @@ class ResearchController extends Controller
 
 			if ($available) {
 				if ($element->getId() >= 120 && $element->getId() <= 122) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 115) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 117) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 118) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 108) {
-					$row['effects'] = '<div class="tech-effects-row">+' . ($entity->getLevel() + 1) . ' слотов флота</div>';
+					$row['effects'] = '+' . ($entity->getLevel() + 1) . ' слотов флота</div>';
 				} elseif ($element->getId() == 109) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 110) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 111) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span></div>';
+					$row['effects'] = '<span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 123) {
-					$row['effects'] = '<div class="tech-effects-row">+' . $entity->getLevel() . '% лабораторий</div>';
+					$row['effects'] = '+' . $entity->getLevel() . '% лабораторий';
 				} elseif ($element->getId() == 113) {
-					$row['effects'] = '<div class="tech-effects-row"><span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($entity->getLevel() * 2) . '%</span></div>';
+					$row['effects'] = '<span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($entity->getLevel() * 2) . '%</span>';
 				}
 
 				$row['time'] = $entity->getTime();
@@ -117,7 +118,9 @@ class ResearchController extends Controller
 			$items[] = $row;
 		}
 
-		return $items;
+		return Inertia::render('Research', [
+			'items' => $items,
+		]);
 	}
 
 	public function action(Request $request, string $action): void

@@ -1,0 +1,18 @@
+.Toastify__close-button {
+	min-width: auto;
+	margin: 0;
+}
+
+.v-popper__popper.v-popper--theme-tooltip {
+	.v-popper__inner {
+		transition: background 250ms ease-in-out;
+		background: #252f39;
+		border: 1px solid #415683;
+		box-shadow: 0 0 30px 5px rgba(40, 40, 40, 0.75);
+		@apply rounded-md p-1;
+	}
+
+	.v-popper__arrow-outer {
+		border-color: #415683;
+	}
+}

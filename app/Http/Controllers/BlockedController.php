@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blocked;
+use Inertia\Inertia;
 
 class BlockedController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$rows = Blocked::orderByDesc('id')
 			->with(['user', 'author'])
@@ -30,6 +31,8 @@ class BlockedController extends Controller
 			];
 		}
 
-		return $items;
+		return Inertia::render('Blocked', [
+			'items' => $items,
+		]);
 	}
 }

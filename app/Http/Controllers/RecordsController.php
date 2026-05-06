@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Format;
 use App\Settings;
 use Illuminate\Support\Facades\Date;
+use Inertia\Inertia;
 
 class RecordsController extends Controller
 {
-	public function index(Settings $settings): array
+	public function index(Settings $settings)
 	{
 		/** @var array<int, array> $recordsArray */
 		$recordsArray = [];
@@ -60,9 +61,9 @@ class RecordsController extends Controller
 			'Оборона' => $Defense,
 		];
 
-		return [
+		return Inertia::render('Records', [
 			'items' => $records,
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
-		];
+		]);
 	}
 }

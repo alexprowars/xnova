@@ -11,20 +11,50 @@ use App\Engine\QueueManager;
 use App\Facades\Vars;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class ShipyardController extends Controller
 {
 	protected string $mode = 'fleet';
 
-	public function index(): array
+	public function index()
 	{
+		$elements = Vars::getObjectsByType(ItemType::FLEET);
+
+		return Inertia::render('Shipyard', [
+			'items' => $this->getItems($elements),
+		]);
+	}
+
+	public function queue(Request $request): void
+	{
+		if ($this->mode == 'defense') {
+			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
+		} else {
+			$elementIds = Vars::getItemsByType(ItemType::FLEET);
+		}
+
 		$queueManager = new QueueManager($this->planet);
 
-		if ($this->mode == 'defense') {
-			$elements = Vars::getObjectsByType(ItemType::DEFENSE);
-		} else {
-			$elements = Vars::getObjectsByType(ItemType::FLEET);
+		$elements = Arr::wrap($request->post('element', []));
+
+		foreach ($elements as $element => $count) {
+			$element 	= (int) $element;
+			$count 		= abs((int) $count);
+
+			if (!in_array($element, $elementIds)) {
+				continue;
+			}
+
+			$object = ObjectsFactory::get($element);
+
+			$queueManager->add($object, $count);
 		}
+	}
+
+	protected function getItems(array $elements): array
+	{
+		$queueManager = new QueueManager($this->planet);
 
 		$queueArray = $queueManager->get(QueueType::SHIPYARD);
 		$buildArray = $queueArray->pluck('level', 'object_id')->all();
@@ -34,7 +64,7 @@ class ShipyardController extends Controller
 		$items = [];
 
 		foreach ($elements as $element) {
-			$entity = EntityFactory::get($element->getId());
+			$entity = $this->planet->getEntityUnit($element->getId());
 
 			$available = $entity->isAvailable();
 
@@ -74,7 +104,7 @@ class ShipyardController extends Controller
 				}
 
 				$row['max'] = $maxConstructable ?: 0;
-				$row['effects'] = Building::getNextProduction($element, 0, $this->planet);
+				$row['effects'] = Building::getNextProduction($element, 0, $this->planet)?->toArray() ?? [];
 			} else {
 				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
 			}
@@ -83,31 +113,5 @@ class ShipyardController extends Controller
 		}
 
 		return $items;
-	}
-
-	public function queue(Request $request): void
-	{
-		if ($this->mode == 'defense') {
-			$elementIds = Vars::getItemsByType(ItemType::DEFENSE);
-		} else {
-			$elementIds = Vars::getItemsByType(ItemType::FLEET);
-		}
-
-		$queueManager = new QueueManager($this->planet);
-
-		$elements = Arr::wrap($request->post('element', []));
-
-		foreach ($elements as $element => $count) {
-			$element 	= (int) $element;
-			$count 		= abs((int) $count);
-
-			if (!in_array($element, $elementIds)) {
-				continue;
-			}
-
-			$object = ObjectsFactory::get($element);
-
-			$queueManager->add($object, $count);
-		}
 	}
 }

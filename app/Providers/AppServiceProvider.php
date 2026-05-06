@@ -8,12 +8,16 @@ use App\Services\GalaxyService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Inertia\ExceptionResponse;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -60,6 +64,18 @@ class AppServiceProvider extends ServiceProvider
 		/*\DB::listen(function ($query) {
 			dump($query);
 		});*/
+
+		Inertia::handleExceptionsUsing(function (ExceptionResponse $response) {
+			if ($response->response instanceof JsonResponse) {
+				return $response;
+			}
+
+			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
+				return $response->render('ErrorPage', [
+					'status' => $response->statusCode(),
+				])->withSharedData();
+			}
+		});
 	}
 
 	public function register()

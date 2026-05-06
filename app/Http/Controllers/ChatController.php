@@ -12,9 +12,15 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
 
 class ChatController extends Controller
 {
+	public function index()
+	{
+		return Inertia::render('Chat');
+	}
+
 	public function send(Request $request): void
 	{
 		$message = $request->post('message');

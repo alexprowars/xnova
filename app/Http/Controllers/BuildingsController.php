@@ -12,10 +12,12 @@ use App\Engine\QueueManager;
 use App\Exceptions\Exception;
 use App\Facades\Vars;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BuildingsController extends Controller
 {
-	public function index(): array
+	public function index(): Response
 	{
 		$viewOnlyAvailable = $this->user->getOption('only_available');
 
@@ -23,7 +25,7 @@ class BuildingsController extends Controller
 
 		$elements = Vars::getObjectsByType(ItemType::BUILDING);
 
-		/** @var \App\Engine\Objects\BuildingObject $element */
+		/** @var BuildingObject $element */
 		foreach ($elements as $element) {
 			if (!$element->hasAllowedBuild($this->planet->planet_type) || !Building::checkTechnologyRace($this->user, $element->getId())) {
 				continue;
@@ -65,7 +67,9 @@ class BuildingsController extends Controller
 			$items[] = $row;
 		}
 
-		return $items;
+		return Inertia::render('Buildings', [
+			'items' => $items,
+		]);
 	}
 
 	public function build(Request $request, string $action): void

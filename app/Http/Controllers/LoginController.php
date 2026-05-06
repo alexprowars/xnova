@@ -17,7 +17,7 @@ class LoginController extends Controller
 		'vkontakte',
 	];
 
-	public function credentials(Request $request): void
+	public function credentials(Request $request)
 	{
 		if (empty($request->post('email'))) {
 			throw new Exception('Введите Email');
@@ -34,6 +34,8 @@ class LoginController extends Controller
 		if (!Auth::attempt($credentials, $request->has('rememberme'))) {
 			throw new Exception('Неверный E-mail и/или пароль');
 		}
+
+		return to_route('overview');
 	}
 
 	public function services(string $service): RedirectResponse

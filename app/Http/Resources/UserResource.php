@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Engine\Enums\ItemType;
-use App\Engine\Game;
 use App\Facades\Vars;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -51,7 +50,6 @@ class UserResource extends JsonResource
 			'technology' => [],
 			'fleets_max' => $this->resource->getTechLevel('computer') + 1,
 			'protection' => $this->resource->isNoobProtection(),
-			'daily_bonus' => null,
 			'deleted_at' => $this->resource->delete_time?->utc()->toAtomString(),
 		];
 
@@ -108,16 +106,6 @@ class UserResource extends JsonResource
 				'u' => $this->resource->lvl_raid ** 2,
 			],
 		];
-
-		if ($this->resource->daily_bonus->isPast()) {
-			$bonusFactor = min(50, $this->resource->daily_bonus_factor + 1);
-
-			if ($this->resource->daily_bonus->subDay()->isPast()) {
-				$bonusFactor = 1;
-			}
-
-			$data['daily_bonus'] = $bonusFactor * 500 * Game::getSpeed('mine');
-		}
 
 		return $data;
 	}

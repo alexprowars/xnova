@@ -6,10 +6,11 @@ use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Format;
+use Inertia\Inertia;
 
 class QuestController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$quests = require resource_path('engine/quests.php');
 
@@ -52,10 +53,12 @@ class QuestController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Quests', [
+			'data' => $result,
+		]);
 	}
 
-	public function info(int $id): array
+	public function info(int $id)
 	{
 		if ($id <= 0) {
 			throw new Exception('Не выбрано задание');
@@ -186,7 +189,9 @@ class QuestController extends Controller
 		$result['rewd'] = implode(', ', $result['rewd']);
 		$result['errors'] = $errors > 0;
 
-		return $result;
+		return Inertia::render('QuestsDetail', [
+			'data' => $result,
+		]);
 	}
 
 	public function finish(int $id): void

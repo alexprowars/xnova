@@ -1,0 +1,231 @@
+.buldings {
+	@apply flex flex-col;
+
+	.buldings-header {
+		@apply bg-gray-400;
+		min-height: 200px;
+		width: 100%;
+		position: relative;
+		background-blend-mode: multiply;
+		background-size: cover;
+		border: 1px solid var(--border-color);
+		@apply mb-1;
+
+		.buldings-header-main {
+			@apply flex flex-col h-full items-end justify-between;
+			min-height: 200px;
+
+			.title {
+				background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+				font-weight: bold;
+				font-size: 18px;
+				padding: 10px 30px 10px 30px;
+			}
+
+			.button {
+				margin-bottom: 10px;
+				margin-right: 10px;
+			}
+		}
+	}
+
+	.buldings-list {
+		@apply grid grid-cols-6 max-sm:grid-cols-3 max-md:grid-cols-4 max-lg:grid-cols-5 gap-2.5 justify-items-center p-2.5;
+		background: var(--head-bg-color);
+		border: 1px solid var(--border-color);
+	}
+
+	.buldings-list-item {
+		@apply relative border-2 border-gray-600 cursor-pointer w-full h-full aspect-square;
+
+		img {
+			@apply w-full h-full;
+		}
+
+		.name {
+			@apply absolute z-1 bottom-0 w-full text-xs font-bold text-center text-ellipsis overflow-hidden;
+			padding-block: 2px;
+			background-color: rgba(0, 0, 0, 0.6) !important;
+		}
+
+		.level {
+			@apply absolute z-1 top-0 right-0 w-12.5 h-6 text-sm font-bold pr-1 flex items-center justify-end text-yellow-500;
+			background: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(0, 0, 0, 0.8) 70%);
+		}
+
+		.upgrade {
+			@apply absolute z-1 top-0 left-0 border w-[35%] h-6 flex items-center justify-center;
+
+			svg {
+				@apply w-3.25 h-3.25;
+			}
+
+			&:not(.active) {
+				@apply cursor-pointer bg-lime-700 hover:bg-lime-600 border-lime-600;
+			}
+
+			&.active {
+				@apply bg-yellow-700;
+			}
+		}
+
+		&.disabled {
+			@apply border-red-600;
+		}
+
+		&.active {
+			@apply border-yellow-600;
+		}
+
+		&.disabled:after {
+			content: "";
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			background: rgba(0, 0, 0, 0.7);
+		}
+	}
+
+	.buldings-active {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		background: var(--main-color);
+		position: absolute;
+		top: 0;
+
+		.buldings-active-wrapper {
+			@apply flex gap-2.5;
+			padding: 10px;
+			height: 100%;
+		}
+
+		.buldings-active-image {
+			img {
+				@apply h-full aspect-square max-sm:h-30;
+			}
+		}
+
+		.buldings-active-content {
+			@apply flex flex-col gap-2.5 grow relative;
+		}
+
+		.buldings-active-title {
+			@apply font-bold p-1 text-sm -ml-1;
+			line-height: 1rem;
+			background: var(--head-bg-color);
+		}
+
+		.buldings-active-price {
+			@apply flex flex-col justify-between;
+
+			> span {
+				@apply mb-1;
+				font-size: 12px;
+				color: #AAA;
+			}
+		}
+
+		.icon {
+			width: 14px;
+			height: 14px;
+			fill: #e0e0e0;
+		}
+
+		.building-active-upgrade {
+			@apply absolute bottom-0 right-0 flex flex-col items-end gap-2;
+		}
+
+		.buldings-active-production {
+			@apply flex flex-col gap-1;
+
+			> span {
+				font-size: 12px;
+				color: #AAA;
+			}
+		}
+
+		.building-active-requirements {
+			@apply flex flex-col gap-1;
+
+			.title {
+				font-size:12px;color:#AAA;
+			}
+
+			.items {
+				@apply flex gap-2;
+
+				.item {
+					@apply bg-contain relative cursor-help w-14 h-14;
+				}
+
+				.item-title {
+					@apply absolute w-full bottom-0 text-xs text-center text-red-600;
+					background-color: rgba(0, 0, 0, 0.8);
+				}
+			}
+		}
+
+		.building-price {
+			@apply flex items-center gap-2;
+
+			.building-price-item {
+				@apply flex items-center gap-1;
+			}
+		}
+
+		.buldings-active-close {
+			opacity: .6;
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 24px;
+			height: 24px;
+			padding: 4px;
+			cursor: pointer;
+			z-index: 2;
+			display: flex;
+			align-items: center;
+
+			svg path {
+				stroke: #fff;
+			}
+		}
+
+		.buldings-active-close:hover {
+			opacity: 1;
+		}
+	}
+
+	.buildings-effects-row {
+		@apply flex items-center gap-1;
+
+		.icon {
+			width: 20px;
+			height: 20px;
+			display: inline-block;
+			background-repeat: no-repeat;
+
+			&.speed {
+				background-image: url('../../../images/icons/speed.png');
+				background-position-y: 1px;
+			}
+
+			&.armor {
+				background-image: url('../../../images/icons/armor.png');
+				background-position-y: 2px;
+			}
+
+			&.damage {
+				background-image: url('../../../images/icons/damage.png');
+			}
+
+			&.shield {
+				background-image: url('../../../images/icons/shield.png');
+				background-position-y: 1px;
+			}
+		}
+	}
+}

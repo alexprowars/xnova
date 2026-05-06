@@ -1,0 +1,9 @@
+.page-info {
+	.building-price .building-price-item {
+		display: inline-block;
+	}
+}
+
+.dialog-content .page-info {
+	max-width: 600px;
+}

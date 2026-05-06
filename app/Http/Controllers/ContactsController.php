@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Inertia\Inertia;
 
 class ContactsController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$users = User::query()
 			->with(['roles'])
@@ -26,6 +27,8 @@ class ContactsController extends Controller
 			];
 		}
 
-		return $items;
+		return Inertia::render('Contacts', [
+			'items' => $items,
+		]);
 	}
 }

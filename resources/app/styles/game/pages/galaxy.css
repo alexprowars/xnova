@@ -1,0 +1,91 @@
+.page-galaxy {
+	.page-galaxy-select {
+		@apply mb-1.5;
+
+		button {
+			min-width: 0;
+		}
+
+		button[disabled] {
+			opacity: 0.6;
+			pointer-events: none;
+		}
+
+		input[type=number] {
+			width: 60px;
+		}
+
+		select {
+			text-align: center;
+			text-align-last: center;
+			-moz-text-align-last: center;
+		}
+	}
+
+	.galaxy {
+		border-spacing: 0;
+		border: 0;
+
+		.debris_0 {
+			background: rgb(0, 100, 0) none;
+		}
+
+		.debris_50 {
+			background: rgb(100, 100, 0) none;
+		}
+
+		.debris_100 {
+			background: rgb(100, 0, 0) none;
+		}
+
+		tr > .th {
+			vertical-align: middle;
+			text-align: center;
+		}
+
+		.img {
+			max-height: 34px;
+			padding: 0;
+
+			img {
+				max-width: none;
+			}
+		}
+
+		.actions {
+			display: flex;
+			justify-content: center;
+			gap: 4px;
+			flex-wrap: wrap;
+			align-items: center;
+
+			> a, > div {
+				display: flex;
+			}
+		}
+
+		.noob {
+			color: #a0ffa0;
+		}
+
+		.strong {
+			color: #ffa0a0;
+		}
+
+		.vacation {
+			color: skyblue;
+		}
+
+		.inactive {
+			color: #cccccc;
+		}
+
+		.longinactive {
+			color: #999999;
+		}
+
+		.blocked {
+			text-decoration: line-through;
+		}
+	}
+}

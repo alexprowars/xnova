@@ -22,7 +22,7 @@ class PlayersController extends Controller
 
 		$result = [
 			'id' => $user->id,
-			'avatar' => '/images/no_photo.gif',
+			'avatar' => '/assets/images/no_photo.gif',
 			'sex' => $user->sex,
 			'name' => $user->username,
 			'race' => $user->race,
@@ -44,7 +44,7 @@ class PlayersController extends Controller
 			$result['avatar'] = $file;
 		} elseif ($user->avatar) {
 			if ($user->avatar != 99) {
-				$result['avatar'] = '/images/faces/' . $user->sex . '/' . $user->avatar . '.png';
+				$result['avatar'] = '/assets/images/faces/' . $user->sex . '/' . $user->avatar . '.png';
 			}
 		}
 
