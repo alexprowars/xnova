@@ -15,11 +15,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
 use Throwable;
 
 class MessagesController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$types = [1, 2, 3, 4, 5, 6, 15, 99, 100, 101];
 		$limits = [5, 10, 25, 50, 100, 200];
@@ -131,7 +132,7 @@ class MessagesController extends Controller
 			'page' => $paginator->currentPage(),
 		];
 
-		return $result;
+		return Inertia::render('Messages', $result);
 	}
 
 	public function write(int $userId, Request $request): array

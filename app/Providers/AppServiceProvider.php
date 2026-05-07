@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
 use App\Services\GalaxyService;
@@ -70,11 +71,17 @@ class AppServiceProvider extends ServiceProvider
 				return $response;
 			}
 
-			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
+			if ($response->exception instanceof PageException) {
 				return $response->render('ErrorPage', [
 					'status' => $response->statusCode(),
+					'message' => $response->exception->getMessage(),
 				])->withSharedData();
 			}
+
+			return $response->render('ErrorPageFull', [
+				'status' => $response->statusCode(),
+				'message' => $response->exception->getMessage(),
+			]);
 		});
 	}
 

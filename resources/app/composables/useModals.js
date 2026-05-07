@@ -2,6 +2,7 @@ import { useModal, useModalSlot, useVfm } from 'vue-final-modal';
 import Modal from '../components/Dialogs/Modal.vue';
 import ConfirmPopup from '../components/Dialogs/Confirm.vue';
 import { stopLoading } from './useLoading.js';
+import i18n from './../i18n';
 
 export const openPopupModal = (component, attrs = {}, events = {}) => {
 	const { open, close } = useModal({
@@ -68,7 +69,7 @@ export const openAlertModal = (title, content) => {
 export const openErrorModal = (e) => {
 	stopLoading();
 
-	const { t } = useNuxtApp().$i18n;
+	const { t } = i18n.global;
 
 	openAlertModal(t?.('forms.error'), e.message);
 }

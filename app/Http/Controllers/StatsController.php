@@ -7,6 +7,7 @@ use App\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class StatsController extends Controller
 {
@@ -17,10 +18,10 @@ class StatsController extends Controller
 	{
 		parent::__construct();
 
-		$this->page = (int) $request->input('page', 0);
+		$this->page = $request->integer('page');
 		$this->page = max($this->page, 1);
 
-		$type = (int) $request->input('type', 1);
+		$type = $request->integer('type', 1);
 		$view = $request->input('view', 'players');
 
 		if ($view != 'players' && $type > 5) {
@@ -38,9 +39,9 @@ class StatsController extends Controller
 		};
 	}
 
-	public function index(Settings $settings, Request $request): array
+	public function index(Settings $settings, Request $request)
 	{
-		$type = (int) $request->input('type', 1);
+		$type = $request->integer('type', 1);
 
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
@@ -99,12 +100,12 @@ class StatsController extends Controller
 			$position++;
 		}
 
-		return $result;
+		return Inertia::render('Stats', $result);
 	}
 
-	public function alliances(Settings $settings, Request $request): array
+	public function alliances(Settings $settings, Request $request)
 	{
-		$type = (int) $request->input('type', 1);
+		$type = $request->integer('type', 1);
 
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
@@ -126,7 +127,7 @@ class StatsController extends Controller
 		foreach ($query as $item) {
 			$row = [];
 			$row['id'] = (int) $item->alliance_id;
-			$row['position'] = $position;
+			$row['place'] = $position;
 
 			$oldPosition = (int) $item->{$this->field . '_old_rank'};
 
@@ -145,10 +146,10 @@ class StatsController extends Controller
 			$position++;
 		}
 
-		return $result;
+		return Inertia::render('Stats', $result);
 	}
 
-	public function races(Settings $settings): array
+	public function races(Settings $settings)
 	{
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
@@ -173,6 +174,6 @@ class StatsController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Stats', $result);
 	}
 }

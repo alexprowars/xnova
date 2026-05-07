@@ -32,6 +32,11 @@ class OverviewController extends Controller
 		]);
 	}
 
+	public function rename()
+	{
+		return Inertia::render('RenamePlanet');
+	}
+
 	public function daily()
 	{
 		if ($this->user->daily_bonus?->isFuture()) {

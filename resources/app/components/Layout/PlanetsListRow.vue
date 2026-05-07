@@ -13,11 +13,9 @@
 </template>
 
 <script setup>
-	import { router, usePage } from '@inertiajs/vue3';
+	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 	import PlanetLink from '../PlanetLink.vue';
-	import { useApiPost } from '../../composables/useApi.js';
-	import { useErrorNotification } from '../../composables/useToast.js';
 	import { changePlanet as changePlanetFn } from '../../utils/helpers.js';
 
 	const { item } = defineProps({

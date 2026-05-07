@@ -18,11 +18,12 @@ use App\Exceptions\Exception;
 use App\Models;
 use App\Models\Fleet;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class InfoController extends Controller
 {
-	public function detail(int $itemId): array
+	public function detail(int $itemId, Request $request)
 	{
 		try {
 			$itemObject = ObjectsFactory::get($itemId);
@@ -131,7 +132,13 @@ class InfoController extends Controller
 			}
 		}
 
-		return $result;
+		if (!$request->inertia() && $request->expectsJson()) {
+			return response()->json($result);
+		}
+
+		return Inertia::render('Info', [
+			'item' => $result,
+		]);
 	}
 
 	public function missiles(Request $request): void

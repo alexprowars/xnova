@@ -34,10 +34,14 @@
 
 <script setup>
 	import PlayerInfo from '../Players/Info.vue';
-	import useStore from '~/store';
-	import { openConfirmModal, useApiPost, useSuccessNotification, useI18n, useWithLoadngIndicator, useApiGet, openPopupModal } from '#imports';
-	import { storeToRefs } from 'pinia';
-	import { Link } from '@inertiajs/vue3';
+	import { Link, usePage } from '@inertiajs/vue3';
+	import TextViewer from '../../TextViewer.vue';
+	import { useI18n } from 'vue-i18n';
+	import { openConfirmModal, openPopupModal } from '../../../composables/useModals.js';
+	import { computed } from 'vue';
+	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useWithLoadngIndicator } from '../../../composables/useLoading.js';
+	import { useApiGet } from '../../../composables/useApi.js';
 
 	const { t } = useI18n();
 
@@ -45,7 +49,8 @@
 		item: Object
 	});
 
-	const { user } = storeToRefs(useStore());
+	const page = usePage();
+	const user = computed(() => page.props.user);
 	const deleteModel = defineModel('delete');
 
 	function abuseAction () {

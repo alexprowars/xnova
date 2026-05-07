@@ -57,6 +57,8 @@
 </template>
 
 <script setup>
+	import Colored from '../../Colored.vue';
+
 	defineProps({
 		production: {
 			type: Array,

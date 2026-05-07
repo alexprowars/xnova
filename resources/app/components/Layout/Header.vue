@@ -27,7 +27,7 @@
 				</Link>
 			</div>
 			<div class="top-menu-block right">
-				<Link href="/stats'" class="m1" v-tooltip="$t('menu.stats')">
+				<Link href="/stats" class="m1" v-tooltip="$t('menu.stats')">
 					<svg class="icon">
 						<use xlink:href="/assets/images/symbols.svg#icon-statistics"></use>
 					</svg>

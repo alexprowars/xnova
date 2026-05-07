@@ -10,10 +10,11 @@ use App\Models\User;
 use App\Notifications\SystemMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class SupportController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$tickets = SupportTicket::query()
 			->whereBelongsTo($this->user)
@@ -32,7 +33,9 @@ class SupportController extends Controller
 			];
 		}
 
-		return $items;
+		return Inertia::render('Support', [
+			'items' => $items,
+		]);
 	}
 
 	public function create(Request $request): void
@@ -91,7 +94,7 @@ class SupportController extends Controller
 		}
 	}
 
-	public function info(int $id): array
+	public function info(int $id)
 	{
 		$ticket = SupportTicket::query()
 			->with(['messages', 'messages.user'])
@@ -121,6 +124,8 @@ class SupportController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('SupportDetail', [
+			'item' => $result,
+		]);
 	}
 }

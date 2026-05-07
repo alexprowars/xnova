@@ -27,6 +27,7 @@
         "@vueuse/core": "^14.3.0",
         "@vueuse/shared": "^14.3.0",
         "animated-scroll-to": "^2.3.2",
+        "chart.js": "^4.5.1",
         "dayjs": "^1.11.20",
         "floating-vue": "^5.2.2",
         "js-animate-scroll": "^1.0.8",

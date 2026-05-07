@@ -7,7 +7,8 @@
 			<div class="main-content" v-touch:tap="tap">
 				<PlanetPanel v-if="user && view['resources']"/>
 				<div class="main-content-row">
-					<MessagesRow v-for="message in messages" :type="message.type || ''" :text="message.text"/>
+					<MessagesRow v-for="message in page.props.messages" :type="message.type || ''" :text="message.text"/>
+					<MessagesRow v-if="message" type="message" :text="message"/>
 					<MessagesRow v-if="user?.vacation" type="warning" text="Включен режим отпуска! Функциональность игры ограничена."/>
 					<MessagesRow v-if="user?.deleted_at" type="info" :text="'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' + $formatDate(user.deleted_at, 'DD MMM YYYY HH:mm') + '. Выключить режим удаления можно в настройках игры.'"/>
 					<slot/>
@@ -43,6 +44,7 @@
 		}
 	});
 
+	const message = ref(null);
 	const user = computed(() => page.props.user);
 
 	const isChatPage = computed(() => {
@@ -51,12 +53,13 @@
 
 	router.on('navigate', () => {
 		sidebar.value = '';
+		message.value = null;
 	});
 
-	const messages = computed(() => {
-		return (page.props.messages || []).filter((item) => {
-			return item['type'].indexOf('-static') >= 0;
-		});
+	router.on('flash', (event) => {
+		if (event.detail.flash.message) {
+			message.value = event.detail.flash.message;
+		}
 	});
 
 	const view = computed(() => {

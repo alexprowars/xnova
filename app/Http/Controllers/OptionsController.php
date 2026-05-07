@@ -10,16 +10,44 @@ use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Models;
 use App\Models\Planet;
+use App\Models\UserAuthentication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Throwable;
 
 class OptionsController extends Controller
 {
+	public function index()
+	{
+		$result = [];
+		$result['about'] = preg_replace('!<br.*>!iU', "\n", $this->user->about);
+		$result['allow_name_change'] = $this->user->username_change?->lessThan(now()->subDay()) ?? true;
+		$result['auth'] = [];
+
+		$authItems = UserAuthentication::query()
+			->whereBelongsTo($this->user)
+			->get();
+
+		foreach ($authItems as $authItem) {
+			$result['auth'][] = [
+				'id' => $authItem->id,
+				'provider' => $authItem->provider,
+				'provider_id' => $authItem->provider_id,
+				'created_at' => $authItem->created_at->utc()->toAtomString(),
+				'login_date' => $authItem->login_date?->utc()->toAtomString(),
+			];
+		}
+
+		return Inertia::render('Options', [
+			'data' => $result,
+		]);
+	}
+
 	public function email(ChangeEmailRequest $request): void
 	{
 		$this->user->email = $request->input('email');

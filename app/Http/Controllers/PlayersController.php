@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
-use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Models\LogsStat;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PlayersController extends Controller
 {
-	public function index(int $userId): array
+	public function index(int $userId, Request $request)
 	{
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new Exception('Профиль не найден');
+			throw new PageException('Профиль не найден');
 		}
 
 		$result = [
@@ -89,15 +91,21 @@ class PlayersController extends Controller
 			];
 		}
 
-		return $result;
+		if (!$request->inertia() && $request->expectsJson()) {
+			return response()->json($result);
+		}
+
+		return Inertia::render('Player', [
+			'data' => $result,
+		]);
 	}
 
-	public function stats(int $id): array
+	public function stats(int $id)
 	{
 		$player = User::find($id);
 
 		if (!$player) {
-			throw new Exception('Информация о данном игроке не найдена');
+			throw new PageException('Информация о данном игроке не найдена');
 		}
 
 		$result = [
@@ -127,10 +135,12 @@ class PlayersController extends Controller
 					'defs' => $item->defs_points,
 					'fleet' => $item->fleet_points,
 					'total' => $item->total_points,
-				]
+				],
 			];
 		}
 
-		return $result;
+		return Inertia::render('PlayerStats', [
+			'data' => $result,
+		]);
 	}
 }

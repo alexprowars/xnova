@@ -15,6 +15,7 @@
 	import Loader from './components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
 	import useChatStore from './store/useChatStore.js';
+	import { setLocale } from './i18n.js';
 
 	defineProps({
 		loading: {
@@ -31,6 +32,8 @@
 
 	const page = usePage();
 	const user = computed(() => page.props.user);
+
+	setLocale(page.props.locale);
 
 	router.on('flash', (event) => {
 		if (event.detail.flash.toast) {

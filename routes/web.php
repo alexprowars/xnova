@@ -17,6 +17,7 @@ Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);
 Route::post('registration', [Controllers\RegistrationController::class, 'create']);
 Route::get('logs/{id}', [Controllers\LogsController::class, 'detail'])->whereNumber('id');
+Route::match(['get', 'post'], 'stats', [Controllers\StatsController::class, 'index']);
 Route::match(['get', 'post'], 'stats/players', [Controllers\StatsController::class, 'index']);
 Route::match(['get', 'post'], 'stats/alliances', [Controllers\StatsController::class, 'alliances']);
 Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class, 'races']);
@@ -88,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('quests/{id}', [Controllers\QuestController::class, 'finish'])->whereNumber('id');
 
 	Route::get('overview', [Controllers\OverviewController::class, 'index'])->name('overview');
+	Route::get('overview/rename', [Controllers\OverviewController::class, 'rename'])->middleware(IsVacationMode::class);
 	Route::post('overview/daily', [Controllers\OverviewController::class, 'daily']);
 
 	Route::get('buildings', [Controllers\BuildingsController::class, 'index']);
@@ -150,6 +152,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('officiers', [Controllers\OfficiersController::class, 'index']);
 	Route::post('officiers/buy', [Controllers\OfficiersController::class, 'buy'])->middleware(IsVacationMode::class);
 
+	Route::get('options', [Controllers\OptionsController::class, 'index']);
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'email']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);
@@ -178,7 +181,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('support', [Controllers\SupportController::class, 'index']);
 	Route::get('support/{id}', [Controllers\SupportController::class, 'info'])->whereNumber('id');
 	Route::post('support/{id}/answer', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
-	Route::post('support', [Controllers\SupportController::class, 'create']);
+	Route::post('support/create', [Controllers\SupportController::class, 'create']);
 
 	Route::get('user/info', [Controllers\UserController::class, 'info']);
 	Route::post('user/planet', [Controllers\UserController::class, 'setPlanet']);

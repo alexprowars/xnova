@@ -14,4 +14,12 @@ const i18n = createI18n({
 	messages,
 });
 
+export const setLocale = (locale) => {
+    if (messages[locale]) {
+        i18n.global.locale.value = locale;
+    } else {
+        console.error(`Locale ${locale} not found.`);
+    }
+};
+
 export default i18n;

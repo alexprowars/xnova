@@ -7,7 +7,6 @@ use App\Engine\Locale;
 use App\Http\Resources\PlanetResource;
 use App\Http\Resources\QueueResource;
 use App\Http\Resources\UserResource;
-use App\Services\UserService;
 use App\Settings;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +15,6 @@ class StateController extends Controller
 	public function index(Settings $settings): array
 	{
 		$user = Auth::user();
-		$planet = $user?->getCurrentPlanet();
 
 		$data = [
 			'messages' => [],
@@ -25,9 +23,7 @@ class StateController extends Controller
 				'fleet' => Game::getSpeed('fleet'),
 				'resources' => Game::getSpeed('mine'),
 			],
-			'settings' => [
-				'language' => Locale::getPreferredLocale(),
-			],
+			'locale' => Locale::getPreferredLocale(),
 			'stats' => [
 				'online' => $settings->usersOnline ?: 0,
 				'users' => $settings->usersTotal ?: 0,
@@ -37,11 +33,9 @@ class StateController extends Controller
 		];
 
 		if ($user) {
-			UserService::checkLevelXp($user);
-
 			$data['user'] = UserResource::make($user);
 
-			if ($planet) {
+			if ($planet = $user->getCurrentPlanet()) {
 				$data['planet'] = PlanetResource::make($planet);
 				$data['queue'] = QueueResource::make($user);
 			}
@@ -50,20 +44,9 @@ class StateController extends Controller
 
 			if (!empty($globalMessage)) {
 				$data['messages'][] = [
-					'type' => 'warning-static',
+					'type' => 'warning',
 					'text' => $globalMessage
 				];
-			}
-
-			if (session()->has('_flash')) {
-				$keys = session('_flash')['new'] ?? [];
-
-				foreach ($keys as $key) {
-					$data['messages'][] = [
-						'type' => $key,
-						'text' => session($key)
-					];
-				}
 			}
 
 			if ($user->messages_ally > 0 && !$user->alliance_id) {

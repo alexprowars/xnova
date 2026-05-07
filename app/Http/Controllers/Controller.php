@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Fleet;
 use App\Models\Planet;
 use App\Models\User;
+use App\Services\UserService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -53,6 +54,8 @@ class Controller extends BaseController
 		if (!(int) config('game.showPlanetListSelect', 0)) {
 			config(['settings.showPlanetListSelect' => (int) $this->user->getOption('planetlistselect')]);
 		}
+
+		UserService::checkLevelXp($user);
 
 		$this->user->getAllyInfo();
 
