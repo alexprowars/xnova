@@ -1,27 +1,44 @@
 <template>
 	<form method="post" @submit.prevent="update">
-		<input type="text" name="name" v-model="name" size="50">
+		<input :class="{error: v$.name.$error}" type="text" name="name" v-model="form.name" size="50">
 		<br>
 		<button type="submit">{{ $t('pages.fleets.verband.change_name_submit') }}</button>
 	</form>
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	import { refreshNuxtData, useApiSubmit } from '#imports';
+	import { useForm } from '@inertiajs/vue3';
+	import { maxLength, minLength, required } from '@vuelidate/validators';
+	import { useVuelidate } from '@vuelidate/core';
 
 	const props = defineProps({
 		id: Number,
 		name: String,
 	});
 
-	const name = ref(props.name);
+	const form = useForm({
+		name: props.name,
+	});
 
-	function update() {
-		useApiSubmit('/fleet/verband/' + props['id'] + '/name', {
-			name: name.value,
-		}, () => {
-			refreshNuxtData();
-		});
+	const validations = {
+		name: {
+			required,
+			minLength: minLength(5),
+			maxLength: maxLength(20),
+		}
+	}
+
+	const v$ = useVuelidate(
+		validations,
+		form,
+		{ $autoDirty: true }
+	);
+
+	async function update() {
+		if (!await v$.value.$validate()) {
+			return;
+		}
+
+		form.post('/fleet/verband/' + props['id'] + '/name');
 	}
 </script>

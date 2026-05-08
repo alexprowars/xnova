@@ -1,43 +1,41 @@
 <template>
 	<Head title="Постройки"/>
 	<div class="page-building page-building-build">
-		<div class="block">
-			<BuildQueue :queue="queueByType('build')"/>
+		<BuildQueue :queue="queueByType('build')"/>
 
-			<div class="buldings">
-				<div class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/buildings-bg.webp\')' }">
-					<div class="buldings-header-main">
-						<span class="title">
-							Постройки / {{ planet['name'] }}
-						</span>
+		<div class="buldings">
+			<div class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/buildings-bg.webp\')' }">
+				<div class="buldings-header-main">
+					<span class="title">
+						Постройки / {{ planet['name'] }}
+					</span>
 
-						<div class="flex flex-col items-end gap-2 bg-black/80 p-3">
-							<i18n-t keypath="pages.building.fields_used" tag="div" scope="global">
-								<template v-slot:used>
-									<span class="positive">{{ planet['field_used'] }}</span>
-								</template><template v-slot:max>
-									<span class="positive">{{ planet['field_max'] }}</span>
-								</template>
-							</i18n-t>
-							<div>
-								{{ $t('pages.building.fields_left') }}
-								<span class="positive">{{ fieldsEmpty }}</span> {{ $t('pages.building.fields_left_2', fieldsEmpty) }}
-							</div>
+					<div class="flex flex-col items-end gap-2 bg-black/80 p-3">
+						<i18n-t keypath="pages.building.fields_used" tag="div" scope="global">
+							<template v-slot:used>
+								<span class="positive">{{ planet['field_used'] }}</span>
+							</template><template v-slot:max>
+								<span class="positive">{{ planet['field_max'] }}</span>
+							</template>
+						</i18n-t>
+						<div>
+							{{ $t('pages.building.fields_left') }}
+							<span class="positive">{{ fieldsEmpty }}</span> {{ $t('pages.building.fields_left_2', fieldsEmpty) }}
 						</div>
-						<Link href="/resources" class="button">
-							Настройки ресурсов
-						</Link>
 					</div>
-					<BuildActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="addAction"/>
+					<Link href="/resources" class="button">
+						Настройки ресурсов
+					</Link>
 				</div>
-				<div class="buldings-list">
-					<BuildItem v-for="(item, i) in items" :key="i"
-						:class="{ active: activeElement === item['id'] }"
-						:item="item"
-						@select="selectAction(item['id'])"
-						@build="addAction"
-					/>
-				</div>
+				<BuildActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="addAction"/>
+			</div>
+			<div class="buldings-list">
+				<BuildItem v-for="(item, i) in items" :key="i"
+					:class="{ active: activeElement === item['id'] }"
+					:item="item"
+					@select="selectAction(item['id'])"
+					@build="addAction"
+				/>
 			</div>
 		</div>
 	</div>

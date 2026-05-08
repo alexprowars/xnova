@@ -1,28 +1,24 @@
 <template>
 	<Head title="Исследования"/>
 	<div class="page-building page-building-tech">
-		<div class="block">
-			<div class="content page-building-items">
-				<div class="buldings">
-					<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/research-bg.webp\')' }">
-						<div class="buldings-header-main">
-							<span class="title">
-								Исследования / {{ planet['name'] }}
-							</span>
-							<Link href="/tech" class="button">
-								Технологии
-							</Link>
-						</div>
-						<TechActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction(activeItem['id'])"/>
-					</div>
-					<div class="buldings-list">
-						<TechItem v-for="(item, i) in items" :key="i" :item="item"
-							:class="{ active: activeElement === item['id'] }"
-							@select="selectAction(item['id'])"
-							@build="buildAction(item['id'])"
-						/>
-					</div>
+		<div class="buldings">
+			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/research-bg.webp\')' }">
+				<div class="buldings-header-main">
+					<span class="title">
+						Исследования / {{ planet['name'] }}
+					</span>
+					<Link href="/tech" class="button">
+						Технологии
+					</Link>
 				</div>
+				<TechActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction(activeItem['id'])"/>
+			</div>
+			<div class="buldings-list">
+				<TechItem v-for="(item, i) in items" :key="i" :item="item"
+					:class="{ active: activeElement === item['id'] }"
+					@select="selectAction(item['id'])"
+					@build="buildAction(item['id'])"
+				/>
 			</div>
 		</div>
 	</div>

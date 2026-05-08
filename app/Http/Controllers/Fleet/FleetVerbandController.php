@@ -107,7 +107,7 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if ($fleet->assault_id) {
-			throw new Exception('Для этого флота уже задана ассоциация!');
+			throw new PageException('Для этого флота уже задана ассоциация!');
 		}
 
 		try {
@@ -121,7 +121,7 @@ class FleetVerbandController extends Controller
 				'user_id' 		=> $this->user->id,
 			]);
 		} catch (Throwable) {
-			throw new Exception('Невозможно получить идентификатор САБ атаки');
+			throw new PageException('Невозможно получить идентификатор САБ атаки');
 		}
 
 		$assault->users()->create([
@@ -137,13 +137,13 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if (!$fleet->assault_id) {
-			throw new Exception('Для этого флота не задана ассоциация!');
+			throw new PageException('Для этого флота не задана ассоциация!');
 		}
 
 		$assault = $fleet->assault;
 
 		if ($assault->fleet_id != $fleet->id) {
-			throw new Exception("Вы не можете добавлять сюда игроков");
+			throw new PageException("Вы не можете добавлять сюда игроков");
 		}
 
 		$user = null;
@@ -161,7 +161,7 @@ class FleetVerbandController extends Controller
 		}
 
 		if (!$user) {
-			throw new Exception('Игрок не найден');
+			throw new PageException('Игрок не найден');
 		}
 
 		$assaultUser = $assault->users()
@@ -169,7 +169,7 @@ class FleetVerbandController extends Controller
 			->first();
 
 		if ($assaultUser) {
-			throw new Exception('Игрок уже приглашён для нападения');
+			throw new PageException('Игрок уже приглашён для нападения');
 		}
 
 		$assault->users()->create([
@@ -196,33 +196,33 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if (!$fleet->assault_id) {
-			throw new Exception('Для этого флота не задана ассоциация!');
+			throw new PageException('Для этого флота не задана ассоциация!');
 		}
 
 		$assault = $fleet->assault;
 
 		if ($assault->fleet_id != $fleet->id) {
-			throw new Exception('Вы не можете менять имя ассоциации');
+			throw new PageException('Вы не можете менять имя ассоциации');
 		}
 
 		$name = strip_tags($request->post('name'));
 
 		if (mb_strlen($name) < 5) {
-			throw new Exception('Слишком короткое имя ассоциации');
+			throw new PageException('Слишком короткое имя ассоциации');
 		}
 
 		if (mb_strlen($name) > 20) {
-			throw new Exception('Слишком длинное имя ассоциации');
+			throw new PageException('Слишком длинное имя ассоциации');
 		}
 
 		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			throw new Exception('Имя ассоциации содержит запрещённые символы');
+			throw new PageException('Имя ассоциации содержит запрещённые символы');
 		}
 
 		$exist = Assault::where('name', $name)->exists();
 
 		if ($exist) {
-			throw new Exception('Имя уже зарезервировано другим игроком');
+			throw new PageException('Имя уже зарезервировано другим игроком');
 		}
 
 		$assault->name = $name;
