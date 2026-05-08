@@ -6,6 +6,7 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\MissionType;
 use App\Engine\Messages\Types\AcsRequestMessage;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;
 use App\Models\Fleet;
@@ -14,11 +15,12 @@ use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\SystemMessage;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class FleetVerbandController extends Controller
 {
-	public function index(int $id): array
+	public function index(int $id)
 	{
 		$fleet = $this->getFleet($id);
 
@@ -95,7 +97,9 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		return $result;
+		return Inertia::render('Fleet/Verband', [
+			'data' => $result,
+		]);
 	}
 
 	public function create(int $fleetId, Request $request): void
@@ -228,7 +232,7 @@ class FleetVerbandController extends Controller
 	protected function getFleet(int $id): Fleet
 	{
 		if ($id <= 0) {
-			throw new Exception('Флот не выбран');
+			throw new PageException('Флот не выбран');
 		}
 
 		$fleet = Fleet::query()
@@ -237,11 +241,11 @@ class FleetVerbandController extends Controller
 			->findOne($id);
 
 		if (!$fleet) {
-			throw new Exception('Этот флот не существует!');
+			throw new PageException('Этот флот не существует!');
 		}
 
 		if ($fleet->start_date->isPast() || $fleet->end_date->isPast() || $fleet->mess == 1) {
-			throw new Exception('Ваш флот возвращается на планету!');
+			throw new PageException('Ваш флот возвращается на планету!');
 		}
 
 		return $fleet;

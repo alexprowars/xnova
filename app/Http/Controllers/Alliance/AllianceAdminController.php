@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Format;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;
@@ -12,13 +13,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Throwable;
 
 class AllianceAdminController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$alliance = $this->getAlliance();
 
@@ -26,7 +28,7 @@ class AllianceAdminController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$type = (int) $request->input('type', 1);
+		$type = $request->integer('type', 1);
 
 		if ($type != 1 && $type != 2 && $type != 3) {
 			$type = 1;
@@ -46,15 +48,16 @@ class AllianceAdminController extends Controller
 		$parse['owner'] = $alliance->user_id;
 		$parse['web'] = $alliance->web;
 		$parse['access'] = $alliance->rights;
-		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
+		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb');
+		$parse['public'] = $alliance->public;
+		$parse['owner_rank'] = $alliance->owner_rank;
 
-		$parse['request_allow'] = $alliance->request_notallow;
-		$parse['owner_range'] = $alliance->owner_range;
-
-		return $parse;
+		return Inertia::render('Alliance/Admin/Main', [
+			'data' => $parse,
+		]);
 	}
 
-	public function name(Request $request): void
+	public function namePage()
 	{
 		$alliance = $this->getAlliance();
 
@@ -62,14 +65,27 @@ class AllianceAdminController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
+		return Inertia::render('Alliance/Admin/Name', [
+			'name' => $alliance->name,
+		]);
+	}
+
+	public function name(Request $request)
+	{
+		$alliance = $this->getAlliance();
+
+		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
+			throw new PageException(__('alliance.Denied_access'));
+		}
+
 		$name = addslashes(htmlspecialchars(trim($request->post('name', ''))));
 
 		if (empty($name)) {
-			throw new Exception('Введите новое название альянса');
+			throw new PageException('Введите новое название альянса');
 		}
 
 		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			throw new Exception('Название альянса содержит запрещённые символы');
+			throw new PageException('Название альянса содержит запрещённые символы');
 		}
 
 		$alliance->name = $name;
@@ -77,9 +93,11 @@ class AllianceAdminController extends Controller
 
 		User::query()->where('alliance_id', $alliance->id)
 			->update(['alliance_name' => $alliance->name]);
+
+		return to_route('alliance.admin');
 	}
 
-	public function tag(Request $request): void
+	public function tagPage()
 	{
 		$alliance = $this->getAlliance();
 
@@ -87,18 +105,33 @@ class AllianceAdminController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
+		return Inertia::render('Alliance/Admin/Tag', [
+			'tag' => $alliance->tag,
+		]);
+	}
+
+	public function tag(Request $request)
+	{
+		$alliance = $this->getAlliance();
+
+		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
+			throw new PageException(__('alliance.Denied_access'));
+		}
+
 		$tag = trim($request->post('tag', ''));
 
 		if (empty($tag)) {
-			throw new Exception('Введите новую абревиатуру альянса');
+			throw new PageException('Введите новую абревиатуру альянса');
 		}
 
 		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
-			throw new Exception('Абревиатура альянса содержит запрещённые символы');
+			throw new PageException('Абревиатура альянса содержит запрещённые символы');
 		}
 
 		$alliance->tag = addslashes(htmlspecialchars($tag));
 		$alliance->save();
+
+		return to_route('alliance.admin');
 	}
 
 	public function remove(): void
@@ -106,64 +139,66 @@ class AllianceAdminController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_DELETE_ALLIANCE)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$alliance->delete();
 	}
 
-	public function give(): array
+	public function give()
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id) {
-			throw new Exception('Доступ запрещён');
+			throw new PageException('Доступ запрещён');
 		}
 
-		$listuser = $alliance->members()
+		$members = $alliance->members()
 			->whereNot('user_id', $alliance->user_id)
 			->where('rank', '>', 0)
 			->with('user')
 			->get();
 
 		$result = [
-			'user' => [],
+			'members' => [],
 		];
 
-		foreach ($listuser as $u) {
-			if ($alliance->ranks[$u->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
-				$result['users'][] = [
-					'id' => $u->id,
-					'name' => $u->user?->username,
-					'rank' => $alliance->ranks[$u->rank]['name'],
+		foreach ($members as $member) {
+			if ($alliance->ranks[$member->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
+				$result['members'][] = [
+					'id' => $member->id,
+					'name' => $member->user?->username,
+					'rank' => $alliance->ranks[$member->rank]['name'],
 				];
 			}
 		}
 
-		$result['id'] = $this->user->id;
-
-		return $result;
+		return Inertia::render('Alliance/Admin/Give', [
+			'data' => $result,
+		]);
 	}
 
-	public function giveSend(Request $request): void
+	public function giveSend(Request $request)
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id) {
-			throw new Exception('Доступ запрещён');
+			throw new PageException('Доступ запрещён');
 		}
 
 		$user = User::find((int) $request->post('user', 0));
 
 		if (!$user || $user->alliance_id != $this->user->alliance_id) {
-			throw new Exception('Операция невозможна.');
+			throw new PageException('Операция невозможна.');
 		}
 
-		$alliance->user_id = $user->id;
+		$alliance->user()->associate($user);
 		$alliance->save();
 
 		AllianceMember::query()->whereBelongsTo($user)
 			->update(['rank' => 0]);
+
+		return to_route('alliance');
 	}
 
 	public function update(Request $request): void
@@ -171,11 +206,16 @@ class AllianceAdminController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::ADMIN_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
-		$alliance->owner_range = Str::sanitize(strip_tags($request->post('owner_range', '')));
-		$alliance->web = Str::sanitize(strip_tags($request->post('web', '')));
+		if ($request->has('owner_rank')) {
+			$alliance->owner_rank = Str::sanitize(strip_tags($request->post('owner_rank', '')));
+		}
+
+		if ($request->has('web')) {
+			$alliance->web = Str::sanitize(strip_tags($request->post('web', '')));
+		}
 
 		if ($request->hasFile('image')) {
 			$file = $request->file('image');
@@ -202,7 +242,10 @@ class AllianceAdminController extends Controller
 			$alliance->clearMediaCollection();
 		}
 
-		$alliance->request_notallow = (int) $request->post('request_notallow', 0) > 0;
+		if ($request->has('public')) {
+			$alliance->public = $request->integer('public') > 0;
+		}
+
 		$alliance->update();
 	}
 

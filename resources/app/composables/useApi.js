@@ -28,6 +28,7 @@ export async function useApiPost (url, data = {}, options = {}){
 	try {
 		return await useHttp(data)
 			.post(url, {
+				...options,
 				headers: {
 					'Locale': i18n.global.locale.value,
 				},
@@ -74,7 +75,9 @@ export const useApiSubmit = async (url, data = {}, callback, error) => {
 	startLoading();
 
 	try {
-		const result = await useApiPost(url, data);
+		const result = await useApiPost(url, data, {
+			forceFormData: true,
+		});
 
 		if (typeof callback === 'function') {
 			callback?.(result);

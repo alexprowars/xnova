@@ -6,14 +6,16 @@ use App\Engine\Battle\BattleReport;
 use App\Engine\Battle\Simulation;
 use App\Engine\Enums\ItemType;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Models\LogsSimulation;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Throwable;
 
 class SimController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		if ($request->has('units')) {
 			$units = explode(';', $request->input('units'));
@@ -62,10 +64,10 @@ class SimController extends Controller
 			}
 		}
 
-		return $result;
+		return Inertia::render('Sim', $result);
 	}
 
-	public function reportById(string $id): array
+	public function reportById(string $id)
 	{
 		$log = LogsSimulation::findOne($id);
 
@@ -81,18 +83,18 @@ class SimController extends Controller
 			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
-		return [
+		return Inertia::render('SimReport', [
 			'report' => $report,
 			'uuid' => $log->id,
-		];
+		]);
 	}
 
-	public function report(Request $request): array
+	public function report(Request $request)
 	{
 		$r = explode('|', $request->input('r', ''));
 
 		if (empty($r[0]) || empty($r[10])) {
-			throw new Exception('Нет данных для симуляции боя');
+			throw new PageException('Нет данных для симуляции боя');
 		}
 
 		$sim = new Simulation();
@@ -119,16 +121,16 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report();
 		} catch (Throwable $e) {
-			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
+			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
 		$log = LogsSimulation::create([
 			'data' => $result,
 		]);
 
-		return [
+		return Inertia::render('SimReport', [
 			'report' => $report,
 			'uuid' => $log->id,
-		];
+		]);
 	}
 }

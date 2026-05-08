@@ -11,12 +11,13 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class AllianceChatController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		if ($this->user->messages_ally != 0) {
 			$this->user->messages_ally = 0;
@@ -64,7 +65,7 @@ class AllianceChatController extends Controller
 
 		$result['owner'] = $alliance->user_id == $this->user->id;
 
-		return $result;
+		return Inertia::render('Alliance/Chat', $result);
 	}
 
 	public function send(Request $request): void

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Referal;
+use Inertia\Inertia;
 
 class ReferralsController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$referals = Referal::query()
 			->whereBelongsTo($this->user, 'user')
@@ -14,6 +15,7 @@ class ReferralsController extends Controller
 			->with('referal')
 			->get();
 
+		$parse = [];
 		$parse['items'] = [];
 
 		foreach ($referals as $referal) {
@@ -38,6 +40,6 @@ class ReferralsController extends Controller
 			];
 		}
 
-		return $parse;
+		return Inertia::render('Referrals', $parse);
 	}
 }

@@ -78,10 +78,14 @@ class AppServiceProvider extends ServiceProvider
 				])->withSharedData();
 			}
 
-			return $response->render('ErrorPageFull', [
-				'status' => $response->statusCode(),
-				'message' => $response->exception->getMessage(),
-			]);
+			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
+				return $response->render('ErrorPageFull', [
+					'status' => $response->statusCode(),
+					'message' => $response->exception->getMessage(),
+				]);
+			}
+
+			return $response;
 		});
 	}
 

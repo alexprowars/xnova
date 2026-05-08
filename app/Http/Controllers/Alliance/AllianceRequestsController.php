@@ -7,22 +7,24 @@ use App\Engine\Enums\MessageType;
 use App\Engine\Messages\Types\AllianceMemberAcceptMessage;
 use App\Engine\Messages\Types\AllianceMemberRejectMessage;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use App\Notifications\MessageNotification;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AllianceRequestsController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(): array
+	public function index()
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT) && !$alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$result = [];
@@ -42,19 +44,21 @@ class AllianceRequestsController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Alliance/Admin/Requests', [
+			'items' => $result,
+		]);
 	}
 
-	public function accept(Request $request): void
+	public function accept(Request $request)
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
-		if ($alliance->members_count >= 150) {
-			throw new Exception('Альянс не может иметь больше 150 участников');
+		if ($alliance->total_members >= 150) {
+			throw new PageException('Альянс не может иметь больше 150 участников');
 		}
 
 		$req = $alliance->requests()
@@ -62,7 +66,7 @@ class AllianceRequestsController extends Controller
 			->first();
 
 		if (!$req) {
-			throw new Exception('Заявка не найдена');
+			throw new PageException('Заявка не найдена');
 		}
 
 		if (!empty($request->post('message'))) {
@@ -95,6 +99,8 @@ class AllianceRequestsController extends Controller
 		);
 
 		$user->notify($notification);
+
+		return to_route('alliance.members');
 	}
 
 	public function reject(Request $request): void
@@ -102,7 +108,7 @@ class AllianceRequestsController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$req = $alliance->requests()
@@ -110,7 +116,7 @@ class AllianceRequestsController extends Controller
 			->first();
 
 		if (!$req) {
-			throw new Exception('Заявка не найдена');
+			throw new PageException('Заявка не найдена');
 		}
 
 		if (!empty($request->post('message'))) {
@@ -135,7 +141,7 @@ class AllianceRequestsController extends Controller
 	public function remove(int $id): void
 	{
 		if (!$id) {
-			throw new Exception('Не указан идентификатор заявки');
+			throw new PageException('Не указан идентификатор заявки');
 		}
 
 		AllianceRequest::query()->where('id', $id)

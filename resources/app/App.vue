@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div :class="[appClass]">
 		<slot/>
 
 		<Loader v-if="loading"/>
@@ -16,8 +16,11 @@
 	import useEcho from './composables/useEcho.js';
 	import useChatStore from './store/useChatStore.js';
 	import { setLocale } from './i18n.js';
+	import dayjs from 'dayjs';
+	import { closeModals } from './composables/useModals.js';
 
 	defineProps({
+		appClass: String,
 		loading: {
 			type: Boolean,
 			default: false,
@@ -34,6 +37,11 @@
 	const user = computed(() => page.props.user);
 
 	setLocale(page.props.locale);
+	dayjs.locale(page.props.locale);
+
+	router.on('navigate', () => {
+		closeModals();
+	});
 
 	router.on('flash', (event) => {
 		if (event.detail.flash.toast) {

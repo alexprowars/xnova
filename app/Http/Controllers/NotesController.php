@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class NotesController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$notes = $this->user->notes()
 			->latest('updated_at')->get();
@@ -29,7 +31,14 @@ class NotesController extends Controller
 			];
 		}
 
-		return $items;
+		return Inertia::render('Notes/List', [
+			'items' => $items,
+		]);
+	}
+
+	public function create()
+	{
+		return Inertia::render('Notes/Create');
 	}
 
 	public function delete(Request $request): void
@@ -41,7 +50,7 @@ class NotesController extends Controller
 		}
 	}
 
-	public function create(Request $request): array
+	public function store(Request $request)
 	{
 		$priority = (int) $request->post('priority', 0);
 
@@ -62,33 +71,37 @@ class NotesController extends Controller
 		$note->text = $message;
 		$note->save();
 
-		return [
-			'id' => $note->id,
-		];
+		Inertia::flash('toast', 'Заметка добавлена');
+
+		return to_route('notes.detail', ['id' => $note->id]);
 	}
 
-	public function edit(int $id): array
+	public function edit(int $id)
 	{
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new Exception(__('notes.not_found'));
+			throw new PageException(__('notes.not_found'));
 		}
 
-		return [
+		$result = [
 			'id' => $note->id,
 			'priority' => (int) $note->priority,
 			'title' => $note->title,
-			'text' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
+			'message' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
 		];
+
+		return Inertia::render('Notes/Edit', [
+			'item' => $result,
+		]);
 	}
 
-	public function update(int $id, Request $request): void
+	public function update(int $id, Request $request)
 	{
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new Exception(__('notes.not_found'));
+			throw new PageException(__('notes.not_found'));
 		}
 
 		$priority = (int) $request->post('priority', 0);
@@ -108,5 +121,9 @@ class NotesController extends Controller
 		$note->title = $title;
 		$note->text = $message;
 		$note->save();
+
+		Inertia::flash('toast', 'Заметка обновлена');
+
+		return back();
 	}
 }

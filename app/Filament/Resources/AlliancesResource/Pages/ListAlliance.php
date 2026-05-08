@@ -45,7 +45,7 @@ class ListAlliance extends ListRecords
 					->formatStateUsing(function (User $state) {
 						return $state->username . ($state->galaxy ? ' [' . $state->galaxy . ':' . $state->system . ':' . $state->planet . ']' : '');
 					}),
-				TextColumn::make('members_count')
+				TextColumn::make('total_members')
 					->label('Кол-во участников'),
 				TextColumn::make('created_at')
 					->label('Дата создания')

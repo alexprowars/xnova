@@ -11,24 +11,25 @@ use App\Models\Planet;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class AllianceMembersController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
 		$alliance = $this->getAlliance();
+
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST)) {
+			throw new Exception(__('alliance.Denied_access'));
+		}
 
 		$result = [];
 
 		if (str_contains(Route::current()->uri(), '/admin')) {
 			$result['admin'] = true;
 		} else {
-			if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST)) {
-				throw new Exception(__('alliance.Denied_access'));
-			}
-
 			$result['admin'] = false;
 		}
 
@@ -65,16 +66,19 @@ class AllianceMembersController extends Controller
 				'planet' => $member->user->planet,
 				'points' => Format::number($member->user->statistics->total_points ?? 0),
 				'date' => $member->created_at->utc()->toAtomString(),
+				'online' => null,
 			];
 
-			if (strtotime($member->user->onlinetime) + 60 * 10 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$item['online'] = '<span class="positive">' . __('alliance.On') . '</span>';
-			} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time() && $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
-			} elseif ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
-				$hours = (int) floor((time() - strtotime($member->user->onlinetime)) / 3600);
+			if ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
+				if (strtotime($member->user->onlinetime) + 60 * 10 >= time()) {
+					$item['online'] = '<span class="positive">' . __('alliance.On') . '</span>';
+				} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time()) {
+					$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
+				} else {
+					$hours = (int) floor((time() - strtotime($member->user->onlinetime)) / 3600);
 
-				$item['online'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
+					$item['online'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
+				}
 			}
 
 			if ($alliance->user_id == $member->user_id) {
@@ -88,8 +92,8 @@ class AllianceMembersController extends Controller
 			$result['members'][] = $item;
 		}
 
-		if (count($result['members']) != $alliance->members_count) {
-			$alliance->members_count = count($result['members']);
+		if (count($result['members']) != $alliance->total_members) {
+			$alliance->total_members = count($result['members']);
 			$alliance->save();
 		}
 
@@ -105,9 +109,10 @@ class AllianceMembersController extends Controller
 		}
 
 		$result['order'] = $order == 'desc' ? 'asc' : 'desc';
-		$result['status'] = $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS);
 
-		return $result;
+		return Inertia::render('Alliance/Members', [
+			'data' => $result,
+		]);
 	}
 
 	public function kick(Request $request): void

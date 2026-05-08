@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Engine\Enums\MessageType;
 use App\Engine\Messages\MessageContract;
+use App\Engine\Messages\Types\TextMessage;
 use App\Models\Message;
 use App\Models\User;
 
@@ -41,10 +42,7 @@ class MessagesChannel
 		}
 
 		if (!is_array($message)) {
-			$message = [
-				'type' => 'TextMessage',
-				'text' => $message,
-			];
+			$message = new TextMessage(['text' => $message])->toArray();
 		}
 
 		$obj->message = $message;

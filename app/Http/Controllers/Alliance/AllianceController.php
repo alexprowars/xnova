@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models;
 use App\Models\Alliance;
@@ -12,12 +13,13 @@ use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class AllianceController extends Controller
 {
 	use AllianceControllerTrait;
 
-	protected function noAlly(): array
+	protected function noAlly()
 	{
 		$result = [
 			'requests' => [],
@@ -40,7 +42,7 @@ class AllianceController extends Controller
 		}
 
 		$alliances = DB::table('alliances', 'a')
-			->select(['a.id', 'a.tag', 'a.name', 'a.members_count as members', 's.total_points'])
+			->select(['a.id', 'a.tag', 'a.name', 'a.total_members as members', 's.total_points'])
 			->leftJoin('statistics as s', 's.alliance_id', '=', 'a.id')
 			->where('s.stat_type', 2)
 			->where('s.stat_code', 1)
@@ -52,10 +54,10 @@ class AllianceController extends Controller
 			$result['alliances'][] = (array) $item;
 		}
 
-		return $result;
+		return Inertia::render('Alliance/Empty', $result);
 	}
 
-	public function index(): array
+	public function index()
 	{
 		if (!$this->user->alliance_id) {
 			return $this->noAlly();
@@ -64,7 +66,7 @@ class AllianceController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id == $this->user->id) {
-			$range = ($alliance->owner_range == '') ? 'Основатель' : $alliance->owner_range;
+			$range = ($alliance->owner_rank == '') ? 'Основатель' : $alliance->owner_rank;
 		} elseif ($alliance->member->rank != null && isset($alliance->ranks[$alliance->member->rank]['name'])) {
 			$range = $alliance->ranks[$alliance->member->rank]['name'];
 		} else {
@@ -98,11 +100,13 @@ class AllianceController extends Controller
 		}
 
 		$result['tag'] = $alliance->tag;
-		$result['members'] = $alliance->members_count;
+		$result['members'] = $alliance->total_members;
 		$result['name'] = $alliance->name;
 		$result['id'] = $alliance->id;
 
-		return $result;
+		return Inertia::render('Alliance/Main', [
+			'data' => $result,
+		]);
 	}
 
 	public function exit(): void
@@ -116,69 +120,82 @@ class AllianceController extends Controller
 		$alliance->deleteMember($this->user->id);
 	}
 
-	public function info(int|string $id): array
+	public function info(int | string $id)
 	{
 		if ($id != '' && !is_numeric($id)) {
-			$allyrow = Alliance::whereTag(addslashes(htmlspecialchars($id)))->first();
+			$alliance = Alliance::whereTag(addslashes(htmlspecialchars($id)))->first();
 		} elseif ($id > 0 && is_numeric($id)) {
-			$allyrow = Alliance::find((int) $id);
+			$alliance = Alliance::find((int) $id);
 		} else {
 			throw new Exception('Указанного альянса не существует в игре!');
 		}
 
-		if (!$allyrow) {
+		if (!$alliance) {
 			throw new Exception('Указанного альянса не существует в игре!');
 		}
 
-		if (empty($allyrow->description)) {
-			$allyrow->description = '[center]У этого альянса ещё нет описания[/center]';
+		if (empty($alliance->description)) {
+			$alliance->description = '[center]У этого альянса ещё нет описания[/center]';
 		}
 
-		$parse['id'] = $allyrow->id;
-		$parse['member_scount'] = $allyrow->members_count;
-		$parse['name'] = $allyrow->name;
-		$parse['tag'] = $allyrow->tag;
-		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($allyrow->description));
-		$parse['image'] = $allyrow->getFirstMediaUrl(conversionName: 'thumb') ?: null;
+		$parse = [];
+		$parse['id'] = $alliance->id;
+		$parse['total_members'] = $alliance->total_members;
+		$parse['name'] = $alliance->name;
+		$parse['tag'] = $alliance->tag;
+		$parse['description'] = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->description));
+		$parse['image'] = $alliance->getFirstMediaUrl(conversionName: 'thumb') ?: null;
 
-		if ($allyrow->web != '' && !str_contains($allyrow->web, 'http')) {
-			$allyrow->web = 'https://' . $allyrow->web;
+		if ($alliance->web != '' && !str_contains($alliance->web, 'http')) {
+			$alliance->web = 'https://' . $alliance->web;
 		}
 
-		$parse['web'] = $allyrow->web;
-		$parse['request'] = ($this->user && $this->user->alliance_id == 0);
+		$parse['web'] = $alliance->web;
+		$parse['request'] = $this->user && $this->user->alliance_id == 0;
 
-		return $parse;
+		return Inertia::render('Alliance/Info', [
+			'data' => $parse,
+		]);
 	}
 
-	public function create(Request $request): void
+	public function createPage()
+	{
+		return Inertia::render('Alliance/Create');
+	}
+
+	public function create(Request $request)
 	{
 		$ally_request = AllianceRequest::query()->whereBelongsTo($this->user)->count();
 
 		if ($this->user->alliance_id > 0 || $ally_request) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$tag = $request->post('tag');
 		$name = $request->post('name');
 
 		if (empty($tag)) {
-			throw new Exception(__('alliance.have_not_tag'));
-		}
-		if (empty($name)) {
-			throw new Exception(__('alliance.have_not_name'));
-		}
-		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
-			throw new Exception("Абревиатура альянса содержит запрещённые символы");
-		}
-		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $name)) {
-			throw new Exception("Название альянса содержит запрещённые символы");
+			throw new PageException(__('alliance.have_not_tag'));
 		}
 
-		$find = Alliance::query()->where('tag', addslashes($tag))->exists();
+		if (empty($name)) {
+			throw new PageException(__('alliance.have_not_name'));
+		}
+
+		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $tag)) {
+			throw new PageException("Абревиатура альянса содержит запрещённые символы");
+		}
+
+		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $name)) {
+			throw new PageException("Название альянса содержит запрещённые символы");
+		}
+
+		$find = Alliance::query()
+			->where('tag', addslashes($tag))
+			->exists();
 
 		if ($find) {
-			throw new Exception(str_replace('%s', $tag, __('alliance.always_exist')));
+			throw new PageException(str_replace('%s', $tag, __('alliance.always_exist')));
 		}
 
 		$alliance = new Alliance();
@@ -188,7 +205,7 @@ class AllianceController extends Controller
 		$alliance->ranks = [];
 
 		if (!$alliance->save()) {
-			throw new Exception('Произошла ошибка при создании альянса');
+			throw new PageException('Произошла ошибка при создании альянса');
 		}
 
 		$member = new AllianceMember();
@@ -196,40 +213,41 @@ class AllianceController extends Controller
 		$member->user_id = $this->user->id;
 
 		if (!$member->save()) {
-			throw new Exception('Произошла ошибка при создании альянса');
+			throw new PageException('Произошла ошибка при создании альянса');
 		}
 
-		$this->user->alliance_id = $alliance->id;
+		$this->user->alliance()->associate($alliance);
 		$this->user->alliance_name = $alliance->name;
-		$this->user->update();
+		$this->user->save();
+
+		return to_route('alliance');
 	}
 
-	public function search(Request $request): array
+	public function search(Request $request)
 	{
 		$query = $request->post('query', '');
-
-		if (!empty($query)) {
-			return [];
-		}
-
-		if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $query)) {
-			throw new Exception('Строка поиска содержит запрещённые символы');
-		}
-
 		$items = [];
 
-		$search = Alliance::query()->where('name', 'LIKE', '%' . $query . '%')
-			->orWhere('tag', 'LIKE', '%' . $query . '%')
-			->limit(30)->get();
+		if (!empty($query)) {
+			if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $query)) {
+				throw new PageException('Строка поиска содержит запрещённые символы');
+			}
 
-		foreach ($search as $item) {
-			$items[] = $item->only(['id', 'name', 'tag', 'members']);
+			$search = Alliance::query()->where('name', 'LIKE', '%' . $query . '%')
+				->orWhere('tag', 'LIKE', '%' . $query . '%')
+				->limit(30)->get();
+
+			foreach ($search as $item) {
+				$items[] = $item->only(['id', 'name', 'tag', 'members']);
+			}
 		}
 
-		return $items;
+		return Inertia::render('Alliance/Search', [
+			'items' => $items,
+		]);
 	}
 
-	public function join(int $id): array
+	public function join(int $id)
 	{
 		if ($this->user->alliance_id) {
 			throw new Exception(__('alliance.Denied_access'));
@@ -241,19 +259,22 @@ class AllianceController extends Controller
 			throw new Exception('Альянса не существует!');
 		}
 
-		if ($alliance->request_notallow != 0) {
+		if (!$alliance->public) {
 			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
 		}
 
-		$requestText = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request ?? ''));
+		$text = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request ?? ''));
 
-		return [
-			'tag' => $alliance->tag,
-			'text' => $requestText,
-		];
+		return Inertia::render('Alliance/Join', [
+			'data' => [
+				'id' => $alliance->id,
+				'tag' => $alliance->tag,
+				'text' => $text,
+			],
+		]);
 	}
 
-	public function joinSend(int $id, Request $request): void
+	public function joinSend(int $id, Request $request)
 	{
 		if ($this->user->alliance_id) {
 			throw new Exception(__('alliance.Denied_access'));
@@ -265,7 +286,7 @@ class AllianceController extends Controller
 			throw new Exception('Альянса не существует!');
 		}
 
-		if ($alliance->request_notallow != 0) {
+		if (!$alliance->public) {
 			throw new Exception('Данный альянс является закрытым для вступлений новых членов');
 		}
 
@@ -280,9 +301,11 @@ class AllianceController extends Controller
 			'user_id' => $this->user->id,
 			'message' => strip_tags($request->post('message')),
 		]);
+
+		return to_route('alliance');
 	}
 
-	public function stat(int $id): array
+	public function stat(int $id)
 	{
 		$alliance = Alliance::findOne($id);
 
@@ -321,6 +344,8 @@ class AllianceController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Alliance/Stats', [
+			'data' => $result,
+		]);
 	}
 }

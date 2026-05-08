@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\MessageType;
 use App\Engine\Messages\Types\FriendsRequestMessage;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Models;
 use App\Models\Friend;
 use App\Models\User;
 use App\Notifications\SystemMessage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class FriendsController extends Controller
 {
-	public function index(): array
+	public function index()
 	{
 		$result = [];
 
@@ -61,10 +63,12 @@ class FriendsController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Friends/List', [
+			'items' => $result,
+		]);
 	}
 
-	public function requests(Request $request): array
+	public function requests(Request $request)
 	{
 		$isMyRequests = $request->input('my', 'N') == 'Y';
 
@@ -109,25 +113,29 @@ class FriendsController extends Controller
 			];
 		}
 
-		return $result;
+		return Inertia::render('Friends/Requests', [
+			'items' => $result,
+		]);
 	}
 
-	public function new(int $userId): array
+	public function new(int $userId)
 	{
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new Exception('Друг не найден');
+			throw new PageException('Друг не найден');
 		}
 
 		if ($user->is($this->user)) {
-			throw new Exception('Нельзя дружить сам с собой');
+			throw new PageException('Нельзя дружить сам с собой');
 		}
 
-		return [
-			'id' => $user->id,
-			'username' => $user->username,
-		];
+		return Inertia::render('Friends/New', [
+			'user' => [
+				'id' => $user->id,
+				'username' => $user->username,
+			]
+		]);
 	}
 
 	public function create(int $userId, Request $request): void

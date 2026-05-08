@@ -40,7 +40,7 @@ function Game()
 	this.sounds = null;
 
 	this.sprite = new Image();
-	this.sprite.src = '/images/404/sprite.png';
+	this.sprite.src = '/assets/images/404/sprite.png';
 	this.state = 0;
 	this.stateCache = 0;
 }
@@ -209,9 +209,9 @@ WelcomeState.prototype.enter = function (game)
 	// Create and load the sounds.
 	game.sounds = new Sounds();
 	game.sounds.init();
-	game.sounds.loadSound('shoot', '/images/404/sounds/shoot.wav');
-	game.sounds.loadSound('bang', '/images/404/sounds/bang.wav');
-	game.sounds.loadSound('explosion', '/images/404/sounds/explosion.wav');
+	game.sounds.loadSound('shoot', '/assets/images/404/sounds/shoot.wav');
+	game.sounds.loadSound('bang', '/assets/images/404/sounds/bang.wav');
+	game.sounds.loadSound('explosion', '/assets/images/404/sounds/explosion.wav');
 };
 
 WelcomeState.prototype.update = function (game, dt)
@@ -651,7 +651,7 @@ PauseState.prototype.draw = function (game, dt, ctx)
 	ctx.fillText("Пауза", game.width / 2, game.height / 2);
 };
 
-/*  
+/*
  Level Intro State
 
  The Level Intro state shows a 'Level X' message and

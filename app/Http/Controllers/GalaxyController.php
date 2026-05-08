@@ -207,7 +207,7 @@ class GalaxyController extends Controller
 					$row['alliance'] = [
 						'id' => $alliance->id,
 						'name' => $alliance->name,
-						'members' => $alliance->members_count,
+						'members' => $alliance->total_members,
 						'web' => $alliance->web,
 						'tag' => $alliance->tag,
 						'diplomacy' => $diplomacy?->type,

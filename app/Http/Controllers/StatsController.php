@@ -118,7 +118,7 @@ class StatsController extends Controller
 
 		$position = ($result['page'] - 1) * 100;
 
-		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`members_count` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`total_members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 
@@ -138,7 +138,7 @@ class StatsController extends Controller
 			$row['diff'] = $oldPosition - $position;
 			$row['name'] = $item->name;
 			$row['name_marked'] = $item->name == $this->user?->alliance_name;
-			$row['members'] = (int) $item->members_count;
+			$row['members'] = (int) $item->total_members;
 			$row['points'] = (int) $item->{$this->field . '_points'};
 
 			$result['items'][] = $row;

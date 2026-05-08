@@ -7,19 +7,19 @@
 <script setup>
 	import MessageForm from '../../../components/Page/Messages/Form.vue';
 	import { openPopupModal } from '../../../composables/useModals.js';
+	import { progress } from '@inertiajs/vue3';
+	import { useApiGet } from '../../../composables/useApi.js';
 
 	const props = defineProps({
 		id: Number,
 	});
 
 	async function openPopup() {
-		const { start, finish } = useLoadingIndicator();
-
-		start();
+		progress.start();
 
 		const { id, to, message } = await useApiGet('/messages/write/' + props.id);
 
-		finish();
+		progress.finish();
 
 		await openPopupModal(MessageForm, { id, to, message });
 	}

@@ -4,20 +4,22 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class AllianceRanksController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(): array
+	public function index()
 	{
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$parse['alliance'] = $alliance->only(['id', 'user_id']);
@@ -37,7 +39,9 @@ class AllianceRanksController extends Controller
 			];
 		}
 
-		return $parse;
+		return Inertia::render('Alliance/Admin/Ranks', [
+			'data' => $parse,
+		]);
 	}
 
 	public function create(Request $request): void
@@ -45,7 +49,7 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$ranks = $alliance->ranks;
@@ -69,13 +73,13 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$rights = Arr::wrap($request->post('rigths', []));
 
 		if (empty($rights)) {
-			throw new Exception('Ошибка в передаче параметров');
+			throw new PageException('Ошибка в передаче параметров');
 		}
 
 		$newRanks = $alliance->ranks;
@@ -104,7 +108,7 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$ranks = $alliance->ranks;

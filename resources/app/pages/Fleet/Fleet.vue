@@ -85,12 +85,12 @@
 </template>
 
 <script setup>
-	import FleetList from '../components/Page/Fleet/FleetList.vue';
+	import FleetList from '../../components/Page/Fleet/FleetList.vue';
 	import { computed, ref, watch } from 'vue';
-	import { Head, Link, usePage } from '@inertiajs/vue3';
-	import { useErrorNotification } from '../composables/useToast.js';
-	import { useApiPost } from '../composables/useApi.js';
-	import { startLoading, stopLoading } from '../composables/useLoading.js';
+	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { useErrorNotification } from '../../composables/useToast.js';
+	import { useApiPost } from '../../composables/useApi.js';
+	import { startLoading, stopLoading } from '../../composables/useLoading.js';
 
 	const props = defineProps({
 		data: {
@@ -205,9 +205,15 @@
 		startLoading();
 
 		try {
-			await useApiPost('/fleet/checkout', {
+			const result = await useApiPost('/fleet/checkout', {
 				ships: fleets.value,
 				...props.data['selected'],
+			});
+
+			router.push({
+				url: '/fleet/checkout',
+				component: 'Fleet/Checkout',
+				props: (currentProps) => ({ ...currentProps, data: result }),
 			});
 		} catch (e) {
 			useErrorNotification(e.message);

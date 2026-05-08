@@ -27,11 +27,11 @@ class FleetCheckoutController extends Controller
 
 	public function send(Request $request)
 	{
-		$galaxy = (int) $request->post('galaxy', 0);
-		$system = (int) $request->post('system', 0);
-		$planet = (int) $request->post('planet', 0);
+		$galaxy = $request->integer('galaxy');
+		$system = $request->integer('system');
+		$planet = $request->integer('planet');
 
-		$type = (int) $request->post('planet_type', 0);
+		$type = $request->integer('planet_type');
 		$type = PlanetType::tryFrom($type);
 
 		if (!$galaxy) {
@@ -72,7 +72,7 @@ class FleetCheckoutController extends Controller
 				$result['ships'][] = $ship;
 			}
 		}
-		throw new Exception('Не выбран флот');
+
 		if (empty($fleets)) {
 			throw new Exception('Не выбран флот');
 		}

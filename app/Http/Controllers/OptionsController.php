@@ -43,16 +43,23 @@ class OptionsController extends Controller
 			];
 		}
 
-		return Inertia::render('Options', [
+		return Inertia::render('Options/Options', [
 			'data' => $result,
 		]);
 	}
 
-	public function email(ChangeEmailRequest $request): void
+	public function email()
+	{
+		return Inertia::render('Options/Email');
+	}
+
+	public function changeEmail(ChangeEmailRequest $request)
 	{
 		$this->user->email = $request->input('email');
 		$this->user->email_verified_at = null;
 		$this->user->save();
+
+		return to_route('options');
 	}
 
 	public function save(Request $request): void

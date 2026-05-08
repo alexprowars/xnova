@@ -8,17 +8,19 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PhalanxController extends Controller
 {
-	public function index(Request $request): array
+	public function index(Request $request)
 	{
-		$galaxy = (int) $request->post('galaxy', 0);
-		$system = (int) $request->post('system', 0);
-		$planet = (int) $request->post('planet', 0);
+		$galaxy = $request->integer('galaxy');
+		$system = $request->integer('system');
+		$planet = $request->integer('planet');
 
 		$consumption = 5000;
 
@@ -42,19 +44,19 @@ class PhalanxController extends Controller
 		$target = new Coordinates($galaxy, $system, $planet);
 
 		if ($this->planet->planet_type != PlanetType::MOON) {
-			throw new Exception('Вы можете использовать фалангу только на луне!');
+			throw new PageException('Вы можете использовать фалангу только на луне!');
 		}
 
 		if ($phalanx == 0) {
-			throw new Exception('Постройте сначало сенсорную фалангу');
+			throw new PageException('Постройте сначало сенсорную фалангу');
 		}
 
 		if ($this->planet->deuterium < $consumption) {
-			throw new Exception('Недостаточно дейтерия для использования. Необходимо: ' . $consumption . '.');
+			throw new PageException('Недостаточно дейтерия для использования. Необходимо: ' . $consumption . '.');
 		}
 
 		if (($target->getSystem() <= $systemFrom || $target->getSystem() >= $systemTo) || $target->getGalaxy() != $this->planet->galaxy) {
-			throw new Exception('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
+			throw new PageException('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
 		}
 
 		$this->planet->deuterium -= $consumption;
@@ -64,7 +66,7 @@ class PhalanxController extends Controller
 			->exists();
 
 		if (!$planetExist) {
-			throw new Exception('Чит детектед! Режим бога активирован! Приятной игры!');
+			throw new PageException('Чит детектед! Режим бога активирован! Приятной игры!');
 		}
 
 		$fleets = Models\Fleet::query()
@@ -126,6 +128,8 @@ class PhalanxController extends Controller
 			}
 		}
 
-		return $items;
+		return Inertia::render('Phalanx', [
+			'items' => $items,
+		]);
 	}
 }

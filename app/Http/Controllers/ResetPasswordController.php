@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
@@ -10,10 +11,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+use Inertia\Inertia;
 
 class ResetPasswordController extends Controller
 {
-	public function forgot(Request $request): array
+	public function index()
+	{
+		return Inertia::render('ResetPassword');
+	}
+
+	public function forgot(Request $request)
 	{
 		$request->validate([
 			'email' => ['required', 'email'],
@@ -24,15 +31,15 @@ class ResetPasswordController extends Controller
 		);
 
 		if ($status != Password::RESET_LINK_SENT) {
-			throw new Exception(__($status));
+			throw new Exception(__($status), 422);
 		}
 
-		return [
+		return response()->json([
 			'message' => __($status),
-		];
+		]);
 	}
 
-	public function reset(Request $request): void
+	public function reset(Request $request)
 	{
 		$data = $request->validate([
 			'token' => ['required'],
@@ -55,7 +62,9 @@ class ResetPasswordController extends Controller
 		);
 
 		if ($status != Password::PASSWORD_RESET) {
-			throw new Exception(__($status));
+			throw new PageException(__($status));
 		}
+
+		return to_route('overview');
 	}
 }

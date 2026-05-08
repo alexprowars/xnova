@@ -7,8 +7,8 @@
 </template>
 
 <script setup>
-	import VacationTab from '../components/Page/Options/VacationTab.vue';
-	import OptionsTab from '../components/Page/Options/OptionsTab.vue';
+	import VacationTab from '../../components/Page/Options/VacationTab.vue';
+	import OptionsTab from '../../components/Page/Options/OptionsTab.vue';
 	import { Head, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 

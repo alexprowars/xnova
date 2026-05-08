@@ -4,22 +4,24 @@ namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\Alliance;
 use App\Models\AllianceDiplomacy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class AllianceDiplomacyController extends Controller
 {
 	use AllianceControllerTrait;
 
-	public function index(): array
+	public function index()
 	{
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
@@ -41,14 +43,16 @@ class AllianceDiplomacyController extends Controller
 		$parse['items'] = [];
 
 		$alliances = Alliance::query()->whereNot('id', $this->user->alliance_id)
-			->where('members_count', '>', 0)
+			->where('total_members', '>', 0)
 			->get();
 
 		foreach ($alliances as $ally) {
 			$parse['items'][] = $ally->only(['id', 'name', 'tag']);
 		}
 
-		return $parse;
+		return Inertia::render('Alliance/Diplomacy', [
+			'data' => $parse,
+		]);
 	}
 
 	public function accept(Request $request): void
@@ -56,14 +60,14 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$item = $alliance->diplomacy()->where('id', (int) $request->query('id'))
 			->first();
 
 		if (!$item) {
-			throw new Exception('Ошибка ввода параметров');
+			throw new PageException('Ошибка ввода параметров');
 		}
 
 		AllianceDiplomacy::query()->where('alliance_id', $item->alliance_id)
@@ -80,14 +84,14 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$item = $alliance->diplomacy()->where('id', (int) $request->query('id'))
 			->first();
 
 		if (!$item) {
-			throw new Exception('Ошибка ввода параметров');
+			throw new PageException('Ошибка ввода параметров');
 		}
 
 		AllianceDiplomacy::query()->where('alliance_id', $item->alliance_id)
@@ -104,14 +108,14 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.Denied_access'));
 		}
 
 		$stts = (int) $request->post('status', 0);
 		$ally = Alliance::find((int) $request->post('alliance'));
 
 		if (!$ally) {
-			throw new Exception('Ошибка ввода параметров');
+			throw new PageException('Ошибка ввода параметров');
 		}
 
 		$ad = $alliance->diplomacy()
@@ -119,11 +123,11 @@ class AllianceDiplomacyController extends Controller
 			->count();
 
 		if ($ad) {
-			throw new Exception('У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.');
+			throw new PageException('У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.');
 		}
 
 		if ($stts < 0 || $stts > 3) {
-			$st = 0;
+			$stts = 0;
 		}
 
 		$alliance->diplomacy()->create([

@@ -9,6 +9,7 @@ Route::get('/', [Controllers\IndexController::class, 'index'])->middleware(Check
 Route::post('login', [Controllers\LoginController::class, 'credentials'])->name('login');
 Route::get('login/social/{service}', [Controllers\LoginController::class, 'services']);
 Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback']);
+Route::get('login/reset', [Controllers\ResetPasswordController::class, 'index']);
 Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset']);
 Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot']);
 Route::get('state', [Controllers\StateController::class, 'index']);
@@ -22,6 +23,7 @@ Route::match(['get', 'post'], 'stats/players', [Controllers\StatsController::cla
 Route::match(['get', 'post'], 'stats/alliances', [Controllers\StatsController::class, 'alliances']);
 Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class, 'races']);
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id');
+Route::get('userbar{id}.jpg', [Controllers\UserBarController::class, 'index'])->whereNumber('id');
 
 Route::middleware(['auth'])->group(function () {
 	Route::post('logout', [Controllers\LogoutController::class, 'index']);
@@ -29,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('tech/{id}', [Controllers\TechController::class, 'info'])->whereNumber('id');
 
 	Route::get('sim', [Controllers\SimController::class, 'index']);
-	Route::post('sim/report', [Controllers\SimController::class, 'report']);
+	Route::get('sim/report', [Controllers\SimController::class, 'report']);
 	Route::post('sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
@@ -44,18 +46,21 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('chat', [Controllers\ChatController::class, 'send']);
 	Route::get('chat/last', [Controllers\ChatController::class, 'last']);
 
-	Route::get('alliance', [Controllers\Alliance\AllianceController::class, 'index']);
-	Route::post('alliance/search', [Controllers\Alliance\AllianceController::class, 'search']);
+	Route::get('alliance', [Controllers\Alliance\AllianceController::class, 'index'])->name('alliance');
+	Route::match(['get', 'post'], 'alliance/search', [Controllers\Alliance\AllianceController::class, 'search']);
+	Route::get('alliance/create', [Controllers\Alliance\AllianceController::class, 'createPage']);
 	Route::post('alliance/create', [Controllers\Alliance\AllianceController::class, 'create']);
 	Route::get('alliance/join/{id}', [Controllers\Alliance\AllianceController::class, 'join']);
 	Route::post('alliance/join/{id}', [Controllers\Alliance\AllianceController::class, 'joinSend']);
 	Route::get('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'index']);
 	Route::post('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'send']);
 	Route::delete('alliance/chat', [Controllers\Alliance\AllianceChatController::class, 'delete']);
-	Route::get('alliance/admin', [Controllers\Alliance\AllianceAdminController::class, 'index']);
+	Route::get('alliance/admin', [Controllers\Alliance\AllianceAdminController::class, 'index'])->name('alliance.admin');
 	Route::post('alliance/admin', [Controllers\Alliance\AllianceAdminController::class, 'update']);
 	Route::post('alliance/admin/text', [Controllers\Alliance\AllianceAdminController::class, 'text']);
+	Route::get('alliance/admin/name', [Controllers\Alliance\AllianceAdminController::class, 'namePage']);
 	Route::post('alliance/admin/name', [Controllers\Alliance\AllianceAdminController::class, 'name']);
+	Route::get('alliance/admin/tag', [Controllers\Alliance\AllianceAdminController::class, 'tagPage']);
 	Route::post('alliance/admin/tag', [Controllers\Alliance\AllianceAdminController::class, 'tag']);
 	Route::post('alliance/admin/remove', [Controllers\Alliance\AllianceAdminController::class, 'remove']);
 	Route::get('alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'give']);
@@ -67,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('alliance/exit', [Controllers\Alliance\AllianceController::class, 'exit']);
 	Route::get('alliance/info/{id}', [Controllers\Alliance\AllianceController::class, 'info'])->whereNumber('id');
 	Route::get('alliance/stat/{id}', [Controllers\Alliance\AllianceController::class, 'stat'])->whereNumber('id');
-	Route::get('alliance/members', [Controllers\Alliance\AllianceMembersController::class, 'index']);
+	Route::get('alliance/members', [Controllers\Alliance\AllianceMembersController::class, 'index'])->name('alliance.members');
 	Route::get('alliance/admin/members', [Controllers\Alliance\AllianceMembersController::class, 'index']);
 	Route::post('alliance/admin/members/kick', [Controllers\Alliance\AllianceMembersController::class, 'kick']);
 	Route::post('alliance/admin/members/rank', [Controllers\Alliance\AllianceMembersController::class, 'rank']);
@@ -90,7 +95,6 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('overview', [Controllers\OverviewController::class, 'index'])->name('overview');
 	Route::get('overview/rename', [Controllers\OverviewController::class, 'rename'])->middleware(IsVacationMode::class);
-	Route::post('overview/daily', [Controllers\OverviewController::class, 'daily']);
 
 	Route::get('buildings', [Controllers\BuildingsController::class, 'index']);
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->middleware(IsVacationMode::class)->whereIn('action', ['insert', 'destroy']);
@@ -98,11 +102,13 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('friends', [Controllers\FriendsController::class, 'index']);
 	Route::get('friends/requests', [Controllers\FriendsController::class, 'requests']);
+	Route::get('friends/requests/my', [Controllers\FriendsController::class, 'requests']);
 	Route::get('friends/new/{id}', [Controllers\FriendsController::class, 'new']);
 	Route::post('friends/new/{id}', [Controllers\FriendsController::class, 'create']);
 	Route::delete('friends/{id}', [Controllers\FriendsController::class, 'delete'])->whereNumber('id');
 	Route::post('friends/{id}/approve', [Controllers\FriendsController::class, 'approve'])->whereNumber('id');
 
+	Route::get('credits', [Controllers\CreditsController::class, 'index']);
 	Route::post('credits/pay', [Controllers\CreditsController::class, 'pay']);
 
 	Route::get('defense', [Controllers\DefenseController::class, 'index']);
@@ -115,7 +121,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('fleet/send', [Controllers\Fleet\FleetSendController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('fleet/send', [Controllers\Fleet\FleetSendController::class, 'send'])->middleware(IsVacationMode::class);
 	Route::post('fleet/back', [Controllers\Fleet\FleetBackController::class, 'index']);
-	Route::get('fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'index']);
+	Route::get('fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'index'])->name('fleet.shortcuts');
 	Route::get('fleet/shortcut/create', [Controllers\Fleet\FleetShortcutController::class, 'create']);
 	Route::post('fleet/shortcut', [Controllers\Fleet\FleetShortcutController::class, 'store']);
 	Route::get('fleet/shortcut/{id}', [Controllers\Fleet\FleetShortcutController::class, 'view'])->whereNumber('id');
@@ -130,9 +136,10 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('galaxy', [Controllers\GalaxyController::class, 'index']);
 	Route::get('empire', [Controllers\EmpireController::class, 'index']);
 
-	Route::get('logs', [Controllers\LogsController::class, 'index']);
+	Route::get('logs', [Controllers\LogsController::class, 'index'])->name('logs');
+	Route::get('logs/create', [Controllers\LogsController::class, 'create']);
 	Route::delete('logs/{id}', [Controllers\LogsController::class, 'delete']);
-	Route::post('logs', [Controllers\LogsController::class, 'create']);
+	Route::post('logs', [Controllers\LogsController::class, 'store']);
 
 	Route::get('merchant', [Controllers\MerchantController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange'])->middleware(IsVacationMode::class);
@@ -145,16 +152,18 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('notes', [Controllers\NotesController::class, 'index']);
 	Route::delete('notes', [Controllers\NotesController::class, 'delete']);
-	Route::get('notes/{id}', [Controllers\NotesController::class, 'edit'])->whereNumber('id');
+	Route::get('notes/{id}', [Controllers\NotesController::class, 'edit'])->whereNumber('id')->name('notes.detail');
 	Route::post('notes/{id}', [Controllers\NotesController::class, 'update'])->whereNumber('id');
-	Route::post('notes/create', [Controllers\NotesController::class, 'create']);
+	Route::get('notes/create', [Controllers\NotesController::class, 'create']);
+	Route::post('notes/create', [Controllers\NotesController::class, 'store']);
 
 	Route::get('officiers', [Controllers\OfficiersController::class, 'index']);
 	Route::post('officiers/buy', [Controllers\OfficiersController::class, 'buy'])->middleware(IsVacationMode::class);
 
-	Route::get('options', [Controllers\OptionsController::class, 'index']);
+	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
-	Route::post('options/email', [Controllers\OptionsController::class, 'email']);
+	Route::get('options/email', [Controllers\OptionsController::class, 'email']);
+	Route::post('options/email', [Controllers\OptionsController::class, 'changeEmail']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);
 	Route::post('options/vacation', [Controllers\OptionsController::class, 'vacation']);
 
@@ -173,7 +182,7 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::post('rocket', [Controllers\RocketController::class, 'index'])->middleware(IsVacationMode::class);
 	Route::get('rw/{id}', [Controllers\RwController::class, 'index'])->whereNumber('id');
-	Route::post('search', [Controllers\SearchController::class, 'index']);
+	Route::match(['get', 'post'], 'search', [Controllers\SearchController::class, 'index']);
 
 	Route::get('shipyard', [Controllers\ShipyardController::class, 'index']);
 	Route::post('shipyard/queue', [Controllers\ShipyardController::class, 'queue'])->middleware(IsVacationMode::class);
@@ -183,7 +192,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('support/{id}/answer', [Controllers\SupportController::class, 'answer'])->whereNumber('id');
 	Route::post('support/create', [Controllers\SupportController::class, 'create']);
 
-	Route::get('user/info', [Controllers\UserController::class, 'info']);
+	Route::post('user/daily', [Controllers\UserController::class, 'daily']);
 	Route::post('user/planet', [Controllers\UserController::class, 'setPlanet']);
 
 	Route::delete('planet/delete', [Controllers\PlanetController::class, 'delete'])->middleware(IsVacationMode::class);

@@ -80,7 +80,11 @@ export default {
 			'negative','quiet','ball','pooh','vv','fig1', 'spam', 'arbuz'
 		],
 	},
-	parse: function (txt) {
+	parse(txt) {
+		if (txt === null) {
+			return '';
+		}
+
 		let j = 0;
 
 		this.patterns.smiles.every((smile) => {

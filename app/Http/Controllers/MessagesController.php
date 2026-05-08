@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Enums\MessageType;
 use App\Engine\Messages\MessageFactory;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Format;
 use App\Models\Message;
 use App\Models\User;
@@ -132,19 +133,19 @@ class MessagesController extends Controller
 			'page' => $paginator->currentPage(),
 		];
 
-		return Inertia::render('Messages', $result);
+		return Inertia::render('Messages/List', $result);
 	}
 
-	public function write(int $userId, Request $request): array
+	public function write(int $userId, Request $request)
 	{
 		if (!$userId) {
-			throw new Exception(__('messages.mess_no_ownerid'));
+			throw new PageException(__('messages.mess_no_ownerid'));
 		}
 
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new Exception(__('messages.mess_no_owner'));
+			throw new PageException(__('messages.mess_no_owner'));
 		}
 
 		$result = [
@@ -167,7 +168,11 @@ class MessagesController extends Controller
 			}
 		}
 
-		return $result;
+		if (!$request->inertia() && $request->expectsJson()) {
+			return response()->json($result);
+		}
+
+		return Inertia::render('Messages/Write', $result);
 	}
 
 	public function send(int $userId, Request $request): void
@@ -219,6 +224,8 @@ class MessagesController extends Controller
 		$message = strtr($message, __('messages.stopwords'));
 
 		$user->notify(new SystemMessage(MessageType::User, $message, $this->user->username_formatted));
+
+		Inertia::flash('toast', 'Сообщение отправлено!');
 	}
 
 	public function delete(Request $request): void

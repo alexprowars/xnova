@@ -1,10 +1,12 @@
 <template>
-	<Head title="Восстановление пароля"/>
 	<div class="page-remind">
+		<Head title="Восстановление пароля"/>
 		<div class="block">
 			<div class="title">Восстановление пароля</div>
 			<div class="content">
-				<div v-if="error" v-html="error.message" :class="[error.type]" class="message"></div>
+				<template v-for="error in form.errors">
+					<div v-html="error.message" :class="[error.type]" class="message"></div>
+				</template>
 				<form class="block-table form text-center" method="post" @submit.prevent="send">
 					<div class="grid">
 						<div class="th">
@@ -14,7 +16,7 @@
 					</div>
 					<div class="grid">
 						<div class="th">
-							Ваш Email: <input :class="{error: v$.email.$error}" type="email" name="email" v-model="email">
+							Ваш Email: <input :class="{error: v$.email.$error}" type="email" name="email" v-model="form.email">
 						</div>
 					</div>
 					<div class="grid">
@@ -31,11 +33,12 @@
 <script setup>
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation } from '@vuelidate/validators'
-	import { ref } from 'vue';
-	import { Head } from '@inertiajs/vue3';
+	import { Head, useForm } from '@inertiajs/vue3';
+	import { useApiPost } from '../composables/useApi.js';
 
-	const email = ref('');
-	const error = ref();
+	const form = useForm({
+		email: '',
+	});
 
 	const validations = {
 		email: {
@@ -46,7 +49,7 @@
 
 	const v$ = useVuelidate(
 		validations,
-		{ email },
+		form,
 		{ $autoDirty: true }
 	);
 
@@ -55,15 +58,25 @@
 			return
 		}
 
-		try {
-			const result = await useApiPost('/login/forgot', {
-				email: email.value,
-			});
+		//try {
+		//await useApiPost('/login/forgot', form.data());
+		//} catch (error) {
+		//	console.log(error)
+		//}
 
-			email.value = '';
-			error.value = { message: result['message'], type: 'success' }
-		} catch (e) {
-			error.value = { message: e.message, type: 'error' }
-		}
+		//return;
+
+		form.post('/login/forgot', {
+			onSuccess() {
+				form.reset();
+			}
+		})
+
+		//try {
+		//	email.value = '';
+		//	error.value = { message: result['message'], type: 'success' }
+		//} catch (e) {
+		//	error.value = { message: e.message, type: 'error' }
+		//}
 	}
 </script>

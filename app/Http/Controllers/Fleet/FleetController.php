@@ -30,11 +30,11 @@ class FleetController extends Controller
 			$maxExpeditions = 1 + floor($expeditionTech / 3);
 		}
 
-		$galaxy = (int) $request->query('galaxy', 0);
-		$system = (int) $request->query('system', 0);
-		$planet = (int) $request->query('planet', 0);
-		$planet_type = (int) $request->query('type', 0);
-		$mission = (int) $request->query('mission', 0);
+		$galaxy = $request->integer('galaxy');
+		$system = $request->integer('system');
+		$planet = $request->integer('planet');
+		$planet_type = $request->integer('type');
+		$mission = $request->integer('mission');
 
 		if (!$galaxy) {
 			$galaxy = $this->planet->galaxy;
@@ -104,7 +104,7 @@ class FleetController extends Controller
 			}
 		}
 
-		return Inertia::render('Fleet', [
+		return Inertia::render('Fleet/Fleet', [
 			'data' => $result,
 		]);
 	}

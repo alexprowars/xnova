@@ -16,10 +16,10 @@ return new class extends Migration {
 			$table->string('web')->nullable();
 			$table->text('text')->nullable();
 			$table->text('request')->nullable();
-			$table->boolean('request_notallow')->default(0);
-			$table->string('owner_range', 32)->nullable();
+			$table->boolean('public')->default(true);
+			$table->string('owner_rank', 32)->nullable();
 			$table->json('ranks')->nullable();
-			$table->integer('members_count')->default(0);
+			$table->integer('total_members')->default(0);
 			$table->timestamps();
 		});
 

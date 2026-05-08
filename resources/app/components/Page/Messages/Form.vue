@@ -15,7 +15,7 @@
 				</div>
 				<div class="grid">
 					<div class="th">
-						<TextEditor :class="{error: v$.message.$error}" v-model="message"/>
+						<TextEditor :class="{error: v$.message.$error}" v-model="form.message"/>
 					</div>
 				</div>
 				<div class="grid">
@@ -31,12 +31,8 @@
 <script setup>
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
-	import { ref } from 'vue';
 	import TextEditor from '../../TextEditor.vue';
-	import { useI18n } from 'vue-i18n';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
-
-	const { t } = useI18n();
+	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		id: {
@@ -53,8 +49,9 @@
 		}
 	});
 
-	const message = ref(props.message);
-	const error = ref(false);
+	const form = useForm({
+		message: props.message,
+	});
 
 	const validations = {
 		message: {
@@ -64,7 +61,7 @@
 
 	const v$ = useVuelidate(
 		validations,
-		{ message },
+		form,
 		{ $autoDirty: true }
 	);
 
@@ -77,22 +74,11 @@
 			return
 		}
 
-		try {
-			const result = await useApiPost('/messages/write/' + props.id, {
-				message: message.value,
-			});
-
-			if (result.redirect && result.redirect.length) {
-				window.location.href = result.redirect;
-			} else {
-				useSuccessNotification(t('pages.messages.form.sent'));
-
-				message.value = '';
+		form.post('/messages/write/' + props.id, {
+			onSuccess: () => {
+				form.resetAndClearErrors();
 				v$.value.$reset();
-
-				error.value = result.error;
 			}
-		} catch {
-		}
+		});
 	}
 </script>
