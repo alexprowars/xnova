@@ -11,7 +11,7 @@
 				<div class="grid">
 					<div class="c">
 						<button @click.prevent="reset">Очистить</button>
-						<button type="submit">Отправить</button>
+						<button type="submit" class="button">Отправить</button>
 					</div>
 				</div>
 			</form>

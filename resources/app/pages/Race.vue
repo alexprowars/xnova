@@ -16,7 +16,7 @@
 					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race1')"></span>
 					<br><br>{{ $t('pages.race.unique_ship_label') }}
 					<span style="color: #adff2f">
-						<InfoPopup :id="220">{{ $t('pages.race.ship_race1_name') }}</InfoPopup>
+						<ModalLink navigate href="info/220">{{ $t('pages.race.ship_race1_name') }}</ModalLink>
 					</span> {{ $t('pages.race.ship_race1_desc') }}</span>
 					<br><br>
 				</div>
@@ -29,7 +29,7 @@
 					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race2')"></span>
 					<br><br>{{ $t('pages.race.unique_ship_label') }}
 					<span style="color: #adff2f">
-						<InfoPopup :id="221">{{ $t('pages.race.ship_race2_name') }}</InfoPopup>
+						<ModalLink navigate href="info/221">{{ $t('pages.race.ship_race2_name') }}</ModalLink>
 					</span> {{ $t('pages.race.ship_race2_desc') }}</span>
 					<br><br>
 				</div>
@@ -48,7 +48,7 @@
 					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race3')"></span>
 					<br><br>{{ $t('pages.race.unique_ship_label') }}
 					<span style="color: #adff2f">
-						<InfoPopup :id="222">{{ $t('pages.race.ship_race3_name') }}</InfoPopup>
+						<ModalLink navigate href="info/222">{{ $t('pages.race.ship_race3_name') }}</ModalLink>
 					</span> {{ $t('pages.race.ship_race3_desc') }}</span>
 					<br><br>
 				</div>
@@ -61,7 +61,7 @@
 					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race4')"></span>
 					<br><br>{{ $t('pages.race.unique_ship_label') }}
 					<span style="color: #adff2f">
-						<InfoPopup :id="223">{{ $t('pages.race.ship_race4_name') }}</InfoPopup>
+						<ModalLink navigate href="info/223">{{ $t('pages.race.ship_race4_name') }}</ModalLink>
 					</span> {{ $t('pages.race.ship_race4_desc') }}</span>
 					<br><br>
 				</div>
@@ -87,13 +87,10 @@
 </template>
 
 <script setup>
-	import InfoPopup from '~/components/Page/Info/Popup.vue';
 	import RaceChange from '~/components/Page/Race/RaceChange.vue';
-	import { computed, onMounted } from 'vue';
+	import { computed, nextTick, onMounted } from 'vue';
 	import { Head, usePage } from '@inertiajs/vue3';
-	import { openAlertModal } from '~/composables/useModals.js';
-	import { useErrorNotification } from '~/composables/useToast.js';
-	import { useApiGet } from '~/composables/useApi.js';
+	import { ModalLink, visitModal } from '@inertiaui/modal-vue';
 
 	defineProps({
 		data: { type: Object },
@@ -111,17 +108,13 @@
 	const user = computed(() => page.props.user);
 	const race = computed(() => user.value?.race || 0);
 
-	onMounted(async () => {
+	onMounted(() => {
 		if (race.value) {
 			return;
 		}
 
-		try {
-			const result = await useApiGet('/content/welcome');
-
-			await openAlertModal(result.title, result.html);
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		nextTick(() => {
+			visitModal('/content/welcome');
+		})
 	});
 </script>

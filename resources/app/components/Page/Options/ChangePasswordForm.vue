@@ -14,7 +14,7 @@
 		</div>
 		<div class="grid">
 			<div class="th">
-				<button type="button" @click.prevent="save">{{ $t('pages.options.save') }}</button>
+				<button type="button" class="button" @click.prevent="save">{{ $t('pages.options.save') }}</button>
 			</div>
 		</div>
 	</div>

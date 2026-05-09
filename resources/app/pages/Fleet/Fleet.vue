@@ -65,7 +65,7 @@
 							<div class="col-span-4 sm:col-span-3 th">{{ allSpeed ? $formatNumber(allSpeed) : '-'}}</div>
 						</div>
 						<div v-if="count && data.fleets.length < user['fleets_max']" class="grid">
-							<div class="th"><button type="submit">{{ $t('pages.fleets.main.next') }}</button></div>
+							<div class="th"><button type="submit" class="button">{{ $t('pages.fleets.main.next') }}</button></div>
 						</div>
 					</form>
 				</div>

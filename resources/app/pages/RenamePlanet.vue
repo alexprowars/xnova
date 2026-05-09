@@ -9,7 +9,7 @@
 						<div class="th hidden sm:flex middle">{{ planet['coordinates']['galaxy'] }}:{{ planet['coordinates']['system'] }}:{{ planet['coordinates']['planet'] }}</div>
 						<div class="th middle">{{ planet['name'] }}</div>
 						<div class="th middle">
-							<button type="button" @click.prevent="deletePlanet">{{ $t('pages.overview.rename.abandon_colony') }}</button>
+							<button type="button" class="button" @click.prevent="deletePlanet">{{ $t('pages.overview.rename.abandon_colony') }}</button>
 						</div>
 					</div>
 					<div class="grid grid-cols-3">

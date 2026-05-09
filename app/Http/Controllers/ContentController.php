@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Models\Content;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use InertiaUI\Modal\Modal;
 
 class ContentController extends Controller
 {
 	public function index(string $slug, Request $request)
 	{
 		if (empty($slug)) {
-			throw new PageException('Страница не найдена!');
+			throw new Exception('Страница не найдена!');
 		}
 
 		$content = Content::query()
@@ -20,20 +22,20 @@ class ContentController extends Controller
 			->first();
 
 		if (!$content) {
-			throw new PageException('Страница не найдена!');
+			throw new Exception('Страница не найдена!');
 		}
 
 		$result = [
 			'title' => $content->title,
-			'html' => stripslashes($content->html),
+			'body' => stripslashes($content->html),
 		];
 
-		if (!$request->inertia() && $request->expectsJson()) {
-			return response()->json($result);
-		}
+		$component = $request->hasHeader(Modal::HEADER_MODAL)
+			? 'Content/Modal' : 'Content/Detail';
 
-		return Inertia::render('Content', [
+		return Inertia::modal($component, [
 			'data' => $result,
-		]);
+		])
+		->baseRoute('content', [$content->alias]);
 	}
 }

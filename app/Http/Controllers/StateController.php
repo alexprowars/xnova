@@ -9,7 +9,6 @@ use App\Http\Resources\QueueResource;
 use App\Http\Resources\UserResource;
 use App\Settings;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class StateController extends Controller
 {
@@ -19,11 +18,11 @@ class StateController extends Controller
 
 		$data = [
 			'messages' => [],
-			'speed' => Inertia::once(fn() => [
+			'speed' => [
 				'game' => Game::getSpeed('build'),
 				'fleet' => Game::getSpeed('fleet'),
 				'resources' => Game::getSpeed('mine'),
-			]),
+			],
 			'locale' => Locale::getPreferredLocale(),
 			'stats' => [
 				'online' => $settings->usersOnline ?: 0,

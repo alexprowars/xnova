@@ -20,8 +20,8 @@
 				</div>
 				<div class="grid">
 					<div class="th">
-						<button type="reset">Очистить</button>
-						<button type="submit">Сохранить</button>
+						<button type="reset" class="button">Очистить</button>
+						<button type="submit" class="button">Сохранить</button>
 					</div>
 				</div>
 			</form>

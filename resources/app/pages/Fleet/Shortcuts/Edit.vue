@@ -17,9 +17,9 @@
 				</div>
 				<div class="grid">
 					<div class="th">
-						<button type="reset">{{ $t('pages.fleets.shortcut.form.clear') }}</button>
-						<button type="submit">{{ $t('pages.fleets.shortcut.edit.update') }}</button>
-						<button type="button" @click.prevent="remove">{{ $t('pages.fleets.shortcut.edit.delete') }}</button>
+						<button type="reset" class="button">{{ $t('pages.fleets.shortcut.form.clear') }}</button>
+						<button type="submit" class="button">{{ $t('pages.fleets.shortcut.edit.update') }}</button>
+						<button type="button" class="button" @click.prevent="remove">{{ $t('pages.fleets.shortcut.edit.delete') }}</button>
 					</div>
 				</div>
 				<div class="grid">

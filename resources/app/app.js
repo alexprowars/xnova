@@ -17,6 +17,7 @@ import DefaultLayout from './layouts/DefaultLayout.vue';
 import FloatingVue from 'floating-vue';
 import Vue3TouchEvents from 'vue3-touch-events'
 import { createVfm } from 'vue-final-modal';
+import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -43,6 +44,7 @@ createInertiaApp({
 		},
 	},
 	withApp(app) {
+		withInertiaModal(app);
 		app.use(i18n);
 
 		app.config.globalProperties.$morph = (value, ...titles) => {
@@ -76,3 +78,8 @@ createInertiaApp({
 		color: '#20529a',
 	},
 });
+
+putConfig({
+	useNativeDialog: false,
+});
+

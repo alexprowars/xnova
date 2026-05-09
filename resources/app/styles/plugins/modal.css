@@ -89,3 +89,19 @@
 		}
 	}
 }
+
+.im-modal-content {
+	vertical-align: middle;
+	text-align: left;
+	background-color: #344566;
+	position: relative;
+	padding: 6px;
+	border: 1px solid #415680;
+	max-width: 600px;
+	margin: 40px auto;
+	@apply xl:min-w-100;
+
+	.im-close-button {
+		cursor: pointer;
+	}
+}

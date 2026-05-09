@@ -15,7 +15,7 @@
 				</div>
 				<div v-if="form.user">
 					<div class="th">
-						<button type="submit">{{ $t('pages.alliance.admin.give_submit_transfer') }}</button>
+						<button type="submit" class="button">{{ $t('pages.alliance.admin.give_submit_transfer') }}</button>
 					</div>
 				</div>
 			</form>

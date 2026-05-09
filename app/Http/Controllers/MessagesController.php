@@ -18,6 +18,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use InertiaUI\Modal\Modal;
 use Throwable;
 
 class MessagesController extends Controller
@@ -169,11 +170,12 @@ class MessagesController extends Controller
 			}
 		}
 
-		if (!$request->inertia() && $request->expectsJson()) {
-			return response()->json($result);
-		}
+		$component = $request->hasHeader(Modal::HEADER_MODAL) ? 'Messages/WriteModal' : 'Messages/Write';
 
-		return Inertia::render('Messages/Write', $result);
+		return Inertia::modal($component, [
+			'data' => $result,
+		])
+		->baseRoute('message.write', [$user->id]);
 	}
 
 	public function send(int $userId, Request $request): void

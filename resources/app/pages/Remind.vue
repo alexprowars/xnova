@@ -21,7 +21,7 @@
 					</div>
 					<div class="grid">
 						<div class="th">
-							<button type="submit">Выслать пароль</button>
+							<button type="submit" class="button">Выслать пароль</button>
 						</div>
 					</div>
 				</form>

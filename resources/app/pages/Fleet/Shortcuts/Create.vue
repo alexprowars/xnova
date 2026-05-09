@@ -17,8 +17,8 @@
 				</div>
 				<div class="grid">
 					<div class="th text-center">
-						<button type="reset">{{ $t('pages.fleets.shortcut.form.clear') }}</button>
-						<button type="submit">{{ $t('pages.fleets.shortcut.create.submit') }}</button>
+						<button type="reset" class="button">{{ $t('pages.fleets.shortcut.form.clear') }}</button>
+						<button type="submit" class="button">{{ $t('pages.fleets.shortcut.create.submit') }}</button>
 					</div>
 				</div>
 				<div class="grid">

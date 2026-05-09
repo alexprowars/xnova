@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
-use App\Exceptions\PageException;
+use App\Exceptions\Exception;
 use App\Models\LogsStat;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use InertiaUI\Modal\Modal;
 
 class PlayersController extends Controller
 {
@@ -19,7 +20,7 @@ class PlayersController extends Controller
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new PageException('Профиль не найден');
+			throw new Exception('Профиль не найден');
 		}
 
 		$result = [
@@ -91,13 +92,12 @@ class PlayersController extends Controller
 			];
 		}
 
-		if (!$request->inertia() && $request->expectsJson()) {
-			return response()->json($result);
-		}
+		$component = $request->hasHeader(Modal::HEADER_MODAL) ? 'Player/Modal' : 'Player/Info';
 
-		return Inertia::render('Player/Info', [
+		return Inertia::modal($component, [
 			'data' => $result,
-		]);
+		])
+		->baseRoute('players.detail', [$user->id]);
 	}
 
 	public function stats(int $id)
@@ -105,7 +105,7 @@ class PlayersController extends Controller
 		$player = User::find($id);
 
 		if (!$player) {
-			throw new PageException('Информация о данном игроке не найдена');
+			throw new Exception('Информация о данном игроке не найдена');
 		}
 
 		$result = [

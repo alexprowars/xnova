@@ -27,7 +27,7 @@
 		</div>
 		<div class="grid">
 			<div class="c">
-				<button type="submit">{{ $t('pages.missile_attack.submit') }}</button>
+				<button type="submit" class="button">{{ $t('pages.missile_attack.submit') }}</button>
 				<button @click.prevent="$emit('close')">{{ $t('pages.missile_attack.cancel') }}</button>
 			</div>
 		</div>

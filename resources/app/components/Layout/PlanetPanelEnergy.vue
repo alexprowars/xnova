@@ -1,6 +1,6 @@
 <template>
 	<div class="resource-panel-item">
-		<InfoPopup :id="4" :title="$t('resources.energy')" class="resource-panel-item-icon">
+		<ModalLink navigate href="info/4" :title="$t('resources.energy')" class="resource-panel-item-icon">
 			<Popper>
 				<div>
 					<span class="sprite skin_energy"></span>
@@ -26,7 +26,7 @@
 					</div>
 				</template>
 			</Popper>
-		</InfoPopup>
+		</ModalLink>
 		<div class="neutral">{{ $t('resources.energy') }}</div>
 		<div title="Доступно энергии">
 			<span :class="[resource['value'] >= 0 ? 'positive' : 'negative']">{{ $formatNumber(resource['value']) }}</span>
@@ -35,8 +35,8 @@
 </template>
 
 <script setup>
-	import InfoPopup from '~/components/Page/Info/Popup.vue';
 	import Popper from '~/components/Popper.vue';
+	import { ModalLink } from '@inertiaui/modal-vue';
 
 	defineProps({
 		resource: {

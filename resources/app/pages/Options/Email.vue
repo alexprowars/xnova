@@ -16,7 +16,7 @@
 					<div class="th middle"><input type="email" name="email" v-model="form.email" :class="{error: v$.email.$error}" size="20" autocomplete="off"></div>
 				</div>
 				<div>
-					<div class="c"><button type="submit">{{ $t('pages.options.email_change_submit') }}</button></div>
+					<div class="c"><button type="submit" class="button">{{ $t('pages.options.email_change_submit') }}</button></div>
 				</div>
 			</form>
 		</div>

@@ -26,6 +26,7 @@
         "filament/spatie-laravel-media-library-plugin": "^v5.0",
         "filament/spatie-laravel-settings-plugin": "^v5.0",
         "inertiajs/inertia-laravel": "^3.0",
+        "inertiaui/modal": "^3.0.0",
         "laravel/framework": "^13.0.0",
         "laravel/reverb": "^1.4",
         "laravel/socialite": "^5.5.7",
@@ -40,6 +41,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
+        "fruitcake/laravel-debugbar": "^4.2",
         "larastan/larastan": "^3.0",
         "laravel/boost": "^2.4",
         "laravel/pail": "^1.2",

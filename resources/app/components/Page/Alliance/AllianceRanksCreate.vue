@@ -8,7 +8,7 @@
 					<div class="th"><input type="text" v-model="form.name" :class="{error: v$.name.$error}" size="20" maxlength="30"></div>
 				</div>
 				<div>
-					<div class="c"><button type="submit">Создать</button></div>
+					<div class="c"><button type="submit" class="button">Создать</button></div>
 				</div>
 			</form>
 		</div>

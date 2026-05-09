@@ -38,7 +38,7 @@
 				</div>
 				<div class="grid">
 					<div class="th">
-						<button type="submit">Сохранить</button>
+						<button type="submit" class="button">Сохранить</button>
 					</div>
 				</div>
 			</form>

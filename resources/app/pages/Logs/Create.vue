@@ -18,7 +18,7 @@
 				</div>
 				<div class="grid">
 					<div class="c">
-						<button type="submit">{{ $t('pages.logs.create.save') }}</button>
+						<button type="submit" class="button">{{ $t('pages.logs.create.save') }}</button>
 					</div>
 				</div>
 			</form>

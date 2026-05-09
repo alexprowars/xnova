@@ -12,7 +12,7 @@
 			</select>
 			{{ $t('pages.messages.index.per_page') }}
 			<div v-if="deleteItems.length > 0" class="inline-block">
-				<button type="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
+				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
 			</div>
 		</div>
 		<div class="content">
@@ -37,7 +37,7 @@
 				<Pagination :options="pagination"/>
 			</div>
 			<div v-if="deleteItems.length > 0" class="float-end" style="padding: 5px">
-				<button type="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
+				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
 			</div>
 		</div>
 	</form>

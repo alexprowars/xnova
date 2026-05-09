@@ -14,7 +14,7 @@
 		</div>
 		<input type="text" v-model="form.userName" size="40" :placeholder="$t('pages.fleets.verband.invite_username_placeholder')">
 		<br>
-		<button type="submit">{{ $t('pages.fleets.verband.invite_submit') }}</button>
+		<button type="submit" class="button">{{ $t('pages.fleets.verband.invite_submit') }}</button>
 	</form>
 </template>
 

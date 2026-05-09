@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Support\ToastType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use InertiaUI\Modal\Modal;
 use Symfony\Component\HttpFoundation\Response;
 
 class Exception extends \Exception
@@ -16,10 +17,26 @@ class Exception extends \Exception
 
 	public function render(Request $request): Response
 	{
-		if (!$request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) {
+		if ((!$request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) || $request->hasHeader('x-modal')) {
 			toast(ToastType::ERROR, $this->getMessage());
 
 			return back();
+		}
+
+		//if ($request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) {
+		////	toast(ToastType::ERROR, $this->getMessage());
+//
+//			return back()->withErrors($this->getMessage());
+//		}
+
+		if ($request->isMethod('GET') && !$request->expectsJson()) {
+			$component = $request->hasHeader(Modal::HEADER_MODAL) ? 'Errors/Modal' : 'Errors/Page';
+
+			return inertia()->render($component, [
+				'errors' => ['message' => $this->getMessage()],
+				'status' => $this->getCode(),
+				'message' => $this->getMessage(),
+			])->toResponse($request);
 		}
 
 		$result = [

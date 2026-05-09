@@ -14,7 +14,7 @@
 					</div>
 					<div>
 						<div class="c">
-							<button type="submit">{{ $t('pages.alliance.search.submit_action') }}</button>
+							<button type="submit" class="button">{{ $t('pages.alliance.search.submit_action') }}</button>
 						</div>
 					</div>
 				</form>

@@ -2,9 +2,9 @@
 	<div class="buldings-active">
 		<div class="buldings-active-wrapper">
 			<div class="buldings-active-image">
-				<Popup :id="item['id']">
+				<ModalLink navigate :href="'info/' + item['id']">
 					<img :src="'/assets/images/elements/' + item['id'] + '.webp'" :alt="item['name']">
-				</Popup>
+				</ModalLink>
 			</div>
 			<div class="buldings-active-content">
 				<div class="buldings-active-title">
@@ -72,10 +72,10 @@
 <script setup>
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed, ref } from 'vue';
-	import Popup from '../Info/Popup.vue';
 	import CloseIcon from '~/images/icons/close.svg?component';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
+	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const props = defineProps({
 		item: {

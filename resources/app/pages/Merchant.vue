@@ -43,7 +43,7 @@
 							</div>
 							<div class="grid">
 								<div class="c">
-									<button type="submit">{{ $t('pages.merchant.exchange') }}</button>
+									<button type="submit" class="button">{{ $t('pages.merchant.exchange') }}</button>
 								</div>
 							</div>
 						</div>

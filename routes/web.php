@@ -15,14 +15,14 @@ Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot
 Route::get('state', [Controllers\StateController::class, 'index']);
 Route::get('blocked', [Controllers\BlockedController::class, 'index']);
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
-Route::get('content/{slug}', [Controllers\ContentController::class, 'index']);
+Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->name('content');
 Route::post('registration', [Controllers\RegistrationController::class, 'create']);
 Route::get('logs/{id}', [Controllers\LogsController::class, 'detail'])->whereNumber('id');
 Route::match(['get', 'post'], 'stats', [Controllers\StatsController::class, 'index']);
 Route::match(['get', 'post'], 'stats/players', [Controllers\StatsController::class, 'index']);
 Route::match(['get', 'post'], 'stats/alliances', [Controllers\StatsController::class, 'alliances']);
 Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class, 'races']);
-Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id');
+Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id')->name('players.detail');
 Route::get('userbar{id}.jpg', [Controllers\UserBarController::class, 'index'])->whereNumber('id');
 
 Route::middleware(['auth'])->group(function () {
@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 
-	Route::get('info/{id}', [Controllers\InfoController::class, 'detail'])->whereNumber('id');
+	Route::get('info/{id}', [Controllers\InfoController::class, 'detail'])->whereNumber('id')->name('info.detail');
 	Route::post('info/{id}/missiles', [Controllers\InfoController::class, 'missiles'])->whereNumber('id');
 	Route::post('info/{id}/alliance', [Controllers\InfoController::class, 'alliance'])->whereNumber('id');
 
@@ -145,7 +145,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('merchant/exchange', [Controllers\MerchantController::class, 'exchange'])->middleware(IsVacationMode::class);
 
 	Route::get('messages', [Controllers\MessagesController::class, 'index']);
-	Route::get('messages/write/{id}', [Controllers\MessagesController::class, 'write']);
+	Route::get('messages/write/{id}', [Controllers\MessagesController::class, 'write'])->name('message.write');
 	Route::post('messages/write/{id}', [Controllers\MessagesController::class, 'send']);
 	Route::post('messages/{id}/abuse', [Controllers\MessagesController::class, 'abuse']);
 	Route::post('messages/delete', [Controllers\MessagesController::class, 'delete']);

@@ -13,7 +13,7 @@
 				</div>
 				<div v-if="interceptor > 0 || interplanetary > 0" class="grid">
 					<div class="th">
-						<button type="submit">{{ $t('pages.info.missile.destroy') }}</button>
+						<button type="submit" class="button">{{ $t('pages.info.missile.destroy') }}</button>
 					</div>
 				</div>
 			</form>

@@ -85,14 +85,14 @@ class AppServiceProvider extends ServiceProvider
 			}
 
 			if ($response->exception instanceof PageException) {
-				return $response->render('ErrorPage', [
+				return $response->render('Errors/Page', [
 					'status' => $response->statusCode(),
 					'message' => $response->exception->getMessage(),
 				])->withSharedData();
 			}
 
 			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
-				return $response->render('ErrorPageFull', [
+				return $response->render('Errors/FullPage', [
 					'status' => $response->statusCode(),
 					'message' => $response->exception->getMessage(),
 				]);

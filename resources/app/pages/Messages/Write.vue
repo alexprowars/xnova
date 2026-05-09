@@ -1,7 +1,7 @@
 <template>
 	<Head :title="$t('pages.messages.write.page_title')"/>
 	<div class="page-messages-write">
-		<MessageForm :id="id" :to="to" :message="message"/>
+		<MessageForm :id="data.id" :to="data.to" :message="data.message"/>
 	</div>
 </template>
 
@@ -18,17 +18,8 @@
 	});
 
 	const props = defineProps({
-		id: {
-			type: Number,
-			default: 0,
-		},
-		to: {
-			type: String,
-			default: '',
-		},
-		message: {
-			type: String,
-			default: '',
+		data: {
+			type: Object,
 		}
 	});
 </script>

@@ -13,7 +13,7 @@
 					<div class="th"><textarea cols="60" rows="10" v-model="message"></textarea></div>
 				</div>
 				<div>
-					<div class="c"><button type="submit">{{ $t('pages.friends.new.submit') }}</button></div>
+					<div class="c"><button type="submit" class="button">{{ $t('pages.friends.new.submit') }}</button></div>
 				</div>
 			</form>
 		</div>

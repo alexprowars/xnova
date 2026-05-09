@@ -20,7 +20,7 @@
 				</div>
 				<div class="grid">
 					<div class="c">
-						<button type="submit">{{ $t('pages.messages.form.submit') }}</button>
+						<button type="submit" class="button">{{ $t('pages.messages.form.submit') }}</button>
 					</div>
 				</div>
 			</form>
@@ -33,6 +33,7 @@
 	import { required } from '@vuelidate/validators';
 	import TextEditor from '~/components/TextEditor.vue';
 	import { useForm } from '@inertiajs/vue3';
+	import { useModal } from '@inertiaui/modal-vue'
 
 	const props = defineProps({
 		id: {
@@ -65,6 +66,8 @@
 		{ $autoDirty: true }
 	);
 
+	const modal = useModal();
+
 	async function send () {
 		if (props.id <= 0) {
 			return;
@@ -74,7 +77,10 @@
 			return
 		}
 
+		modal.close();
+
 		form.post('/messages/write/' + props.id, {
+			preserveUrl: true,
 			onSuccess: () => {
 				form.resetAndClearErrors();
 				v$.value.$reset();

@@ -31,7 +31,7 @@
 						<br>
 						<input type="text" name="summ" value="10">
 						<br>
-						<button type="submit">Купить</button>
+						<button type="submit" class="button">Купить</button>
 					</form>
 				</div>
 			</div>

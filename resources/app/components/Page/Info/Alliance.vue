@@ -16,7 +16,7 @@
 				</div>
 				<div v-if="fleet" class="grid">
 					<div class="th">
-						<button type="submit">{{ $t('pages.info.alliance.send') }} {{ data['cost'] }} {{ $t('pages.info.alliance.deuterium') }}</button>
+						<button type="submit" class="button">{{ $t('pages.info.alliance.send') }} {{ data['cost'] }} {{ $t('pages.info.alliance.deuterium') }}</button>
 					</div>
 				</div>
 			</form>

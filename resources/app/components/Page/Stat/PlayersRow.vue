@@ -14,9 +14,9 @@
 			<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
 		</div>
 		<div class="th sm:col-span-4 col-span-5">
-			<a :href="'/players/' + item['id']" @click.prevent="openPlayerPopup">
+			<ModalLink navigate :href="'/players/' + item['id']">
 				<span :class="{ neutral: marked }">{{ item['name'] }}</span>
-			</a>
+			</ModalLink>
 			<div v-if="item['alliance']" class="sm:hidden">
 				<Link :class="{neutral: item['alliance']['marked']}" :href="'/alliance/info/' + item['alliance']['id']">
 					{{ item['alliance']['name'] }}
@@ -48,14 +48,11 @@
 </template>
 
 <script setup>
-	import PlayerInfo from '../Players/Info.vue';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import { useWithLoadngIndicator } from '~/composables/useLoading.js';
-	import { openPopupModal } from '~/composables/useModals.js';
-	import { useApiGet } from '~/composables/useApi.js';
 	import { useUrlSearchParams } from '@vueuse/core';
+	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const props = defineProps({
 		item: Object,
@@ -70,12 +67,4 @@
 
 		return (!id && user.value?.['id'] === props.item['id']) || id === props.item['id'];
 	});
-
-	function openPlayerPopup () {
-		useWithLoadngIndicator(async () => {
-			const result = await useApiGet('/players/' + props.item['id']);
-
-			await openPopupModal(PlayerInfo, { item: result });
-		})
-	}
 </script>

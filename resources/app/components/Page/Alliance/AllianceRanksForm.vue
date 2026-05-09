@@ -39,7 +39,7 @@
 					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][diplomacy]'" v-model="rank['rights']['diplomacy']"></div>
 				</div>
 				<div v-if="items.length > 0" class="grid">
-					<div class="c"><button type="submit">Сохранить</button></div>
+					<div class="c"><button type="submit" class="button">Сохранить</button></div>
 				</div>
 				<div v-if="items.length === 0" class="grid">
 					<div class="th">нет рангов</div>

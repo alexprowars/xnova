@@ -36,7 +36,11 @@ export default defineConfig({
 				prodDevtools: true
 			},
 		}),
-		inertia(),
+		inertia({
+			ssr: {
+				host: '127.0.0.1',
+			},
+		}),
 		svgLoader({
 			defaultImport: 'url',
 			svgoConfig: {

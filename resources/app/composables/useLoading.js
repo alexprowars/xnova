@@ -1,4 +1,4 @@
-import { progress, setLayoutProps } from '@inertiajs/vue3';
+import { setLayoutProps } from '@inertiajs/vue3';
 
 let loaderTimeout;
 
@@ -25,11 +25,3 @@ export const stopLoading = () => {
 		loading: false,
 	});
 }
-
-export const useWithLoadngIndicator = async (callback) => {
-	progress.start();
-
-	await callback();
-
-	progress.finish();
-};

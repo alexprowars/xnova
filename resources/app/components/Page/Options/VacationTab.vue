@@ -36,7 +36,7 @@
 			</div>
 			<div class="grid">
 				<div class="th">
-					<button type="submit">{{ $t('pages.options.save') }}</button>
+					<button type="submit" class="button">{{ $t('pages.options.save') }}</button>
 				</div>
 			</div>
 		</div>

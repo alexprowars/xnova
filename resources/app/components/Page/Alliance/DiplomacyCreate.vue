@@ -20,7 +20,7 @@
 				</div>
 				<div>
 					<div class="c middle">
-						<button type="submit">Добавить</button>
+						<button type="submit" class="button">Добавить</button>
 					</div>
 				</div>
 			</form>

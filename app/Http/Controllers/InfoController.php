@@ -19,6 +19,7 @@ use App\Models;
 use App\Models\Fleet;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use InertiaUI\Modal\Modal;
 use Throwable;
 
 class InfoController extends Controller
@@ -132,13 +133,13 @@ class InfoController extends Controller
 			}
 		}
 
-		if (!$request->inertia() && $request->expectsJson()) {
-			return response()->json($result);
-		}
+		$component = $request->hasHeader(Modal::HEADER_MODAL)
+			? 'Info/Modal' : 'Info/Detail';
 
-		return Inertia::render('Info', [
+		return Inertia::modal($component, [
 			'item' => $result,
-		]);
+		])
+		->baseRoute('info.detail', [$itemObject->getId()]);
 	}
 
 	public function missiles(Request $request): void

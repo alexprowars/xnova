@@ -1,9 +1,9 @@
 <template>
 	<tr>
 		<td class="th text-left" nowrap>
-			<InfoPopup :id="item['id']" :title="$t('tech.' + item['id'])">
+			<ModalLink navigate :href="'info/' + item['id']" :title="$t('tech.' + item['id'])">
 				{{ $t('tech.' + item['id']) }}
-			</InfoPopup>
+			</ModalLink>
 		</td>
 		<td class="th text-center">
 			<Colored :value="item['level']"/>
@@ -27,10 +27,10 @@
 </template>
 
 <script setup>
-	import InfoPopup from '~/components/Page/Info/Popup.vue';
 	import Colored from '~/components/Colored.vue';
 	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
+	import { ModalLink } from '@inertiaui/modal-vue';
 
 	defineProps({
 		item: {

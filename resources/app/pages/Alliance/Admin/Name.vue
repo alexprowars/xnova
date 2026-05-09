@@ -11,7 +11,7 @@
 				</div>
 				<div>
 					<div class="c">
-						<button type="submit">{{ $t('pages.alliance.admin.action_change') }}</button>
+						<button type="submit" class="button">{{ $t('pages.alliance.admin.action_change') }}</button>
 					</div>
 				</div>
 			</form>

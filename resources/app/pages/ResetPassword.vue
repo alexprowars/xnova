@@ -30,7 +30,7 @@
 					</div>
 					<div class="grid">
 						<div class="th">
-							<button type="submit">Изменить</button>
+							<button type="submit" class="button">Изменить</button>
 						</div>
 					</div>
 				</form>

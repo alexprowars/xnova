@@ -4,7 +4,7 @@
 			<div class="th">
 				<input :class="{error: v$.name.$error}" type="text" v-model="form.name" size="50">
 				<br>
-				<button type="submit">{{ $t('pages.fleets.verband.create_submit') }}</button>
+				<button type="submit" class="button">{{ $t('pages.fleets.verband.create_submit') }}</button>
 			</div>
 		</div>
 	</form>

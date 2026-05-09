@@ -42,7 +42,7 @@
 					<div class="grid">
 						<div class="c">
 							<button @click.prevent="reset">{{ $t('pages.notes.edit.reset') }}</button>
-							<button type="submit">{{ $t('pages.notes.edit.save') }}</button>
+							<button type="submit" class="button">{{ $t('pages.notes.edit.save') }}</button>
 						</div>
 					</div>
 				</form>

@@ -27,7 +27,7 @@
 							<Link :href="'/alliance/info/' + item['alliance_id']">{{ item['name'] }} [{{ item['tag'] }}]</Link>
 						</td>
 						<td class="th">{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm') }}</td>
-						<td class="th"><button type="button" @click.prevent="removeRequest(item['id'])">Убрать заявку</button></td>
+						<td class="th"><button type="button" class="button" @click.prevent="removeRequest(item['id'])">Убрать заявку</button></td>
 					</tr>
 				</template>
 				</tbody>

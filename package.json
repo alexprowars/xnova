@@ -21,6 +21,7 @@
     "dependencies": {
         "@inertiajs/vite": "^3.1.1",
         "@inertiajs/vue3": "^3.1.1",
+        "@inertiaui/modal-vue": "^3.1.0",
         "@vitejs/plugin-vue": "^6.0.6",
         "@vuelidate/core": "^2.0.3",
         "@vuelidate/validators": "^2.0.4",

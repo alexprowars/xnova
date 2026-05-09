@@ -18,7 +18,7 @@
 				</div>
 				<div class="grid">
 					<div class="c">
-						<button type="submit">{{ $t('pages.alliance.create.submit') }}</button>
+						<button type="submit" class="button">{{ $t('pages.alliance.create.submit') }}</button>
 					</div>
 				</div>
 			</form>

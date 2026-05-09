@@ -198,7 +198,7 @@
 				</div>
 				<div v-if="data['missions'].length > 0" class="grid">
 					<div class="th">
-						<button type="submit">{{ $t('pages.fleets.checkout.next') }}</button>
+						<button type="submit" class="button">{{ $t('pages.fleets.checkout.next') }}</button>
 					</div>
 				</div>
 			</form>
