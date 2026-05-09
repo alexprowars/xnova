@@ -12,8 +12,8 @@ use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\Planet;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class RocketController extends Controller
 {
@@ -91,6 +91,6 @@ class RocketController extends Controller
 			$this->planet->update();
 		}
 
-		Inertia::flash('toast', '<b>' . $count . '</b> межпланетные ракеты запущены для атаки удалённой планеты!');
+		toast(ToastType::SUCCESS, '<b>' . $count . '</b> межпланетные ракеты запущены для атаки удалённой планеты!');
 	}
 }

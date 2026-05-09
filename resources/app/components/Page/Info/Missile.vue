@@ -24,7 +24,9 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { useI18n } from 'vue-i18n';
-	import { usePage } from '@inertiajs/vue3';
+	import { useForm, usePage } from '@inertiajs/vue3';
+	import Number from '../../Number.vue';
+	import { useSuccessNotification } from '../../../composables/useToast.js';
 
 	const { t } = useI18n();
 
@@ -40,14 +42,17 @@
 	const interplanetary = ref(0);
 
 	function send() {
-		useApiSubmit('/info/' + props.item + '/missiles', {
+		useForm({
 			interceptor: interceptor.value,
 			interplanetary: interplanetary.value,
-		}, () => {
-			useSuccessNotification(t('pages.info.missile.destroyed'));
+		})
+		.post('/info/' + props.item + '/missiles', {
+			onSuccess() {
+				useSuccessNotification(t('pages.info.missile.destroyed'));
 
-			interceptor.value = 0;
-			interplanetary.value = 0;
+				interceptor.value = 0;
+				interplanetary.value = 0;
+			}
 		});
 	}
 </script>

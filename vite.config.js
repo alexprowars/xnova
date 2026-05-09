@@ -41,7 +41,17 @@ export default defineConfig({
 		}),
 		inertia(),
 		svgLoader({
-			defaultImport: 'url'
+			defaultImport: 'url',
+			svgoConfig: {
+				plugins: [{
+					name: 'preset-default',
+					params: {
+						overrides: {
+							removeViewBox: false,
+						},
+					},
+				}],
+			}
 		}),
 	],
 });

@@ -49,7 +49,7 @@
 				</div>
 
 				<div v-if="item['available'] && !user.vacation" class="building-active-upgrade">
-					<div v-if="fieldsEmpty <= 0" class="negative">
+					<div v-if="emptyFieldsCount <= 0" class="negative">
 						{{ $t('pages.building.status_no_more_fields') }}
 					</div>
 					<a v-else-if="user['queue_max'] > 1 && queueByType('build').length > 0" @click.prevent="buildAction">
@@ -92,6 +92,7 @@
 	import CloseIcon from '@assets/icons/close.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { Link, usePage } from '@inertiajs/vue3';
+	import { queueByType, emptyFieldsCount } from '../../../utils/buildings.js';
 
 	const props = defineProps({
 		item: {
@@ -103,20 +104,7 @@
 	const page = usePage();
 	const user = computed(() => page.props.user);
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
 	const emit = defineEmits(['close', 'build']);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
-
-	const fieldsEmpty = computed(() => {
-		if (!planet.value) {
-			return 0;
-		}
-
-		return planet.value.field_max - planet.value.field_used - queueByType('build').length;
-	});
 
 	const level = computed(() => planet.value['buildings'][props['item']['code']] || 0);
 
@@ -137,7 +125,7 @@
 	});
 
 	const available = computed(() => {
-		return props.item['available'] && hasResources.value && fieldsEmpty.value > 0
+		return props.item['available'] && hasResources.value && emptyFieldsCount.value > 0
 			&& !user.value.vacation;
 	});
 

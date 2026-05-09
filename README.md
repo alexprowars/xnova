@@ -16,10 +16,10 @@ Vue (**https://vuejs.org**)
 
 ## Run in docker
 `composer install`\
-`composer setup`\
 `cd docker`\
 `docker-compose build --no-cache`\
-`docker-compose up -d`
+`docker-compose up -d`\
+`docker exec xnova composer setup`
 
 #### Login Information
 login **admin@admin.com**\

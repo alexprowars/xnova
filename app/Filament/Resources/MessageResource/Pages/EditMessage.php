@@ -7,7 +7,6 @@ use App\Filament\Resources\MessageResource;
 use App\Models\Message;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;

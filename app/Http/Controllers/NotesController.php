@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
@@ -71,7 +71,7 @@ class NotesController extends Controller
 		$note->text = $message;
 		$note->save();
 
-		Inertia::flash('toast', 'Заметка добавлена');
+		toast(ToastType::SUCCESS, 'Заметка добавлена');
 
 		return to_route('notes.detail', ['id' => $note->id]);
 	}
@@ -122,7 +122,7 @@ class NotesController extends Controller
 		$note->text = $message;
 		$note->save();
 
-		Inertia::flash('toast', 'Заметка обновлена');
+		toast(ToastType::SUCCESS, 'Заметка обновлена');
 
 		return back();
 	}

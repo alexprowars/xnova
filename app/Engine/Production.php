@@ -63,15 +63,15 @@ class Production
 		$this->planet->planet_updated = true;
 	}
 
-	public function getProductionFactor(): int
+	public function getProductionFactor(): float
 	{
 		if ($this->planet->energy == 0) {
-			$factor = 0;
+			return 0;
 		} elseif ($this->planet->energy >= $this->planet->energy_used) {
-			$factor = 100;
-		} else {
-			$factor = round(($this->planet->energy / $this->planet->energy_used) * 100, 1);
+			return 100;
 		}
+
+		$factor = round(($this->planet->energy / $this->planet->energy_used) * 100, 1);
 
 		return min(max($factor, 0), 100);
 	}

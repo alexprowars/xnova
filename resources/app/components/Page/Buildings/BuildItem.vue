@@ -21,6 +21,7 @@
 	import { computed } from 'vue';
 	import { usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
+	import { queueByType, emptyFieldsCount } from '../../../utils/buildings.js';
 
 	const props = defineProps({
 		item: {
@@ -32,20 +33,7 @@
 	const page = usePage();
 	const user = computed(() => page.props.user);
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
 	const emit = defineEmits(['select', 'build']);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
-
-	const fieldsEmpty = computed(() => {
-		if (!planet.value) {
-			return 0;
-		}
-
-		return planet.value.field_max - planet.value.field_used - queueByType('build').length;
-	});
 
 	const level = computed(() => planet.value['buildings'][props['item']['code']] || 0);
 
@@ -66,7 +54,7 @@
 	});
 
 	const available = computed(() => {
-		return props.item['available'] && hasResources.value && fieldsEmpty.value > 0 && !user.value.vacation;
+		return props.item['available'] && hasResources.value && emptyFieldsCount.value > 0 && !user.value.vacation;
 	});
 
 	const inQueue = computed(() => {

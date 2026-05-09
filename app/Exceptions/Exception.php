@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Support\ToastType;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Exception extends \Exception
 {
@@ -11,8 +14,14 @@ class Exception extends \Exception
 		parent::__construct($message, $code);
 	}
 
-	public function render(): JsonResponse
+	public function render(Request $request): Response
 	{
+		if (!$request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) {
+			toast(ToastType::ERROR, $this->getMessage());
+
+			return back();
+		}
+
 		$result = [
 			'code' => $this->getCode(),
 			'message' => $this->getMessage(),

@@ -28,10 +28,8 @@
 	import { ref, watch, useTemplateRef, computed } from 'vue';
 	import TechActive from '../components/Page/Buildings/TechActive.vue';
 	import TechItem from '../components/Page/Buildings/TechItem.vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 	import { useAnimateScroll } from '../composables/useAnimateScroll.js';
-	import { useApiPost } from '../composables/useApi.js';
-	import { useErrorNotification } from '../composables/useToast.js';
 
 	const props = defineProps({
 		items: {
@@ -67,12 +65,10 @@
 	}
 
 	async function buildAction (id) {
-		try {
-			await useApiPost('/research/search', { element: id });
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm({ element: id })
+			.post('/research/search', {
+				preserveUrl: true,
+				preserveScroll: true,
+			});
 	}
 </script>

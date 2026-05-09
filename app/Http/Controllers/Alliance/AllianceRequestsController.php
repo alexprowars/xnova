@@ -6,7 +6,6 @@ use App\Engine\Enums\AllianceAccess;
 use App\Engine\Enums\MessageType;
 use App\Engine\Messages\Types\AllianceMemberAcceptMessage;
 use App\Engine\Messages\Types\AllianceMemberRejectMessage;
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\AllianceMember;

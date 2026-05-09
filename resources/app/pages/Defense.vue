@@ -32,9 +32,8 @@
 	import { computed, ref } from 'vue';
 	import UnitItem from '../components/Page/Buildings/UnitItem.vue';
 	import UnitActive from '../components/Page/Buildings/UnitActive.vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { useApiPost } from '../composables/useApi.js';
-	import { useErrorNotification } from '../composables/useToast.js';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { queueByType } from '../utils/buildings.js';
 
 	const props = defineProps({
 		items: {
@@ -45,11 +44,6 @@
 
 	const page = usePage();
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
@@ -64,18 +58,16 @@
 		}
 	}
 
-	async function buildAction (id, count) {
+	function buildAction (id, count) {
 		let data = {
 			element: {}
 		};
 		data.element[id] = count;
 
-		try {
-			await useApiPost('/defense/queue', data);
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm(data)
+			.post('/defense/queue', {
+				preserveUrl: true,
+				preserveScroll: true,
+			});
 	}
 </script>

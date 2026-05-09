@@ -229,7 +229,7 @@
 	import Tabs from '../../Tabs.vue';
 	import Tab from '../../Tab.vue';
 	import { Link, router, usePage } from '@inertiajs/vue3';
-	import { useApiSubmit } from '../../../composables/useApi.js';
+	import { useApiPost, useApiSubmit } from '../../../composables/useApi.js';
 	import { useSuccessNotification } from '../../../composables/useToast.js';
 	import { openConfirmModal } from '../../../composables/useModals.js';
 	import TextEditor from '../../TextEditor.vue';

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Fleet;
 use App\Engine\Enums\MessageType;
 use App\Engine\Fleet\MissionType;
 use App\Engine\Messages\Types\AcsRequestMessage;
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\Assault;

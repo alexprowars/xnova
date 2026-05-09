@@ -7,6 +7,7 @@ use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Models\LogsBattle;
 use App\Models\Report;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
@@ -94,7 +95,7 @@ class LogsController extends Controller
 			throw new PageException('Произошла ошибка при сохранении боевого отчета');
 		}
 
-		Inertia::flash('toast', 'Боевой отчёт успешно сохранён');
+		toast(ToastType::SUCCESS, 'Боевой отчёт успешно сохранён');
 
 		return to_route('logs');
 	}

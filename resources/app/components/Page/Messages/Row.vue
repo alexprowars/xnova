@@ -41,7 +41,7 @@
 	import { computed } from 'vue';
 	import { useSuccessNotification } from '../../../composables/useToast.js';
 	import { useWithLoadngIndicator } from '../../../composables/useLoading.js';
-	import { useApiGet } from '../../../composables/useApi.js';
+	import { useApiGet, useApiPost } from '../../../composables/useApi.js';
 
 	const { t } = useI18n();
 

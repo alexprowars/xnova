@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import i18n from './i18n.js';
 import './styles.css';
+import toastPlugin from './plugins/toast';
 import { morph, number, time } from './utils/format.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -16,7 +17,6 @@ import DefaultLayout from './layouts/DefaultLayout.vue';
 import FloatingVue from 'floating-vue';
 import Vue3TouchEvents from 'vue3-touch-events'
 import { createVfm } from 'vue-final-modal';
-import Vue3Toastify, { toast } from 'vue3-toastify';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -66,14 +66,7 @@ createInertiaApp({
 
 		app.use(createVfm());
 
-		app.use(Vue3Toastify, {
-			autoClose: 3000,
-			position: toast.POSITION.TOP_CENTER,
-			clearOnUrlChange: false,
-			pauseOnHover: false,
-			pauseOnFocusLoss: false,
-			dangerouslyHTMLString: true,
-		});
+		app.use(toastPlugin);
 
 		app.config.errorHandler = (error) => {
 			console.error(error);

@@ -28,5 +28,7 @@ class Daemon extends Command
 		$loop->addPeriodicTimer(1800, function () use ($loop) {
 			$loop->stop();
 		});
+
+		$this->info('Daemon started');
 	}
 }

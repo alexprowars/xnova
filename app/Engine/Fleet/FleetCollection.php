@@ -26,7 +26,7 @@ class FleetCollection extends Collection
 
 	public function getSpeed(): int
 	{
-		return $this->map(fn(Ship $item) => $item->getSpeed())->min();
+		return $this->map(fn(Ship $item): int => $item->getSpeed())->min();
 	}
 
 	public function getDistance(Coordinates $origin, Coordinates $destination): int

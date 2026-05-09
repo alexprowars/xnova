@@ -23,7 +23,8 @@
 <script setup>
 	import BuildRowPrice from './../Buildings/BuildRowPrice.vue'
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal } from '../../../composables/useModals.js';
+	import { closeModals, openConfirmModal } from '../../../composables/useModals.js';
+	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		data: Object,
@@ -41,15 +42,11 @@
 			}, {
 				title: t('pages.info.destroy.destroy'),
 				handler: async () => {
-					await useApiPost('/buildings/build/destroy', {
+					useForm({
 						element: props.item,
-					});
+					}).post('/buildings/build/destroy');
 
 					await closeModals();
-
-					if (useRoute().path.indexOf('/buildings') !== -1) {
-						await refreshNuxtData();
-					}
 				}
 			}]
 		);

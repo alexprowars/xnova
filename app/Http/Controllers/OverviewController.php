@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Game;
-use App\Exceptions\Exception;
 use App\Services\FleetService;
 use Inertia\Inertia;
 use Inertia\Response;

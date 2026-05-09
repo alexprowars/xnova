@@ -10148,16 +10148,16 @@
         },
         {
             "name": "technikermathe/blade-lucide-icons",
-            "version": "v3.150.0",
+            "version": "v3.149.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PascaleBeier/blade-lucide-icons.git",
-                "reference": "dbecb3c01ab856fc1b8e6e70c48c56a5bde7b40c"
+                "reference": "5d997b2699985804900065599a2c2f5c4b1bad23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PascaleBeier/blade-lucide-icons/zipball/dbecb3c01ab856fc1b8e6e70c48c56a5bde7b40c",
-                "reference": "dbecb3c01ab856fc1b8e6e70c48c56a5bde7b40c",
+                "url": "https://api.github.com/repos/PascaleBeier/blade-lucide-icons/zipball/5d997b2699985804900065599a2c2f5c4b1bad23",
+                "reference": "5d997b2699985804900065599a2c2f5c4b1bad23",
                 "shasum": ""
             },
             "require": {
@@ -10207,9 +10207,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PascaleBeier/blade-lucide-icons/issues",
-                "source": "https://github.com/PascaleBeier/blade-lucide-icons/tree/v3.150.0"
+                "source": "https://github.com/PascaleBeier/blade-lucide-icons/tree/v3.149.0"
             },
-            "time": "2026-04-30T00:23:27+00:00"
+            "time": "2026-04-29T00:23:29+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

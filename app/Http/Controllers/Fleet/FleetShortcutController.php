@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Fleet;
 
 use App\Engine\Enums\PlanetType;
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use App\Models\FleetShortcut;

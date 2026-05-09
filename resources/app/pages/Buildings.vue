@@ -20,7 +20,7 @@
 						</i18n-t>
 						<div>
 							{{ $t('pages.building.fields_left') }}
-							<span class="positive">{{ fieldsEmpty }}</span> {{ $t('pages.building.fields_left_2', fieldsEmpty) }}
+							<span class="positive">{{ emptyFieldsCount }}</span> {{ $t('pages.building.fields_left_2', emptyFieldsCount) }}
 						</div>
 					</div>
 					<Link href="/resources" class="button">
@@ -46,9 +46,8 @@
 	import BuildItem from '../components/Page/Buildings/BuildItem.vue';
 	import BuildActive from '../components/Page/Buildings/BuildActive.vue';
 	import { computed, ref } from 'vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { useApiPost } from '../composables/useApi.js';
-	import { useErrorNotification } from '../composables/useToast.js';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { queueByType, emptyFieldsCount } from '../utils/buildings.js';
 
 	const props = defineProps({
 		items: {
@@ -59,19 +58,6 @@
 
 	const page = usePage();
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
-
-	const fieldsEmpty = computed(() => {
-		if (!planet.value) {
-			return 0;
-		}
-
-		return planet.value.field_max - planet.value.field_used - queueByType('build').length;
-	});
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
@@ -87,14 +73,10 @@
 	}
 
 	async function addAction (id) {
-		try {
-			await useApiPost('/buildings/build/insert', {
-				element: id
+		useForm({ element: id })
+			.post('/buildings/build/insert', {
+				preserveUrl: true,
+				preserveScroll: true,
 			});
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
 	}
 </script>

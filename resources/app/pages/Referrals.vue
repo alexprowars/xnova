@@ -27,7 +27,7 @@
 					<div class="grid grid-cols-2">
 						<div class="th">{{ $t('pages.referrals.referred_by_caption') }}</div>
 						<div class="th">
-							<Link :to="'/players/' + you['id']">{{ you['username'] }}</Link>
+							<Link :href="'/players/' + you['id']">{{ you['username'] }}</Link>
 						</div>
 					</div>
 				</div>

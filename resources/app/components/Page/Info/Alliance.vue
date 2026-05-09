@@ -28,6 +28,7 @@
 	import { ref } from 'vue';
 	import { useI18n } from 'vue-i18n';
 	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useForm } from '@inertiajs/vue3';
 
 	const { t } = useI18n();
 
@@ -38,10 +39,13 @@
 	const fleet = ref(0);
 
 	function send() {
-		useApiSubmit('/info/' + props.item + '/alliance', {
+		useForm({
 			fleetId: fleet.value,
-		}, () => {
-			useSuccessNotification(t('pages.info.alliance.sent'));
+		})
+		.post('/info/' + props.item + '/alliance', {
+			onSuccess() {
+				useSuccessNotification(t('pages.info.alliance.sent'));
+			}
 		});
 	}
 </script>

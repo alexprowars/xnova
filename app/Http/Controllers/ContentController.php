@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Models\Content;
 use Illuminate\Http\Request;

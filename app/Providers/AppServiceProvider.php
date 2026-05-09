@@ -10,7 +10,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -65,6 +64,16 @@ class AppServiceProvider extends ServiceProvider
 		/*\DB::listen(function ($query) {
 			dump($query);
 		});*/
+
+		Inertia::disableSsr(function () {
+			$path = request()->path();
+
+			if ($path == '/' || str_starts_with($path, 'content') || str_starts_with($path, 'stats') || str_starts_with($path, 'players')) {
+				return false;
+			}
+
+			return true;
+		});
 
 		Inertia::handleExceptionsUsing(function (ExceptionResponse $response) {
 			if ($response->response instanceof JsonResponse) {

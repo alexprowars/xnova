@@ -33,9 +33,7 @@
 	import { computed } from 'vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '../../../composables/useModals.js';
-	import { Link, router } from '@inertiajs/vue3';
-	import { useApiPost } from '../../../composables/useApi.js';
-	import { useErrorNotification } from '../../../composables/useToast.js';
+	import { Link, useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		index: Number,
@@ -55,15 +53,11 @@
 			}, {
 				title: t('pages.building.remove_confirm_action'),
 				async handler() {
-					try {
-						await useApiPost('/buildings/queue/remove', {
-							index: props.index
+					useForm({ index: props.index })
+						.post('/buildings/queue/remove', {
+							preserveUrl: true,
+							preserveScroll: true,
 						});
-
-						router.reload();
-					} catch (e) {
-						useErrorNotification(e.message);
-					}
 				}
 			}]
 		)
@@ -78,15 +72,11 @@
 			}, {
 				title: t('pages.building.cancel_confirm_action'),
 				async handler() {
-					try {
-						await useApiPost('/buildings/queue/cancel', {
-							index: props.index - 1
+					useForm({ index: props.index - 1 })
+						.post('/buildings/queue/cancel', {
+							preserveUrl: true,
+							preserveScroll: true,
 						});
-
-						router.reload();
-					} catch (e) {
-						useErrorNotification(e.message);
-					}
 				}
 			}]
 		);

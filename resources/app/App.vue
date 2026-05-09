@@ -10,7 +10,6 @@
 <script setup>
 	import { computed, provide } from 'vue';
 	import { router, usePage, usePoll } from '@inertiajs/vue3';
-	import { useSuccessNotification } from './composables/useToast.js';
 	import { ModalsContainer } from 'vue-final-modal';
 	import Loader from './components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
@@ -43,16 +42,10 @@
 		closeModals();
 	});
 
-	router.on('flash', (event) => {
-		if (event.detail.flash.toast) {
-			useSuccessNotification(event.detail.flash.toast);
-		}
-	});
-
 	if (user.value) {
-		usePoll(60000, {
+		/*usePoll(60000, {
 			only: ['user', 'planet', 'queue', 'stats']
-		});
+		});*/
 
 		echo?.channel('chat')
 			.listen('ChatMessage', ({ message }) => {

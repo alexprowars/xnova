@@ -21,6 +21,7 @@
 	import { computed } from 'vue';
 	import { usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
+	import { queueByType } from '../../../utils/buildings.js';
 
 	const props = defineProps({
 		item: {
@@ -32,12 +33,7 @@
 	const page = usePage();
 	const user = computed(() => page.props.user);
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
 	const emit = defineEmits(['select', 'build']);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
 
 	const level = computed(() => user.value['technology'][props['item']['code']] || 0);
 

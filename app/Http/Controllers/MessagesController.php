@@ -11,6 +11,7 @@ use App\Models\Message;
 use App\Models\User;
 use App\Notifications\MessageNotification;
 use App\Notifications\SystemMessage;
+use App\Support\ToastType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -225,7 +226,7 @@ class MessagesController extends Controller
 
 		$user->notify(new SystemMessage(MessageType::User, $message, $this->user->username_formatted));
 
-		Inertia::flash('toast', 'Сообщение отправлено!');
+		toast(ToastType::SUCCESS, 'Сообщение отправлено!');
 	}
 
 	public function delete(Request $request): void

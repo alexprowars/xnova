@@ -708,7 +708,7 @@
 		width: 100%;
 		position: fixed;
 		bottom: 0;
-		@apply max-xs:relative max-xs:mt-7.5;
+		@apply max-xs:relative max-xs:mt-7.5 z-10;
 
 		a, a:link {
 			color: #848484;

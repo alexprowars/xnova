@@ -11,7 +11,7 @@
     "devDependencies": {
         "@fancyapps/ui": "^6.1.14",
         "@popperjs/core": "^2.11.8",
-        "@tailwindcss/vite": "^4.2.4",
+        "@tailwindcss/vite": "^4.3.0",
         "laravel-echo": "^2.3.4",
         "laravel-vite-plugin": "^3.1",
         "mini-svg-data-uri": "^1.4.4",

@@ -7,7 +7,6 @@ use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet;
 use App\Engine\Fleet\MissionType;
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Models;
 use Illuminate\Database\Eloquent\Builder;

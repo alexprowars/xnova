@@ -2,4 +2,8 @@
 	.page-building-build-queue {
 		@apply mb-1;
 	}
+
+	.page-building-unit-queue {
+		@apply mt-1;
+	}
 }

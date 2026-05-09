@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Engine\Game;
 use App\Exceptions\Exception;
 use App\Format;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -40,9 +40,9 @@ class UserController extends Controller
 		$this->user->update();
 
 		if ($this->user->daily_bonus_factor > 1) {
-			Inertia::flash('toast', 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия, а также 1 кредит.');
+			toast(ToastType::SUCCESS, 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия, а также 1 кредит.');
 		} else {
-			Inertia::flash('toast', 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия.');
+			toast(ToastType::SUCCESS, 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия.');
 		}
 	}
 

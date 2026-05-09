@@ -9,6 +9,7 @@ use App\Http\Resources\QueueResource;
 use App\Http\Resources\UserResource;
 use App\Settings;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class StateController extends Controller
 {
@@ -18,11 +19,11 @@ class StateController extends Controller
 
 		$data = [
 			'messages' => [],
-			'speed' => [
+			'speed' => Inertia::once(fn() => [
 				'game' => Game::getSpeed('build'),
 				'fleet' => Game::getSpeed('fleet'),
 				'resources' => Game::getSpeed('mine'),
-			],
+			]),
 			'locale' => Locale::getPreferredLocale(),
 			'stats' => [
 				'online' => $settings->usersOnline ?: 0,
@@ -33,11 +34,11 @@ class StateController extends Controller
 		];
 
 		if ($user) {
-			$data['user'] = UserResource::make($user);
+			$data['user'] = fn () => UserResource::make($user);
 
 			if ($planet = $user->getCurrentPlanet()) {
-				$data['planet'] = PlanetResource::make($planet);
-				$data['queue'] = QueueResource::make($user);
+				$data['planet'] = fn () => PlanetResource::make($planet);
+				$data['queue'] = fn () => QueueResource::make($user);
 			}
 
 			$globalMessage = $settings->globalMessage ?: '';
@@ -45,7 +46,7 @@ class StateController extends Controller
 			if (!empty($globalMessage)) {
 				$data['messages'][] = [
 					'type' => 'warning',
-					'text' => $globalMessage
+					'text' => $globalMessage,
 				];
 			}
 

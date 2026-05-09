@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\LogsCredit;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -77,6 +78,6 @@ class RaceController extends Controller
 			$planet->update();
 		}
 
-		Inertia::flash('toast', 'Фракция изменена');
+		toast(ToastType::SUCCESS, 'Фракция изменена');
 	}
 }

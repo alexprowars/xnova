@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Alliance;
 
 use App\Engine\Enums\AllianceAccess;
-use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

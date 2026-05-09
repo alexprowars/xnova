@@ -5,17 +5,11 @@ namespace App\Http\Middleware;
 use App\Http\Controllers\StateController;
 use App\Settings;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-	protected $rootView = 'app';
-
-	public function version(Request $request): ?string
-	{
-		return parent::version($request);
-	}
-
 	/**
 	 * @return array<string, mixed>
 	 */
@@ -24,6 +18,8 @@ class HandleInertiaRequests extends Middleware
 		$settings = app(Settings::class);
 
 		$state = new StateController()->index($settings);
+
+		//Inertia::once();
 
 		return [
 			...parent::share($request),

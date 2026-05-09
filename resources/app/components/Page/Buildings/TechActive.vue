@@ -70,6 +70,7 @@
 	import TechQueue from '../Buildings/TechQueue.vue';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
+	import { emptyFieldsCount } from '../../../utils/buildings.js';
 
 	const props = defineProps({
 		item: {
@@ -82,21 +83,8 @@
 	const page = usePage();
 	const user = computed(() => page.props.user);
 	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
 
 	const emit = defineEmits(['close', 'build']);
-
-	function queueByType(type) {
-		return queue.value.filter((item) => item.planet_id === planet.value?.id && item.type === type);
-	}
-
-	const fieldsEmpty = computed(() => {
-		if (!planet.value) {
-			return 0;
-		}
-
-		return planet.value.field_max - planet.value.field_used - queueByType('build').length;
-	});
 	
 	const level = computed(() => user.value['technology'][props['item']['code']] || 0);
 
@@ -108,7 +96,7 @@
 	});
 
 	const available = computed(() => {
-		return props.item['available'] && hasResources.value && fieldsEmpty.value > 0
+		return props.item['available'] && hasResources.value && emptyFieldsCount.value > 0
 			&& !user.value.vacation;
 	});
 
