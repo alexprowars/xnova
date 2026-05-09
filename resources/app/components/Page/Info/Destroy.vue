@@ -23,7 +23,7 @@
 <script setup>
 	import BuildRowPrice from './../Buildings/BuildRowPrice.vue'
 	import { useI18n } from 'vue-i18n';
-	import { closeModals, openConfirmModal } from '../../../composables/useModals.js';
+	import { closeModals, openConfirmModal } from '~/composables/useModals.js';
 	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({

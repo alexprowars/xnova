@@ -1,6 +1,6 @@
-import { useApiPost } from '../composables/useApi.js';
+import { useApiPost } from '~/composables/useApi.js';
 import { router } from '@inertiajs/vue3';
-import { useErrorNotification } from '../composables/useToast.js';
+import { useErrorNotification } from '~/composables/useToast.js';
 
 export function addScript (url)
 {

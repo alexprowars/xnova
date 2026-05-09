@@ -8,7 +8,7 @@
 	}
 
 	body {
-		background: #000 url("../../images/background_1.jpg") no-repeat bottom fixed;
+		background: #000 url("~/images/background_1.jpg") no-repeat bottom fixed;
 		overflow-y: scroll;
 		-webkit-font-smoothing: antialiased;
 		color: var(--text-color);
@@ -700,7 +700,7 @@
 	}
 
 	footer {
-		background: #000 url("../../images/bar-bg.gif") repeat-x top;
+		background: #000 url("~/images/bar-bg.gif") repeat-x top;
 		color: #848484;
 		height: 25px;
 		line-height: 25px;
@@ -965,7 +965,7 @@
 	height: 100px;
 	margin-left: -50px;
 	margin-top: -50px;
-	background: url('../../images/loader-cat.svg') no-repeat transparent;
+	background: url('~/images/loader-cat.svg') no-repeat transparent;
 }
 
 body.loading {

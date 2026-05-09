@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-	import FriendRow from '../../components/Page/Friends/FriendRow.vue';
+	import FriendRow from '~/components/Page/Friends/FriendRow.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineProps({

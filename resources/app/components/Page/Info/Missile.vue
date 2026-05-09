@@ -25,8 +25,8 @@
 	import { computed, ref } from 'vue';
 	import { useI18n } from 'vue-i18n';
 	import { useForm, usePage } from '@inertiajs/vue3';
-	import Number from '../../Number.vue';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import Number from '~/components/Number.vue';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
 

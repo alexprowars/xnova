@@ -27,7 +27,7 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useI18n } from 'vue-i18n';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useForm } from '@inertiajs/vue3';
 
 	const { t } = useI18n();

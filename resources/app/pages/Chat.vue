@@ -25,7 +25,7 @@
 							</button>
 							<template #content>
 								<div class="smiles">
-									<img v-for="smile in smilesList" :src="'/images/smile/'+smile+'.gif'" :alt="smile" @click="addSmile(smile)">
+									<img v-for="smile in smilesList" :src="'/assets/images/smile/'+smile+'.gif'" :alt="smile" @click="addSmile(smile)">
 								</div>
 							</template>
 						</Popper>
@@ -41,10 +41,10 @@
 
 <script setup>
 	import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-	import parser from '../utils/parser';
-	import ChatMessage from '../components/Page/Chat/ChatMessage.vue';
+	import parser from '~/utils/parser';
+	import ChatMessage from '~/components/Page/Chat/ChatMessage.vue';
 	import { Head } from '@inertiajs/vue3';
-	import Popper from '../components/Popper.vue';
+	import Popper from '~/components/Popper.vue';
 
 	defineOptions({
 		layout: {

@@ -34,9 +34,9 @@
 </template>
 
 <script setup>
-	import CreateTicket from '../components/Page/Support/Create.vue';
+	import CreateTicket from '~/components/Page/Support/Create.vue';
 	import { ref } from 'vue';
-	import ListItem from '../components/Page/Support/ListItem.vue';
+	import ListItem from '~/components/Page/Support/ListItem.vue';
 	import { Head } from '@inertiajs/vue3';
 
 	defineOptions({

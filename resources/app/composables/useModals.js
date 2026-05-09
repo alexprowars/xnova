@@ -1,8 +1,8 @@
 import { useModal, useModalSlot, useVfm } from 'vue-final-modal';
-import Modal from '../components/Dialogs/Modal.vue';
-import ConfirmPopup from '../components/Dialogs/Confirm.vue';
-import { stopLoading } from './useLoading.js';
-import i18n from './../i18n';
+import Modal from '~/components/Dialogs/Modal.vue';
+import ConfirmPopup from '~/components/Dialogs/Confirm.vue';
+import { stopLoading } from '~/composables/useLoading.js';
+import i18n from '~/i18n.js';
 
 export const openPopupModal = (component, attrs = {}, events = {}) => {
 	const { open, close } = useModal({

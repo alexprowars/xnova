@@ -53,7 +53,7 @@ class QuestController extends Controller
 			];
 		}
 
-		return Inertia::render('Quests', [
+		return Inertia::render('Quests/List', [
 			'data' => $result,
 		]);
 	}
@@ -189,7 +189,7 @@ class QuestController extends Controller
 		$result['rewd'] = implode(', ', $result['rewd']);
 		$result['errors'] = $errors > 0;
 
-		return Inertia::render('QuestsDetail', [
+		return Inertia::render('Quests/Detail', [
 			'data' => $result,
 		]);
 	}

@@ -87,13 +87,13 @@
 </template>
 
 <script setup>
-	import InfoPopup from '../components/Page/Info/Popup.vue';
-	import RaceChange from '../components/Page/Race/RaceChange.vue';
+	import InfoPopup from '~/components/Page/Info/Popup.vue';
+	import RaceChange from '~/components/Page/Race/RaceChange.vue';
 	import { computed, onMounted } from 'vue';
 	import { Head, usePage } from '@inertiajs/vue3';
-	import { openAlertModal } from '../composables/useModals.js';
-	import { useErrorNotification } from '../composables/useToast.js';
-	import { useApiGet } from '../composables/useApi.js';
+	import { openAlertModal } from '~/composables/useModals.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
+	import { useApiGet } from '~/composables/useApi.js';
 
 	defineProps({
 		data: { type: Object },

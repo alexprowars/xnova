@@ -57,11 +57,11 @@
 
 <script setup>
 	import { Link, router } from '@inertiajs/vue3';
-	import Timer from '../../Timer.vue';
+	import Timer from '~/components/Timer.vue';
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal } from '../../../composables/useModals.js';
-	import { useErrorNotification, useSuccessNotification } from '../../../composables/useToast.js';
-	import { useApiPost } from '../../../composables/useApi.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import { useErrorNotification, useSuccessNotification } from '~/composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	const props = defineProps({
 		i: {

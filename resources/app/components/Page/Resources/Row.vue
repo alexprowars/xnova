@@ -28,7 +28,7 @@
 
 <script setup>
 	import InfoPopup from '~/components/Page/Info/Popup.vue';
-	import Colored from '../../Colored.vue';
+	import Colored from '~/components/Colored.vue';
 	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 

@@ -32,8 +32,8 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import TextViewer from '../../components/TextViewer.vue';
-	import { useSuccessNotification } from '../../composables/useToast.js';
+	import TextViewer from '~/components/TextViewer.vue';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
 		layout: {

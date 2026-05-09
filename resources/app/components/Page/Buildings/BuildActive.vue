@@ -89,10 +89,10 @@
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed } from 'vue';
 	import Popup from '../Info/Popup.vue';
-	import CloseIcon from '@assets/icons/close.svg?component';
+	import CloseIcon from '~/images/icons/close.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { Link, usePage } from '@inertiajs/vue3';
-	import { queueByType, emptyFieldsCount } from '../../../utils/buildings.js';
+	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 
 	const props = defineProps({
 		item: {

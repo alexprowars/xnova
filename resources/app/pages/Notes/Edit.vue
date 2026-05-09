@@ -56,8 +56,8 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import TextViewer from '../../components/TextViewer.vue';
-	import TextEditor from '../../components/TextEditor.vue';
+	import TextViewer from '~/components/TextViewer.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 
 	defineOptions({
 		layout: {

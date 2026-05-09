@@ -5,11 +5,13 @@
 		<span v-if="item['tou'].length" :class="[item['private'] ? 'private' : 'player']">
 			{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['tou']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" @click.prevent="emit('player', u)">{{ u }}</a><a v-else @click.prevent="emit('private', u)">{{ u }}</a></span>]
 		</span>
-		<span class="page-chat-row-message" v-html="item['text']"></span>
+		<span class="page-chat-row-message" v-html="reformatMessage(item['text'])"></span>
 	</div>
 </template>
 
 <script setup>
+	import { reformatMessage } from '~/store/useChatStore.js';
+
 	defineProps({
 		item: Object,
 	});

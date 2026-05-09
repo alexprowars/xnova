@@ -24,8 +24,8 @@
 	import { useVuelidate } from '@vuelidate/core';
 	import { required, sameAs } from '@vuelidate/validators';
 	import { ref } from 'vue';
-	import { useApiSubmit } from '../../../composables/useApi.js';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { router } from '@inertiajs/vue3';
 
 	const currentPassword = ref('');

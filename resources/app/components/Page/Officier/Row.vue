@@ -42,9 +42,9 @@
 
 <script setup>
 	import { computed } from 'vue';
-	import { openConfirmModal } from '../../../composables/useModals.js';
-	import { useApiPost } from '../../../composables/useApi.js';
-	import { useErrorNotification, useSuccessNotification } from '../../../composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import { useApiPost } from '~/composables/useApi.js';
+	import { useErrorNotification, useSuccessNotification } from '~/composables/useToast.js';
 	import { router, usePage } from '@inertiajs/vue3';
 
 	const props = defineProps({

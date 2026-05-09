@@ -45,8 +45,8 @@
 
 <script setup>
 	import { computed, useTemplateRef } from 'vue';
-	import { useApiSubmit } from '../../../composables/useApi.js';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { router, usePage } from '@inertiajs/vue3';
 
 	const page = usePage();

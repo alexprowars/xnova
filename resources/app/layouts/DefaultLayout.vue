@@ -23,16 +23,16 @@
 </template>
 
 <script setup>
-	import { isMobile, isSSR } from '../utils/helpers.js';
+	import { isMobile, isSSR } from '~/utils/helpers.js';
 	import { ref, computed } from 'vue';
-	import MessagesRow from '../components/Layout/MessagesRow.vue';
-	import Header from '../components/Layout/Header.vue';
-	import MainMenu from '../components/Layout/MainMenu.vue';
-	import PlanetsList from '../components/Layout/PlanetsList.vue';
-	import PlanetPanel from '../components/Layout/PlanetPanel.vue';
-	import Footer from '../components/Layout/Footer.vue';
+	import MessagesRow from '~/components/Layout/MessagesRow.vue';
+	import Header from '~/components/Layout/Header.vue';
+	import MainMenu from '~/components/Layout/MainMenu.vue';
+	import PlanetsList from '~/components/Layout/PlanetsList.vue';
+	import PlanetPanel from '~/components/Layout/PlanetPanel.vue';
+	import Footer from '~/components/Layout/Footer.vue';
 	import { usePage, router } from '@inertiajs/vue3';
-	import Chat from '../components/Chat.vue';
+	import Chat from '~/components/Chat.vue';
 
 	const sidebar = ref('');
 	const page = usePage();

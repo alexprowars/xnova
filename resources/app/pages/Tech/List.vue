@@ -17,8 +17,8 @@
 
 <script setup>
 	import { Head, Link } from '@inertiajs/vue3';
-	import Tabs from '../components/Tabs.vue';
-	import Tab from '../components/Tab.vue';
+	import Tabs from '~/components/Tabs.vue';
+	import Tab from '~/components/Tab.vue';
 
 	defineOptions({
 		layout: {

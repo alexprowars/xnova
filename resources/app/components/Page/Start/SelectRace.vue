@@ -25,8 +25,8 @@
 <script setup>
 	import { ref } from 'vue';
 	import { router } from '@inertiajs/vue3';
-	import { useErrorNotification } from '../../../composables/useToast.js';
-	import { useApiPost } from '../../../composables/useApi.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	const race = ref(null);
 

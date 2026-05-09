@@ -65,10 +65,10 @@
 </template>
 
 <script setup>
-	import Create from '../../components/Page/Fleet/Verband/Create.vue';
-	import ChangeName from '../../components/Page/Fleet/Verband/ChangeName.vue';
-	import InviteUser from '../../components/Page/Fleet/Verband/InviteUser.vue';
-	import FleetRow from '../../components/Page/Fleet/Verband/FleetRow.vue';
+	import Create from '~/components/Page/Fleet/Verband/Create.vue';
+	import ChangeName from '~/components/Page/Fleet/Verband/ChangeName.vue';
+	import InviteUser from '~/components/Page/Fleet/Verband/InviteUser.vue';
+	import FleetRow from '~/components/Page/Fleet/Verband/FleetRow.vue';
 	import { Head } from '@inertiajs/vue3';
 
 	defineProps({

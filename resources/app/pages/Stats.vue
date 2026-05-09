@@ -46,9 +46,9 @@
 </template>
 
 <script setup>
-	import StatPlayers from './../components/Page/Stat/Players.vue';
-	import StatAlliances from './../components/Page/Stat/Alliances.vue';
-	import StatRaces from './../components/Page/Stat/Races.vue';
+	import StatPlayers from '~/components/Page/Stat/Players.vue';
+	import StatAlliances from '~/components/Page/Stat/Alliances.vue';
+	import StatRaces from '~/components/Page/Stat/Races.vue';
 	import { computed, ref, watch } from 'vue';
 	import { Head, router } from '@inertiajs/vue3';
 

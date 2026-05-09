@@ -11,7 +11,7 @@
 	import { computed, provide } from 'vue';
 	import { router, usePage, usePoll } from '@inertiajs/vue3';
 	import { ModalsContainer } from 'vue-final-modal';
-	import Loader from './components/Layout/Loader.vue';
+	import Loader from '~/components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
 	import useChatStore from './store/useChatStore.js';
 	import { setLocale } from './i18n.js';

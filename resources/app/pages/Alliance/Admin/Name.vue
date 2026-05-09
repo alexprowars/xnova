@@ -24,7 +24,7 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
 
 	defineOptions({

@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-	import PlayerInfo from '../components/Page/Players/Info.vue';
+	import PlayerInfo from '~/components/Page/Players/Info.vue';
 	import { Head } from '@inertiajs/vue3';
 
 	defineOptions({

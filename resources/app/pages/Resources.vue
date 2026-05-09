@@ -151,16 +151,16 @@
 </template>
 
 <script setup>
-	import ResourcesBar from '../components/Page/Resources/Bar.vue';
-	import ResourcesRow from '../components/Page/Resources/Row.vue';
-	import InfoPopup from '../components/Page/Info/Popup.vue';
-	import StorageRow from '../components/Page/Resources/StorageRow.vue';
-	import BuyResources from '../components/Page/Resources/BuyResources.vue';
+	import ResourcesBar from '~/components/Page/Resources/Bar.vue';
+	import ResourcesRow from '~/components/Page/Resources/Row.vue';
+	import InfoPopup from '~/components/Page/Info/Popup.vue';
+	import StorageRow from '~/components/Page/Resources/StorageRow.vue';
+	import BuyResources from '~/components/Page/Resources/BuyResources.vue';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import Colored from '../components/Colored.vue';
-	import { useApiPost } from '../composables/useApi.js';
-	import { useErrorNotification } from '../composables/useToast.js';
+	import Colored from '~/components/Colored.vue';
+	import { useApiPost } from '~/composables/useApi.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
 		data: {

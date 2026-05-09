@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-	import parser from '../utils/parser';
+	import parser from '~/utils/parser';
 	import { computed } from 'vue';
 
 	const props = defineProps({

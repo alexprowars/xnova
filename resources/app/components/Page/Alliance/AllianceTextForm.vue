@@ -31,7 +31,7 @@
 
 <script setup>
 	import { Link, useForm } from '@inertiajs/vue3';
-	import TextEditor from '../../TextEditor.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 
 	const props = defineProps({
 		data: Object,

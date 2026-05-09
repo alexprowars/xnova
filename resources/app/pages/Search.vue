@@ -31,8 +31,8 @@
 
 <script setup>
 	import { ref, watch } from 'vue';
-	import ListPlayers from '../components/Page/Search/ListPlayers.vue';
-	import ListAlliances from '../components/Page/Search/ListAlliances.vue';
+	import ListPlayers from '~/components/Page/Search/ListPlayers.vue';
+	import ListAlliances from '~/components/Page/Search/ListAlliances.vue';
 	import { Head, useForm } from '@inertiajs/vue3';
 
 	defineProps({

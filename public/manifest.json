@@ -1,0 +1,37 @@
+{
+	"name": "XNova",
+	"short_name": "XNova",
+	"description": "XNova - это браузерная игра в жанре космическая стратегия",
+	"start_url": "/?standalone=true",
+	"display": "standalone",
+	"background_color": "#253046",
+	"theme_color": "#37476a",
+	"lang": "ru",
+	"orientation": "any",
+	"icons": [
+		{
+			"src": "/assets/images/pwa/icon_192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/assets/images/pwa/icon_512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/assets/images/pwa/maskable_192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/assets/images/pwa/maskable_512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}

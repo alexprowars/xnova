@@ -26,10 +26,10 @@
 
 <script setup>
 	import { ref, watch, useTemplateRef, computed } from 'vue';
-	import TechActive from '../components/Page/Buildings/TechActive.vue';
-	import TechItem from '../components/Page/Buildings/TechItem.vue';
+	import TechActive from '~/components/Page/Buildings/TechActive.vue';
+	import TechItem from '~/components/Page/Buildings/TechItem.vue';
 	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-	import { useAnimateScroll } from '../composables/useAnimateScroll.js';
+	import { useAnimateScroll } from '~/composables/useAnimateScroll.js';
 
 	const props = defineProps({
 		items: {

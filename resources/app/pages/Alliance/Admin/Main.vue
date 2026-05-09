@@ -48,12 +48,12 @@
 </template>
 
 <script setup>
-	import AllianceUpdateForm from '../../../components/Page/Alliance/AllianceUpdateForm.vue';
-	import AllianceTextForm from '../../../components/Page/Alliance/AllianceTextForm.vue';
+	import AllianceUpdateForm from '~/components/Page/Alliance/AllianceUpdateForm.vue';
+	import AllianceTextForm from '~/components/Page/Alliance/AllianceTextForm.vue';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { openConfirmModal } from '../../../composables/useModals.js';
-	import { useApiSubmit } from '../../../composables/useApi.js';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { computed } from 'vue';
 	import { useI18n } from 'vue-i18n';
 

@@ -57,9 +57,9 @@
 <script setup>
 	import { ref } from 'vue';
 	import { Head, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '../composables/useApi.js';
-	import { useSuccessNotification } from '../composables/useToast.js';
-	import Number from '../components/Number.vue';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
+	import Number from '~/components/Number.vue';
 	import { useI18n } from 'vue-i18n';
 
 	const props = defineProps({

@@ -13,10 +13,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'@': resolve(__dirname, 'resources/js'),
-			'~': '/resources/app',
-			'@assets': '/resources/app/images',
-			'@public': '/public/assets/images',
+			'~': resolve(__dirname, 'resources/app'),
 		},
 	},
 	plugins: [

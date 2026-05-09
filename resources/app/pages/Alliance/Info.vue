@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-	import TextViewer from '../../components/TextViewer.vue';
+	import TextViewer from '~/components/TextViewer.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineOptions({

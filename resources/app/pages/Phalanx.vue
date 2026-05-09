@@ -53,8 +53,8 @@
 	import { useNow } from '@vueuse/core';
 	import dayjs from 'dayjs';
 	import { Head } from '@inertiajs/vue3';
-	import App from '../App.vue';
-	import EmptyLayout from '../layouts/EmptyLayout.vue';
+	import App from '~/App.vue';
+	import EmptyLayout from '~/layouts/EmptyLayout.vue';
 
 	defineOptions({
 		layout: [App, EmptyLayout],

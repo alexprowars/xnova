@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-	import ItemRow from '../../components/Page/Logs/ItemRow.vue';
+	import ItemRow from '~/components/Page/Logs/ItemRow.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineOptions({

@@ -54,12 +54,12 @@
 </template>
 
 <script setup>
-	import ChatMessageForm from '../../components/Page/Alliance/ChatMessageForm.vue';
+	import ChatMessageForm from '~/components/Page/Alliance/ChatMessageForm.vue';
 	import { computed, ref } from 'vue';
-	import TextViewer from '../../components/TextViewer.vue';
-	import Pagination from '../../components/Pagination.vue';
+	import TextViewer from '~/components/TextViewer.vue';
+	import Pagination from '~/components/Pagination.vue';
 	import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-	import { useSuccessNotification } from '../../composables/useToast.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
 		layout: {

@@ -30,7 +30,7 @@
 
 <script setup>
 	import { useForm } from '@inertiajs/vue3';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineProps({
 		items: Array,

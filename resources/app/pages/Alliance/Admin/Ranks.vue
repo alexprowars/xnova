@@ -13,9 +13,9 @@
 </template>
 
 <script setup>
-	import AllianceRanksForm from '../../../components/Page/Alliance/AllianceRanksForm.vue';
-	import AllianceRanksInfo from '../../../components/Page/Alliance/AllianceRanksInfo.vue';
-	import AllianceRanksCreate from '../../../components/Page/Alliance/AllianceRanksCreate.vue';
+	import AllianceRanksForm from '~/components/Page/Alliance/AllianceRanksForm.vue';
+	import AllianceRanksInfo from '~/components/Page/Alliance/AllianceRanksInfo.vue';
+	import AllianceRanksCreate from '~/components/Page/Alliance/AllianceRanksCreate.vue';
 	import { Head, Link, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 

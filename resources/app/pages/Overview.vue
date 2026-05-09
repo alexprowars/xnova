@@ -237,20 +237,20 @@
 </template>
 
 <script setup>
-	import PlayerInfo from '../components/Page/Players/Info.vue';
-	import Fleets from '../components/Page/Overview/Feets.vue';
-	import Clock from '../components/Page/Overview/Clock.vue';
-	import QueueRow from '../components/Page/Overview/QueueRow.vue';
-	import DailyBonus from '../components/Page/Overview/DailyBonus.vue';
-	import { sendMission } from '../utils/fleet';
+	import PlayerInfo from '~/components/Page/Players/Info.vue';
+	import Fleets from '~/components/Page/Overview/Feets.vue';
+	import Clock from '~/components/Page/Overview/Clock.vue';
+	import QueueRow from '~/components/Page/Overview/QueueRow.vue';
+	import DailyBonus from '~/components/Page/Overview/DailyBonus.vue';
+	import { sendMission } from '~/utils/fleet';
 	import { computed } from 'vue';
-	import ChatList from '../components/Page/Overview/ChatList.vue';
+	import ChatList from '~/components/Page/Overview/ChatList.vue';
 	import { Link, usePage, router, Head } from '@inertiajs/vue3';
-	import { changePlanet, isMobile } from '../utils/helpers.js';
-	import { useWithLoadngIndicator } from '../composables/useLoading.js';
-	import { openPopupModal } from '../composables/useModals.js';
-	import Popper from '../components/Popper.vue';
-	import { useApiGet } from '../composables/useApi.js';
+	import { changePlanet, isMobile } from '~/utils/helpers.js';
+	import { useWithLoadngIndicator } from '~/composables/useLoading.js';
+	import { openPopupModal } from '~/composables/useModals.js';
+	import Popper from '~/components/Popper.vue';
+	import { useApiGet } from '~/composables/useApi.js';
 
 	defineProps({
 		dailyBonus: {

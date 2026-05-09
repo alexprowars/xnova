@@ -31,7 +31,7 @@
 <script setup>
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
-	import TextEditor from '../../TextEditor.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({

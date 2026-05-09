@@ -5,10 +5,10 @@
 </template>
 
 <script setup>
-	import MessageForm from '../../../components/Page/Messages/Form.vue';
-	import { openPopupModal } from '../../../composables/useModals.js';
+	import MessageForm from '~/components/Page/Messages/Form.vue';
+	import { openPopupModal } from '~/composables/useModals.js';
 	import { progress } from '@inertiajs/vue3';
-	import { useApiGet } from '../../../composables/useApi.js';
+	import { useApiGet } from '~/composables/useApi.js';
 
 	const props = defineProps({
 		id: Number,

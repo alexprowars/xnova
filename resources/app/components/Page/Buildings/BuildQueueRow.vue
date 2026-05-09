@@ -32,7 +32,7 @@
 	import { useNow } from '@vueuse/core';
 	import { computed } from 'vue';
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal } from '../../../composables/useModals.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
 	import { Link, useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({

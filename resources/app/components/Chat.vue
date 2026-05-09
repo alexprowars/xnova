@@ -23,7 +23,7 @@
 <script setup>
 	import { onBeforeUnmount, onMounted, ref, watch, inject } from 'vue';
 	import ChatMessage from './Page/Chat/ChatMessage.vue';
-	import { isMobile } from '../utils/helpers.js';
+	import { isMobile } from '~/utils/helpers.js';
 
 	const props = defineProps({
 		visible: {

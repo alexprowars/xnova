@@ -1,7 +1,7 @@
 import { useForm, useHttp } from '@inertiajs/vue3';
-import i18n from './../i18n';
-import { startLoading, stopLoading } from './useLoading.js';
-import { useErrorNotification } from './useToast.js';
+import i18n from '~/i18n.js';
+import { startLoading, stopLoading } from '~/composables/useLoading.js';
+import { useErrorNotification } from '~/composables/useToast.js';
 
 export const useApiGet = async (url, params = {}) => {
 	if (!url.startsWith('/')) {

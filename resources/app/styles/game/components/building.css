@@ -209,21 +209,21 @@
 			background-repeat: no-repeat;
 
 			&.speed {
-				background-image: url('../../../images/icons/speed.png');
+				background-image: url('~/images/icons/speed.png');
 				background-position-y: 1px;
 			}
 
 			&.armor {
-				background-image: url('../../../images/icons/armor.png');
+				background-image: url('~/images/icons/armor.png');
 				background-position-y: 2px;
 			}
 
 			&.damage {
-				background-image: url('../../../images/icons/damage.png');
+				background-image: url('~/images/icons/damage.png');
 			}
 
 			&.shield {
-				background-image: url('../../../images/icons/shield.png');
+				background-image: url('~/images/icons/shield.png');
 				background-position-y: 1px;
 			}
 		}

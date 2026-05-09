@@ -34,7 +34,7 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
 		data: Object,

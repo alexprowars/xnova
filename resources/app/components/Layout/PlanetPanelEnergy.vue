@@ -35,8 +35,8 @@
 </template>
 
 <script setup>
-	import InfoPopup from '../../components/Page/Info/Popup.vue';
-	import Popper from '../Popper.vue';
+	import InfoPopup from '~/components/Page/Info/Popup.vue';
+	import Popper from '~/components/Popper.vue';
 
 	defineProps({
 		resource: {

@@ -44,8 +44,8 @@
 	import { useVuelidate } from '@vuelidate/core';
 	import { computed } from 'vue';
 	import { Head, useForm } from '@inertiajs/vue3';
-	import App from '../App.vue';
-	import EmptyLayout from '../layouts/EmptyLayout.vue';
+	import App from '~/App.vue';
+	import EmptyLayout from '~/layouts/EmptyLayout.vue';
 	import { useUrlSearchParams } from '@vueuse/core';
 
 	defineOptions({

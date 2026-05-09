@@ -55,10 +55,10 @@
 	import { router, usePage } from '@inertiajs/vue3';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
-	import Tabs from '../../Tabs.vue';
-	import Tab from '../../Tab.vue';
-	import { useErrorNotification } from '../../../composables/useToast.js';
-	import { useApiPost } from '../../../composables/useApi.js';
+	import Tabs from '~/components/Tabs.vue';
+	import Tab from '~/components/Tab.vue';
+	import { useErrorNotification } from '~/composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	const page = usePage();
 	const user = computed(() => page.props.user);

@@ -13,9 +13,9 @@
 </template>
 
 <script setup>
-	import Game from '../components/Layout/Game.vue';
-	import App from '../App.vue';
-	import EmptyLayout from '../layouts/EmptyLayout.vue';
+	import Game from '~/components/Layout/Game.vue';
+	import App from '~/App.vue';
+	import EmptyLayout from '~/layouts/EmptyLayout.vue';
 
 	defineOptions({
 		layout: [App, EmptyLayout],

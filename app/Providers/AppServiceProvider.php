@@ -7,6 +7,7 @@ use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
 use App\Services\GalaxyService;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\ExceptionResponse;
@@ -28,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
 		Date::use(CarbonImmutable::class);
 
 		JsonResource::withoutWrapping();
+
+		RateLimiter::for('global', fn () => Limit::perMinute(60)->by(request()->ip()));
 
 		Str::macro('sanitize', function (string $string): string {
 			return htmlspecialchars($string);

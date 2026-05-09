@@ -10,7 +10,7 @@
 
 <script setup>
 	import { computed, onMounted, ref } from 'vue';
-	import Game from '../../utils/spaceinvaders';
+	import Game from '~/utils/spaceinvaders';
 
 	let game = null;
 	let gameRef = ref(null);

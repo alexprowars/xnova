@@ -35,9 +35,9 @@
 
 <script setup>
 	import { Link, router } from '@inertiajs/vue3';
-	import { openConfirmModal } from '../../../composables/useModals.js';
-	import { useApiSubmit } from '../../../composables/useApi.js';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
 

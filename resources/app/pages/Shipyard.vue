@@ -28,14 +28,12 @@
 </template>
 
 <script setup>
-	import UnitQueue from '../components/Page/Buildings/UnitQueue.vue';
+	import UnitQueue from '~/components/Page/Buildings/UnitQueue.vue';
 	import { computed, ref } from 'vue';
-	import UnitItem from '../components/Page/Buildings/UnitItem.vue';
-	import UnitActive from '../components/Page/Buildings/UnitActive.vue';
-	import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-	import { useApiPost } from '../composables/useApi.js';
-	import { useErrorNotification } from '../composables/useToast.js';
-	import { queueByType } from '../utils/buildings.js';
+	import UnitItem from '~/components/Page/Buildings/UnitItem.vue';
+	import UnitActive from '~/components/Page/Buildings/UnitActive.vue';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { queueByType } from '~/utils/buildings.js';
 
 	const props = defineProps({
 		items: {

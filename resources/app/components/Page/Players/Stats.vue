@@ -54,7 +54,7 @@
 <script setup>
 	import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 	import { Chart, CategoryScale, LinearScale, LineController, PointElement, LineElement, Legend, Tooltip } from 'chart.js';
-	import { number } from '../../../utils/format';
+	import { number } from '~/utils/format.js';
 	import dayjs from 'dayjs';
 	import { useI18n } from 'vue-i18n';
 	import { useUrlSearchParams } from '@vueuse/core';

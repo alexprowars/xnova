@@ -18,9 +18,9 @@
 </template>
 
 <script setup>
-	import { useErrorNotification } from '../../../composables/useToast.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
 	import { router } from '@inertiajs/vue3';
-	import { useApiPost } from '../../../composables/useApi.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	defineProps({
 		amount: Number,

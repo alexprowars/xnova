@@ -44,11 +44,11 @@
 </template>
 
 <script setup>
-	import MessagesRow from '../../components/Page/Messages/Row.vue';
+	import MessagesRow from '~/components/Page/Messages/Row.vue';
 	import { computed, ref, watch } from 'vue';
 	import { Head, router, usePage } from '@inertiajs/vue3';
-	import { useApiSubmit } from '../../composables/useApi.js';
-	import Pagination from '../../components/Pagination.vue';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import Pagination from '~/components/Pagination.vue';
 
 	defineOptions({
 		layout: {

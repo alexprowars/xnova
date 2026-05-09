@@ -12,7 +12,7 @@
 				<div v-for="item in items" class="page-stat-races-row grid grid-cols-12">
 					<div class="th col-span-2 middle">{{ item['place'] }}</div>
 					<div class="th col-span-1 middle">
-						<img :src="'/images/skin/race' + item['race'] + '.gif'" alt="" width="30" height="30">
+						<img :src="'/assets/images/skin/race' + item['race'] + '.gif'" alt="" width="30" height="30">
 					</div>
 					<div class="th col-span-3 middle">{{ $formatNumber(item['count']) }}</div>
 					<div class="th col-span-3 middle">{{ $formatNumber(item['points']) }}</div>

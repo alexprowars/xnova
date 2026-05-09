@@ -46,7 +46,7 @@
 	import PlanetPanelEnergy from './PlanetPanelEnergy.vue';
 	import { computed, ref } from 'vue';
 	import { Link, usePage } from '@inertiajs/vue3';
-	import Popper from '../Popper.vue';
+	import Popper from '~/components/Popper.vue';
 	import { useIntervalFn } from '@vueuse/shared';
 
 	const updated = ref(0);

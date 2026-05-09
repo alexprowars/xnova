@@ -73,7 +73,7 @@
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed, ref } from 'vue';
 	import Popup from '../Info/Popup.vue';
-	import CloseIcon from '@assets/icons/close.svg?component';
+	import CloseIcon from '~/images/icons/close.svg?component';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 

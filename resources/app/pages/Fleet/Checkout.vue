@@ -211,9 +211,9 @@
 	import dayjs from 'dayjs';
 	import { useNow } from '@vueuse/core';
 	import { Link, router, useForm, usePage } from '@inertiajs/vue3';
-	import { useErrorNotification } from '../../composables/useToast.js';
-	import { getConsumption, getDistance, getDuration, getSpeed, getStorage } from '../../utils/fleet.js';
-	import { useApiPost } from '../../composables/useApi.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
+	import { getConsumption, getDistance, getDuration, getSpeed, getStorage } from '~/utils/fleet.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	const props = defineProps({
 		data: {

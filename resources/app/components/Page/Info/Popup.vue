@@ -6,9 +6,9 @@
 
 <script setup>
 	import InfoContent from './Content.vue';
-	import { useWithLoadngIndicator } from '../../../composables/useLoading.js';
-	import { openPopupModal } from '../../../composables/useModals.js';
-	import { useApiGet } from '../../../composables/useApi.js';
+	import { useWithLoadngIndicator } from '~/composables/useLoading.js';
+	import { openPopupModal } from '~/composables/useModals.js';
+	import { useApiGet } from '~/composables/useApi.js';
 
 	const props = defineProps({
 		id: {

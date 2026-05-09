@@ -17,11 +17,11 @@
 </template>
 
 <script setup>
-	import IconUpgrade from '@assets/icons/upgrade.svg?component';
+	import IconUpgrade from '~/images/icons/upgrade.svg?component';
 	import { computed } from 'vue';
 	import { usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { queueByType } from '../../../utils/buildings.js';
+	import { queueByType } from '~/utils/buildings.js';
 
 	const props = defineProps({
 		item: {

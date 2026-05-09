@@ -81,13 +81,13 @@
 </template>
 
 <script setup>
-	import SendMessagePopup from '../../components/Page/Messages/SendMessagePopup.vue';
+	import SendMessagePopup from '~/components/Page/Messages/SendMessagePopup.vue';
 	import { computed, ref } from 'vue';
 	import { Head, Link, router } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal } from '../../composables/useModals.js';
-	import { useApiSubmit } from '../../composables/useApi.js';
-	import { useSuccessNotification } from '../../composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
 		layout: {

@@ -31,7 +31,7 @@
 
 <script setup>
 	import { Head } from '@inertiajs/vue3';
-	import TextViewer from '../components/TextViewer.vue';
+	import TextViewer from '~/components/TextViewer.vue';
 
 	defineOptions({
 		layout: {

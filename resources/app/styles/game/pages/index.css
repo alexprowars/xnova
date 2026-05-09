@@ -6,8 +6,8 @@ body.index-page {
 	font-size: 13px;
 	width: 100%;
 	height: 100%;
-	background: #000000 url('../../../images/main_background.jpg') center no-repeat;
-	@apply max-md:bg-black max-md:bg-[url('@assets/starfield_01.gif')] max-md:bg-repeat max-md:bg-fixed max-md:bg-position-[0px_0px];
+	background: #000000 url('~/images/main_background.jpg') center no-repeat;
+	@apply max-md:bg-black max-md:bg-[url('~/images/starfield_01.gif')] max-md:bg-repeat max-md:bg-fixed max-md:bg-position-[0px_0px];
 }
 
 .page-index {
@@ -69,7 +69,7 @@ body.index-page {
 		left: 0;
 		right: 0;
 		width: 100%;
-		background: url('../../../images/main_bottom.png') repeat-x;
+		background: url('~/images/main_bottom.png') repeat-x;
 	}
 
 	.bottom .desk {
@@ -300,6 +300,6 @@ body.index-page {
 
 @media only screen and (max-width: 768px) {
 	body.index-page {
-		background: #000 url("../../../images/starfield_01.gif") repeat 0 0 fixed;
+		background: #000 url("~/images/starfield_01.gif") repeat 0 0 fixed;
 	}
 }

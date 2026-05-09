@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-	import parser from '../utils/parser.js';
+	import parser from '~/utils/parser.js';
 	import { computed, ref } from 'vue';
 	import Popper from './Popper.vue';
 

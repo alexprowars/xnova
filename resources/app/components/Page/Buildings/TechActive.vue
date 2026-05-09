@@ -66,11 +66,11 @@
 	import BuildRowPrice from '../Buildings/BuildRowPrice.vue';
 	import { computed } from 'vue';
 	import Popup from '../Info/Popup.vue';
-	import CloseIcon from '@assets/icons/close.svg?component';
+	import CloseIcon from '~/images/icons/close.svg?component';
 	import TechQueue from '../Buildings/TechQueue.vue';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { emptyFieldsCount } from '../../../utils/buildings.js';
+	import { emptyFieldsCount } from '~/utils/buildings.js';
 
 	const props = defineProps({
 		item: {

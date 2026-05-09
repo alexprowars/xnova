@@ -40,7 +40,7 @@
 
 <script setup>
 	import { ref } from 'vue';
-	import RequestAcceptForm from '../../../components/Page/Alliance/RequestAcceptForm.vue';
+	import RequestAcceptForm from '~/components/Page/Alliance/RequestAcceptForm.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineOptions({

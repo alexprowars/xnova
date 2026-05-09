@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-	import MessageForm from '../../components/Page/Messages/Form.vue'
+	import MessageForm from '~/components/Page/Messages/Form.vue'
 	import { Head } from '@inertiajs/vue3';
 
 	defineOptions({

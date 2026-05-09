@@ -95,7 +95,7 @@ class PlayersController extends Controller
 			return response()->json($result);
 		}
 
-		return Inertia::render('Player', [
+		return Inertia::render('Player/Info', [
 			'data' => $result,
 		]);
 	}
@@ -139,7 +139,7 @@ class PlayersController extends Controller
 			];
 		}
 
-		return Inertia::render('PlayerStats', [
+		return Inertia::render('Player/Stats', [
 			'data' => $result,
 		]);
 	}

@@ -5,7 +5,7 @@
 
 <script setup>
 	import { Head } from '@inertiajs/vue3';
-	import Stats from '../components/Page/Players/Stats.vue';
+	import Stats from '~/components/Page/Players/Stats.vue';
 
 	defineOptions({
 		layout: {

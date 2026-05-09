@@ -226,13 +226,13 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import ChangePasswordForm from './ChangePasswordForm.vue';
-	import Tabs from '../../Tabs.vue';
-	import Tab from '../../Tab.vue';
+	import Tabs from '~/components/Tabs.vue';
+	import Tab from '~/components/Tab.vue';
 	import { Link, router, usePage } from '@inertiajs/vue3';
-	import { useApiPost, useApiSubmit } from '../../../composables/useApi.js';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
-	import { openConfirmModal } from '../../../composables/useModals.js';
-	import TextEditor from '../../TextEditor.vue';
+	import { useApiPost, useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
+	import TextEditor from '~/components/TextEditor.vue';
 
 	defineProps({
 		data: Object,

@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-	import InfoContent from '../components/Page/Info/Content.vue';
+	import InfoContent from '~/components/Page/Info/Content.vue';
 	import { Head } from '@inertiajs/vue3';
 
 	defineOptions({

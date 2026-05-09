@@ -7,8 +7,8 @@
 </template>
 
 <script setup>
-	import SelectRace from '../components/Page/Start/SelectRace.vue';
-	import SelectAvatar from '../components/Page/Start/SelectAvatar.vue';
+	import SelectRace from '~/components/Page/Start/SelectRace.vue';
+	import SelectAvatar from '~/components/Page/Start/SelectAvatar.vue';
 	import { Head, router, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 

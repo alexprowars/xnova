@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-	import TextEditor from '../../TextEditor.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 
 	const value = defineModel();
 	const emit = defineEmits(['send']);

@@ -2,7 +2,7 @@
 	.sprite {
 		display: inline-block;
 		overflow: hidden;
-		background: url("../../images/sprite.png") no-repeat;
+		background: url("~/images/sprite.png") no-repeat;
 
 		&.skin_b {width:16px; height:16px; background-position: -188px -1px}
 		&.skin_batt0 {width:42px; height:22px; background-position: -597px -1px}
@@ -52,7 +52,7 @@
 	.officier {
 		display: inline-block;
 		overflow: hidden;
-		background: url("../../images/officiers.png") no-repeat;
+		background: url("~/images/officiers.png") no-repeat;
 
 		&.geologist {width:32px; height:32px; background-position: -444px -2px}
 		&.geologist_active {width:32px; height:32px; background-position: -410px -2px}

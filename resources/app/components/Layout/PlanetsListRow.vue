@@ -15,8 +15,8 @@
 <script setup>
 	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import PlanetLink from '../PlanetLink.vue';
-	import { changePlanet as changePlanetFn } from '../../utils/helpers.js';
+	import PlanetLink from '~/components/PlanetLink.vue';
+	import { changePlanet as changePlanetFn } from '~/utils/helpers.js';
 
 	const { item } = defineProps({
 		item: {

@@ -174,7 +174,7 @@
 	import { computed } from 'vue';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { changePlanet as changePlanetFn } from '../utils/helpers.js';
+	import { changePlanet as changePlanetFn } from '~/utils/helpers.js';
 
 	defineOptions({
 		layout: {

@@ -37,8 +37,8 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { router, usePage } from '@inertiajs/vue3';
-	import { useErrorNotification } from '../../../composables/useToast.js';
-	import { useApiPost } from '../../../composables/useApi.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
 
 	const props = defineProps({
 		page: {

@@ -80,12 +80,12 @@
 </template>
 
 <script setup>
-	import GalaxyRow from '../components/Page/Galaxy/Row.vue';
-	import GalaxySelector from '../components/Page/Galaxy/Selector.vue';
-	import GalaxyLegend from '../components/Page/Galaxy/Legend.vue';
-	import MissileAttack from '../components/Page/Galaxy/MissileAttack.vue';
+	import GalaxyRow from '~/components/Page/Galaxy/Row.vue';
+	import GalaxySelector from '~/components/Page/Galaxy/Selector.vue';
+	import GalaxyLegend from '~/components/Page/Galaxy/Legend.vue';
+	import MissileAttack from '~/components/Page/Galaxy/MissileAttack.vue';
 	import { computed, ref } from 'vue';
-	import Popper from '../components/Popper.vue';
+	import Popper from '~/components/Popper.vue';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
 
 	defineOptions({

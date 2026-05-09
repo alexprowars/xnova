@@ -263,11 +263,11 @@
 
 <script setup>
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
-	import { sendMission } from '../../../utils/fleet';
+	import { sendMission } from '~/utils/fleet.js';
 	import { computed, ref } from 'vue';
 	import dayjs from 'dayjs';
 	import { Link, usePage } from '@inertiajs/vue3';
-	import Popper from '../../Popper.vue';
+	import Popper from '~/components/Popper.vue';
 
 	const {
 		/** @type { Number } */

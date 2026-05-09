@@ -22,7 +22,7 @@
 	import ResourceTooltip from './PlanetPanelResourceTooltip.vue'
 	import InfoPopup from '../Page/Info/Popup.vue'
 	import { ref } from 'vue';
-	import Popper from '../Popper.vue';
+	import Popper from '~/components/Popper.vue';
 
 	defineProps({
 		resource: {

@@ -42,12 +42,12 @@
 </template>
 
 <script setup>
-	import BuildQueue from '../components/Page/Buildings/BuildQueue.vue';
-	import BuildItem from '../components/Page/Buildings/BuildItem.vue';
-	import BuildActive from '../components/Page/Buildings/BuildActive.vue';
+	import BuildQueue from '~/components/Page/Buildings/BuildQueue.vue';
+	import BuildItem from '~/components/Page/Buildings/BuildItem.vue';
+	import BuildActive from '~/components/Page/Buildings/BuildActive.vue';
 	import { computed, ref } from 'vue';
 	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-	import { queueByType, emptyFieldsCount } from '../utils/buildings.js';
+	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 
 	const props = defineProps({
 		items: {

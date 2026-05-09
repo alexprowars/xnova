@@ -64,7 +64,7 @@ class SimController extends Controller
 			}
 		}
 
-		return Inertia::render('Sim', $result);
+		return Inertia::render('Sim/Form', $result);
 	}
 
 	public function reportById(string $id)
@@ -83,7 +83,7 @@ class SimController extends Controller
 			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
 		}
 
-		return Inertia::render('SimReport', [
+		return Inertia::render('Sim/Report', [
 			'report' => $report,
 			'uuid' => $log->id,
 		]);
@@ -128,7 +128,7 @@ class SimController extends Controller
 			'data' => $result,
 		]);
 
-		return Inertia::render('SimReport', [
+		return Inertia::render('Sim/Report', [
 			'report' => $report,
 			'uuid' => $log->id,
 		]);

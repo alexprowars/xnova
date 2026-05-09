@@ -30,10 +30,10 @@
 	import { ref } from 'vue';
 	import { required } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
-	import TextEditor from '../../TextEditor.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 	import { useI18n } from 'vue-i18n';
-	import { useApiPost } from '../../../composables/useApi.js';
-	import { useErrorNotification, useSuccessNotification } from '../../../composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
+	import { useErrorNotification, useSuccessNotification } from '~/composables/useToast.js';
 	import { router } from '@inertiajs/vue3';
 
 	const emit = defineEmits(['close']);

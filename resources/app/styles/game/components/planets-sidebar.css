@@ -48,7 +48,7 @@
 			}
 
 			.reload {
-				background: url("../../../images/reload-icon.png") 0 0 no-repeat;
+				background: url("~/images/reload-icon.png") 0 0 no-repeat;
 				width: 20px;
 				height: 20px;
 				cursor: pointer;

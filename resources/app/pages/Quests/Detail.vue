@@ -49,8 +49,8 @@
 
 <script setup>
 	import { Head, Link, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '../composables/useApi.js';
-	import { useSuccessNotification } from '../composables/useToast.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
 		layout: {

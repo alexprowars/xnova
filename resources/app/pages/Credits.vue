@@ -42,7 +42,7 @@
 <script setup>
 	import { Head, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import { useApiSubmit } from '../composables/useApi.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
 
 	defineOptions({
 		layout: {

@@ -44,7 +44,7 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import TextEditor from '../../components/TextEditor.vue';
+	import TextEditor from '~/components/TextEditor.vue';
 
 	defineOptions({
 		layout: {

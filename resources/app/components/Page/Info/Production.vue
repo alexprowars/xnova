@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-	import Colored from '../../Colored.vue';
+	import Colored from '~/components/Colored.vue';
 
 	defineProps({
 		production: {

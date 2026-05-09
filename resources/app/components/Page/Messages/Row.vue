@@ -35,13 +35,13 @@
 <script setup>
 	import PlayerInfo from '../Players/Info.vue';
 	import { Link, usePage } from '@inertiajs/vue3';
-	import TextViewer from '../../TextViewer.vue';
+	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal, openPopupModal } from '../../../composables/useModals.js';
+	import { openConfirmModal, openPopupModal } from '~/composables/useModals.js';
 	import { computed } from 'vue';
-	import { useSuccessNotification } from '../../../composables/useToast.js';
-	import { useWithLoadngIndicator } from '../../../composables/useLoading.js';
-	import { useApiGet, useApiPost } from '../../../composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { useWithLoadngIndicator } from '~/composables/useLoading.js';
+	import { useApiGet, useApiPost } from '~/composables/useApi.js';
 
 	const { t } = useI18n();
 

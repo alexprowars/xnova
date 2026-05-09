@@ -50,12 +50,12 @@
 </template>
 
 <script setup>
-	import AuthForm from '../components/Page/Index/AuthForm.vue';
+	import AuthForm from '~/components/Page/Index/AuthForm.vue';
 	import RegistrationForm from './Registration.vue';
 	import RemindForm from './Remind.vue';
-	import { isMobile } from '../utils/helpers';
+	import { isMobile } from '~/utils/helpers';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { openPopupModal } from '../composables/useModals.js';
+	import { openPopupModal } from '~/composables/useModals.js';
 
 	const page = usePage();
 

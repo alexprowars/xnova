@@ -33,7 +33,7 @@ class SupportController extends Controller
 			];
 		}
 
-		return Inertia::render('Support', [
+		return Inertia::render('Support/List', [
 			'items' => $items,
 		]);
 	}
@@ -124,7 +124,7 @@ class SupportController extends Controller
 			];
 		}
 
-		return Inertia::render('SupportDetail', [
+		return Inertia::render('Support/Detail', [
 			'item' => $result,
 		]);
 	}

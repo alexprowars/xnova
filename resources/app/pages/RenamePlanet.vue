@@ -45,9 +45,9 @@
 	import { computed, ref } from 'vue';
 	import { Head, router, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { useApiSubmit } from '../composables/useApi.js';
-	import { useSuccessNotification } from '../composables/useToast.js';
-	import { openConfirmModal } from '../composables/useModals.js';
+	import { useApiSubmit } from '~/composables/useApi.js';
+	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
 
 	defineOptions({
 		layout: {

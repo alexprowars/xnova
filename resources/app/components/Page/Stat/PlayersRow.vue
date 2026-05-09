@@ -52,9 +52,9 @@
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import { useWithLoadngIndicator } from '../../../composables/useLoading.js';
-	import { openPopupModal } from '../../../composables/useModals.js';
-	import { useApiGet } from '../../../composables/useApi.js';
+	import { useWithLoadngIndicator } from '~/composables/useLoading.js';
+	import { openPopupModal } from '~/composables/useModals.js';
+	import { useApiGet } from '~/composables/useApi.js';
 	import { useUrlSearchParams } from '@vueuse/core';
 
 	const props = defineProps({

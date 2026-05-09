@@ -20,8 +20,8 @@
 <script setup>
 	import { computed } from 'vue';
 	import { usePage } from '@inertiajs/vue3';
-	import Timer from '../../Timer.vue';
-	import { changePlanet } from '../../../utils/helpers.js';
+	import Timer from '~/components/Timer.vue';
+	import { changePlanet } from '~/utils/helpers.js';
 
 	const { item } = defineProps({
 		item: Object

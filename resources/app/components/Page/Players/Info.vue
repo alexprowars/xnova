@@ -136,7 +136,7 @@
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link, usePage } from '@inertiajs/vue3'
 	import { computed } from 'vue';
-	import TextViewer from '../../TextViewer.vue';
+	import TextViewer from '~/components/TextViewer.vue';
 
 	defineProps({
 		item: {

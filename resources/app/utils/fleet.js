@@ -1,5 +1,5 @@
-import { useErrorNotification } from '../composables/useToast.js';
-import { useApiPost } from '../composables/useApi.js';
+import { useErrorNotification } from '~/composables/useToast.js';
+import { useApiPost } from '~/composables/useApi.js';
 
 export function getDistance (from, to) {
 	if ((to['galaxy'] - from['galaxy']) !== 0) {

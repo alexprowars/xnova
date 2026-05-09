@@ -48,10 +48,10 @@
 	import { required } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { Link, router } from '@inertiajs/vue3';
-	import TextEditor from '../components/TextEditor.vue';
-	import { useSuccessNotification } from '../composables/useToast.js';
-	import { openErrorModal } from '../composables/useModals.js';
-	import { useApiPost } from '../composables/useApi.js';
+	import TextEditor from '~/components/TextEditor.vue';
+	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { openErrorModal } from '~/composables/useModals.js';
+	import { useApiPost } from '~/composables/useApi.js';
 	import { useI18n } from 'vue-i18n';
 
 	const { t } = useI18n();

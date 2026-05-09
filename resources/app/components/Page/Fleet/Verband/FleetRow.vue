@@ -33,9 +33,9 @@
 </template>
 
 <script setup>
-	import PlanetLink from '../../../PlanetLink.vue';
-	import Timer from '../../../Timer.vue';
-	import Popper from '../../../Popper.vue';
+	import PlanetLink from '~/components/PlanetLink.vue';
+	import Timer from '~/components/Timer.vue';
+	import Popper from '~/components/Popper.vue';
 
 	defineProps({
 		item: Object,

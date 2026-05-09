@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-	import Row from '../components/Page/Officier/Row.vue';
+	import Row from '~/components/Page/Officier/Row.vue';
 	import { Head, Link, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 

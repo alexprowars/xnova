@@ -12,10 +12,10 @@
 	import dayjs from 'dayjs';
 	import { useNow } from '@vueuse/core';
 	import { useI18n } from 'vue-i18n';
-	import { openConfirmModal } from '../../../composables/useModals.js';
+	import { openConfirmModal } from '~/composables/useModals.js';
 	import { router } from '@inertiajs/vue3';
-	import { useApiPost } from '../../../composables/useApi.js';
-	import { useErrorNotification } from '../../../composables/useToast.js';
+	import { useApiPost } from '~/composables/useApi.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
 		build: Object,
