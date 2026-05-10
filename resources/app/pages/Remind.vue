@@ -34,7 +34,6 @@
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation } from '@vuelidate/validators'
 	import { Head, useForm } from '@inertiajs/vue3';
-	import { useApiPost } from '~/composables/useApi.js';
 
 	const form = useForm({
 		email: '',

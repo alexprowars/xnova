@@ -70,7 +70,7 @@ class FriendsController extends Controller
 
 	public function requests(Request $request)
 	{
-		$isMyRequests = $request->input('my', 'N') == 'Y';
+		$isMyRequests = str_contains($request->path(), '/my');
 
 		$result = [];
 
@@ -131,14 +131,14 @@ class FriendsController extends Controller
 		}
 
 		return Inertia::render('Friends/New', [
-			'user' => [
+			'data' => [
 				'id' => $user->id,
 				'username' => $user->username,
-			]
+			],
 		]);
 	}
 
-	public function create(int $userId, Request $request): void
+	public function create(int $userId, Request $request)
 	{
 		$user = User::find($userId);
 
@@ -179,6 +179,8 @@ class FriendsController extends Controller
 		$user->notify(
 			new SystemMessage(MessageType::System, new FriendsRequestMessage(['name' => $this->user->username]))
 		);
+
+		return to_route('friends');
 	}
 
 	public function delete(int $id): void
@@ -196,7 +198,7 @@ class FriendsController extends Controller
 		}
 	}
 
-	public function approve(int $id): void
+	public function approve(int $id)
 	{
 		$friend = Models\Friend::find($id);
 
@@ -210,5 +212,7 @@ class FriendsController extends Controller
 
 		$friend->active = true;
 		$friend->update();
+
+		return to_route('friends');
 	}
 }

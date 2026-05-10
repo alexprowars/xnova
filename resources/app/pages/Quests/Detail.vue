@@ -48,8 +48,7 @@
 </template>
 
 <script setup>
-	import { Head, Link, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
@@ -67,10 +66,11 @@
 	});
 
 	function finish() {
-		useApiSubmit('/quests/' + props.data['id'], {}, () => {
-			useSuccessNotification('Квест завершен');
-
-			router.visit('/quests');
+		useForm().post('/quests/' + props.data['id'], {
+			preserveUrl: true,
+			onSuccess() {
+				useSuccessNotification('Квест завершен');
+			}
 		});
 	}
 </script>

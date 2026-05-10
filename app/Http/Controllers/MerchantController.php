@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Game;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,7 +18,7 @@ class MerchantController extends Controller
 		]);
 	}
 
-	public function exchange(Request $request): array
+	public function exchange(Request $request)
 	{
 		if ($this->user->credits <= 0) {
 			throw new Exception('Недостаточно кредитов для проведения обменной операции');
@@ -79,9 +80,6 @@ class MerchantController extends Controller
 			$quest->save();
 		}
 
-		return [
-			'type' => $type,
-			'exchange' => $exchange,
-		];
+		toast(ToastType::SUCCESS, 'Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type));
 	}
 }

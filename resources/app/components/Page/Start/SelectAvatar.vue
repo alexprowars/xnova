@@ -40,7 +40,7 @@
 						</Tabs>
 					</div>
 				</div>
-				<div v-if="name && avatar" class="grid">
+				<div v-if="form.name && form.avatar" class="grid">
 					<div class="th">
 						<button class="button" @click.prevent="save">{{ $t('pages.start.continue') }}</button>
 					</div>

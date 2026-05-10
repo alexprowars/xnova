@@ -34,10 +34,10 @@
 </template>
 
 <script setup>
-	import { Link, router } from '@inertiajs/vue3';
+	import { Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { useI18n } from 'vue-i18n';
 
 	const { t } = useI18n();
 
@@ -51,13 +51,13 @@
 			t('pages.friends.list.remove_confirm.title'),
 			[{
 				title: t('pages.friends.list.remove_confirm.yes'),
-				handler: () => {
-					useApiSubmit('/friends/' + item.id, {
-						_method: 'DELETE'
-					}, () => {
-						useSuccessNotification(t('pages.friends.list.remove_confirm.success'));
-
-						router.reload();
+				handler() {
+					useForm().delete('/friends/' + item.id, {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.friends.list.remove_confirm.success'));
+						}
 					});
 				}
 			}, {

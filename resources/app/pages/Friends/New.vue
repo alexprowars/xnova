@@ -7,10 +7,10 @@
 		<div class="content">
 			<form class="block-table text-center" @submit.prevent="send">
 				<div>
-					<div class="th">{{ $t('pages.friends.new.player') }} {{ user['username'] }}</div>
+					<div class="th">{{ $t('pages.friends.new.player') }} {{ data['username'] }}</div>
 				</div>
 				<div>
-					<div class="th"><textarea cols="60" rows="10" v-model="message"></textarea></div>
+					<div class="th"><textarea cols="60" rows="10" v-model="form.message"></textarea></div>
 				</div>
 				<div>
 					<div class="c"><button type="submit" class="button">{{ $t('pages.friends.new.submit') }}</button></div>
@@ -24,10 +24,8 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	import { Head, Link, router } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
@@ -41,18 +39,20 @@
 	});
 
 	const props = defineProps({
-		user: Object,
-	})
+		data: Object,
+	});
 
-	const message = ref('');
+	const form = useForm({
+		message: '',
+	});
 
 	function send() {
-		useApiSubmit('/friends/new/' + props.user['id'], {
-			message: message.value,
-		}, () => {
-			useSuccessNotification(t('pages.friends.new.request_sent'));
-
-			router.visit('/friends');
+		form.post('/friends/new/' + props.data['id'], {
+			preserveUrl: true,
+			preserveScroll: true,
+			onSuccess() {
+				useSuccessNotification(t('pages.friends.new.request_sent'));
+			}
 		});
 	}
 </script>

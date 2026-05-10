@@ -1,5 +1,5 @@
 <template>
-	<form ref="formRef" method="post" @submit.prevent="send">
+	<Form action="/options" method="post" :on-success="() => useSuccessNotification('Настройки успешно изменены')">
 		<div class="block-table text-center">
 			<div class="grid">
 				<div class="c">{{ $t('pages.options.vacation_mode') }}</div>
@@ -40,25 +40,14 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</Form>
 </template>
 
 <script setup>
-	import { computed, useTemplateRef } from 'vue';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { computed } from 'vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
-	import { router, usePage } from '@inertiajs/vue3';
+	import { Form, usePage } from '@inertiajs/vue3';
 
 	const page = usePage();
 	const user = computed(() => page.props.user);
-
-	const formRef = useTemplateRef('formRef');
-
-	function send() {
-		useApiSubmit('/options', new FormData(formRef.value), () => {
-			useSuccessNotification('Настройки успешно изменены');
-
-			router.reload();
-		});
-	}
 </script>

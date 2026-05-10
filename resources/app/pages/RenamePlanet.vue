@@ -43,9 +43,8 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
-	import { Head, router, usePage } from '@inertiajs/vue3';
+	import { Head, useForm, usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
 
@@ -86,22 +85,20 @@
 	});
 
 	function changeName() {
-		useApiSubmit('/planet/rename', {
-			name: name.value
-		}, () => {
-			useSuccessNotification(t('pages.overview.rename.toast_renamed'));
-
-			router.visit('/overview');
+		useForm({ image: image.value }).delete('/planet/rename', {
+			preserveUrl: true,
+			onSuccess() {
+				useSuccessNotification(t('pages.overview.rename.toast_renamed'));
+			}
 		});
 	}
 
 	function changeImage() {
-		useApiSubmit('/planet/image', {
-			image: image.value
-		}, () => {
-			useSuccessNotification(t('pages.overview.rename.toast_image_changed'));
-
-			router.visit('/overview');
+		useForm({ image: image.value }).delete('/planet/image', {
+			preserveUrl: true,
+			onSuccess() {
+				useSuccessNotification(t('pages.overview.rename.toast_image_changed'));
+			}
 		});
 	}
 
@@ -114,12 +111,12 @@
 			}, {
 				title: t('pages.overview.rename.modal_confirm_delete'),
 				handler() {
-					useApiSubmit('/planet/delete', {
-						_method: 'DELETE',
-					}, async () => {
-						useSuccessNotification(t('pages.overview.rename.toast_colony_removed'));
-
-						router.reload();
+					useForm().delete('/planet/delete', {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.overview.rename.toast_colony_removed'));
+						}
 					});
 				}
 			}]

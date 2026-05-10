@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Throwable;
 
 class LoginController extends Controller
 {
@@ -19,20 +20,26 @@ class LoginController extends Controller
 
 	public function credentials(Request $request)
 	{
-		if (empty($request->post('email'))) {
-			throw new Exception('Введите Email');
-		}
+		try {
+			if (empty($request->post('email'))) {
+				throw new Exception('Введите Email');
+			}
 
-		$existUser = User::query()->where('email', $request->post('email'))->exists();
+			$existUser = User::query()
+				->where('email', $request->post('email'))
+				->exists();
 
-		if (!$existUser) {
-			throw new Exception('Игрока с таким E-mail адресом не найдено');
-		}
+			if (!$existUser) {
+				throw new Exception('Игрока с таким E-mail адресом не найдено');
+			}
 
-		$credentials = $request->only(['email', 'password']);
+			$credentials = $request->only(['email', 'password']);
 
-		if (!Auth::attempt($credentials, $request->has('rememberme'))) {
-			throw new Exception('Неверный E-mail и/или пароль');
+			if (!Auth::attempt($credentials, $request->has('rememberme'))) {
+				throw new Exception('Неверный E-mail и/или пароль');
+			}
+		} catch (Throwable $e) {
+			return back()->withErrors(['error' => $e->getMessage()]);
 		}
 
 		return to_route('overview');

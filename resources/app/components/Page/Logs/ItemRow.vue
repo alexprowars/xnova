@@ -14,9 +14,8 @@
 <script setup>
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
-	import { router } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 
 	const { t } = useI18n();
 
@@ -30,13 +29,13 @@
 			t('pages.logs.item.delete_confirm.title'),
 			[{
 				title: t('pages.logs.item.delete_confirm.yes'),
-				handler: () => {
-					useApiSubmit('/logs/' + item['id'], {
-						_method: 'DELETE',
-					}, () => {
-						useSuccessNotification(t('pages.logs.item.delete_confirm.success'));
-
-						router.reload();
+				handler() {
+					useForm().delete('/logs/' + item['id'], {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.logs.item.delete_confirm.success'));
+						}
 					});
 				}
 			}, {

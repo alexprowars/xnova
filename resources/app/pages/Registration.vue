@@ -24,7 +24,7 @@
 							<input :class="{error: v$.password_confirmation.$error}" type="password" v-model="form.password_confirmation" autocomplete="new-password">
 						</div>
 					</div>
-					<ReCaptcha v-if="recaptchaKey" v-model="captchaToken"/>
+					<ReCaptcha v-if="recaptchaKey" v-model="form.captcha"/>
 					<div class="grid">
 						<div class="th text-left">
 							<input :class="{error: v$.rules.$error}" id="rules" type="checkbox" v-model="form.rules">
@@ -55,17 +55,17 @@
 <script setup>
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation, minLength } from '@vuelidate/validators'
-	import { computed, ref } from 'vue';
+	import { computed } from 'vue';
 	import ReCaptcha from '~/components/ReCaptcha.vue';
 	import { Head, Link, useForm } from '@inertiajs/vue3';
 
 	const recaptchaKey = computed(() => import.meta.env.VITE_APP_NAME || null);
-	const captchaToken = ref('');
 
 	const form = useForm({
 		email: '',
 		password: '',
-		password_confirm: '',
+		password_confirmation: '',
+		captcha: null,
 		rules: null,
 		laws: null,
 	});

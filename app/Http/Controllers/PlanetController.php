@@ -59,7 +59,7 @@ class PlanetController extends Controller
 		Cache::forget('app::planetlist_' . $this->user->id);
 	}
 
-	public function rename(Request $request): void
+	public function rename(Request $request)
 	{
 		$name = strip_tags(trim($request->post('name', '')));
 
@@ -77,9 +77,11 @@ class PlanetController extends Controller
 
 		$this->planet->name = $name;
 		$this->planet->update();
+
+		return to_route('overview');
 	}
 
-	public function image(Request $request): void
+	public function image(Request $request)
 	{
 		if ($this->user->credits < 1) {
 			throw new Exception(__('overview.insufficient_credits'));
@@ -103,5 +105,7 @@ class PlanetController extends Controller
 
 		$this->user->credits--;
 		$this->user->update();
+
+		return to_route('overview');
 	}
 }

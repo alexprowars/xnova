@@ -31,15 +31,14 @@
 		</div>
 	</div>
 	<div class="mt-2">
-		<button v-if="deleteItems.length > 0" class="negative" @click="deleteNotes">{{ $t('pages.notes.index.delete_selected') }}</button>
+		<button v-if="deleteItems.length > 0" class="button negative" @click="deleteNotes">{{ $t('pages.notes.index.delete_selected') }}</button>
 		<Link class="button" href="/notes/create">{{ $t('pages.notes.index.create_new') }}</Link>
 	</div>
 </template>
 
 <script setup>
 	import { ref } from 'vue';
-	import { Head, Link, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
 
@@ -63,15 +62,13 @@
 	const deleteItems = ref([]);
 
 	function deleteNotes() {
-		useApiSubmit('/notes', {
-			_method: 'DELETE',
-			id: deleteItems.value,
-		}, () => {
-			useSuccessNotification(t('pages.notes.index.deleted'));
-
-			deleteItems.value = [];
-
-			router.reload();
+		useForm({ id: deleteItems.value }).delete('/notes', {
+			preserveUrl: true,
+			preserveScroll: true,
+			onSuccess() {
+				useSuccessNotification(t('pages.notes.index.deleted'));
+				deleteItems.value = [];
+			}
 		});
 	}
 </script>

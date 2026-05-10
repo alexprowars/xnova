@@ -9,8 +9,8 @@
 					<div class="grid grid-cols-6">
 						<div class="c">{{ $t('pages.friends.list.name') }}</div>
 						<div class="c">{{ $t('pages.friends.list.alliance') }}</div>
-						<div class="col-span-2 c">{{ $t('pages.friends.list.coordinates') }}</div>
-						<div class="c">{{ $t('pages.friends.list.text') }}</div>
+						<div class="c">{{ $t('pages.friends.list.coordinates') }}</div>
+						<div class="col-span-2 c">{{ $t('pages.friends.list.text') }}</div>
 						<div class="c">&nbsp;</div>
 					</div>
 					<RequestRow v-for="item in items" :key="item['id']" :item="item" :is-my="isMy"/>

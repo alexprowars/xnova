@@ -134,7 +134,7 @@ class AllianceAdminController extends Controller
 		return to_route('alliance.admin');
 	}
 
-	public function remove(): void
+	public function remove()
 	{
 		$alliance = $this->getAlliance();
 
@@ -143,6 +143,8 @@ class AllianceAdminController extends Controller
 		}
 
 		$alliance->delete();
+
+		return to_route('alliance');
 	}
 
 	public function give()

@@ -64,9 +64,8 @@
 </template>
 
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
@@ -96,13 +95,13 @@ import { Head, Link, router } from '@inertiajs/vue3';
 				title: 'Нет',
 			}, {
 				title: 'Да',
-				handler: () => {
-					useApiSubmit('/alliance/request/' + id, {
-						_method: 'DELETE',
-					}, () => {
-						useSuccessNotification('Вы отозвали свою заявку на вступление в альянс');
-
-						router.reload();
+				handler() {
+					useForm().delete('/alliance/request/' + id, {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification('Вы отозвали свою заявку на вступление в альянс');
+						}
 					});
 				}
 			}]

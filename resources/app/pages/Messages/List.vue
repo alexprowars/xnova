@@ -46,8 +46,7 @@
 <script setup>
 	import MessagesRow from '~/components/Page/Messages/Row.vue';
 	import { computed, ref, watch } from 'vue';
-	import { Head, router, usePage } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 	import Pagination from '~/components/Pagination.vue';
 
 	defineOptions({
@@ -93,12 +92,12 @@
 	});
 
 	function deleteMessages() {
-		useApiSubmit('/messages/delete', {
-			id: deleteItems.value,
-		}, () => {
-			deleteItems.value = [];
-
-			router.reload();
+		useForm({ id: deleteItems.value }).delete('/messages/delete', {
+			preserveUrl: true,
+			preserveScroll: true,
+			onSuccess() {
+				deleteItems.value = [];
+			}
 		});
 	}
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<form ref="formRef" method="post" @submit.prevent="send">
+	<Form action="/options" method="post" :on-success="() => useSuccessNotification('Настройки успешно изменены')">
 		<Tabs>
 			<Tab :name="$t('pages.options.information')">
 				<div class="block-table text-center">
@@ -220,7 +220,7 @@
 				</div>
 			</Tab>
 		</Tabs>
-	</form>
+	</Form>
 </template>
 
 <script setup>
@@ -228,8 +228,7 @@
 	import ChangePasswordForm from './ChangePasswordForm.vue';
 	import Tabs from '~/components/Tabs.vue';
 	import Tab from '~/components/Tab.vue';
-	import { Link, router, useForm, usePage } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { Form, Link, useForm, usePage } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import TextEditor from '~/components/TextEditor.vue';
@@ -241,19 +240,10 @@
 	const page = usePage();
 	const user = computed(() => page.props.user);
 
-	const formRef = ref(null);
 	const timezones = ref([]);
 
 	for (let i = -12; i <= 12; i++) {
 		timezones.value.push(i);
-	}
-
-	function send() {
-		useApiSubmit('/options', new FormData(formRef.value), () => {
-			useSuccessNotification('Настройки успешно изменены');
-
-			router.reload();
-		});
 	}
 
 	function enableVacationMode() {

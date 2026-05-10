@@ -1,5 +1,5 @@
 <template>
-	<div class="grid grid-cols-5">
+	<div class="grid grid-cols-6">
 		<div class="th middle">
 			<Link :href="'/messages/write/' + item['user']['id']">{{ item['user']['name'] }}</Link>
 		</div>
@@ -12,7 +12,7 @@
 				{{ item['user']['galaxy'] }}:{{ item['user']['system'] }}:{{ item['user']['planet'] }}
 			</Link>
 		</div>
-		<div class="th middle" v-html="item['message']"></div>
+		<div class="col-span-2 th middle" v-html="item['message']"></div>
 		<div class="th text-center">
 			<button v-if="isMy" @click.prevent="remove" class="button text-danger">{{ $t('pages.friends.requests.remove_request') }}</button>
 			<template v-else>
@@ -24,8 +24,7 @@
 </template>
 
 <script setup>
-	import { Link, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
+	import { Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
@@ -41,8 +40,8 @@
 	});
 
 	function approve () {
-		useApiSubmit('/friends/' + item['id'] + '/approve', {}, () => {
-			router.visit('/friends');
+		useForm().post('/friends/' + item['id'] + '/approve', {
+			preserveUrl: true,
 		});
 	}
 
@@ -52,13 +51,13 @@
 			t('pages.friends.requests.remove_request_confirm.title'),
 			[{
 				title: t('pages.friends.requests.remove_request_confirm.yes'),
-				handler: () => {
-					useApiSubmit('/friends/' + item['id'], {
-						_method: 'DELETE'
-					}, async () => {
-						useSuccessNotification(t('pages.friends.requests.remove_request_confirm.success'));
-
-						router.reload();
+				handler() {
+					useForm().delete('/friends/' + item['id'], {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.friends.requests.remove_request_confirm.success'));
+						}
 					});
 				}
 			}, {

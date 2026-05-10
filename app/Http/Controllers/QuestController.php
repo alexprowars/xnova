@@ -194,7 +194,7 @@ class QuestController extends Controller
 		]);
 	}
 
-	public function finish(int $id): void
+	public function finish(int $id)
 	{
 		if ($id <= 0) {
 			throw new Exception('Не выбрано задание');
@@ -264,5 +264,7 @@ class QuestController extends Controller
 
 		$this->user->save();
 		$this->planet->save();
+
+		return to_route('quests');
 	}
 }

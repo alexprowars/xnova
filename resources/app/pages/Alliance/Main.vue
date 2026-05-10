@@ -97,11 +97,10 @@
 
 <script setup>
 	import { computed } from 'vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
@@ -129,11 +128,13 @@
 				title: t('pages.alliance.index.leave_confirm.no'),
 			}, {
 				title: t('pages.alliance.index.leave_confirm.yes'),
-				handler: () => {
-					useApiSubmit('/alliance/exit', {}, () => {
-						useSuccessNotification(t('pages.alliance.index.leave_confirm.success'));
-
-						router.reload();
+				handler() {
+					useForm().post('/alliance/exit', {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.alliance.index.leave_confirm.success'));
+						}
 					});
 				}
 			}]

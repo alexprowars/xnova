@@ -50,9 +50,8 @@
 <script setup>
 	import AllianceUpdateForm from '~/components/Page/Alliance/AllianceUpdateForm.vue';
 	import AllianceTextForm from '~/components/Page/Alliance/AllianceTextForm.vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { computed } from 'vue';
 	import { useI18n } from 'vue-i18n';
@@ -82,11 +81,12 @@
 				title: t('pages.alliance.admin.confirm_decline'),
 			}, {
 				title: t('pages.alliance.admin.confirm_accept'),
-				handler: () => {
-					useApiSubmit('/alliance/admin/remove', {}, () => {
-						useSuccessNotification(t('pages.alliance.admin.index_dissolve_success_notice'));
-
-						router.visit('/alliance');
+				handler() {
+					useForm().delete('/alliance/admin/remove', {
+						preserveUrl: true,
+						onSuccess() {
+							useSuccessNotification(t('pages.alliance.admin.index_dissolve_success_notice'));
+						}
 					});
 				}
 			}]

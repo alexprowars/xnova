@@ -52,10 +52,10 @@
 <script setup>
 	import AuthForm from '~/components/Page/Index/AuthForm.vue';
 	import RegistrationForm from './Registration.vue';
-	import RemindForm from './Remind.vue';
 	import { isMobile } from '~/utils/helpers';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
 	import { openPopupModal } from '~/composables/useModals.js';
+	import { visitModal } from '@inertiaui/modal-vue'
 
 	const page = usePage();
 
@@ -72,7 +72,7 @@
 			return router.visit('/remind');
 		}
 
-		openPopupModal(RemindForm);
+		visitModal('/remind');
 	}
 
 	async function socialLogin(service) {

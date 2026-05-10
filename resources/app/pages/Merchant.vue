@@ -56,9 +56,7 @@
 
 <script setup>
 	import { ref } from 'vue';
-	import { Head, router } from '@inertiajs/vue3';
-	import { useApiSubmit } from '~/composables/useApi.js';
-	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { Head, useForm } from '@inertiajs/vue3';
 	import Number from '~/components/Number.vue';
 	import { useI18n } from 'vue-i18n';
 
@@ -84,14 +82,15 @@
 	}
 
 	function exchange() {
-		useApiSubmit('/merchant/exchange', {
-			type: type.value, ...resources.value
-		}, async (result) => {
-			useSuccessNotification(t('pages.merchant.success_message', [result['exchange'], t('resources.' + result['type'])]));
-
-			type.value = '';
-
-			router.reload();
+		useForm({
+			type: type.value,
+			...resources.value,
+		})
+		.post('/merchant/exchange', {
+			preserveUrl: true,
+			onSuccess(result) {
+				type.value = '';
+			}
 		});
 	}
 </script>

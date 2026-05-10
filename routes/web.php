@@ -6,6 +6,7 @@ use App\Http\Middleware\IsVacationMode;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Controllers\IndexController::class, 'index'])->middleware(CheckReferral::class)->name('index');
+Route::get('remind', [Controllers\IndexController::class, 'remind'])->name('remind');
 Route::post('login', [Controllers\LoginController::class, 'credentials'])->name('login');
 Route::get('login/social/{service}', [Controllers\LoginController::class, 'services']);
 Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback']);
@@ -62,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('alliance/admin/name', [Controllers\Alliance\AllianceAdminController::class, 'name']);
 	Route::get('alliance/admin/tag', [Controllers\Alliance\AllianceAdminController::class, 'tagPage']);
 	Route::post('alliance/admin/tag', [Controllers\Alliance\AllianceAdminController::class, 'tag']);
-	Route::post('alliance/admin/remove', [Controllers\Alliance\AllianceAdminController::class, 'remove']);
+	Route::delete('alliance/admin/remove', [Controllers\Alliance\AllianceAdminController::class, 'remove']);
 	Route::get('alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'give']);
 	Route::post('alliance/admin/give', [Controllers\Alliance\AllianceAdminController::class, 'giveSend']);
 	Route::get('alliance/diplomacy', [Controllers\Alliance\AllianceDiplomacyController::class, 'index']);
@@ -100,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('buildings/build/{action}', [Controllers\BuildingsController::class, 'build'])->middleware(IsVacationMode::class)->whereIn('action', ['insert', 'destroy']);
 	Route::post('buildings/queue/{action}', [Controllers\BuildingsController::class, 'queue'])->middleware(IsVacationMode::class)->whereIn('action', ['cancel', 'remove']);
 
-	Route::get('friends', [Controllers\FriendsController::class, 'index']);
+	Route::get('friends', [Controllers\FriendsController::class, 'index'])->name('friends');
 	Route::get('friends/requests', [Controllers\FriendsController::class, 'requests']);
 	Route::get('friends/requests/my', [Controllers\FriendsController::class, 'requests']);
 	Route::get('friends/new/{id}', [Controllers\FriendsController::class, 'new']);
@@ -148,7 +149,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('messages/write/{id}', [Controllers\MessagesController::class, 'write'])->name('message.write');
 	Route::post('messages/write/{id}', [Controllers\MessagesController::class, 'send']);
 	Route::post('messages/{id}/abuse', [Controllers\MessagesController::class, 'abuse']);
-	Route::post('messages/delete', [Controllers\MessagesController::class, 'delete']);
+	Route::delete('messages/delete', [Controllers\MessagesController::class, 'delete']);
 
 	Route::get('notes', [Controllers\NotesController::class, 'index']);
 	Route::delete('notes', [Controllers\NotesController::class, 'delete']);

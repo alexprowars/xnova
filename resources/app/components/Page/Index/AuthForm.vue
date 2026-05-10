@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div v-if="errors.exception" v-html="errors.exception" class="message error"></div>
+		<div v-if="errors.error" v-html="errors.error" class="message error"></div>
 		<form action="" method="post" @submit.prevent="send">
 			<input :class="{error: v$.email.$error}" name="email" class="input-text" placeholder="Email" v-model="form.email" type="email" autocomplete="username">
 			<input :class="{error: v$.password.$error}" name="password" class="input-text" :placeholder="$t('pages.index.auth_password_placeholder')" v-model="form.password" type="password" autocomplete="current-password">
-			<button type="submit" class="input-submit">{{ $t('pages.index.auth_submit') }}</button>
+			<button type="submit" class="button input-submit">{{ $t('pages.index.auth_submit') }}</button>
 			<div class="remember">
 				<input id="rememberme" type="checkbox" v-model="form.remember">
 				<label for="rememberme">{{ $t('pages.index.auth_remember_me') }}</label>

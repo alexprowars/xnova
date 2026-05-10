@@ -83,11 +83,9 @@
 <script setup>
 	import SendMessagePopup from '~/components/Page/Messages/SendMessagePopup.vue';
 	import { computed, ref } from 'vue';
-	import { Head, Link, router } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiSubmit } from '~/composables/useApi.js';
-	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
 		layout: {
@@ -118,10 +116,12 @@
 	}
 
 	function saveRank(id, rank) {
-		useApiSubmit('/alliance/admin/members/rank', { id, rank }, () => {
-			changeRank.value = 0;
-
-			router.reload();
+		useForm({ id, rank }).post('/alliance/admin/members/rank', {
+			preserveUrl: true,
+			preserveScroll: true,
+			onSuccess() {
+				changeRank.value = 0;
+			}
 		});
 	}
 
@@ -133,11 +133,13 @@
 				title: t('pages.alliance.members.kick_confirm.no'),
 			}, {
 				title: t('pages.alliance.members.kick_confirm.yes'),
-				handler: () => {
-					useApiSubmit('/alliance/admin/members/kick', { id }, () => {
-						useSuccessNotification(t('pages.alliance.members.kick_confirm.success'));
-
-						router.reload();
+				handler() {
+					useForm({ id }).post('/alliance/admin/members/kick', {
+						preserveUrl: true,
+						preserveScroll: true,
+						onSuccess() {
+							changeRank.value = 0;
+						}
 					});
 				}
 			}]

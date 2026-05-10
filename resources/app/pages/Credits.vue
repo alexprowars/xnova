@@ -40,9 +40,8 @@
 </template>
 
 <script setup>
-	import { Head, usePage } from '@inertiajs/vue3';
+	import { Head, useForm, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
-	import { useApiSubmit } from '~/composables/useApi.js';
 
 	defineOptions({
 		layout: {
@@ -56,6 +55,8 @@
 	const user = computed(() => page.props.user);
 
 	function pay() {
-		useApiSubmit('/credits/pay', {}, () => {});
+		useForm().post('/credits/pay', {
+			preserveUrl: true,
+		});
 	}
 </script>
