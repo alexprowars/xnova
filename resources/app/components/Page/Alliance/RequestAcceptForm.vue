@@ -12,7 +12,7 @@
 				<div class="c">Форма ответа:</div>
 			</div>
 			<div class="grid">
-				<div class="th"><button @click.prevent="accept">Принять</button></div>
+				<div class="th"><button class="button" @click.prevent="accept">Принять</button></div>
 			</div>
 			<div class="grid">
 				<div class="th">
@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="grid">
-				<div class="th"><button @click.prevent="reject">Отклонить</button></div>
+				<div class="th"><button class="button" @click.prevent="reject">Отклонить</button></div>
 			</div>
 		</div>
 		<div class="separator"></div>

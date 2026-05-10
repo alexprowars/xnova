@@ -56,6 +56,6 @@
 	const user = computed(() => page.props.user);
 
 	function pay() {
-		useApiSubmit('credits/pay', {}, () => {});
+		useApiSubmit('/credits/pay', {}, () => {});
 	}
 </script>

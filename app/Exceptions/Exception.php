@@ -20,7 +20,7 @@ class Exception extends \Exception
 		if ((!$request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) || $request->hasHeader('x-modal')) {
 			toast(ToastType::ERROR, $this->getMessage());
 
-			return back();
+			return back()->withErrors($this->getMessage());
 		}
 
 		//if ($request->isMethod('GET') && $request->inertia() && !$request->expectsJson()) {

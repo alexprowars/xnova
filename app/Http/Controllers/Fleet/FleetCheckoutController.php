@@ -17,6 +17,7 @@ use App\Models\Planet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
+use Inertia\Inertia;
 
 class FleetCheckoutController extends Controller
 {
@@ -171,9 +172,9 @@ class FleetCheckoutController extends Controller
 			];
 		}
 
-		$acs = (int) $request->post('alliance', 0);
+		$acs = $request->integer('alliance');
 
-		$mission = (int) $request->post('mission');
+		$mission = $request->integer('mission');
 		$mission = MissionType::tryFrom($mission);
 
 		$targetPlanet = Planet::findByCoordinates($target);
@@ -208,6 +209,8 @@ class FleetCheckoutController extends Controller
 
 		$result['mission'] = $mission;
 
-		return response()->json($result);
+		return Inertia::render('Fleet/Checkout', [
+			'data' => $result,
+		]);
 	}
 }

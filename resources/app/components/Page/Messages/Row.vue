@@ -33,13 +33,12 @@
 </template>
 
 <script setup>
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Link, useForm, usePage } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { computed } from 'vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';;
-	import { useApiPost } from '~/composables/useApi.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const { t } = useI18n();
@@ -60,13 +59,12 @@
 				title: t('pages.messages.row.abuse_confirm.no'),
 			}, {
 				title: t('pages.messages.row.abuse_confirm.yes'),
-				handler: async () => {
-					try {
-						await useApiPost('/messages/' + props.item['id'] + '/abuse');
-
-						useSuccessNotification(t('pages.messages.row.abuse_confirm.success'));
-					} catch {
-					}
+				handler() {
+					useForm().post('/messages/' + props.item['id'] + '/abuse', {
+						onSuccess() {
+							useSuccessNotification(t('pages.messages.row.abuse_confirm.success'));
+						}
+					});
 				}
 			}]
 		);

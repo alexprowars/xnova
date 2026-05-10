@@ -25,7 +25,7 @@
 			<div class="separator"></div>
 			<div class="grid">
 				<div class="text-right">
-					<button @click="newRequest">{{ $t('pages.support.index.create_request') }}</button>
+					<button class="button" @click="newRequest">{{ $t('pages.support.index.create_request') }}</button>
 				</div>
 			</div>
 		</div>

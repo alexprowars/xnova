@@ -6,10 +6,10 @@
 				<div class="grid grid-cols-2">
 					<div class="th middle">{{ $t('pages.fleets.checkout.target') }}</div>
 					<div class="th middle gap-2 fleet-coordinates-input">
-						<input type="number" min="1" :max="data['galaxy_max']" v-model="data['target']['galaxy']">
-						<input type="number" min="1" :max="data['system_max']" v-model="data['target']['system']">
-						<input type="number" min="1" :max="data['planet_max']" v-model="data['target']['planet']">
-						<select name="planet_type" v-model="data['target']['planet_type']">
+						<input type="number" min="1" :max="data['galaxy_max']" v-model.number="target['galaxy']">
+						<input type="number" min="1" :max="data['system_max']" v-model.number="target['system']">
+						<input type="number" min="1" :max="data['planet_max']" v-model.number="target['planet']">
+						<select name="planet_type" v-model.number="target['planet_type']">
 							<option v-for="index in Object.keys($tm('planet_type'))" :value="index">{{ $t('planet_type.' + index) }}</option>
 						</select>
 					</div>
@@ -110,12 +110,12 @@
 							<div class="title">{{ $t('pages.fleets.checkout.mission') }}</div>
 							<div class="content">
 								<div class="block-table">
-									<div v-for="mission in data['missions']">
+									<div v-for="item in data['missions']">
 										<div class="th flex items-center gap-2" style="text-align: left !important">
-											<input :id="'m_'+mission" type="radio" v-model="data['mission']" :value="mission">
-											<label :for="'m_'+mission">{{ $t('fleet_mission.'+mission) }}</label>
+											<input :id="'m_' + item" type="radio" v-model="mission" :value="item">
+											<label :for="'m_' + item">{{ $t('fleet_mission.' + item) }}</label>
 
-											<span v-if="mission === 15" class="text-center negative">
+											<span v-if="item === 15" class="text-center negative">
 												{{ $t('pages.fleets.checkout.expedition_warning') }}
 											</span>
 										</div>
@@ -163,10 +163,10 @@
 										<div class="th">&nbsp;</div>
 									</div>
 
-									<div v-if="data['mission'] === 15 && data['missions'].indexOf(15) >= 0" class="mission m_15">
+									<div v-if="mission === 15 && mission.indexOf(15) >= 0" class="mission m_15">
 										<div class="c">{{ $t('pages.fleets.checkout.expedition_time') }}</div>
 									</div>
-									<div v-if="data['mission'] === 15 && data['missions'].indexOf(15) >= 0" class="mission m_15">
+									<div v-if="mission === 15 && data['missions'].indexOf(15) >= 0" class="mission m_15">
 										<div class="th">
 											<select name="expeditiontime">
 												<option v-for="i in data['expedition_hours']" :value="i">{{ i }} {{ $t('pages.fleets.checkout.expedition_hour') }}</option>
@@ -174,10 +174,10 @@
 										</div>
 									</div>
 
-									<div v-if="data['mission'] === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
+									<div v-if="mission === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
 										<div class="c">{{ $t('pages.fleets.checkout.orbit_hours') }}</div>
 									</div>
-									<div v-if="data['mission'] === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
+									<div v-if="mission === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
 										<div class="th">
 											<select name="holdingtime" v-model="hold_hours">
 												<option value="0">0</option>
@@ -210,10 +210,9 @@
 	import { computed, onMounted, ref, watch } from 'vue';
 	import dayjs from 'dayjs';
 	import { useNow } from '@vueuse/core';
-	import { Link, router, useForm, usePage } from '@inertiajs/vue3';
-	import { useErrorNotification } from '~/composables/useToast.js';
+	import { Link, useForm, usePage } from '@inertiajs/vue3';
 	import { getConsumption, getDistance, getDuration, getSpeed, getStorage } from '~/utils/fleet.js';
-	import { useApiPost } from '~/composables/useApi.js';
+	import { startLoading, stopLoading } from '~/composables/useLoading.js';
 
 	const props = defineProps({
 		data: {
@@ -221,7 +220,7 @@
 		}
 	});
 
-	const data = computed(() => props.data);
+	const target = ref(props.data.target);
 
 	const formRef = ref();
 	const resource = ref({
@@ -233,6 +232,7 @@
 	const storage = ref(0);
 	const maxspeed = ref(0);
 	const consumption = ref(0);
+	const mission = ref(props.data.mission);
 	const moon = ref();
 
 	const now = useNow({ interval: 1000 });
@@ -247,8 +247,8 @@
 	const hold = computed(() => {
 		let hold = 0;
 
-		if (data.value['mission'] === 5) {
-			hold = data.value['ships'].reduce((summ, item) => item['stay'] * hold_hours.value, 0);
+		if (mission.value === 5) {
+			hold = props.data['ships'].reduce((summ, item) => item['stay'] * hold_hours.value, 0);
 		}
 
 		return hold;
@@ -262,28 +262,30 @@
 		info();
 	});
 
-	watch(() => data.value?.target, async () => {
+	watch(target, () => {
 		let ships = {}
-		data.value['ships'].forEach((item) => ships[item['id']] = item['count']);
+		props.data['ships'].forEach((item) => ships[item['id']] = item['count']);
 
-		try {
-			const result = await useApiPost('/fleet/checkout', {
-				...data.value['target'], ships,
-			});
-
-			delete result['target'];
-
-			router.replaceProp('data', Object.assign(data.value, result))
-
-			info();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm({
+			...target.value, ships,
+		})
+		.post('/fleet/checkout', {
+			preserveScroll: true,
+			onSuccess() {
+				info();
+			},
+			onStart() {
+				startLoading();
+			},
+			onFinish() {
+				stopLoading();
+			}
+		});
 	}, { deep: true });
 
 	function info () {
-		distance.value = getDistance(planet.value['coordinates'], data.value['target']);
-		maxspeed.value = getSpeed(data.value['ships']);
+		distance.value = getDistance(planet.value['coordinates'], target.value);
+		maxspeed.value = getSpeed(props.data['ships']);
 
 		duration.value = getDuration({
 			factor: speed.value,
@@ -293,28 +295,32 @@
 		});
 
 		consumption.value = getConsumption({
-			ships: data.value['ships'],
+			ships: props.data['ships'],
 			duration: duration.value,
 			distance: distance.value,
 			universe_speed: page.props.speed['fleet']
 		});
 
-		storage.value = getStorage(data.value['ships']) - consumption.value;
+		storage.value = getStorage(props.data['ships']) - consumption.value;
+
+		if (!props.data.missions.includes(mission.value)) {
+			mission.value = props.data.mission;
+		}
 	}
 
 	function setTarget (galaxy, system, planet, type) {
-		data.value['target']['galaxy'] = galaxy
-		data.value['target']['system'] = system
-		data.value['target']['planet'] = planet
+		target.value['galaxy'] = galaxy
+		target.value['system'] = system
+		target.value['planet'] = planet
 
 		if (typeof type === 'undefined')
 			type = 1
 
-		data.value['target']['planet_type'] = type
+		target.value['planet_type'] = type
 	}
 
 	function allianceSet (index) {
-		let al = data.value['alliances'][index]
+		let al = props.data['alliances'][index]
 
 		alliance.value = al['id']
 		setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type'])
@@ -353,31 +359,18 @@
 
 	function send() {
 		let ships = {};
-		data.value.ships.forEach((ship) => ships[ship.id] = ship.count);
+		props.data.ships.forEach((ship) => ships[ship.id] = ship.count);
 
 		useForm({
 			ships,
-			...data.value['target'],
+			...target.value,
 			alliance: alliance.value,
-			fleet: data.value['fleet'],
-			mission: data.value['mission'],
+			fleet: props.data['fleet'],
+			mission: mission.value,
 			moon: moon.value,
 			speed: speed.value,
 			resource: resource.value,
 		})
-		.post('/fleet/send', {
-			onSuccess: (result) => {
-				router.push({
-					url: '/fleet/send',
-					component: 'Fleet/Send',
-					props: (currentProps) => ({ ...currentProps, data: result }),
-				});
-			},
-			onError: (errors) => {
-				if (errors.exception) {
-					useErrorNotification(errors.exception);
-				}
-			}
-		});
+		.post('/fleet/send');
 	}
 </script>

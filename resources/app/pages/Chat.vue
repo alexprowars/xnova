@@ -33,8 +33,8 @@
 				</div>
 			</div>
 
-			<button @click.prevent="clear">{{ $t('pages.chat.button_clear') }}</button>
-			<button @click.prevent="sendMessage">{{ $t('pages.chat.button_send') }}</button>
+			<button class="button" @click.prevent="clear">{{ $t('pages.chat.button_clear') }}</button>
+			<button class="button" @click.prevent="sendMessage">{{ $t('pages.chat.button_send') }}</button>
 		</div>
 	</div>
 </template>

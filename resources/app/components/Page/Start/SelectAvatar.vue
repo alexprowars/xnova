@@ -7,7 +7,7 @@
 					<div class="th middle">
 						<div>
 							{{ $t('pages.start.game_nickname') }}:
-							<input :class="{error: v$.name.$error}" name="name" size="20" maxlength="30" type="text" v-model="name">
+							<input :class="{error: v$.name.$error}" name="name" size="20" maxlength="30" type="text" v-model="form.name">
 						</div>
 					</div>
 				</div>
@@ -20,7 +20,7 @@
 							<Tab :name="$t('pages.start.male')">
 								<div class="grid grid-cols-4">
 									<div v-for="i in 8">
-										<input type="radio" :value="'1_'+i" :id="'f1_'+i" v-model="avatar">
+										<input type="radio" :value="'1_'+i" :id="'f1_'+i" v-model="form.avatar">
 										<label :for="'f1_'+i" class="avatar">
 											<img :src="'/assets/images/faces/1/'+i+'s.png'" alt="">
 										</label>
@@ -30,7 +30,7 @@
 							<Tab :name="$t('pages.start.female')">
 								<div class="grid grid-cols-4">
 									<div v-for="i in 8">
-										<input type="radio" :value="'2_'+i" :id="'f2_'+i" v-model="avatar">
+										<input type="radio" :value="'2_'+i" :id="'f2_'+i" v-model="form.avatar">
 										<label :for="'f2_'+i" class="avatar">
 											<img :src="'/assets/images/faces/2/'+i+'s.png'" alt="">
 										</label>
@@ -42,7 +42,7 @@
 				</div>
 				<div v-if="name && avatar" class="grid">
 					<div class="th">
-						<button @click.prevent="save">{{ $t('pages.start.continue') }}</button>
+						<button class="button" @click.prevent="save">{{ $t('pages.start.continue') }}</button>
 					</div>
 				</div>
 			</div>
@@ -51,20 +51,20 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
-	import { router, usePage } from '@inertiajs/vue3';
+	import { computed } from 'vue';
+	import { useForm, usePage } from '@inertiajs/vue3';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
 	import Tabs from '~/components/Tabs.vue';
 	import Tab from '~/components/Tab.vue';
-	import { useErrorNotification } from '~/composables/useToast.js';
-	import { useApiPost } from '~/composables/useApi.js';
 
 	const page = usePage();
 	const user = computed(() => page.props.user);
 
-	const name = ref(user.value['name']);
-	const avatar = ref(null);
+	const form = useForm({
+		name: user.value['name'],
+		avatar: null,
+	});
 
 	const validations = {
 		name: {
@@ -74,21 +74,17 @@
 
 	const v$ = useVuelidate(
 		validations,
-		{ name },
+		form,
 		{ $autoDirty: true }
 	);
 
 	async function save() {
 		if (!await v$.value.$validate()) {
-			return
+			return;
 		}
 
-		try {
-			await useApiPost('/start', { name, avatar });
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		form.post('/start', {
+			preserveUrl: true,
+		});
 	}
 </script>

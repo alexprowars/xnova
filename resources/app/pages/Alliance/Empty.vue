@@ -97,7 +97,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 			}, {
 				title: 'Да',
 				handler: () => {
-					useApiSubmit('alliance/request/' + id, {
+					useApiSubmit('/alliance/request/' + id, {
 						_method: 'DELETE',
 					}, () => {
 						useSuccessNotification('Вы отозвали свою заявку на вступление в альянс');

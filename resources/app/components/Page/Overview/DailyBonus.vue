@@ -18,21 +18,15 @@
 </template>
 
 <script setup>
-	import { useErrorNotification } from '~/composables/useToast.js';
-	import { router } from '@inertiajs/vue3';
-	import { useApiPost } from '~/composables/useApi.js';
+	import { useForm } from '@inertiajs/vue3';
 
 	defineProps({
 		amount: Number,
 	});
 
 	async function getBonus () {
-		try {
-			await useApiPost('/user/daily');
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm().post('/user/daily', {
+			preserveScroll: true,
+		});
 	}
 </script>

@@ -1,6 +1,6 @@
 <template>
 	<div class="block-table">
-		<div v-if="fleets.length > 0" class="grid grid-cols-12 divide-x">
+		<div v-if="fleets.length > 0" class="grid grid-cols-12 divide-x text-center">
 			<div class="col-span-3 sm:col-span-1 th">{{ $t('pages.fleets.list.number') }}</div>
 			<div class="col-span-6 sm:col-span-2 th">{{ $t('pages.fleets.list.mission') }}</div>
 			<div class="col-span-3 sm:col-span-1 th">{{ $t('pages.fleets.list.quantity') }}</div>

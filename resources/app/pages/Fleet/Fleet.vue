@@ -87,7 +87,7 @@
 <script setup>
 	import FleetList from '~/components/Page/Fleet/FleetList.vue';
 	import { computed, ref, watch } from 'vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, router, useForm, useHttp, usePage } from '@inertiajs/vue3';
 	import { useErrorNotification } from '~/composables/useToast.js';
 	import { useApiPost } from '~/composables/useApi.js';
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
@@ -202,23 +202,20 @@
 	}
 
 	async function checkout() {
-		startLoading();
-
-		try {
-			const result = await useApiPost('/fleet/checkout', {
-				ships: fleets.value,
-				...props.data['selected'],
-			});
-
-			router.push({
-				url: '/fleet/checkout',
-				component: 'Fleet/Checkout',
-				props: (currentProps) => ({ ...currentProps, data: result }),
-			});
-		} catch (e) {
-			useErrorNotification(e.message);
-		} finally {
-			stopLoading();
-		}
+		useForm({
+			ships: fleets.value,
+			...props.data['selected'],
+		})
+		.post('/fleet/checkout', {
+			onSuccess(result) {
+				//router.push(result);
+			},
+			onStart() {
+				startLoading();
+			},
+			onFinish() {
+				stopLoading();
+			}
+		});
 	}
 </script>

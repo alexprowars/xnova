@@ -81,21 +81,29 @@ class AppServiceProvider extends ServiceProvider
 
 		Inertia::handleExceptionsUsing(function (ExceptionResponse $response) {
 			if ($response->response instanceof JsonResponse) {
-				return $response;
+				//return $response;
 			}
 
 			if ($response->exception instanceof PageException) {
-				return $response->render('Errors/Page', [
-					'status' => $response->statusCode(),
-					'message' => $response->exception->getMessage(),
-				])->withSharedData();
+				return $response->render(
+					'Errors/Page',
+					array_merge([
+						'errors' => ['error' => $response->exception->getMessage()],
+						'status' => $response->statusCode(),
+						'message' => $response->exception->getMessage(),
+					], !app()->isProduction() ? ['trace' => $response->exception->getTraceAsString()] : [])
+				)->withSharedData();
 			}
 
 			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
-				return $response->render('Errors/FullPage', [
-					'status' => $response->statusCode(),
-					'message' => $response->exception->getMessage(),
-				]);
+				return $response->render(
+					'Errors/FullPage',
+					array_merge([
+						'errors' => ['error' => $response->exception->getMessage()],
+						'status' => $response->statusCode(),
+						'message' => $response->exception->getMessage(),
+					], !app()->isProduction() ? ['trace' => $response->exception->getTraceAsString()] : [])
+				);
 			}
 
 			return $response;

@@ -13,7 +13,7 @@
 				</div>
 				<div class="th flex gap-2">
 					<input ref="textRef" class="page-chat-message" type="text" v-model="message" @keydown.enter.prevent="sendMessage" maxlength="750">
-					<button @click.prevent="sendMessage">Отправить</button>
+					<button class="button" @click.prevent="sendMessage">Отправить</button>
 				</div>
 			</div>
 		</div>

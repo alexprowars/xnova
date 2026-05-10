@@ -9,6 +9,7 @@ use App\Engine\Fleet;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
+use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
 use App\Format;
@@ -20,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class FleetSendController extends Controller
 {
@@ -63,10 +65,10 @@ class FleetSendController extends Controller
 		$sender->setFleetSpeed($fleetSpeedFactor);
 
 		if ($fleetMission == MissionType::Expedition) {
-			$sender->setExpeditionTime((int) $request->post('expeditiontime', 0));
+			$sender->setExpeditionTime($request->integer('expeditiontime'));
 		}
 
-		$holdTime = (int) $request->post('holdingtime', 0);
+		$holdTime = $request->integer('holdingtime');
 
 		if ($holdTime) {
 			$sender->setStayTime($holdTime);
@@ -90,7 +92,7 @@ class FleetSendController extends Controller
 		try {
 			$fleet = DB::transaction(fn() => $sender->send());
 		} catch (Exception $e) {
-			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
+			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
 		$fleetCollection = FleetCollection::createFromArray($fleetArray, $this->planet);
@@ -118,7 +120,9 @@ class FleetSendController extends Controller
 			$result['units'][Vars::getName($unitId)] = $count;
 		}
 
-		return response()->json($result);
+		return Inertia::render('Fleet/Send', [
+			'data' => $result,
+		]);
 	}
 
 	private function checkJumpGate(Planet $planet): void

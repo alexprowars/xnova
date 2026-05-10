@@ -40,7 +40,7 @@
 						<option value="unmarked">{{ $t('pages.alliance.chat.delete_option_unmarked') }}</option>
 						<option value="all">{{ $t('pages.alliance.chat.delete_option_all') }}</option>
 					</select>
-					<button @click.prevent="remove">{{ $t('pages.alliance.chat.button_delete') }}</button>
+					<button class="button" @click.prevent="remove">{{ $t('pages.alliance.chat.button_delete') }}</button>
 				</div>
 			</div>
 		</div>

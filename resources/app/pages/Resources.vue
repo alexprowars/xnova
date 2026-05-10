@@ -155,11 +155,9 @@
 	import ResourcesRow from '~/components/Page/Resources/Row.vue';
 	import StorageRow from '~/components/Page/Resources/StorageRow.vue';
 	import BuyResources from '~/components/Page/Resources/BuyResources.vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 	import Colored from '~/components/Colored.vue';
-	import { useApiPost } from '~/composables/useApi.js';
-	import { useErrorNotification } from '~/composables/useToast.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const props = defineProps({
@@ -174,13 +172,9 @@
 	const isVacation = computed(() => user.value?.vacation !== null);
 
 	async function shutdown(active) {
-		try {
-			await useApiPost('/resources/shutdown', { active });
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm({ active }).post('/resources/shutdown', {
+			preserveUrl: true,
+		});
 	}
 
 	async function updateState() {
@@ -188,12 +182,8 @@
 
 		props.data['items'].forEach((item) => state[item['id']] = item['factor']);
 
-		try {
-			await useApiPost('/resources/state', { state });
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm({ state }).post('/resources/state', {
+			preserveUrl: true,
+		});
 	}
 </script>

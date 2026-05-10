@@ -23,15 +23,15 @@
 			<div v-if="!user.vacation" class="basis-1/2 sm:basis-1/6 order-2 text-center officiers-item-action flex items-center justify-center">
 				<div class="flex flex-col gap-2">
 					<div>
-						<button @click.prevent="submit(7, 20)">{{ $t('pages.officiers.cost_week') }}</button>
+						<button class="button" @click.prevent="submit(7, 20)">{{ $t('pages.officiers.cost_week') }}</button>
 						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">20</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
 					</div>
 					<div>
-						<button @click.prevent="submit(14, 40)">{{ $t('pages.officiers.cost_weeks') }}</button>
+						<button class="button" @click.prevent="submit(14, 40)">{{ $t('pages.officiers.cost_weeks') }}</button>
 						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">40</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
 					</div>
 					<div>
-						<button @click.prevent="submit(30, 80)">{{ $t('pages.officiers.cost_month') }}</button>
+						<button class="button" @click.prevent="submit(30, 80)">{{ $t('pages.officiers.cost_month') }}</button>
 						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">80</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
 					</div>
 				</div>
@@ -43,9 +43,7 @@
 <script setup>
 	import { computed } from 'vue';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useApiPost } from '~/composables/useApi.js';
-	import { useErrorNotification, useSuccessNotification } from '~/composables/useToast.js';
-	import { router, usePage } from '@inertiajs/vue3';
+	import { useForm, usePage } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		item: Object,
@@ -64,19 +62,15 @@
 				title: 'Отменить',
 			}, {
 				title: 'Нанять',
-				handler: async () => {
-					try {
-						await useApiPost('/officiers/buy', {
-							code: props.item['code'],
-							duration: value
-						});
-
-						router.reload();
-
-						useSuccessNotification('Офицер был завербован!');
-					} catch (e) {
-						useErrorNotification(e.message);
-					}
+				handler() {
+					useForm({
+						code: props.item['code'],
+						duration: value
+					})
+					.post('/officiers/buy', {
+						preserveUrl: true,
+						preserveScroll: true,
+					});
 				}
 			}]
 		);

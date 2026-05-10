@@ -35,10 +35,8 @@
 	import { computed } from 'vue';
 	import Colored from '~/components/Colored.vue';
 	import { useI18n } from 'vue-i18n';
-	import { router, usePage } from '@inertiajs/vue3';
+	import { useForm, usePage } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useErrorNotification, useSuccessNotification } from '~/composables/useToast.js';
-	import { useApiPost } from '~/composables/useApi.js';
 
 	defineProps({
 		item: Object,
@@ -62,15 +60,7 @@
 			}, {
 				title: t('pages.resources.resources_buy_confirm_yes'),
 				async handler() {
-					try {
-						const result = await useApiPost('/resources/buy');
-
-						useSuccessNotification(t('pages.resources.resources_buy_success', result));
-
-						router.reload();
-					} catch (e) {
-						useErrorNotification(e.message);
-					}
+					useForm().post('/resources/buy');
 				}
 			}]
 		);

@@ -11,6 +11,7 @@ use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
 use App\Models\Planet;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
@@ -74,7 +75,7 @@ class ResourcesController extends Controller
 		]);
 	}
 
-	public function buy()
+	public function buy(): void
 	{
 		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
 			throw new Exception('На этой планете нельзя купить ресурсы');
@@ -107,7 +108,7 @@ class ResourcesController extends Controller
 			'type' => 2,
 		]);
 
-		return $resources;
+		toast(ToastType::SUCCESS, 'Вы успешно купили ' . $resources['metal'] . ' металла, ' . $resources['crystal'] . ' кристалла, ' . $resources['deuterium'] . ' дейтерия');
 	}
 
 	public function shutdown(Request $request): void

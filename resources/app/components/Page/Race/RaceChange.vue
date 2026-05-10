@@ -1,6 +1,6 @@
 <template>
 	<form method="post" @submit.prevent="changeRace">
-		<select v-model="race">
+		<select v-model="form.race">
 			<option value="">выбрать...</option>
 			<option value="1">Конфедерация</option>
 			<option value="2">Бионики</option>
@@ -8,27 +8,23 @@
 			<option value="4">Древние</option>
 		</select>
 		<br><br>
-		<button v-if="race" type="submit">Сменить фракцию</button>
+		<button v-if="form.race" type="submit" class="button">Сменить фракцию</button>
 	</form>
 </template>
 
 <script setup>
 	import { ref } from 'vue';
-	import { router } from '@inertiajs/vue3';
-	import { useErrorNotification } from '~/composables/useToast.js';
-	import { useApiPost } from '~/composables/useApi.js';
+	import { useForm } from '@inertiajs/vue3';
+
+	const form = useForm({
+		race: '',
+	});
 
 	const race = ref('');
 
 	async function changeRace() {
-		try {
-			await useApiPost('/race/change', {
-				race
-			});
-
-			router.visit('/overview');
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		form.post('/race/change', {
+			preserveUrl: true,
+		});
 	}
 </script>

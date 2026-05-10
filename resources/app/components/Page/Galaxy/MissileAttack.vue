@@ -28,7 +28,7 @@
 		<div class="grid">
 			<div class="c">
 				<button type="submit" class="button">{{ $t('pages.missile_attack.submit') }}</button>
-				<button @click.prevent="$emit('close')">{{ $t('pages.missile_attack.cancel') }}</button>
+				<button class="button" @click.prevent="$emit('close')">{{ $t('pages.missile_attack.cancel') }}</button>
 			</div>
 		</div>
 	</form>
@@ -36,9 +36,7 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
-	import { router, usePage } from '@inertiajs/vue3';
-	import { useErrorNotification } from '~/composables/useToast.js';
-	import { useApiPost } from '~/composables/useApi.js';
+	import { useForm, usePage } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		page: {
@@ -56,18 +54,15 @@
 	const count = ref(currentPlanet.value['units']['interplanetary_misil'] || 0);
 
 	async function send() {
-		try {
-			await useApiPost('/rocket', {
-				galaxy: props.page['galaxy'],
-				system: props.page['system'],
-				planet: props.planet,
-				count: count.value,
-				target: target.value,
-			});
-
-			router.reload();
-		} catch (e) {
-			useErrorNotification(e.message);
-		}
+		useForm({
+			galaxy: props.page['galaxy'],
+			system: props.page['system'],
+			planet: props.planet,
+			count: count.value,
+			target: target.value,
+		})
+		.post('/rocket', {
+			preserveUrl: true,
+		});
 	}
 </script>

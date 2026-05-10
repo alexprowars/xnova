@@ -261,12 +261,14 @@ class MessagesController extends Controller
 			->whereHas('roles')
 			->get();
 
+		$messageText = MessageFactory::get($message->message);
+
 		foreach ($users as $user) {
 			$user->notify(new MessageNotification(
 				$this->user,
 				MessageType::User,
 				'<span style="color: red">' . $this->user->username . '</span>',
-				'От кого: ' . $message->from . '<br>Дата отправления: ' . $message->date->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $message->message
+				'От кого: ' . $message->from->username . '<br>Дата отправления: ' . $message->date->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $messageText->render()
 			));
 		}
 	}

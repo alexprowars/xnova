@@ -231,12 +231,12 @@
 							<div class="text-center flex flex-col gap-2">
 								<div><input type="text" class="w-full min-w-full" v-model.number="spyCount"></div>
 								<div>
-									<button @click.prevent="spy(item['planet']['type'], $event)" type="button" class="w-full">
+									<button @click.prevent="spy(item['planet']['type'], $event)" type="button" class="button w-full">
 										{{ $t('pages.galaxy.actions_spy_planet') }}
 									</button>
 								</div>
 								<div>
-									<button v-if="item['moon'] && !item['moon']['destruyed']" @click.prevent="spy(3, $event)" type="button" class="w-full">
+									<button v-if="item['moon'] && !item['moon']['destruyed']" @click.prevent="spy(3, $event)" type="button" class="button w-full">
 										{{ $t('pages.galaxy.actions_spy_moon') }}
 									</button>
 								</div>

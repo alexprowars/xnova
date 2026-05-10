@@ -33,10 +33,10 @@ class FleetShortcutController extends Controller
 
 	public function create(Request $request)
 	{
-		$galaxy = $request->integer('g');
-		$system = $request->integer('s');
-		$planet = $request->integer('p');
-		$planetType = $request->integer('t');
+		$galaxy = $request->integer('galaxy');
+		$system = $request->integer('system');
+		$planet = $request->integer('planet');
+		$planetType = $request->integer('type');
 
 		$galaxy = min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
 		$system = min(max($system, 1), config('game.maxSystemInGalaxy'));

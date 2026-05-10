@@ -82,4 +82,3 @@ createInertiaApp({
 putConfig({
 	useNativeDialog: false,
 });
-

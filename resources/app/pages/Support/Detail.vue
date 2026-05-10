@@ -31,12 +31,12 @@
 		<div class="content">
 			<div class="grid">
 				<div class="th">
-					<TextEditor v-model="message" :class="{error: v$.message.$error}"/>
+					<TextEditor v-model="form.message" :class="{error: v$.message.$error}"/>
 				</div>
 			</div>
 			<div class="grid">
 				<div class="c text-center">
-					<button @click.prevent="answer">{{ $t('pages.support.detail.reply') }}</button>
+					<button class="button" @click.prevent="answer">{{ $t('pages.support.detail.reply') }}</button>
 				</div>
 			</div>
 		</div>
@@ -44,14 +44,11 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
 	import { required } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
-	import { Link, router } from '@inertiajs/vue3';
+	import { Link, useForm } from '@inertiajs/vue3';
 	import TextEditor from '~/components/TextEditor.vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
-	import { openErrorModal } from '~/composables/useModals.js';
-	import { useApiPost } from '~/composables/useApi.js';
 	import { useI18n } from 'vue-i18n';
 
 	const { t } = useI18n();
@@ -62,7 +59,9 @@
 		}
 	});
 
-	const message = ref('');
+	const form = useForm({
+		message: '',
+	});
 
 	const validations = {
 		message: {
@@ -72,7 +71,7 @@
 
 	const v$ = useVuelidate(
 		validations,
-		{ message },
+		form,
 		{ $autoDirty: true }
 	);
 
@@ -81,17 +80,15 @@
 			return
 		}
 
-		try {
-			await useApiPost('/support/' + props.item['id'] + '/answer', {
-				message: message.value,
-			});
+		form.post('/support/' + props.item['id'] + '/answer', {
+			preserveUrl: true,
+			preserveScroll: true,
+			onSuccess() {
+				form.resetAndClearErrors();
+				v$.value.$reset();
 
-			message.value = '';
-
-			router.reload();
-			useSuccessNotification(t('pages.support.notifications.request_added'));
-		} catch (e) {
-			openErrorModal(e);
-		}
+				useSuccessNotification(t('pages.support.notifications.request_added'));
+			}
+		});
 	}
 </script>

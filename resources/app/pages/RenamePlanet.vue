@@ -15,7 +15,7 @@
 					<div class="grid grid-cols-3">
 						<div class="th hidden sm:flex middle">{{ $t('pages.overview.rename.change_name_heading') }}</div>
 						<div class="th middle"><input type="text" :placeholder="planet['name']" v-model="name" maxlength="20"></div>
-						<div class="th middle"><button v-if="name" @click.prevent="changeName">{{ $t('pages.overview.rename.change_name_submit') }}</button></div>
+						<div class="th middle"><button v-if="name" class="button" @click.prevent="changeName">{{ $t('pages.overview.rename.change_name_submit') }}</button></div>
 					</div>
 				</div>
 			</div>
@@ -33,7 +33,7 @@
 				</div>
 				<div v-if="image > 0" class="grid">
 					<div class="th text-center">
-						<button @click.prevent="changeImage">{{ $t('pages.overview.rename.change_image_one_credit') }}</button>
+						<button class="button" @click.prevent="changeImage">{{ $t('pages.overview.rename.change_image_one_credit') }}</button>
 					</div>
 				</div>
 			</div>

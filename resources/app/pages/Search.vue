@@ -16,7 +16,7 @@
 							&nbsp;&nbsp;
 							<input type="text" name="search" v-model="query">
 							&nbsp;&nbsp;
-							<button @click.prevent="search">{{ $t('pages.search.search_button') }}</button>
+							<button class="button" @click.prevent="search">{{ $t('pages.search.search_button') }}</button>
 						</div>
 					</div>
 				</div>

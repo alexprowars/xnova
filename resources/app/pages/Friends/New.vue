@@ -47,7 +47,7 @@
 	const message = ref('');
 
 	function send() {
-		useApiSubmit('friends/new/' + props.user['id'], {
+		useApiSubmit('/friends/new/' + props.user['id'], {
 			message: message.value,
 		}, () => {
 			useSuccessNotification(t('pages.friends.new.request_sent'));

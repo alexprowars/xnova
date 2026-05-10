@@ -60,7 +60,7 @@
 										</select>
 									</div>
 									<div class="th">
-										<button @click.prevent="saveRank(m['id'], m['rank'])">
+										<button class="button" @click.prevent="saveRank(m['id'], m['rank'])">
 											{{ $t('pages.alliance.members.save') }}
 										</button>
 									</div>
@@ -118,7 +118,7 @@
 	}
 
 	function saveRank(id, rank) {
-		useApiSubmit('alliance/admin/members/rank', { id, rank }, () => {
+		useApiSubmit('/alliance/admin/members/rank', { id, rank }, () => {
 			changeRank.value = 0;
 
 			router.reload();
@@ -134,7 +134,7 @@
 			}, {
 				title: t('pages.alliance.members.kick_confirm.yes'),
 				handler: () => {
-					useApiSubmit('alliance/admin/members/kick', { id }, () => {
+					useApiSubmit('/alliance/admin/members/kick', { id }, () => {
 						useSuccessNotification(t('pages.alliance.members.kick_confirm.success'));
 
 						router.reload();

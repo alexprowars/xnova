@@ -79,5 +79,7 @@ class RaceController extends Controller
 		}
 
 		toast(ToastType::SUCCESS, 'Фракция изменена');
+
+		return to_route('overview');
 	}
 }

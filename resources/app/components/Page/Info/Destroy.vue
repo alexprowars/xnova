@@ -12,7 +12,7 @@
 					<div class="th">
 						<div class="mb-2">{{ $t('pages.info.destroy.demolition_time') }} {{ $formatTime(data['time']) }}</div>
 
-						<button @click.prevent="destroyAction">{{ $t('pages.info.destroy.destroy') }}</button>
+						<button class="button" @click.prevent="destroyAction">{{ $t('pages.info.destroy.destroy') }}</button>
 					</div>
 				</div>
 			</div>

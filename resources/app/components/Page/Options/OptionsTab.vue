@@ -228,8 +228,8 @@
 	import ChangePasswordForm from './ChangePasswordForm.vue';
 	import Tabs from '~/components/Tabs.vue';
 	import Tab from '~/components/Tab.vue';
-	import { Link, router, usePage } from '@inertiajs/vue3';
-	import { useApiPost, useApiSubmit } from '~/composables/useApi.js';
+	import { Link, router, useForm, usePage } from '@inertiajs/vue3';
+	import { useApiSubmit } from '~/composables/useApi.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import TextEditor from '~/components/TextEditor.vue';
@@ -264,9 +264,10 @@
 				title: 'Нет',
 			}, {
 				title: 'Да',
-				async handler() {
-					await useApiPost('/options/vacation');
-					router.reload();
+				handler() {
+					useForm().post('/options/vacation', {
+						preserveUrl: true,
+					});
 				}
 			}]
 		);

@@ -67,7 +67,7 @@
 	});
 
 	function finish() {
-		useApiSubmit('quests/' + props.data['id'], {}, () => {
+		useApiSubmit('/quests/' + props.data['id'], {}, () => {
 			useSuccessNotification('Квест завершен');
 
 			router.visit('/quests');

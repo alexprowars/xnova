@@ -1,5 +1,4 @@
-import { useErrorNotification } from '~/composables/useToast.js';
-import { useApiPost } from '~/composables/useApi.js';
+import { useForm } from '@inertiajs/vue3';
 
 export function getDistance (from, to) {
 	if ((to['galaxy'] - from['galaxy']) !== 0) {
@@ -50,11 +49,20 @@ export function getStorage (ships) {
 }
 
 export async function sendMission(mission, galaxy, system, planet, type, count) {
-	try {
-		await useApiPost('/fleet/quick', {
+	return new Promise((resolve, reject) => {
+		useForm({
 			mission, galaxy, system, planet, type, count
+		})
+		.post('/fleet/quick', {
+			preserveScroll: true,
+			preserveUrl: true,
+			onSuccess() {
+				resolve();
+			},
+			onError() {
+				reject();
+			}
 		});
-	} catch (e) {
-		useErrorNotification(e.message);
-	}
+	})
+
 }

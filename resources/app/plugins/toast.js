@@ -1,5 +1,6 @@
 import { toast } from 'vue3-toastify';
 import { router } from '@inertiajs/vue3';
+import ToastMessage from '~/components/ToastMessage.vue';
 
 export default {
 	install(_app) {
@@ -10,6 +11,7 @@ export default {
 			pauseOnHover: false,
 			pauseOnFocusLoss: false,
 			dangerouslyHTMLString: true,
+			theme: 'auto',
 		});
 
 		router.on('flash', (event) => {
@@ -17,11 +19,12 @@ export default {
 
 			notifications.forEach(notification => {
 				if (notification?.body) {
-					toast({
-						title: notification?.title,
-						content: notification.body,
-					}, {
-						type: notification?.type || 'default'
+					toast(ToastMessage, {
+						contentProps: {
+							title: notification?.title || null,
+							content: notification.body,
+						},
+						type: notification?.type || 'default',
 					});
 				}
 			})

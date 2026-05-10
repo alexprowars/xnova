@@ -30,7 +30,7 @@
 					<div class="grid grid-cols-2">
 						<div v-if="data['access']['delete'] || false">
 							<div class="c">{{ $t('pages.alliance.admin.index_dissolve_caption') }}</div>
-							<div class="th"><button @click.prevent="remove">{{ $t('pages.alliance.admin.action_continue') }}</button></div>
+							<div class="th"><button class="button" @click.prevent="remove">{{ $t('pages.alliance.admin.action_continue') }}</button></div>
 						</div>
 						<div v-if="data['owner'] === user['id']">
 							<div class="c">{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</div>
@@ -83,7 +83,7 @@
 			}, {
 				title: t('pages.alliance.admin.confirm_accept'),
 				handler: () => {
-					useApiSubmit('alliance/admin/remove', {}, () => {
+					useApiSubmit('/alliance/admin/remove', {}, () => {
 						useSuccessNotification(t('pages.alliance.admin.index_dissolve_success_notice'));
 
 						router.visit('/alliance');

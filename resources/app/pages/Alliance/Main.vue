@@ -89,7 +89,7 @@
 		</div>
 		<div class="content">
 			<div class="th text-center">
-				<button @click.prevent="exit">{{ $t('pages.alliance.index.continue') }}</button>
+				<button class="button" @click.prevent="exit">{{ $t('pages.alliance.index.continue') }}</button>
 			</div>
 		</div>
 	</div>
@@ -130,7 +130,7 @@
 			}, {
 				title: t('pages.alliance.index.leave_confirm.yes'),
 				handler: () => {
-					useApiSubmit('alliance/exit', {}, () => {
+					useApiSubmit('/alliance/exit', {}, () => {
 						useSuccessNotification(t('pages.alliance.index.leave_confirm.success'));
 
 						router.reload();

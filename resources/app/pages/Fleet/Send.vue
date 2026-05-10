@@ -5,19 +5,19 @@
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.mission') }}</div>
-			<div class="th">{{ $t('fleet_mission.' + page['mission']) }}</div>
+			<div class="th">{{ $t('fleet_mission.' + data['mission']) }}</div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.distance') }}</div>
-			<div class="th">{{ $formatNumber(page['distance']) }}</div>
+			<div class="th">{{ $formatNumber(data['distance']) }}</div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.speed') }}</div>
-			<div class="th">{{ $formatNumber(page['speed']) }}</div>
+			<div class="th">{{ $formatNumber(data['speed']) }}</div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.consumption') }}</div>
-			<div class="th">{{ $formatNumber(page['consumption']) }}</div>
+			<div class="th">{{ $formatNumber(data['consumption']) }}</div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.deployment') }}</div>

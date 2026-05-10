@@ -19,7 +19,7 @@ export default defineConfig({
 	plugins: [
 		laravel({
 			input: ['resources/app/app.js'],
-			refresh: true,
+			//refresh: true,
 		}),
 		tailwindcss(),
 		vue({

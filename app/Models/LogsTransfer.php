@@ -13,6 +13,7 @@ class LogsTransfer extends Model
 
 	protected $casts = [
 		'created_at' => 'immutable_datetime',
+		'data' => 'json:unicode',
 	];
 
 	/** @return BelongsTo<User, $this> */

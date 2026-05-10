@@ -13,13 +13,13 @@
 					</div>
 					<div class="flex">
 						<div class="th middle">
-							<button :disabled="galaxy === 1" @click.prevent="changeByDirection('galaxyLeft')">&lt;-</button>
+							<button class="button" :disabled="galaxy === 1" @click.prevent="changeByDirection('galaxyLeft')">&lt;-</button>
 						</div>
 						<div class="th middle">
 							<input name="galaxy" v-model.number="inputGalaxy" maxlength="3" tabindex="1" min="1" type="number">
 						</div>
 						<div class="th middle">
-							<button :disabled="galaxy >= galaxyMax" @click.prevent="changeByDirection('galaxyRight')">-&gt;</button>
+							<button class="button" :disabled="galaxy >= galaxyMax" @click.prevent="changeByDirection('galaxyRight')">-&gt;</button>
 						</div>
 					</div>
 				</div>
@@ -33,13 +33,13 @@
 					</div>
 					<div class="flex">
 						<div class="th middle">
-							<button :disabled="system === 1" @click.prevent="changeByDirection('systemLeft')">&lt;-</button>
+							<button class="button" :disabled="system === 1" @click.prevent="changeByDirection('systemLeft')">&lt;-</button>
 						</div>
 						<div class="th middle">
 							<input name="system" v-model.number="inputSystem" maxlength="3" tabindex="2" min="1" type="number">
 						</div>
 						<div class="th middle">
-							<button :disabled="system >= systemMax" @click.prevent="changeByDirection('systemRight')">-&gt;</button>
+							<button class="button" :disabled="system >= systemMax" @click.prevent="changeByDirection('systemRight')">-&gt;</button>
 						</div>
 					</div>
 				</div>

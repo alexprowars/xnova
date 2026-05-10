@@ -1,25 +1,5 @@
-import { useHttp } from '@inertiajs/vue3';
-import i18n from '~/i18n.js';
 import { startLoading, stopLoading } from '~/composables/useLoading.js';
 import { useErrorNotification } from '~/composables/useToast.js';
-
-export async function useApiPost (url, data = {}, options = {}){
-	if (!url.startsWith('/')) {
-		url = '/' + url;
-	}
-
-	try {
-		return await useHttp(data)
-			.post(url, {
-				...options,
-				headers: {
-					'Locale': i18n.global.locale.value,
-				},
-			});
-	} catch (e) {
-		return handleError(e);
-	}
-}
 
 export const useApiSubmit = async (url, data = {}, callback, error) => {
 	startLoading();

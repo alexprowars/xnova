@@ -93,5 +93,7 @@ class StartController extends Controller
 		}
 
 		$this->user->update();
+
+		return to_route('quests');
 	}
 }
