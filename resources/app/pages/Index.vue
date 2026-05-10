@@ -51,10 +51,8 @@
 
 <script setup>
 	import AuthForm from '~/components/Page/Index/AuthForm.vue';
-	import RegistrationForm from './Registration.vue';
 	import { isMobile } from '~/utils/helpers';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { openPopupModal } from '~/composables/useModals.js';
 	import { visitModal } from '@inertiaui/modal-vue'
 
 	const page = usePage();
@@ -64,7 +62,7 @@
 			return router.visit('/registration');
 		}
 
-		openPopupModal(RegistrationForm)
+		visitModal('/registration');
 	}
 
 	function showRemindPassword () {

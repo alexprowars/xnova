@@ -28,7 +28,7 @@
 <script setup>
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation } from '@vuelidate/validators'
-	import { useForm } from '@inertiajs/vue3';
+	import { useForm, useHttp } from '@inertiajs/vue3';
 	import { ref } from 'vue';
 
 	const form = useForm({
@@ -52,25 +52,13 @@
 
 	async function send () {
 		if (!await v$.value.$validate()) {
-			return
+			return;
 		}
 
-		form.post('/login/forgot', {
-			preserveUrl: true,
-			preserveErrors: true,
-			onSuccess() {
-				form.reset();
-			},
-			onError(errors) {
-				error.value = { message: errors.error, type: 'error' }
+		useHttp(form).post('/login/forgot', {
+			onSuccess(result) {
+				error.value = result;
 			}
-		})
-
-		//try {
-		//	email.value = '';
-		//	error.value = { message: result['message'], type: 'success' }
-		//} catch (e) {
-		//	error.value = { message: e.message, type: 'error' }
-		//}
+		});
 	}
 </script>

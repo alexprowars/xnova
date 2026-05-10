@@ -15,12 +15,5 @@ class IndexController extends Controller
 		]);
 	}
 
-	public function remind(Request $request)
-	{
-		$component = $request->hasHeader(Modal::HEADER_MODAL)
-			? 'Index/RemindModal' : 'Index/Remind';
 
-		return Inertia::modal($component)
-			->baseRoute('remind');
-	}
 }

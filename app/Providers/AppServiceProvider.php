@@ -81,7 +81,7 @@ class AppServiceProvider extends ServiceProvider
 
 		Inertia::handleExceptionsUsing(function (ExceptionResponse $response) {
 			if ($response->response instanceof JsonResponse) {
-				//return $response;
+				return $response;
 			}
 
 			if ($response->exception instanceof PageException) {

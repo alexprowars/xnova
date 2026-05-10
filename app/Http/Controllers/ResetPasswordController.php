@@ -12,31 +12,43 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Inertia\Inertia;
+use InertiaUI\Modal\Modal;
+use Throwable;
 
 class ResetPasswordController extends Controller
 {
-	public function index()
+	public function remind(Request $request)
+	{
+		$component = $request->hasHeader(Modal::HEADER_MODAL)
+			? 'Index/RemindModal' : 'Index/Remind';
+
+		return Inertia::modal($component);
+	}
+
+	public function resetPage()
 	{
 		return Inertia::render('ResetPassword');
 	}
 
 	public function forgot(Request $request)
 	{
-		$request->validate([
-			'email' => ['required', 'email'],
-		]);
+		try {
+			$request->validate([
+				'email' => ['required', 'email'],
+			]);
 
-		$status = Password::sendResetLink(
-			$request->only('email')
-		);
+			$status = Password::sendResetLink(
+				$request->only('email')
+			);
 
-		if ($status != Password::RESET_LINK_SENT) {
-			throw new Exception(__($status), 422);
+			if ($status != Password::RESET_LINK_SENT) {
+				throw new Exception(__($status), 422);
+			}
+
+			return response()->json(['type' => 'success', 'message' => __($status)]);
+		} catch (Throwable $e) {
+			return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
 		}
-
-		return response()->json([
-			'message' => __($status),
-		]);
 	}
 
 	public function reset(Request $request)
