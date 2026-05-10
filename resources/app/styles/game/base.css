@@ -4,6 +4,7 @@
 		position: relative;
 		-webkit-overflow-scrolling: touch;
 		overflow-scrolling: touch;
+		scrollbar-gutter: stable;
 	}
 
 	body {
@@ -12,6 +13,7 @@
 		color: var(--text-color);
 		font-size: 13px;
 		background-color: #000;
+		padding-right: 0 !important;
 		@apply xl:max-2xl:text-[13px];
 	}
 

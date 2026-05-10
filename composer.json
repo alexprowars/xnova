@@ -82,7 +82,7 @@
 			"@php artisan key:generate",
 			"@php artisan migrate --force --seed",
 			"npm install",
-			"npm run build"
+			"npm run build:ssr"
 		],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

@@ -38,7 +38,7 @@ export default defineConfig({
 		}),
 		inertia({
 			ssr: {
-				host: '127.0.0.1',
+				host: process.env.INERTIA_SSR_HOST || '127.0.0.1',
 			},
 		}),
 		svgLoader({

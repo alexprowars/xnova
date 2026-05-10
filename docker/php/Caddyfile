@@ -33,17 +33,6 @@
 		file_server
 	}
 
-	@api {
-		path /api* /broadcasting* /admin* /livewire* /_debugbar*
-	}
-
-	handle @api {
-		php_server {
-			try_files {path} index.php
-			resolve_root_symlink
-		}
-	}
-
 	@reverb {
 		path /app/* /apps/*
 	}
@@ -53,7 +42,10 @@
 	}
 
 	handle {
-		reverse_proxy frontend:3000
+		php_server {
+			try_files {path} index.php
+			resolve_root_symlink
+		}
 	}
 
 	request_body {

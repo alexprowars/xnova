@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.9-php8.4-trixie
+FROM dunglas/frankenphp:1.12-php8.5-trixie
 
 ARG UID
 ARG GID
@@ -6,18 +6,27 @@ ARG GID
 ENV ROOT=/app
 ENV UID=${UID:-1001}
 ENV GID=${GID:-1001}
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 ENV USER=web
 ENV COMPOSER_FUND=0
 ENV COMPOSER_MAX_PARALLEL_HTTP=24
+ENV NODE_VERSION=24
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get upgrade -y \
     && mkdir -p /etc/apt/keyrings \
-    && apt-get install -y --no-install-recommends --no-install-suggests curl ca-certificates zip unzip sqlite3
-RUN install-php-extensions pcntl gd exif zip intl redis
+    && apt-get install -y --no-install-recommends --no-install-suggests curl ca-certificates zip unzip sqlite3 gnupg
+
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    chmod 644 /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_VERSION.x nodistro main" \
+    | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs
+
+RUN install-php-extensions ffi pcntl gd exif zip intl redis
 
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 

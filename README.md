@@ -15,11 +15,13 @@ Vue (**https://vuejs.org**)
 - Composer
 
 ## Run in docker
-`composer install`\
 `cd docker`\
-`docker-compose build --no-cache`\
+`docker-compose build`\
 `docker-compose up -d`\
+`docker exec xnova composer install`\
 `docker exec xnova composer setup`
+
+Visit http://localhost:8000
 
 #### Login Information
 login **admin@admin.com**\

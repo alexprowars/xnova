@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Listeners\UserAuthenticated;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
+use Inertia\Ssr\SsrRenderFailed;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,4 +18,11 @@ class EventServiceProvider extends ServiceProvider
 			'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
 		],
 	];
+
+	public function boot()
+	{
+		Event::listen(SsrRenderFailed::class, function (SsrRenderFailed $event) {
+			Log::warning('SSR failed', $event->toArray());
+		});
+	}
 }

@@ -1,4 +1,4 @@
-import { toast } from 'vue3-toastify';
+import Vue3Toastify, { toast } from 'vue3-toastify';
 import { router } from '@inertiajs/vue3';
 import ToastMessage from '~/components/ToastMessage.vue';
 
