@@ -1,5 +1,5 @@
 <template>
-	<div :class="[appClass]">
+	<div>
 		<slot/>
 
 		<Loader v-if="loading"/>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-	import { computed, provide } from 'vue';
+	import { computed, provide, watch } from 'vue';
 	import { router, usePage, usePoll } from '@inertiajs/vue3';
 	import { ModalsContainer } from 'vue-final-modal';
 	import Loader from '~/components/Layout/Loader.vue';
@@ -18,8 +18,8 @@
 	import dayjs from 'dayjs';
 	import { closeModals } from './composables/useModals.js';
 
-	defineProps({
-		appClass: String,
+	const props = defineProps({
+		bodyClass: String,
 		loading: {
 			type: Boolean,
 			default: false,
@@ -41,6 +41,16 @@
 	router.on('navigate', () => {
 		closeModals();
 	});
+
+	watch(() => props.bodyClass, (value, oldValue) => {
+		if (oldValue) {
+			document.querySelector('body').classList.remove(oldValue);
+		}
+
+		if (value) {
+			document.querySelector('body').classList.add(value);
+		}
+	}, { immediate: true });
 
 	if (user.value) {
 		/*usePoll(60000, {

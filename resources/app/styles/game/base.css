@@ -4,20 +4,23 @@
 		position: relative;
 		-webkit-overflow-scrolling: touch;
 		overflow-scrolling: touch;
-		scrollbar-gutter: stable;
 	}
 
 	body {
-		background: #000 url("~/images/background_1.jpg") no-repeat bottom fixed;
 		overflow-y: scroll;
 		-webkit-font-smoothing: antialiased;
 		color: var(--text-color);
 		font-size: 13px;
+		background-color: #000;
 		@apply xl:max-2xl:text-[13px];
 	}
 
 	body, html {
 		min-height: 100%;
+	}
+
+	.application {
+		background: url("~/images/background_1.jpg") no-repeat bottom;
 	}
 
 	:focus {

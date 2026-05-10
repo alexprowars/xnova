@@ -53,7 +53,12 @@
 	import AuthForm from '~/components/Page/Index/AuthForm.vue';
 	import { isMobile } from '~/utils/helpers';
 	import { Head, Link, router, usePage } from '@inertiajs/vue3';
-	import { visitModal } from '@inertiaui/modal-vue'
+	import { visitModal } from '@inertiaui/modal-vue';
+	import App from '~/App.vue';
+
+	defineOptions({
+		layout: [App],
+	});
 
 	const page = usePage();
 

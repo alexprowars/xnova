@@ -103,7 +103,7 @@
 	});
 
 	setLayoutProps({
-		appClass: 'set_sim',
+		bodyClass: 'set_sim',
 	});
 
 	defineProps({
