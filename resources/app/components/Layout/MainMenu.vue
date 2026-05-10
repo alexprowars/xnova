@@ -17,9 +17,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import MainMenuItem from './MainMenuItem.vue';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 
 	defineProps({
@@ -30,7 +30,7 @@
 	});
 
 	const emit = defineEmits(['toggle']);
-	const page = usePage();
+	const state = useState();
 	const { t } = useI18n();
 
 	const items = computed(() => [
@@ -54,7 +54,7 @@
 	]);
 
 	const isVacation = computed(() => {
-		return page.props.user && page.props.user.vacation !== null
+		return state.user && state.user.vacation !== null
 	})
 
 	const filteredItems = computed(() => {

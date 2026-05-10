@@ -11,8 +11,8 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		item: {
@@ -20,9 +20,9 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 	const emit = defineEmits(['select', 'build']);
 
 	const level = computed(() => planet.value['units'][props['item']['code']] || 0);

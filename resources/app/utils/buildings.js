@@ -1,18 +1,18 @@
-import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import useState from '~/composables/useState.js';
 
 export function queueByType(type) {
-	const page = usePage();
+	const state = useState();
 
-	return page.props.queue.filter((item) => item.planet_id === page.props.planet?.id && item.type === type);
+	return state.queue.filter((item) => item.planet_id === state.planet?.id && item.type === type);
 }
 
 export const emptyFieldsCount = computed(() => {
-	const page = usePage();
+	const state = useState();
 
-	if (!page.props.planet) {
+	if (!state.planet) {
 		return 0;
 	}
 
-	return page.props.planet.field_max - page.props.planet.field_used - queueByType('build').length;
+	return state.planet.field_max - state.planet.field_used - queueByType('build').length;
 });

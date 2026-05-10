@@ -33,7 +33,8 @@
 </template>
 
 <script setup>
-	import { Link, useForm, usePage } from '@inertiajs/vue3';
+	import useState from '~/composables/useState.js';
+	import { Link, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -47,8 +48,8 @@
 		item: Object
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 	const deleteModel = defineModel('delete');
 
 	function abuseAction () {

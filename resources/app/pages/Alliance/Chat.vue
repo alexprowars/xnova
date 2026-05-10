@@ -54,11 +54,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import ChatMessageForm from '~/components/Page/Alliance/ChatMessageForm.vue';
 	import { computed, ref } from 'vue';
 	import TextViewer from '~/components/TextViewer.vue';
 	import Pagination from '~/components/Pagination.vue';
-	import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, router, useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	defineOptions({
@@ -82,8 +83,8 @@
 	const deleteType = ref('marked');
 	const marked = ref([]);
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	function quote (messageItem) {
 		let text = messageItem['message'] || '';

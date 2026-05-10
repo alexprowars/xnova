@@ -22,9 +22,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, ref } from 'vue';
 	import { useI18n } from 'vue-i18n';
-	import { useForm, usePage } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 	import Number from '~/components/Number.vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
@@ -36,8 +37,8 @@
 		},
 	});
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 	const interceptor = ref(0);
 	const interplanetary = ref(0);
 

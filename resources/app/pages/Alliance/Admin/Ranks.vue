@@ -13,10 +13,11 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import AllianceRanksForm from '~/components/Page/Alliance/AllianceRanksForm.vue';
 	import AllianceRanksInfo from '~/components/Page/Alliance/AllianceRanksInfo.vue';
 	import AllianceRanksCreate from '~/components/Page/Alliance/AllianceRanksCreate.vue';
-	import { Head, Link, usePage } from '@inertiajs/vue3';
+	import { Head, Link } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({
@@ -31,6 +32,6 @@
 		data: Object,
 	})
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

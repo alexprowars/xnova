@@ -32,10 +32,11 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import Colored from '~/components/Colored.vue';
 	import { useI18n } from 'vue-i18n';
-	import { useForm, usePage } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
 
 	defineProps({
@@ -43,9 +44,9 @@
 	});
 
 	const { t } = useI18n();
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 
 	const visible = computed(() => {
 		return planet.value.type === 1 && user.value.vacation === null;

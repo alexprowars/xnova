@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-	import { usePage } from '@inertiajs/vue3';
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import PlanetLink from '~/components/PlanetLink.vue';
 	import { changePlanet as changePlanetFn } from '~/utils/helpers.js';
@@ -24,8 +24,8 @@
 		}
 	});
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	function changePlanet () {
 		if (planet.value.id === item.id) {

@@ -63,11 +63,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import BuildRowPrice from '../Buildings/BuildRowPrice.vue';
 	import { computed } from 'vue';
 	import CloseIcon from '~/images/icons/close.svg?component';
 	import TechQueue from '../Buildings/TechQueue.vue';
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Link } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { emptyFieldsCount } from '~/utils/buildings.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
@@ -80,9 +81,9 @@
 
 	const { tm } = useI18n();
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 
 	const emit = defineEmits(['close', 'build']);
 	

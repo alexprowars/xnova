@@ -51,15 +51,16 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { useForm, usePage } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
 	import Tabs from '~/components/Tabs.vue';
 	import Tab from '~/components/Tab.vue';
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	const form = useForm({
 		name: user.value['name'],

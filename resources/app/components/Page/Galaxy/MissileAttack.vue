@@ -35,8 +35,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, ref } from 'vue';
-	import { useForm, usePage } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		page: {
@@ -47,8 +48,8 @@
 		}
 	});
 
-	const page = usePage();
-	const currentPlanet = computed(() => page.props.planet);
+	const state = useState();
+	const currentPlanet = computed(() => state.planet);
 
 	const target = ref('all');
 	const count = ref(currentPlanet.value['units']['interplanetary_misil'] || 0);

@@ -32,7 +32,8 @@
 </template>
 
 <script setup>
-	import { Head, Link, usePage } from '@inertiajs/vue3';
+	import useState from '~/composables/useState.js';
+	import { Head, Link } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({
@@ -49,6 +50,6 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

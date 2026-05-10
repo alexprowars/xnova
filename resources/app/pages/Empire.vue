@@ -171,8 +171,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, router } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { changePlanet as changePlanetFn } from '~/utils/helpers.js';
 
@@ -191,8 +192,8 @@
 	});
 
 	const { tm } = useI18n();
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	const rows = computed(() => {
 		return props.data['planets'].length + 2;

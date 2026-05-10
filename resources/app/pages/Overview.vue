@@ -237,6 +237,7 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import Fleets from '~/components/Page/Overview/Feets.vue';
 	import Clock from '~/components/Page/Overview/Clock.vue';
 	import QueueRow from '~/components/Page/Overview/QueueRow.vue';
@@ -244,7 +245,7 @@
 	import { sendMission } from '~/utils/fleet';
 	import { computed } from 'vue';
 	import ChatList from '~/components/Page/Overview/ChatList.vue';
-	import { Link, usePage, router, Head } from '@inertiajs/vue3';
+	import { Link, router, Head } from '@inertiajs/vue3';
 	import { changePlanet, isMobile } from '~/utils/helpers.js';
 	import Popper from '~/components/Popper.vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
@@ -260,10 +261,10 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
-	const queue = computed(() => page.props.queue);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
+	const queue = computed(() => state.queue);
 	const host = computed(() => import.meta.env.VITE_APP_URL || '');
 
 	const userFiledsPercent = computed(() => {

@@ -42,17 +42,18 @@
 				<Link href="/blocked">{{ $t('menu.blocked') }}</Link>  |
 				<Link href="/contacts">{{ $t('menu.contacts') }}</Link>
 			</div>
-			<div v-if="page.props['stats']" class="copy">
-				<a @click.prevent :title="$t('pages.index.stats_online_tooltip')" style="color:green">{{ page.props['stats']['online'] }}</a> / <a @click.prevent :title="$t('pages.index.stats_total_tooltip')" style="color:yellow">{{ page.props['stats']['users'] }}</a>&nbsp;&nbsp;&nbsp;&copy; {{ (new Date).getFullYear() }} XNOVA.SU
+			<div v-if="state['stats']" class="copy">
+				<a @click.prevent :title="$t('pages.index.stats_online_tooltip')" style="color:green">{{ state['stats']['online'] }}</a> / <a @click.prevent :title="$t('pages.index.stats_total_tooltip')" style="color:yellow">{{ state['stats']['users'] }}</a>&nbsp;&nbsp;&nbsp;&copy; {{ (new Date).getFullYear() }} XNOVA.SU
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import AuthForm from '~/components/Page/Index/AuthForm.vue';
 	import { isMobile } from '~/utils/helpers';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, router } from '@inertiajs/vue3';
 	import { visitModal } from '@inertiaui/modal-vue';
 	import App from '~/App.vue';
 
@@ -60,7 +61,7 @@
 		layout: [App],
 	});
 
-	const page = usePage();
+	const state = useState();
 
 	function showRegistration () {
 		if (isMobile()) {

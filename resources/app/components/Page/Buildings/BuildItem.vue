@@ -17,9 +17,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import IconUpgrade from '~/images/icons/upgrade.svg?component';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 
@@ -30,9 +30,9 @@
 	});
 
 	const { tm } = useI18n();
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 	const emit = defineEmits(['select', 'build']);
 
 	const level = computed(() => planet.value['buildings'][props['item']['code']] || 0);

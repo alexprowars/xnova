@@ -207,10 +207,11 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, onMounted, ref, watch } from 'vue';
 	import dayjs from 'dayjs';
 	import { useNow } from '@vueuse/core';
-	import { Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Link, useForm } from '@inertiajs/vue3';
 	import { getConsumption, getDistance, getDuration, getSpeed, getStorage } from '~/utils/fleet.js';
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
 
@@ -241,8 +242,8 @@
 	const alliance = ref(0);
 	const hold_hours = ref(1);
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	const hold = computed(() => {
 		let hold = 0;
@@ -291,14 +292,14 @@
 			factor: speed.value,
 			distance: distance.value,
 			max_speed: maxspeed.value,
-			universe_speed: page.props.speed['fleet']
+			universe_speed: state.speed['fleet']
 		});
 
 		consumption.value = getConsumption({
 			ships: props.data['ships'],
 			duration: duration.value,
 			distance: distance.value,
-			universe_speed: page.props.speed['fleet']
+			universe_speed: state.speed['fleet']
 		});
 
 		storage.value = getStorage(props.data['ships']) - consumption.value;

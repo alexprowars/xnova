@@ -22,14 +22,14 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import FleetRow from './FleetRow.vue';
-	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineProps({
 		fleets: Array,
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

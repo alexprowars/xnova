@@ -133,8 +133,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
-	import { Link, usePage } from '@inertiajs/vue3'
+	import { Link } from '@inertiajs/vue3'
 	import { computed } from 'vue';
 	import TextViewer from '~/components/TextViewer.vue';
 
@@ -144,6 +145,6 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

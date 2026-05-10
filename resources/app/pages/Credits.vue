@@ -40,7 +40,8 @@
 </template>
 
 <script setup>
-	import { Head, useForm, usePage } from '@inertiajs/vue3';
+	import useState from '~/composables/useState.js';
+	import { Head, useForm } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({
@@ -51,8 +52,8 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	function pay() {
 		useForm().post('/credits/pay', {

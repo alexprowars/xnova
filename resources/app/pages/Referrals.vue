@@ -75,8 +75,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { Head, Link, usePage } from '@inertiajs/vue3';
+	import { Head, Link } from '@inertiajs/vue3';
 	import { useScriptTag } from '@vueuse/core';
 
 	defineOptions({
@@ -95,8 +96,8 @@
 		you: Object,
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 	const host = computed(() => import.meta.env.VITE_APP_URL || '');
 
 	useScriptTag(

@@ -7,7 +7,7 @@
 			<div class="main-content" v-touch:tap="tap">
 				<PlanetPanel v-if="user && view['resources']"/>
 				<div class="main-content-row">
-					<MessagesRow v-for="message in page.props.messages" :type="message.type || ''" :text="message.text"/>
+					<MessagesRow v-for="message in state.messages" :type="message.type || ''" :text="message.text"/>
 					<MessagesRow v-if="message" type="message" :text="message"/>
 					<MessagesRow v-if="user?.vacation" type="warning" text="Включен режим отпуска! Функциональность игры ограничена."/>
 					<MessagesRow v-if="user?.deleted_at" type="info" :text="'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' + $formatDate(user.deleted_at, 'DD MMM YYYY HH:mm') + '. Выключить режим удаления можно в настройках игры.'"/>
@@ -23,6 +23,7 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { isMobile, isSSR } from '~/utils/helpers.js';
 	import { ref, computed } from 'vue';
 	import MessagesRow from '~/components/Layout/MessagesRow.vue';
@@ -36,6 +37,7 @@
 
 	const sidebar = ref('');
 	const page = usePage();
+	const state = useState();
 
 	const props = defineProps({
 		view: {
@@ -45,7 +47,7 @@
 	});
 
 	const message = ref(null);
-	const user = computed(() => page.props.user);
+	const user = computed(() => state.user);
 
 	const isChatPage = computed(() => {
 		return page.url.indexOf('/chat') !== -1;

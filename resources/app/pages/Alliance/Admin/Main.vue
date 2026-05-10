@@ -48,9 +48,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import AllianceUpdateForm from '~/components/Page/Alliance/AllianceUpdateForm.vue';
 	import AllianceTextForm from '~/components/Page/Alliance/AllianceTextForm.vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { computed } from 'vue';
@@ -70,8 +71,8 @@
 
 	const { t } = useI18n();
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	function remove() {
 		openConfirmModal(

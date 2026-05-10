@@ -10,6 +10,6 @@
 	import DefaultLayout from '~/layouts/DefaultLayout.vue';
 
 	defineOptions({
-		layout: (props) => props.user ? [App, DefaultLayout] : [App, EmptyLayout],
+		layout: (props) => props.state.user ? [App, DefaultLayout] : [App, EmptyLayout],
 	});
 </script>

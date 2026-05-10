@@ -85,9 +85,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import FleetList from '~/components/Page/Fleet/FleetList.vue';
 	import { computed, ref, watch } from 'vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
 
 	const props = defineProps({
@@ -100,8 +101,8 @@
 	const allCapacity = ref(0);
 	const allSpeed = ref(0);
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 	const isVacation = computed(() => user.value?.vacation !== null);
 
 	const count = computed(() => {

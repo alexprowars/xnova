@@ -8,8 +8,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, provide, watch } from 'vue';
-	import { router, usePage, usePoll } from '@inertiajs/vue3';
+	import { router, usePoll } from '@inertiajs/vue3';
 	import { ModalsContainer } from 'vue-final-modal';
 	import Loader from '~/components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
@@ -32,11 +33,15 @@
 	provide('echo', echo);
 	provide('chat', chatStore);
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
-	setLocale(page.props.locale);
-	dayjs.locale(page.props.locale);
+	watch(user, () => {
+		console.log('user')
+	})
+
+	setLocale(state.locale);
+	dayjs.locale(state.locale);
 
 	router.on('navigate', () => {
 		closeModals();
@@ -54,7 +59,7 @@
 
 	if (user.value) {
 		/*usePoll(60000, {
-			only: ['user', 'planet', 'queue', 'stats']
+			only: ['state']
 		});*/
 
 		echo?.channel('chat')
@@ -68,7 +73,7 @@
 			})
 			.listen('PlanetEntityUpdated', () => {
 				router.reload({
-					only: ['user', 'planet', 'queue', 'stats']
+					only: ['state']
 				});
 			});
 	}

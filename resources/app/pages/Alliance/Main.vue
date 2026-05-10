@@ -96,8 +96,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -117,8 +118,8 @@
 		data: Object,
 	})
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	function exit () {
 		openConfirmModal(

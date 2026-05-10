@@ -28,11 +28,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import UnitQueue from '~/components/Page/Buildings/UnitQueue.vue';
 	import { computed, ref } from 'vue';
 	import UnitItem from '~/components/Page/Buildings/UnitItem.vue';
 	import UnitActive from '~/components/Page/Buildings/UnitActive.vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { queueByType } from '~/utils/buildings.js';
 
 	const props = defineProps({
@@ -42,8 +43,8 @@
 		}
 	});
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {

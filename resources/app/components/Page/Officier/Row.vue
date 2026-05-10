@@ -41,16 +41,17 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import { openConfirmModal } from '~/composables/useModals.js';
-	import { useForm, usePage } from '@inertiajs/vue3';
+	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
 		item: Object,
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	const date = computed(() => user.value['officiers'].find((v) => v['code'] === props.item['code'])?.['date']);
 

@@ -224,11 +224,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, ref } from 'vue';
 	import ChangePasswordForm from './ChangePasswordForm.vue';
 	import Tabs from '~/components/Tabs.vue';
 	import Tab from '~/components/Tab.vue';
-	import { Form, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Form, Link, useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import TextEditor from '~/components/TextEditor.vue';
@@ -237,8 +238,8 @@
 		data: Object,
 	})
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	const timezones = ref([]);
 

@@ -63,11 +63,12 @@
 </template>
 
 <script setup>
-	import { Link, usePage, router } from '@inertiajs/vue3';
+	import useState from '~/composables/useState.js';
+	import { Link, router } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	function logout() {
 		router.post('/logout');

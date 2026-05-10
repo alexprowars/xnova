@@ -16,9 +16,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import PlanetRow from './PlanetsListRow.vue';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 
 	defineProps({
 		active: {
@@ -27,10 +27,10 @@
 		}
 	});
 
-	const page = usePage();
+	const state = useState();
 	const emit = defineEmits(['toggle']);
 
 	const items = computed(() => {
-		return page.props.user.planets || [];
+		return state.user.planets || [];
 	})
 </script>

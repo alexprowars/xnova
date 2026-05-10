@@ -48,8 +48,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Link } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 	import { useUrlSearchParams } from '@vueuse/core';
 	import { ModalLink } from '@inertiaui/modal-vue';
@@ -58,8 +59,8 @@
 		item: Object,
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 	const query = useUrlSearchParams('history');
 
 	const marked = computed(() => {

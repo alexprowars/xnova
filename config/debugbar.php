@@ -22,10 +22,6 @@ return [
 		'horizon*',
 		'_boost/browser-logs',
 		'broadcasting*',
-		'local/tools/*',
-		'local/payments/*',
-		'api/*',
-		'graphql/*',
 	],
 
 	/*

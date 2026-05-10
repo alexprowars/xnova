@@ -87,9 +87,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import RaceChange from '~/components/Page/Race/RaceChange.vue';
 	import { computed, nextTick, onMounted } from 'vue';
-	import { Head, usePage } from '@inertiajs/vue3';
+	import { Head } from '@inertiajs/vue3';
 	import { ModalLink, visitModal } from '@inertiaui/modal-vue';
 
 	defineProps({
@@ -104,8 +105,8 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 	const race = computed(() => user.value?.race || 0);
 
 	onMounted(() => {

@@ -12,8 +12,8 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 
 	defineProps({
 		price: {
@@ -21,9 +21,9 @@
 		}
 	});
 
-	const page = usePage();
+	const state = useState();
 
 	const resources = computed(() => {
-		return page.props.planet.resources;
+		return state.planet.resources;
 	});
 </script>

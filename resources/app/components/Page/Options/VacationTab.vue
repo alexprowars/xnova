@@ -44,10 +44,11 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
-	import { Form, usePage } from '@inertiajs/vue3';
+	import { Form } from '@inertiajs/vue3';
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

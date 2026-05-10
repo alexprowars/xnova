@@ -27,8 +27,8 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import Colored from '~/components/Colored.vue';
-	import { usePage } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
 
@@ -41,6 +41,6 @@
 		}
 	});
 
-	const page = usePage();
-	const isVacation = computed(() => page.props.user?.vacation !== null);
+	const state = useState();
+	const isVacation = computed(() => state.user?.vacation !== null);
 </script>

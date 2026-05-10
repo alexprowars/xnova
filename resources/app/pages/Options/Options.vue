@@ -7,9 +7,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import VacationTab from '~/components/Page/Options/VacationTab.vue';
 	import OptionsTab from '~/components/Page/Options/OptionsTab.vue';
-	import { Head, usePage } from '@inertiajs/vue3';
+	import { Head } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({
@@ -24,6 +25,6 @@
 		data: Object,
 	})
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 </script>

@@ -262,11 +262,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { sendMission } from '~/utils/fleet.js';
 	import { computed, ref } from 'vue';
 	import dayjs from 'dayjs';
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Link } from '@inertiajs/vue3';
 	import Popper from '~/components/Popper.vue';
 
 	const {
@@ -300,9 +301,9 @@
 		},
 	});
 
-	const page = usePage();
-	const currentUser = computed(() => page.props.user);
-	const currentPlanet = computed(() => page.props.planet);
+	const state = useState();
+	const currentUser = computed(() => state.user);
+	const currentPlanet = computed(() => state.planet);
 	const isVacation = computed(() => currentUser.value !== null && currentUser.value.vacation !== null);
 
 	const spyCount = ref(parseInt(currentUser.value['options']['spy']) || 1);

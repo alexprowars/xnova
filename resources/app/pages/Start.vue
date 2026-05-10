@@ -7,9 +7,10 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import SelectRace from '~/components/Page/Start/SelectRace.vue';
 	import SelectAvatar from '~/components/Page/Start/SelectAvatar.vue';
-	import { Head, router, usePage } from '@inertiajs/vue3';
+	import { Head, router } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({
@@ -23,8 +24,8 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
+	const state = useState();
+	const user = computed(() => state.user);
 
 	if (user.value.race && user.value.sex && user.value.avatar) {
 		router.visit('/overview');

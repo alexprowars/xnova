@@ -42,11 +42,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import BuildQueue from '~/components/Page/Buildings/BuildQueue.vue';
 	import BuildItem from '~/components/Page/Buildings/BuildItem.vue';
 	import BuildActive from '~/components/Page/Buildings/BuildActive.vue';
 	import { computed, ref } from 'vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 
 	const props = defineProps({
@@ -56,8 +57,8 @@
 		}
 	});
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {

@@ -42,8 +42,9 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed, ref } from 'vue';
-	import { Head, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, useForm } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -58,8 +59,8 @@
 
 	const { t } = useI18n();
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	const name = ref('');
 	const image = ref(0);

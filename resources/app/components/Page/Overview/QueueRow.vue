@@ -18,8 +18,8 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { usePage } from '@inertiajs/vue3';
 	import Timer from '~/components/Timer.vue';
 	import { changePlanet } from '~/utils/helpers.js';
 
@@ -27,9 +27,9 @@
 		item: Object
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 
 	const planetItem = computed(() => {
 		return user.value['planets'].find((p) => p['id'] === item['planet_id']);

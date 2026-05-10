@@ -42,18 +42,19 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import PanelResource from './PlanetPanelResource.vue';
 	import PlanetPanelEnergy from './PlanetPanelEnergy.vue';
 	import { computed, ref } from 'vue';
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Link } from '@inertiajs/vue3';
 	import Popper from '~/components/Popper.vue';
 	import { useIntervalFn } from '@vueuse/shared';
 
 	const updated = ref(0);
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 
 	if (planet.value) {
 		useIntervalFn(() => {

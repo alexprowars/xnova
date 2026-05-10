@@ -151,11 +151,12 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import ResourcesBar from '~/components/Page/Resources/Bar.vue';
 	import ResourcesRow from '~/components/Page/Resources/Row.vue';
 	import StorageRow from '~/components/Page/Resources/StorageRow.vue';
 	import BuyResources from '~/components/Page/Resources/BuyResources.vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 	import Colored from '~/components/Colored.vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
@@ -166,9 +167,9 @@
 		}
 	});
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 	const isVacation = computed(() => user.value?.vacation !== null);
 
 	async function shutdown(active) {

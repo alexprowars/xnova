@@ -80,13 +80,14 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import GalaxyRow from '~/components/Page/Galaxy/Row.vue';
 	import GalaxySelector from '~/components/Page/Galaxy/Selector.vue';
 	import GalaxyLegend from '~/components/Page/Galaxy/Legend.vue';
 	import MissileAttack from '~/components/Page/Galaxy/MissileAttack.vue';
 	import { computed, ref } from 'vue';
 	import Popper from '~/components/Popper.vue';
-	import { Head, Link, router, usePage } from '@inertiajs/vue3';
+	import { Head, Link, router } from '@inertiajs/vue3';
 
 	defineOptions({
 		layout: {
@@ -105,9 +106,9 @@
 	const missile = ref(false);
 	const missilePlanet = ref(0);
 
-	const page = usePage();
-	const user = computed(() => page.props.user);
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const user = computed(() => state.user);
+	const planet = computed(() => state.planet);
 
 	const rows = computed(() => {
 		let result = [];

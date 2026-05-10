@@ -20,7 +20,7 @@ class HandleInertiaRequests extends Middleware
 
 		return [
 			...parent::share($request),
-			...$state,
+			'state' => $state,
 		];
 	}
 }

@@ -25,10 +25,11 @@
 </template>
 
 <script setup>
+	import useState from '~/composables/useState.js';
 	import { ref, watch, useTemplateRef, computed } from 'vue';
 	import TechActive from '~/components/Page/Buildings/TechActive.vue';
 	import TechItem from '~/components/Page/Buildings/TechItem.vue';
-	import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useAnimateScroll } from '~/composables/useAnimateScroll.js';
 
 	const props = defineProps({
@@ -40,8 +41,8 @@
 
 	const activeRef = useTemplateRef('activeRef');
 
-	const page = usePage();
-	const planet = computed(() => page.props.planet);
+	const state = useState();
+	const planet = computed(() => state.planet);
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
