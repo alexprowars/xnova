@@ -7,7 +7,7 @@
 		<div class="content">
 			<form class="block-table text-center" @submit.prevent="send">
 				<div>
-					<div class="th">{{ $t('pages.friends.new.player') }} {{ data['username'] }}</div>
+					<div class="th">{{ $t('pages.friends.new.player') }} {{ page['username'] }}</div>
 				</div>
 				<div>
 					<div class="th"><textarea cols="60" rows="10" v-model="form.message"></textarea></div>
@@ -39,7 +39,7 @@
 	});
 
 	const props = defineProps({
-		data: Object,
+		page: Object,
 	});
 
 	const form = useForm({
@@ -47,7 +47,7 @@
 	});
 
 	function send() {
-		form.post('/friends/new/' + props.data['id'], {
+		form.post('/friends/new/' + props.page['id'], {
 			preserveUrl: true,
 			preserveScroll: true,
 			onSuccess() {

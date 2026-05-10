@@ -21,13 +21,13 @@
 			</div>
 		</div>
 
-		<div v-if="items.length" class="block">
+		<div v-if="page.items.length" class="block">
 			<div class="title">
 				{{ $t('pages.alliance.search.results_section_heading') }}
 			</div>
 			<div class="content">
 				<div class="block-table text-center">
-					<div v-for="r in items" class="grid grid-cols-3">
+					<div v-for="r in page.items" class="grid grid-cols-3">
 						<div class="th">
 							<Link :href="'/alliance/join/' + r['id']">
 								[{{ r['tag'] }}]
@@ -63,11 +63,8 @@
 		}
 	});
 
-	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+	const props = defineProps({
+		page: Object,
 	});
 
 	const form = useForm({

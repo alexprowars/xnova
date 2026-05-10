@@ -110,9 +110,7 @@ class AllianceMembersController extends Controller
 
 		$result['order'] = $order == 'desc' ? 'asc' : 'desc';
 
-		return Inertia::render('Alliance/Members', [
-			'data' => $result,
-		]);
+		return Inertia::render('Alliance/Members', $result);
 	}
 
 	public function kick(Request $request): void

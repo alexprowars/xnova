@@ -4,7 +4,7 @@
 		<div class="title">{{ $t('pages.blocked.heading') }}</div>
 		<div class="content">
 			<div class="block-table text-center">
-				<div v-if="items.length === 0" class="grid">
+				<div v-if="page.items.length === 0" class="grid">
 					<div class="b">{{ $t('pages.blocked.empty_state') }}</div>
 				</div>
 				<template v-else>
@@ -15,7 +15,7 @@
 						<div class="th col-span-2">{{ $t('pages.blocked.col_reason') }}</div>
 						<div class="th">{{ $t('pages.blocked.col_moderator') }}</div>
 					</div>
-					<div v-for="item in items" class="grid grid-cols-6">
+					<div v-for="item in page.items" class="grid grid-cols-6">
 						<div class="b">
 							<Link :href="'/players/' + item['user']['id']">
 								{{ item['user']['name'] }}
@@ -37,7 +37,7 @@
 						</div>
 					</div>
 					<div class="grid">
-						<div class="b">{{ $t('pages.blocked.footer_total', { count: items.length }) }}</div>
+						<div class="b">{{ $t('pages.blocked.footer_total', { count: page.items.length }) }}</div>
 					</div>
 				</template>
 			</div>
@@ -57,9 +57,6 @@
 	});
 
 	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+		page: Object,
 	});
 </script>

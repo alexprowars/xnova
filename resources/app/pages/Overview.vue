@@ -1,7 +1,7 @@
 <template>
 	<Head :title="$t('menu.overview')"/>
 	<div class="page-overview">
-		<DailyBonus v-if="dailyBonus" :amount="dailyBonus"/>
+		<DailyBonus v-if="page.dailyBonus" :amount="page.dailyBonus"/>
 
 		<div class="block">
 			<div class="title">
@@ -36,8 +36,8 @@
 					<div class="text-center" v-html="$t('pages.overview.newbie_mode_notify')"></div>
 				</div>
 
-				<div v-if="fleets.length" class="mb-1.5">
-					<Fleets :items="fleets"/>
+				<div v-if="page.fleets.length" class="mb-1.5">
+					<Fleets :items="page.fleets"/>
 				</div>
 
 				<div class="overview grid sm:grid-cols-3 gap-1.5">
@@ -251,14 +251,7 @@
 	import { ModalLink } from '@inertiaui/modal-vue';
 
 	defineProps({
-		dailyBonus: {
-			type: Number,
-			default: null,
-		},
-		fleets: {
-			type: Array,
-			default: () => [],
-		}
+		page: Object,
 	});
 
 	const state = useState();

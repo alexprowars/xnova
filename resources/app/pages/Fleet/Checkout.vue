@@ -6,9 +6,9 @@
 				<div class="grid grid-cols-2">
 					<div class="th middle">{{ $t('pages.fleets.checkout.target') }}</div>
 					<div class="th middle gap-2 fleet-coordinates-input">
-						<input type="number" min="1" :max="data['galaxy_max']" v-model.number="target['galaxy']">
-						<input type="number" min="1" :max="data['system_max']" v-model.number="target['system']">
-						<input type="number" min="1" :max="data['planet_max']" v-model.number="target['planet']">
+						<input type="number" min="1" :max="page['galaxy_max']" v-model.number="target['galaxy']">
+						<input type="number" min="1" :max="page['system_max']" v-model.number="target['system']">
+						<input type="number" min="1" :max="page['planet_max']" v-model.number="target['planet']">
 						<select name="planet_type" v-model.number="target['planet_type']">
 							<option v-for="index in Object.keys($tm('planet_type'))" :value="index">{{ $t('planet_type.' + index) }}</option>
 						</select>
@@ -50,8 +50,8 @@
 					<div class="c">{{ $t('pages.fleets.checkout.links') }} <Link href="/fleet/shortcut">{{ $t('pages.fleets.checkout.links_edit') }}</Link></div>
 				</div>
 
-				<div v-if="data['shortcuts'].length > 0" class="grid" :class="{'grid-cols-2': data['shortcuts'].length !== 1}">
-					<div v-for="link in data['shortcuts']" class="th">
+				<div v-if="page['shortcuts'].length > 0" class="grid" :class="{'grid-cols-2': page['shortcuts'].length !== 1}">
+					<div v-for="link in page['shortcuts']" class="th">
 						<a @click.prevent="setTarget(link['galaxy'], link['system'], link['planet'], link['planet_type'])">
 							{{ link['name'] }} {{ link['galaxy'] }}:{{ link['system'] }}:{{ link['planet'] }}
 							<span v-if="link['planet_type'] === 1">(P)</span>
@@ -68,37 +68,37 @@
 					</div>
 				</div>
 
-				<div v-if="data['planets'].length > 0" class="grid">
+				<div v-if="page['planets'].length > 0" class="grid">
 					<div class="c">{{ $t('pages.fleets.checkout.planets') }}</div>
 				</div>
-				<div v-if="data['planets'].length > 0" class="grid grid-cols-2">
-					<div v-for="(planet, i) in data['planets']" class="th" :class="['col-span-'+(data['planets'].length % 2 > 0 && i === data['planets'].length - 1 ? 2 : 1)]">
+				<div v-if="page['planets'].length > 0" class="grid grid-cols-2">
+					<div v-for="(planet, i) in page['planets']" class="th" :class="['col-span-'+(page['planets'].length % 2 > 0 && i === page['planets'].length - 1 ? 2 : 1)]">
 						<a @click.prevent="setTarget(planet['galaxy'], planet['system'], planet['planet'], planet['planet_type'])">
 							{{ planet['name'] }} {{ planet['galaxy'] }}:{{ planet['system'] }}:{{ planet['planet'] }}
 						</a>
 					</div>
 				</div>
 
-				<div v-if="data['moons'].length > 0" class="grid">
+				<div v-if="page['moons'].length > 0" class="grid">
 					<div class="c">
 						{{ $t('pages.fleets.checkout.gates') }}
-						<span v-if="data['gate_time']" class="small">{{ $t('pages.fleets.checkout.gates_charge', [$formatTime((dayjs(data['gate_time']).diff(now) / 1000), ':', true)]) }}</span>
+						<span v-if="page['gate_time']" class="small">{{ $t('pages.fleets.checkout.gates_charge', [$formatTime((dayjs(page['gate_time']).diff(now) / 1000), ':', true)]) }}</span>
 					</div>
 				</div>
-				<div v-if="data['moons'].length > 0" class="grid grid-cols-2">
-					<div v-for="(item, i) in data['moons']" class="th" :class="['col-span-'+(data['moons'].length % 2 > 0 && i === data['moons'].length - 1 ? 2 : 1)]">
+				<div v-if="page['moons'].length > 0" class="grid grid-cols-2">
+					<div v-for="(item, i) in page['moons']" class="th" :class="['col-span-'+(page['moons'].length % 2 > 0 && i === page['moons'].length - 1 ? 2 : 1)]">
 						<input type="radio" v-model="moon" :value="item['id']" :id="'moon' + item['id']">
 						<label :for="'moon'+item['id']">
 							{{ item['name'] }} [{{ item['galaxy'] }}:{{ item['system'] }}:{{ item['planet'] }}]
-							<span v-if="item['jumpgate']">{{ $formatTime((dayjs(data['jumpgate']).diff(now) / 1000), ':', true) }}</span>
+							<span v-if="item['jumpgate']">{{ $formatTime((dayjs(page['jumpgate']).diff(now) / 1000), ':', true) }}</span>
 						</label>
 					</div>
 				</div>
 
-				<div v-if="data['alliances'].length > 0" class="grid">
+				<div v-if="page['alliances'].length > 0" class="grid">
 					<div class="c">{{ $t('pages.fleets.checkout.combat_alliances') }}</div>
 				</div>
-				<div v-for="(row, index) in data['alliances']" class="grid">
+				<div v-for="(row, index) in page['alliances']" class="grid">
 					<div class="th">
 						<a @click.prevent="allianceSet(index)">({{ row['name'] }})</a>
 					</div>
@@ -110,7 +110,7 @@
 							<div class="title">{{ $t('pages.fleets.checkout.mission') }}</div>
 							<div class="content">
 								<div class="block-table">
-									<div v-for="item in data['missions']">
+									<div v-for="item in page['missions']">
 										<div class="th flex items-center gap-2" style="text-align: left !important">
 											<input :id="'m_' + item" type="radio" v-model="mission" :value="item">
 											<label :for="'m_' + item">{{ $t('fleet_mission.' + item) }}</label>
@@ -120,7 +120,7 @@
 											</span>
 										</div>
 									</div>
-									<div v-if="data['missions'].length === 0">
+									<div v-if="page['missions'].length === 0">
 										<div class="th negative">{{ $t('pages.fleets.checkout.mission_impossible') }}</div>
 									</div>
 									<div>
@@ -166,18 +166,18 @@
 									<div v-if="mission === 15 && mission.indexOf(15) >= 0" class="mission m_15">
 										<div class="c">{{ $t('pages.fleets.checkout.expedition_time') }}</div>
 									</div>
-									<div v-if="mission === 15 && data['missions'].indexOf(15) >= 0" class="mission m_15">
+									<div v-if="mission === 15 && page['missions'].indexOf(15) >= 0" class="mission m_15">
 										<div class="th">
 											<select name="expeditiontime">
-												<option v-for="i in data['expedition_hours']" :value="i">{{ i }} {{ $t('pages.fleets.checkout.expedition_hour') }}</option>
+												<option v-for="i in page['expedition_hours']" :value="i">{{ i }} {{ $t('pages.fleets.checkout.expedition_hour') }}</option>
 											</select>
 										</div>
 									</div>
 
-									<div v-if="mission === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
+									<div v-if="mission === 5 && page['missions'].indexOf(5) >= 0" class="mission m_5">
 										<div class="c">{{ $t('pages.fleets.checkout.orbit_hours') }}</div>
 									</div>
-									<div v-if="mission === 5 && data['missions'].indexOf(5) >= 0" class="mission m_5">
+									<div v-if="mission === 5 && page['missions'].indexOf(5) >= 0" class="mission m_5">
 										<div class="th">
 											<select name="holdingtime" v-model="hold_hours">
 												<option value="0">0</option>
@@ -196,7 +196,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="data['missions'].length > 0" class="grid">
+				<div v-if="page['missions'].length > 0" class="grid">
 					<div class="th">
 						<button type="submit" class="button">{{ $t('pages.fleets.checkout.next') }}</button>
 					</div>
@@ -216,12 +216,10 @@
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
-	const target = ref(props.data.target);
+	const target = ref(props.page.target);
 
 	const formRef = ref();
 	const resource = ref({
@@ -233,7 +231,7 @@
 	const storage = ref(0);
 	const maxspeed = ref(0);
 	const consumption = ref(0);
-	const mission = ref(props.data.mission);
+	const mission = ref(props.page.mission);
 	const moon = ref();
 
 	const now = useNow({ interval: 1000 });
@@ -249,7 +247,7 @@
 		let hold = 0;
 
 		if (mission.value === 5) {
-			hold = props.data['ships'].reduce((summ, item) => item['stay'] * hold_hours.value, 0);
+			hold = props.page['ships'].reduce((summ, item) => item['stay'] * hold_hours.value, 0);
 		}
 
 		return hold;
@@ -265,7 +263,7 @@
 
 	watch(target, () => {
 		let ships = {}
-		props.data['ships'].forEach((item) => ships[item['id']] = item['count']);
+		props.page['ships'].forEach((item) => ships[item['id']] = item['count']);
 
 		useForm({
 			...target.value, ships,
@@ -286,7 +284,7 @@
 
 	function info () {
 		distance.value = getDistance(planet.value['coordinates'], target.value);
-		maxspeed.value = getSpeed(props.data['ships']);
+		maxspeed.value = getSpeed(props.page['ships']);
 
 		duration.value = getDuration({
 			factor: speed.value,
@@ -296,16 +294,16 @@
 		});
 
 		consumption.value = getConsumption({
-			ships: props.data['ships'],
+			ships: props.page['ships'],
 			duration: duration.value,
 			distance: distance.value,
 			universe_speed: state.speed['fleet']
 		});
 
-		storage.value = getStorage(props.data['ships']) - consumption.value;
+		storage.value = getStorage(props.page['ships']) - consumption.value;
 
-		if (!props.data.missions.includes(mission.value)) {
-			mission.value = props.data.mission;
+		if (!props.page.missions.includes(mission.value)) {
+			mission.value = props.page.mission;
 		}
 	}
 
@@ -321,7 +319,7 @@
 	}
 
 	function allianceSet (index) {
-		let al = props.data['alliances'][index]
+		let al = props.page['alliances'][index]
 
 		alliance.value = al['id']
 		setTarget(al['galaxy'], al['system'], al['planet'], al['planet_type'])
@@ -360,13 +358,13 @@
 
 	function send() {
 		let ships = {};
-		props.data.ships.forEach((ship) => ships[ship.id] = ship.count);
+		props.page.ships.forEach((ship) => ships[ship.id] = ship.count);
 
 		useForm({
 			ships,
 			...target.value,
 			alliance: alliance.value,
-			fleet: props.data['fleet'],
+			fleet: props.page['fleet'],
 			mission: mission.value,
 			moon: moon.value,
 			speed: speed.value,

@@ -13,8 +13,8 @@
 					<div class="c">{{ $t('pages.friends.list.online') }}</div>
 					<div class="c">&nbsp;</div>
 				</div>
-				<FriendRow v-for="item in items" :key="item['id']" :item="item"/>
-				<div v-if="items.length === 0" class="grid">
+				<FriendRow v-for="item in page.items" :key="item['id']" :item="item"/>
+				<div v-if="page.items.length === 0" class="grid">
 					<div class="th">{{ $t('pages.friends.list.no_friends') }}</div>
 				</div>
 			</div>
@@ -31,9 +31,6 @@
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+		page: Object,
 	});
 </script>

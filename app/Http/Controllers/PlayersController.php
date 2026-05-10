@@ -94,10 +94,8 @@ class PlayersController extends Controller
 
 		$component = $request->hasHeader(Modal::HEADER_MODAL) ? 'Player/Modal' : 'Player/Info';
 
-		return Inertia::modal($component, [
-			'data' => $result,
-		])
-		->baseRoute('players.detail', [$user->id]);
+		return Inertia::modal($component, $result)
+			->baseRoute('players.detail', [$user->id]);
 	}
 
 	public function stats(int $id)
@@ -139,8 +137,6 @@ class PlayersController extends Controller
 			];
 		}
 
-		return Inertia::render('Player/Stats', [
-			'data' => $result,
-		]);
+		return Inertia::render('Player/Stats', $result);
 	}
 }

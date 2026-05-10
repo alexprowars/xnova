@@ -38,9 +38,7 @@ class AllianceRanksController extends Controller
 			];
 		}
 
-		return Inertia::render('Alliance/Admin/Ranks', [
-			'data' => $parse,
-		]);
+		return Inertia::render('Alliance/Admin/Ranks', $parse);
 	}
 
 	public function create(Request $request): void

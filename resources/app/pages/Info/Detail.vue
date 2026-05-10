@@ -1,6 +1,6 @@
 <template>
-	<Head :title="item['name']"/>
-	<InfoContent :item="item"/>
+	<Head :title="page.item['name']"/>
+	<InfoContent :item="page.item"/>
 </template>
 
 <script setup>
@@ -16,8 +16,6 @@
 	});
 
 	defineProps({
-		item: {
-			type: Object,
-		}
+		page: Object,
 	});
 </script>

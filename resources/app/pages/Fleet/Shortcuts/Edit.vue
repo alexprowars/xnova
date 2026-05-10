@@ -37,19 +37,19 @@
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
-		data: Object,
+		page: Object,
 	});
 
 	const form = useForm({
-		name: props.data.name,
-		galaxy: props.data.galaxy,
-		system: props.data.system,
-		planet: props.data.planet,
-		planet_type: props.data.planet_type,
+		name: props.page.name,
+		galaxy: props.page.galaxy,
+		system: props.page.system,
+		planet: props.page.planet,
+		planet_type: props.page.planet_type,
 	});
 
 	function update() {
-		form.post('/fleet/shortcut/' + props.data.id, {
+		form.post('/fleet/shortcut/' + props.page.id, {
 			onSuccess() {
 				useSuccessNotification(t('pages.fleets.shortcut.edit.notify_updated'));
 			}
@@ -57,7 +57,7 @@
 	}
 
 	function remove() {
-		useForm().delete('/fleet/shortcut/' + props.data.id, {
+		useForm().delete('/fleet/shortcut/' + props.page.id, {
 			onSuccess() {
 				useSuccessNotification(t('pages.fleets.shortcut.edit.notify_deleted'));
 			}

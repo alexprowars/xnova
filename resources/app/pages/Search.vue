@@ -23,8 +23,8 @@
 			</div>
 		</div>
 		<div v-if="sended" class="mt-2">
-			<ListPlayers v-if="type === 'playername' || type === 'planetname'" :items="items"/>
-			<ListAlliances v-else :items="items"/>
+			<ListPlayers v-if="type === 'playername' || type === 'planetname'" :items="page.items"/>
+			<ListAlliances v-else :items="page.items"/>
 		</div>
 	</div>
 </template>
@@ -36,11 +36,8 @@
 	import { Head, useForm } from '@inertiajs/vue3';
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+		page: Object,
+	});
 
 	const query = ref('');
 	const type = ref('playername');

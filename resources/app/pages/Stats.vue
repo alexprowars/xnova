@@ -3,7 +3,7 @@
 	<div class="page-stat">
 		<div class="block">
 			<div class="title text-center">
-				{{ $t('pages.stats.header', [$formatDate(data['update'], 'DD MMM YYYY HH:mm:ss')]) }}
+				{{ $t('pages.stats.header', [$formatDate(page['update'], 'DD MMM YYYY HH:mm:ss')]) }}
 			</div>
 			<div class="content">
 				<div class="block-table text-center">
@@ -39,9 +39,9 @@
 			</div>
 		</div>
 
-		<StatPlayers v-if="list === 'players'" :items="items"/>
-		<StatAlliances v-if="list === 'alliances'" :items="items"/>
-		<StatRaces v-if="list === 'races'" :items="items"/>
+		<StatPlayers v-if="page.list === 'players'" :items="page.items"/>
+		<StatAlliances v-if="page.list === 'alliances'" :items="page.items"/>
+		<StatRaces v-if="page.list === 'races'" :items="page.items"/>
 	</div>
 </template>
 
@@ -49,7 +49,7 @@
 	import StatPlayers from '~/components/Page/Stat/Players.vue';
 	import StatAlliances from '~/components/Page/Stat/Alliances.vue';
 	import StatRaces from '~/components/Page/Stat/Races.vue';
-	import { computed, ref, watch } from 'vue';
+	import { ref, watch } from 'vue';
 	import { Head, router } from '@inertiajs/vue3';
 
 	defineOptions({
@@ -61,27 +61,14 @@
 	});
 
 	const props = defineProps({
-		update: String,
-		list: String,
-		type: Number,
-		page: Number,
-		elements: {
-			type: Number,
-			default: 0,
-		},
-		items: {
-			type: Array,
-			default: () => [],
-		},
+		page: Object,
 	});
 
-	const data = computed(() => props);
-
 	const form = ref({
-		list: props.list ?? 'players',
-		type: props.type ?? 1,
-		page: props.page ?? 1,
-		pages: Math.max(Math.ceil((props.elements ?? 0) / 100), 1),
+		list: props.page.list ?? 'players',
+		type: props.page.type ?? 1,
+		page: props.page.page ?? 1,
+		pages: Math.max(Math.ceil((props.page.elements ?? 0) / 100), 1),
 	});
 
 	watch(() => form.value.list, () => {

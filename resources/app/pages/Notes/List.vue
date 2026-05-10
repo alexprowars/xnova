@@ -11,7 +11,7 @@
 					<div class="col-span-3 c">{{ $t('pages.notes.index.date') }}</div>
 					<div class="col-span-8 c">{{ $t('pages.notes.index.subject') }}</div>
 				</div>
-				<div class="grid grid-cols-12" v-for="item in items">
+				<div class="grid grid-cols-12" v-for="item in page.items">
 					<div class="col-span-1 th text-center">
 						<input :value="item['id']" v-model="deleteItems" type="checkbox">
 					</div>
@@ -24,7 +24,7 @@
 						</Link>
 					</div>
 				</div>
-				<div class="grid" v-if="items.length === 0">
+				<div class="grid" v-if="page.items.length === 0">
 					<div class="th">{{ $t('pages.notes.index.no_notes') }}</div>
 				</div>
 			</div>
@@ -52,12 +52,9 @@
 		}
 	});
 
-	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+	const props = defineProps({
+		page: Object,
+	});
 
 	const deleteItems = ref([]);
 

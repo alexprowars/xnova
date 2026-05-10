@@ -104,9 +104,7 @@ class FleetController extends Controller
 			}
 		}
 
-		return Inertia::render('Fleet/Fleet', [
-			'data' => $result,
-		]);
+		return Inertia::render('Fleet/Fleet', $result);
 	}
 
 	public function list(): array

@@ -30,8 +30,6 @@ class HallController extends Controller
 
 		$result['last'] = $items->sortByDesc('date')->first()->id ?? null;
 
-		return Inertia::render('Hall', [
-			'data' => $result,
-		]);
+		return Inertia::render('Hall', $result);
 	}
 }

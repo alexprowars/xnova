@@ -6,10 +6,10 @@
 			<div class="block-table">
 				<div class="grid">
 					<div class="th text-center">
-						{{ $t('pages.records.updated_at', { time: $formatDate(update, 'DD MMM YYYY HH:mm:ss') }) }}
+						{{ $t('pages.records.updated_at', { time: $formatDate(page.update, 'DD MMM YYYY HH:mm:ss') }) }}
 					</div>
 				</div>
-				<template v-for="(list, group) in items">
+				<template v-for="(list, group) in page.items">
 					<div class="grid grid-cols-12">
 						<div class="col-span-5 c">{{ group }}</div>
 						<div class="col-span-5 c text-center">{{ $t('pages.records.col_player') }}</div>
@@ -38,7 +38,6 @@
 	});
 
 	defineProps({
-		update: String,
-		items: Object,
+		page: Object,
 	});
 </script>

@@ -7,7 +7,7 @@
 			</div>
 			<div class="content">
 				<div class="block-table">
-					<div v-if="!items.length" class="grid">
+					<div v-if="!page.items.length" class="grid">
 						<div class="th">{{ $t('pages.support.index.empty') }}</div>
 					</div>
 					<div v-else class="grid grid-cols-12">
@@ -16,7 +16,7 @@
 						<div class="col-span-2 th">{{ $t('pages.support.index.col_status') }}</div>
 						<div class="col-span-3 th">{{ $t('pages.support.index.col_date') }}</div>
 					</div>
-					<ListItem v-for="item in items" :key="item['id']" :item="item"/>
+					<ListItem v-for="item in page.items" :key="item['id']" :item="item"/>
 				</div>
 			</div>
 		</div>
@@ -48,10 +48,7 @@
 	});
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+		page: Object,
 	});
 
 	const request = ref(false);

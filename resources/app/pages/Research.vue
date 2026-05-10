@@ -14,7 +14,7 @@
 				<TechActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction(activeItem['id'])"/>
 			</div>
 			<div class="buldings-list">
-				<TechItem v-for="(item, i) in items" :key="i" :item="item"
+				<TechItem v-for="(item, i) in page.items" :key="i" :item="item"
 					:class="{ active: activeElement === item['id'] }"
 					@select="selectAction(item['id'])"
 					@build="buildAction(item['id'])"
@@ -33,11 +33,8 @@
 	import { useAnimateScroll } from '~/composables/useAnimateScroll.js';
 
 	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+		page: Object,
+	});
 
 	const activeRef = useTemplateRef('activeRef');
 
@@ -46,7 +43,7 @@
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
-		return props.items.filter((item) => item.id === activeElement.value)[0] || null;
+		return props.page.items.filter((item) => item.id === activeElement.value)[0] || null;
 	});
 
 	watch(activeElement, (value) => {

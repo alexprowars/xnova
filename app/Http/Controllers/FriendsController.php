@@ -131,10 +131,8 @@ class FriendsController extends Controller
 		}
 
 		return Inertia::render('Friends/New', [
-			'data' => [
-				'id' => $user->id,
-				'username' => $user->username,
-			],
+			'id' => $user->id,
+			'username' => $user->username,
 		]);
 	}
 

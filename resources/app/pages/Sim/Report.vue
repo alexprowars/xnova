@@ -1,12 +1,12 @@
 <template>
 	<Head title="Симуляция"/>
 	<div class="combar-report text-center">
-		<div v-html="report"></div>
+		<div v-html="page.report"></div>
 		Ссылка на результат симуляции
 		<div class="my-4 text-center">
-			<input type="text" :value="host + '/sim/report/' + uuid" class="w-125 p-4">
+			<input type="text" :value="host + '/sim/page.report/' + page.uuid" class="w-125 p-4">
 		</div>
-		<div v-if="statistics" class="my-4">
+		<div v-if="page.statistics" class="my-4">
 			<div class="mb-2">Результаты потерь после 50 симуляций:</div>
 			<div class="block-table text-center w-max mx-auto">
 				<div class="grid grid-cols-12">
@@ -14,7 +14,7 @@
 					<div class="col-span-4 th">Потери атакующего</div>
 					<div class="col-span-4 th">Потери защитника</div>
 				</div>
-				<div v-for="(s, i) in statistics" class="grid grid-cols-12">
+				<div v-for="(s, i) in page.statistics" class="grid grid-cols-12">
 					<div class="col-span-4 th">{{ (i + 1) }}</div>
 					<div class="col-span-4 th">{{ $formatNumber(s['att']) }}</div>
 					<div class="col-span-4 th">{{ $formatNumber(s['def']) }}</div>
@@ -35,12 +35,7 @@
 	});
 
 	defineProps({
-		uuid: String,
-		report: String,
-		statistics: {
-			type: Array,
-			default: () => [],
-		},
+		page: Object,
 	})
 
 	const host = computed(() => import.meta.env.VITE_APP_URL || '');

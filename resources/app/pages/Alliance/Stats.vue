@@ -1,6 +1,6 @@
 <template>
 	<Head title="Статистика альянса"/>
-	<Stats type="alliance" :data="data"/>
+	<Stats type="alliance" :data="page"/>
 </template>
 
 <script setup>
@@ -16,6 +16,6 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	});
 </script>

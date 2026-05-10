@@ -23,15 +23,15 @@
 								<td class="th text-left" nowrap>{{ $t('pages.resources.base_production') }}</td>
 								<td class="k text-center"></td>
 								<td class="k text-center"></td>
-								<td v-for="res in data['resources']" class="k text-center">{{ $formatNumber(planet['resources'][res]['basic']) }}</td>
+								<td v-for="res in page['resources']" class="k text-center">{{ $formatNumber(planet['resources'][res]['basic']) }}</td>
 								<td class="k text-center">{{ $formatNumber(planet['resources']['energy']['basic']) }}</td>
 								<td class="k text-center">100%</td>
 							</tr>
-							<ResourcesRow v-for="(item, index) in data['items']" :key="index" :item="item" :resources="data['resources']"/>
+							<ResourcesRow v-for="(item, index) in page['items']" :key="index" :item="item" :resources="page['resources']"/>
 							<tr>
 								<td class="th" colspan="2">{{ $t('pages.resources.storage') }}</td>
-								<td class="th text-center">{{ data['bonus_h'] }}%</td>
-								<td v-for="res in data['resources']" class="k text-center" v-once>
+								<td class="th text-center">{{ page['bonus_h'] }}%</td>
+								<td v-for="res in page['resources']" class="k text-center" v-once>
 									<span :class="[(planet['resources'][res]['capacity'] > planet['resources'][res]['value']) ? 'positive' : 'negative']">
 										{{ $formatNumber(planet['resources'][res]['capacity'] / 1000) }} k
 									</span>
@@ -47,7 +47,7 @@
 							</tr>
 							<tr>
 								<td class="th" colspan="3">{{ $t('pages.resources.total') }}</td>
-								<td v-for="res in data['resources']" class="k text-center">
+								<td v-for="res in page['resources']" class="k text-center">
 									<Colored :value="planet['resources'][res]['production']"/>
 								</td>
 								<td class="k text-center"><Colored :value="planet['resources']['energy']['value']"/></td>
@@ -62,9 +62,9 @@
 			<div class="block-table rounded overflow-clip">
 				<div class="grid grid-cols-6">
 					<div class="col-span-2 c">{{ $t('pages.resources.production_level') }}</div>
-					<div class="th text-center">{{ data['production_level'] }}%</div>
+					<div class="th text-center">{{ page['production_level'] }}%</div>
 					<div class="col-span-3 th">
-						<ResourcesBar :value="data['production_level']" :reverse="true"/>
+						<ResourcesBar :value="page['production_level']" :reverse="true"/>
 					</div>
 				</div>
 				<div class="grid grid-cols-6">
@@ -92,7 +92,7 @@
 						<div class="col-span-3 th">{{ $t('pages.resources.per_week') }}</div>
 						<div class="col-span-3 th">{{ $t('pages.resources.per_month') }}</div>
 					</div>
-					<div class="grid grid-cols-12" v-for="res in data['resources']">
+					<div class="grid grid-cols-12" v-for="res in page['resources']">
 						<div class="col-span-2 th">
 							{{ $t('resources.' + res) }}
 						</div>
@@ -119,7 +119,7 @@
 			</div>
 			<div class="content">
 				<div class="block-table">
-					<StorageRow v-for="res in data['resources']" :key="res" :resource="res"/>
+					<StorageRow v-for="res in page['resources']" :key="res" :resource="res"/>
 				</div>
 			</div>
 		</div>
@@ -146,7 +146,7 @@
 			</div>
 		</div>
 
-		<BuyResources :item="data['buy_form']"/>
+		<BuyResources :item="page['buy_form']"/>
 	</div>
 </template>
 
@@ -162,9 +162,7 @@
 	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	const state = useState();
@@ -181,7 +179,7 @@
 	async function updateState() {
 		let state = {};
 
-		props.data['items'].forEach((item) => state[item['id']] = item['factor']);
+		props.page['items'].forEach((item) => state[item['id']] = item['factor']);
 
 		useForm({ state }).post('/resources/state', {
 			preserveUrl: true,

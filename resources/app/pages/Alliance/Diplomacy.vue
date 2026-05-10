@@ -1,11 +1,11 @@
 <template>
 	<Head :title="$t('pages.alliance.diplomacy.page_title')"/>
 	<div>
-		<div v-if="data['DMyQuery'].length > 0" class="block">
+		<div v-if="page['DMyQuery'].length > 0" class="block">
 			<div class="title">{{ $t('pages.alliance.diplomacy.my_requests') }}</div>
 			<div class="content">
 				<div class="block-table text-center">
-					<div v-for="item in data['DMyQuery']" class="grid grid-cols-3">
+					<div v-for="item in page['DMyQuery']" class="grid grid-cols-3">
 						<div class="th">{{ item['name'] }}</div>
 						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
 						<div class="th">
@@ -16,11 +16,11 @@
 			</div>
 		</div>
 
-		<div v-if="data['DQuery'].length > 0" class="block">
+		<div v-if="page['DQuery'].length > 0" class="block">
 			<div class="title">{{ $t('pages.alliance.diplomacy.requests_to_alliance') }}</div>
 			<div class="content">
 				<div class="block-table text-center">
-					<div v-for="item in data['DQuery']" class="grid grid-cols-3">
+					<div v-for="item in page['DQuery']" class="grid grid-cols-3">
 						<div class="th">{{ item['name'] }}</div>
 						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
 						<div class="th">
@@ -36,21 +36,21 @@
 			<div class="title">{{ $t('pages.alliance.diplomacy.alliance_relations') }}</div>
 			<div class="content">
 				<div class="block-table text-center">
-					<div v-for="item in data['DText']" class="grid grid-cols-3">
+					<div v-for="item in page['DText']" class="grid grid-cols-3">
 						<div class="th">{{ item['name'] }}</div>
 						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
 						<div class="th">
 							<a href="" @click.prevent="reject(item['id'])"><img src="/assets/images/abort.gif" :alt="$t('pages.alliance.diplomacy.delete_request')"></a>
 						</div>
 					</div>
-					<div v-if="data['DText'].length === 0">
+					<div v-if="page['DText'].length === 0">
 						<div class="th">{{ $t('pages.alliance.diplomacy.none') }}</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<DiplomacyCreate :items="data['items']"/>
+		<DiplomacyCreate :items="page['items']"/>
 
 		<div class="mt-2">
 			<Link href="/alliance" class="button">{{ $t('pages.alliance.diplomacy.back') }}</Link>
@@ -75,7 +75,7 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	})
 
 	function accept(id) {

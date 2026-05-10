@@ -9,7 +9,7 @@
 						{{ $t('pages.alliance.admin.give_transfer_player_label') }}
 						<select v-model="form.user">
 							<option value="">{{ $t('pages.alliance.admin.give_player_placeholder') }}</option>
-							<option v-for="item in data['members']" :value="item['id']">{{ item['name'] }} [{{ item['rank'] }}]</option>
+							<option v-for="item in page['members']" :value="item['id']">{{ item['name'] }} [{{ item['rank'] }}]</option>
 						</select>
 					</div>
 				</div>
@@ -40,7 +40,7 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	});
 
 	const form = useForm({

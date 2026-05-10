@@ -47,12 +47,10 @@ class FleetShortcutController extends Controller
 		}
 
 		return Inertia::render('Fleet/Shortcuts/Create', [
-			'data' => [
-				'galaxy' => $galaxy,
-				'system' => $system,
-				'planet' => $planet,
-				'planet_type' => $planetType,
-			],
+			'galaxy' => $galaxy,
+			'system' => $system,
+			'planet' => $planet,
+			'planet_type' => $planetType,
 		]);
 	}
 
@@ -99,14 +97,12 @@ class FleetShortcutController extends Controller
 		}
 
 		return Inertia::render('Fleet/Shortcuts/Edit', [
-			'data' => [
-				'id' => $shortcut->id,
-				'name' => $shortcut->name,
-				'galaxy' => $shortcut->galaxy,
-				'system' => $shortcut->system,
-				'planet' => $shortcut->planet,
-				'planet_type' => $shortcut->planet_type,
-			]
+			'id' => $shortcut->id,
+			'name' => $shortcut->name,
+			'galaxy' => $shortcut->galaxy,
+			'system' => $shortcut->system,
+			'planet' => $shortcut->planet,
+			'planet_type' => $shortcut->planet_type,
 		]);
 	}
 

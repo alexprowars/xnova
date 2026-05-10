@@ -10,8 +10,8 @@
 					<div class="col-span-2 c">{{ $t('pages.logs.index.link') }}</div>
 					<div class="col-span-2 c">{{ $t('pages.logs.index.management') }}</div>
 				</div>
-				<ItemRow v-for="row in items" :key="row['id']" :item="row"/>
-				<div v-if="items.length === 0" class="grid">
+				<ItemRow v-for="row in page.items" :key="row['id']" :item="row"/>
+				<div v-if="page.items.length === 0" class="grid">
 					<div class="th text-center">{{ $t('pages.logs.index.no_logs') }}</div>
 				</div>
 				<div class="grid">
@@ -37,9 +37,6 @@
 	});
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+		page: Object,
+	});
 </script>

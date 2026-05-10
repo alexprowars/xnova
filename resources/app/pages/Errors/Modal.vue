@@ -2,7 +2,7 @@
 	<Modal>
 	<div class="block-table">
 		<div class="grid">
-			<div class="th error-message text-center" v-html="message"></div>
+			<div class="th error-message text-center" v-html="page.message"></div>
 		</div>
 	</div>
 	</Modal>
@@ -12,7 +12,6 @@
 	import { Modal } from '@inertiaui/modal-vue';
 
 	defineProps({
-		status: Number,
-		message: String,
+		page: Object,
 	});
 </script>

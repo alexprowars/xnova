@@ -36,11 +36,11 @@
 	});
 
 	const props = defineProps({
-		tag: String,
+		page: Object,
 	});
 
 	const form = useForm({
-		tag: props.tag,
+		tag: props.page.tag,
 	});
 
 	const { t } = useI18n();

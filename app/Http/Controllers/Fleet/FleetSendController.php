@@ -120,9 +120,7 @@ class FleetSendController extends Controller
 			$result['units'][Vars::getName($unitId)] = $count;
 		}
 
-		return Inertia::render('Fleet/Send', [
-			'data' => $result,
-		]);
+		return Inertia::render('Fleet/Send', $result);
 	}
 
 	private function checkJumpGate(Planet $planet): void

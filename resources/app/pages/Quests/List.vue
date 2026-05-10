@@ -7,7 +7,7 @@
 			</div>
 			<div class="content">
 				<div class="block-table">
-					<div class="flex divide-x" v-for="quest in data.items">
+					<div class="flex divide-x" v-for="quest in page.items">
 						<div class="th w-10">{{ quest['id'] }}</div>
 						<div class="th w-10">
 							<img :src="'/assets/images/'+(quest['finish'] ? 'check' : 'none')+'.gif'" class="inline" height="11" width="12" alt="">
@@ -18,7 +18,7 @@
 							<template v-if="quest['available'] === false && Object.keys(quest['required']).length > 0">
 								<br><br>Требования:
 									<div v-for="(req, key) in quest['required']">
-										<span v-if="key === 'quest'" :class="[(!data.quests[req] || data.quests[req]['finish'] === 0) ? 'negative' : 'positive']">Выполнение задания №{{ req }}</span>
+										<span v-if="key === 'quest'" :class="[(!page.quests[req] || page.quests[req]['finish'] === 0) ? 'negative' : 'positive']">Выполнение задания №{{ req }}</span>
 										<span v-else-if="key === 'level_minier'" :class="[user.lvl.mine.l < req ? 'negative' : 'positive']">Промышленный уровень {{ req }}</span>
 										<span v-else-if="key === 'level_raid'" :class="[user.lvl.raid.l < req ? 'negative' : 'positive']">Военный уровень {{ req }}</span>
 									</div>
@@ -45,9 +45,7 @@
 	});
 
 	defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	const state = useState();

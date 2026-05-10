@@ -38,15 +38,15 @@
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
-		data: Object,
+		page: Object,
 	});
 
 	const form = useForm({
 		name: '',
-		galaxy: props.data.galaxy,
-		system: props.data.system,
-		planet: props.data.planet,
-		planet_type: props.data.planet_type,
+		galaxy: props.page.galaxy,
+		system: props.page.system,
+		planet: props.page.planet,
+		planet_type: props.page.planet_type,
 	});
 
 	const { t } = useI18n();

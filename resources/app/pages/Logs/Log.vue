@@ -1,6 +1,6 @@
 <template>
 	<Head :title="$t('pages.logs.view.page_title')"/>
-	<div id="report" class="table-responsive" v-html="raport"></div>
+	<div id="report" class="table-responsive" v-html="page.raport"></div>
 </template>
 
 <script setup>
@@ -15,6 +15,6 @@
 	});
 
 	defineProps({
-		raport: String,
-	})
+		page: Object,
+	});
 </script>

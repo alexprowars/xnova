@@ -43,9 +43,7 @@ class OptionsController extends Controller
 			];
 		}
 
-		return Inertia::render('Options/Options', [
-			'data' => $result,
-		]);
+		return Inertia::render('Options/Options', $result);
 	}
 
 	public function email()

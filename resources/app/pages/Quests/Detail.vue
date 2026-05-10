@@ -1,9 +1,9 @@
 <template>
-	<Head :title="'Задание. ' + data['title']"/>
+	<Head :title="'Задание. ' + page['title']"/>
 	<div class="page-quests quests-detail">
 		<div class="block">
 			<div class="title">
-				{{ data['title'] }}
+				{{ page['title'] }}
 			</div>
 			<div class="content">
 				<div class="block-table quests">
@@ -11,13 +11,13 @@
 						<div class="k text-left">
 							<div class="grid grid-cols-12 gap-3 m-2">
 								<div class="col-span-3 text-center">
-									<img :src="'/assets/images/quests/' + data['id'] + '.jpg'" class="inline" alt="">
+									<img :src="'/assets/images/quests/' + page['id'] + '.jpg'" class="inline" alt="">
 								</div>
 								<div class="col-span-9 text-left">
-									<div class="description" v-html="data['description']"></div>
+									<div class="description" v-html="page['description']"></div>
 									<div class="text-xl mt-4">Задачи:</div>
 									<ul>
-										<li v-for="task in data['task']">
+										<li v-for="task in page['task']">
 											<span v-html="task[0]"></span>
 											<span>
 												<img :src="'/assets/images/'+(task[1] ? 'check' : 'none')+'.gif'" height="11" width="12" alt="">
@@ -25,7 +25,7 @@
 										</li>
 									</ul>
 									<div style="color:orange;">
-										Награда: <span v-html="data['rewd']"></span>
+										Награда: <span v-html="page['rewd']"></span>
 									</div>
 								</div>
 							</div>
@@ -33,8 +33,8 @@
 					</div>
 					<div class="grid">
 						<div class="k text-center">
-							<input v-if="!data['errors']" type="button" class="end" @click.prevent="finish" value="Закончить">
-							<div v-if="data['solution']" class="solution m-2" v-html="data['solution']"></div>
+							<input v-if="!page['errors']" type="button" class="end" @click.prevent="finish" value="Закончить">
+							<div v-if="page['solution']" class="solution m-2" v-html="page['solution']"></div>
 						</div>
 					</div>
 				</div>
@@ -60,13 +60,11 @@
 	});
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	function finish() {
-		useForm().post('/quests/' + props.data['id'], {
+		useForm().post('/quests/' + props.page['id'], {
 			preserveUrl: true,
 			onSuccess() {
 				useSuccessNotification('Квест завершен');

@@ -6,24 +6,24 @@
 		</div>
 		<div class="content">
 			<div class="block-table text-center">
-				<div v-if="data['image']">
+				<div v-if="page['image']">
 					<div class="th">
-						<img :src="data['image']" class="max-w-full" alt="">
+						<img :src="page['image']" class="max-w-full" alt="">
 					</div>
 				</div>
 				<div class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.abbreviation') }}</div>
-					<div class="th">{{ data['tag'] }}</div>
+					<div class="th">{{ page['tag'] }}</div>
 				</div>
 				<div class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.name') }}</div>
-					<div class="th">{{ data['name'] }}</div>
+					<div class="th">{{ page['name'] }}</div>
 				</div>
 				<div class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.members') }}</div>
 					<div class="th">
-						{{ data['members'] }}
-						<template v-if="data['access']['memberlist']">
+						{{ page['members'] }}
+						<template v-if="page['access']['memberlist']">
 							(<Link href="/alliance/members">{{ $t('pages.alliance.index.members_list') }}</Link>)
 						</template>
 					</div>
@@ -31,13 +31,13 @@
 				<div class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.your_rank') }}</div>
 					<div class="th">
-						{{ data['range'] }}
-						<template v-if="data['access']['admin']">
+						{{ page['range'] }}
+						<template v-if="page['access']['admin']">
 							(<Link href="/alliance/admin">{{ $t('pages.alliance.index.alliance_management') }}</Link>)
 						</template>
 					</div>
 				</div>
-				<div v-if="data['diplomacy'] !== false" class="grid grid-cols-2">
+				<div v-if="page['diplomacy'] !== false" class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.diplomacy') }}</div>
 					<div class="th">
 						<Link href="/alliance/diplomacy">{{ $t('pages.alliance.index.view') }}</Link>
@@ -46,13 +46,13 @@
 						</template>
 					</div>
 				</div>
-				<div v-if="data['requests'] > 0" class="grid grid-cols-2">
+				<div v-if="page['requests'] > 0" class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.requests') }}</div>
 					<div class="th">
 						<Link href="/alliance/admin/requests">{{ page['requests'] }} {{ $t('pages.alliance.index.requests_count') }}</Link>
 					</div>
 				</div>
-				<div v-if="data['access']['chat']" class="grid grid-cols-2">
+				<div v-if="page['access']['chat']" class="grid grid-cols-2">
 					<div class="th">
 						{{ $t('pages.alliance.index.alliance_chat') }}
 						<template v-if="user.alliance?.messages > 0">
@@ -61,29 +61,29 @@
 					</div>
 					<div class="th"><Link href="/alliance/chat">{{ $t('pages.alliance.index.enter_chat') }}</Link></div>
 				</div>
-				<div v-if="data['web']" class="grid grid-cols-2">
+				<div v-if="page['web']" class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.index.homepage') }}</div>
-					<div class="th"><a :href="data['web']" target="_blank">{{ data['web'] }}</a></div>
+					<div class="th"><a :href="page['web']" target="_blank">{{ page['web'] }}</a></div>
 				</div>
-				<div v-if="data['description']">
+				<div v-if="page['description']">
 					<div class="b p-1 h-60">
-						<TextViewer :text="data['description']"/>
+						<TextViewer :text="page['description']"/>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div v-if="data['text']" class="block">
+	<div v-if="page['text']" class="block">
 		<div class="title">
 			{{ $t('pages.alliance.index.internal_competence') }}
 		</div>
 		<div class="content">
 			<div class="b p-1 min-h-32">
-				<TextViewer :text="data['text']"/>
+				<TextViewer :text="page['text']"/>
 			</div>
 		</div>
 	</div>
-	<div v-if="!data['owner']" class="block">
+	<div v-if="!page['owner']" class="block">
 		<div class="title">
 			{{ $t('pages.alliance.index.leave_alliance') }}
 		</div>
@@ -114,8 +114,8 @@
 		}
 	});
 
-	const props = defineProps({
-		data: Object,
+	defineProps({
+		page: Object,
 	})
 
 	const state = useState();

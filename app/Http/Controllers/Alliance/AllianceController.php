@@ -104,9 +104,7 @@ class AllianceController extends Controller
 		$result['name'] = $alliance->name;
 		$result['id'] = $alliance->id;
 
-		return Inertia::render('Alliance/Main', [
-			'data' => $result,
-		]);
+		return Inertia::render('Alliance/Main', $result);
 	}
 
 	public function exit(): void
@@ -153,9 +151,7 @@ class AllianceController extends Controller
 		$parse['web'] = $alliance->web;
 		$parse['request'] = $this->user && $this->user->alliance_id == 0;
 
-		return Inertia::render('Alliance/Info', [
-			'data' => $parse,
-		]);
+		return Inertia::render('Alliance/Info', $parse);
 	}
 
 	public function createPage()
@@ -266,11 +262,9 @@ class AllianceController extends Controller
 		$text = str_replace(["\r\n", "\n", "\r"], '', stripslashes($alliance->request ?? ''));
 
 		return Inertia::render('Alliance/Join', [
-			'data' => [
-				'id' => $alliance->id,
-				'tag' => $alliance->tag,
-				'text' => $text,
-			],
+			'id' => $alliance->id,
+			'tag' => $alliance->tag,
+			'text' => $text,
 		]);
 	}
 
@@ -344,8 +338,6 @@ class AllianceController extends Controller
 			];
 		}
 
-		return Inertia::render('Alliance/Stats', [
-			'data' => $result,
-		]);
+		return Inertia::render('Alliance/Stats', $result);
 	}
 }

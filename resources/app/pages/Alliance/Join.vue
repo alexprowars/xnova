@@ -2,17 +2,17 @@
 	<Head :title="$t('pages.alliance.join.meta_title')"/>
 	<div class="block">
 		<div class="title">
-			{{ $t('pages.alliance.join.heading_title', [data['tag']]) }}
+			{{ $t('pages.alliance.join.heading_title', [page['tag']]) }}
 		</div>
 		<div class="content">
 			<form class="block-table text-center" @submit.prevent="send">
-				<template v-if="data['text']">
+				<template v-if="page['text']">
 					<div>
 						<div class="c">{{ $t('pages.alliance.join.alliance_welcome_heading') }}</div>
 					</div>
 					<div>
 						<div class="b min-h-20 p-2 text-left">
-							<TextViewer :text="data['text']"/>
+							<TextViewer :text="page['text']"/>
 						</div>
 					</div>
 				</template>
@@ -34,6 +34,7 @@
 	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
+	import { useI18n } from 'vue-i18n';
 
 	defineOptions({
 		layout: {
@@ -44,7 +45,7 @@
 	});
 
 	const props = defineProps({
-		data: Object,
+		page: Object,
 	});
 
 	const { t } = useI18n();
@@ -54,7 +55,7 @@
 	});
 
 	function send() {
-		form.post('/alliance/join/' + props.data['id'], {
+		form.post('/alliance/join/' + props.page['id'], {
 			onSuccess() {
 				useSuccessNotification(t('pages.alliance.join.success_after_submit'));
 			}

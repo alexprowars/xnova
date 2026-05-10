@@ -1,7 +1,7 @@
 <template>
 	<Modal>
-		<Head :title="item['name']"/>
-		<InfoContent :item="item"/>
+		<Head :title="page.item['name']"/>
+		<InfoContent :item="page.item"/>
 	</Modal>
 </template>
 
@@ -11,8 +11,6 @@
 	import { Modal } from '@inertiaui/modal-vue';
 
 	defineProps({
-		item: {
-			type: Object,
-		}
+		page: Object,
 	});
 </script>

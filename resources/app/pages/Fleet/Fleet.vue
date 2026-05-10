@@ -6,24 +6,24 @@
 				<div class="grid grid-cols-2">
 					<div class="text-left">
 						{{ $t('pages.fleets.main.fleets') }}
-						<span :class="[data.fleets.length < user['fleets_max'] ? 'positive' : 'negative']">{{ data.fleets.length }}</span>
+						<span :class="[page.fleets.length < user['fleets_max'] ? 'positive' : 'negative']">{{ page.fleets.length }}</span>
 						{{ $t('pages.fleets.main.of') }}
 						<span class="negative">{{ user['fleets_max'] }}</span>
 					</div>
-					<div v-if="data['maxExpeditions'] > 0" class="text-right">
-						{{ $t('pages.fleets.main.expeditions') }} {{ data['curExpeditions'] }}/{{ data['maxExpeditions'] }}
+					<div v-if="page['maxExpeditions'] > 0" class="text-right">
+						{{ $t('pages.fleets.main.expeditions') }} {{ page['curExpeditions'] }}/{{ page['maxExpeditions'] }}
 					</div>
 				</div>
 			</div>
 			<div class="content">
-				<FleetList :fleets="data.fleets"/>
+				<FleetList :fleets="page.fleets"/>
 			</div>
 		</div>
 		<template v-if="!isVacation">
-			<div v-if="data.ships.length" class="block page-fleet-select">
+			<div v-if="page.ships.length" class="block page-fleet-select">
 				<div class="title">
 					<div class="grid">
-						{{ $t('pages.fleets.main.select_ships') }}<template v-if="data['selected']['mission'] > 0"> {{ $t('pages.fleets.main.select_mission') }} "{{ $t('fleet_mission.' + data['selected']['mission']) }}"</template><template v-if="data['selected']['galaxy'] > 0"> на координаты [{{ data['selected']['galaxy'] }}:{{ data['selected']['system'] }}:{{ data['selected']['planet'] }}]</template>
+						{{ $t('pages.fleets.main.select_ships') }}<template v-if="page['selected']['mission'] > 0"> {{ $t('pages.fleets.main.select_mission') }} "{{ $t('fleet_mission.' + page['selected']['mission']) }}"</template><template v-if="page['selected']['galaxy'] > 0"> на координаты [{{ page['selected']['galaxy'] }}:{{ page['selected']['system'] }}:{{ page['selected']['planet'] }}]</template>
 					</div>
 				</div>
 				<div class="content">
@@ -33,7 +33,7 @@
 							<div class="col-span-2 sm:col-span-2 th">{{ $t('pages.fleets.main.quantity') }}</div>
 							<div class="col-span-4 sm:col-span-3 th">&nbsp;</div>
 						</div>
-						<div v-for="ship in data.ships" class="grid grid-cols-12 divide-x">
+						<div v-for="ship in page.ships" class="grid grid-cols-12 divide-x">
 							<div class="col-span-6 sm:col-span-7 th middle">
 								<a :title="$t('tech.' + ship.id)">{{ $t('tech.' + ship.id) }}</a>
 							</div>
@@ -64,7 +64,7 @@
 							<div class="col-span-4 sm:col-span-2 th">{{ $t('pages.fleets.main.speed') }}</div>
 							<div class="col-span-4 sm:col-span-3 th">{{ allSpeed ? $formatNumber(allSpeed) : '-'}}</div>
 						</div>
-						<div v-if="count && data.fleets.length < user['fleets_max']" class="grid">
+						<div v-if="count && page.fleets.length < user['fleets_max']" class="grid">
 							<div class="th"><button type="submit" class="button">{{ $t('pages.fleets.main.next') }}</button></div>
 						</div>
 					</form>
@@ -92,9 +92,7 @@
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	const fleets = ref({});
@@ -106,13 +104,13 @@
 	const isVacation = computed(() => user.value?.vacation !== null);
 
 	const count = computed(() => {
-		return props.data['ships'].reduce((total, ship) => {
+		return props.page['ships'].reduce((total, ship) => {
 			let cnt = fleets.value[ship.id] || 0;
 			return (total + cnt);
 		}, 0);
 	});
 
-	watch(() => props.data.ships, () => {
+	watch(() => props.page.ships, () => {
 		init();
 	});
 
@@ -121,7 +119,7 @@
 	}, { deep: true });
 
 	function init () {
-		if (!props.data.ships) {
+		if (!props.page.ships) {
 			return;
 		}
 
@@ -129,7 +127,7 @@
 	}
 
 	function maxShips (shipId) {
-		let ship = props.data['ships'].find((item) => {
+		let ship = props.page['ships'].find((item) => {
 			return item.id === shipId
 		})
 
@@ -141,13 +139,13 @@
 	}
 
 	function clearShips () {
-		props.data.ships.forEach((ship) => {
+		props.page.ships.forEach((ship) => {
 			fleets.value[ship['id']] = '';
 		})
 	}
 
 	function allShips () {
-		props.data.ships.forEach((ship) => {
+		props.page.ships.forEach((ship) => {
 			if (ship['id'] !== 212) {
 				fleets.value[ship['id']] = ship['count'];
 			}
@@ -167,7 +165,7 @@
 		if (fleets.value[shipId] <= 0)
 			fleets.value[shipId] = '';
 
-		let ship = props.data['ships'].find((item) => {
+		let ship = props.page['ships'].find((item) => {
 			return item.id === shipId
 		})
 
@@ -180,7 +178,7 @@
 		let capacity = 0;
 		let speed = maxSpeed;
 
-		props.data['ships'].forEach((ship) => {
+		props.page['ships'].forEach((ship) => {
 			let cnt = fleets.value[ship.id] || 0;
 			cnt = parseInt(cnt);
 
@@ -203,7 +201,7 @@
 	async function checkout() {
 		useForm({
 			ships: fleets.value,
-			...props.data['selected'],
+			...page['selected'],
 		})
 		.post('/fleet/checkout', {
 			onSuccess(result) {

@@ -2,19 +2,19 @@
 	<Head title="Галактика"/>
 	<div class="page-galaxy">
 		<GalaxySelector
-			:shortcuts="data['shortcuts']"
-			:galaxy="data['galaxy']"
-			:galaxy-max="data['galaxy_max']"
-			:system="data['system']"
-			:system-max="data['system_max']"
+			:shortcuts="page['shortcuts']"
+			:galaxy="page['galaxy']"
+			:galaxy-max="page['galaxy_max']"
+			:system="page['system']"
+			:system-max="page['system_max']"
 			@change="changeCoordinates"
 		/>
 
-		<MissileAttack v-if="missile" :page="data" :planet="missilePlanet" @close="missile = false"/>
+		<MissileAttack v-if="missile" :page="page" :planet="missilePlanet" @close="missile = false"/>
 
 		<div class="block">
 			<div class="title">
-				{{ $t('pages.galaxy.title', [data['galaxy'], data['system']]) }}
+				{{ $t('pages.galaxy.title', [page['galaxy'], page['system']]) }}
 			</div>
 			<div class="content">
 				<div class="table-responsive">
@@ -33,11 +33,11 @@
 							</tr>
 
 							<GalaxyRow v-for="(item, index) in rows"
-								:key="data['galaxy'] + ':' + data['system'] + ':' + index"
+								:key="page['galaxy'] + ':' + page['system'] + ':' + index"
 								:item="item"
-								:user="data['user']"
-								:galaxy="data['galaxy']"
-								:system="data['system']"
+								:user="page['user']"
+								:galaxy="page['galaxy']"
+								:system="page['system']"
 								:planet="index + 1"
 								@sendMissile="sendMissile(item['planet'])"
 							/>
@@ -45,14 +45,14 @@
 							<tr v-if="user['technology']['expedition_tech']">
 								<td class="th" width="30">16</td>
 								<td class="c big" colspan="8">
-									<Link :href="'/fleet?galaxy=' + data['galaxy'] + '&system=' + data['system'] + '&planet=16&mission=15'">
+									<Link :href="'/fleet?galaxy=' + page['galaxy'] + '&system=' + page['system'] + '&planet=16&mission=15'">
 										{{ $t('pages.galaxy.planet_16') }}
 									</Link>
 								</td>
 							</tr>
 							<tr>
 								<td class="c" colspan="6">
-									{{ $t('pages.galaxy.no_planets', data.items.length) }}
+									{{ $t('pages.galaxy.no_planets', page.items.length) }}
 								</td>
 								<td class="c" colspan="3">
 									<Popper>
@@ -65,7 +65,7 @@
 							</tr>
 							<tr>
 								<td class="c" colspan="3">{{ $t('pages.galaxy.rockets', planet['units']['interplanetary_misil']) }}</td>
-								<td class="c" colspan="3">{{ data['user']['fleets'] }} / {{ $t('pages.galaxy.fleets', user['fleets_max']) }}</td>
+								<td class="c" colspan="3">{{ page['user']['fleets'] }} / {{ $t('pages.galaxy.fleets', user['fleets_max']) }}</td>
 								<td class="c" colspan="3">
 									<div>{{ $t('pages.galaxy.recyclers', planet['units']['recycler']) }}</div>
 									<div>{{ $t('pages.galaxy.spy_probes', planet['units']['spy_sonde']) }}</div>
@@ -98,9 +98,7 @@
 	});
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	const missile = ref(false);
@@ -114,7 +112,7 @@
 		let result = [];
 
 		for (let i = 1; i <= 15; i++) {
-			result.push(props.data.items.find(item => item.position.planet === i) || null);
+			result.push(props.page.items.find(item => item.position.planet === i) || null);
 		}
 
 		return result;

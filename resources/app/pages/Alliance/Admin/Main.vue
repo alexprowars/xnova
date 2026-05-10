@@ -8,7 +8,7 @@
 					<div>
 						<div class="th"><Link href="/alliance/admin/ranks">{{ $t('pages.alliance.admin.index_link_ranks') }}</Link></div>
 					</div>
-					<div v-if="data['access']['kick']">
+					<div v-if="page['access']['kick']">
 						<div class="th"><Link href="/alliance/admin/members">{{ $t('pages.alliance.admin.index_link_members') }}</Link></div>
 					</div>
 					<div>
@@ -21,18 +21,18 @@
 			</div>
 		</div>
 
-		<AllianceTextForm :data="data"/>
-		<AllianceUpdateForm :data="data"/>
+		<AllianceTextForm :data="page"/>
+		<AllianceUpdateForm :data="page"/>
 
 		<div class="block">
 			<div class="content">
 				<div class="block-table text-center">
 					<div class="grid grid-cols-2">
-						<div v-if="data['access']['delete'] || false">
+						<div v-if="page['access']['delete'] || false">
 							<div class="c">{{ $t('pages.alliance.admin.index_dissolve_caption') }}</div>
 							<div class="th"><button class="button" @click.prevent="remove">{{ $t('pages.alliance.admin.action_continue') }}</button></div>
 						</div>
-						<div v-if="data['owner'] === user['id']">
+						<div v-if="page['owner'] === user['id']">
 							<div class="c">{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</div>
 							<div class="th"><Link href="/alliance/admin/give" class="button">{{ $t('pages.alliance.admin.action_continue') }}</Link></div>
 						</div>
@@ -66,7 +66,7 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	})
 
 	const { t } = useI18n();

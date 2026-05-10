@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Exceptions\PageException;
 use App\Facades\Vars;
 use App\Factories\PlanetServiceFactory;
+use App\Http\PageResponseFactory;
 use App\Services\GalaxyService;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -20,6 +21,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\ExceptionResponse;
 use Inertia\Inertia;
+use Inertia\ResponseFactory;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -119,5 +121,6 @@ class AppServiceProvider extends ServiceProvider
 		$this->app->singleton(GalaxyService::class);
 		$this->app->singleton(Vars::class);
 		$this->app->singleton(PlanetServiceFactory::class);
+		$this->app->singleton(ResponseFactory::class, PageResponseFactory::class);
 	}
 }

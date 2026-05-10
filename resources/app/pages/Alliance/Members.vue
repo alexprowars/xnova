@@ -2,24 +2,24 @@
 	<Head :title="$t('pages.alliance.members.page_title')"/>
 	<div class="block">
 		<div class="title">
-			{{ $t('pages.alliance.members.title', [data['members'].length]) }}
+			{{ $t('pages.alliance.members.title', [page['members'].length]) }}
 		</div>
 		<div class="content">
 			<table class="table text-center">
 				<tbody>
 				<tr>
 					<td class="th">{{ $t('pages.alliance.members.number') }}</td>
-					<td class="th"><Link :href="url + '?sort=name&order=' + data['order']">{{ $t('pages.alliance.members.nickname') }}</Link></td>
+					<td class="th"><Link :href="url + '?sort=name&order=' + page['order']">{{ $t('pages.alliance.members.nickname') }}</Link></td>
 					<td class="th">&nbsp;</td>
 					<td class="th">&nbsp;</td>
-					<td class="th"><Link :href="url + '?sort=rank&order=' + data['order']">{{ $t('pages.alliance.members.rank') }}</Link></td>
-					<td class="th"><Link :href="url + '?sort=points&order=' + data['order']">{{ $t('pages.alliance.members.points') }}</Link></td>
+					<td class="th"><Link :href="url + '?sort=rank&order=' + page['order']">{{ $t('pages.alliance.members.rank') }}</Link></td>
+					<td class="th"><Link :href="url + '?sort=points&order=' + page['order']">{{ $t('pages.alliance.members.points') }}</Link></td>
 					<td class="th">{{ $t('pages.alliance.members.coordinates') }}</td>
-					<td class="th"><Link :href="url + '?sort=date&order=' + data['order']">{{ $t('pages.alliance.members.join_date') }}</Link></td>
-					<td class="th" v-if="data['status']"><Link :href="url + '?sort=active&order=' + data['order']">{{ $t('pages.alliance.members.activity') }}</Link></td>
-					<td class="th" v-if="data['admin']">{{ $t('pages.alliance.members.management') }}</td>
+					<td class="th"><Link :href="url + '?sort=date&order=' + page['order']">{{ $t('pages.alliance.members.join_date') }}</Link></td>
+					<td class="th" v-if="page['status']"><Link :href="url + '?sort=active&order=' + page['order']">{{ $t('pages.alliance.members.activity') }}</Link></td>
+					<td class="th" v-if="page['admin']">{{ $t('pages.alliance.members.management') }}</td>
 				</tr>
-				<template v-for="(m, index) in data['members']">
+				<template v-for="(m, index) in page['members']">
 					<tr>
 						<td class="th">{{ index + 1 }}</td>
 						<td class="th">{{ m['username'] }}</td>
@@ -38,7 +38,7 @@
 						</td>
 						<td class="th">{{ $formatDate(m['date'], 'DD MMM YYYY') }}</td>
 						<td class="th" v-html="m['online'] || ''"></td>
-						<td class="th" v-if="data['admin']">
+						<td class="th" v-if="page['admin']">
 							<a href="" @click.prevent="kick(m['id'])">
 								<img src="/assets/images/abort.gif" alt="">
 							</a>
@@ -48,7 +48,7 @@
 							</a>
 						</td>
 					</tr>
-					<tr v-if="m['id'] === changeRank && data['admin']">
+					<tr v-if="m['id'] === changeRank && page['admin']">
 						<td colspan="10" class="th p-0">
 							<div class="table border-0">
 								<div>
@@ -56,7 +56,7 @@
 									<div class="th">
 										<select v-model="m['rank']">
 											<option value="0">{{ $t('pages.alliance.members.novice') }}</option>
-											<option v-for="rank in data['ranks']" :value="rank['id']">{{ rank['name'] }}</option>
+											<option v-for="rank in page['ranks']" :value="rank['id']">{{ rank['name'] }}</option>
 										</select>
 									</div>
 									<div class="th">
@@ -74,7 +74,7 @@
 		</div>
 	</div>
 	<div class="mt-2">
-		<Link :href="'/alliance' + (data['admin'] ? '/admin' : '')" class="button">
+		<Link :href="'/alliance' + (page['admin'] ? '/admin' : '')" class="button">
 			{{ $t('pages.alliance.members.back_to_overview') }}
 		</Link>
 	</div>
@@ -96,7 +96,7 @@
 	});
 
 	const props = defineProps({
-		data: Object,
+		page: Object,
 	})
 
 	const { t } = useI18n();
@@ -104,7 +104,7 @@
 	const changeRank = ref();
 
 	const url = computed(() => {
-		return '/alliance/' + (props.data['admin'] ? 'admin/members' : 'members');
+		return '/alliance/' + (props.page['admin'] ? 'admin/members' : 'members');
 	});
 
 	function setRank(id) {

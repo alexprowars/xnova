@@ -2,7 +2,7 @@
 	<Head title="Hacтpoйки"/>
 	<div>
 		<VacationTab v-if="user.vacation"/>
-		<OptionsTab v-else :data="data"/>
+		<OptionsTab v-else :data="page"/>
 	</div>
 </template>
 
@@ -22,7 +22,7 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	})
 
 	const state = useState();

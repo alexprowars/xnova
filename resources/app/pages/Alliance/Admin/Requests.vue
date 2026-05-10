@@ -10,7 +10,7 @@
 					<RequestAcceptForm :request="request" @close="request = null"/>
 				</td>
 			</tr>
-			<tr v-if="items.length > 0">
+			<tr v-if="page.items.length > 0">
 				<td class="c">
 					{{ $t('pages.alliance.admin.requests_col_login') }}
 				</td>
@@ -18,7 +18,7 @@
 					{{ $t('pages.alliance.admin.requests_col_submitted_at') }}
 				</td>
 			</tr>
-			<tr v-for="item in items">
+			<tr v-for="item in page.items">
 				<td class="th">
 					<a href="" @click.prevent="show(item)">{{ item['name'] }}</a>
 				</td>
@@ -26,7 +26,7 @@
 					{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm') }}
 				</td>
 			</tr>
-			<tr v-if="items.length === 0">
+			<tr v-if="page.items.length === 0">
 				<td class="th" colspan="2">{{ $t('pages.alliance.admin.requests_empty_list') }}</td>
 			</tr>
 			<tr>
@@ -52,7 +52,7 @@
 	});
 
 	defineProps({
-		items: Array,
+		page: Object,
 	})
 
 	const request = ref(null);

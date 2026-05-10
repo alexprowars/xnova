@@ -1,5 +1,5 @@
 <template>
-	<Head :title="data['name']"/>
+	<Head :title="page['name']"/>
 	<div class="tech_view" ref="elementRef"></div>
 </template>
 
@@ -17,9 +17,7 @@
 	});
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	let counter = 0;
@@ -28,13 +26,13 @@
 
 	onMounted(() => {
 		objectTree = new ECOTree('objectTree', elementRef.value);
-		createTree(1, -1, props.data['id'], props.data['level'], props.data['available']);
+		createTree(1, -1, props.page['id'], props.page['level'], props.page['available']);
 
 		window.objectTree = objectTree;
 	});
 
 	function createTree (tid, prntid, element, level, access, fwrd) {
-		let item = props.data['items'].find((el) => el.id === element);
+		let item = props.page['items'].find((el) => el.id === element);
 
 		let active = 'lime';
 

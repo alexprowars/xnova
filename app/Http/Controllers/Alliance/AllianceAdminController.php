@@ -52,9 +52,7 @@ class AllianceAdminController extends Controller
 		$parse['public'] = $alliance->public;
 		$parse['owner_rank'] = $alliance->owner_rank;
 
-		return Inertia::render('Alliance/Admin/Main', [
-			'data' => $parse,
-		]);
+		return Inertia::render('Alliance/Admin/Main', $parse);
 	}
 
 	public function namePage()
@@ -175,9 +173,7 @@ class AllianceAdminController extends Controller
 			}
 		}
 
-		return Inertia::render('Alliance/Admin/Give', [
-			'data' => $result,
-		]);
+		return Inertia::render('Alliance/Admin/Give', $result);
 	}
 
 	public function giveSend(Request $request)

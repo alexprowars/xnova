@@ -8,12 +8,12 @@
 			<div class="content">
 				<div class="block-table">
 					<div class="grid grid-cols-2">
-						<div v-for="item in items" class="th">
+						<div v-for="item in page.items" class="th">
 							<Link :href="'/fleet/shortcut/' + item['id']">
 								{{ item['name'] }} [{{ item['galaxy'] }}:{{ item['system'] }}:{{ item['planet'] }}] {{ $t('planet_type.' + item['planet_type']) }}
 							</Link>
 						</div>
-						<div v-if="items.length === 0" class="col-span-2 th">{{ $t('pages.fleets.shortcut.index.empty') }}</div>
+						<div v-if="page.items.length === 0" class="col-span-2 th">{{ $t('pages.fleets.shortcut.index.empty') }}</div>
 					</div>
 					<div class="grid">
 						<div class="c text-center">
@@ -31,9 +31,6 @@
 	import { Head, Link } from '@inertiajs/vue3';
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+		page: Object,
+	});
 </script>

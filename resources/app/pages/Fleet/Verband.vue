@@ -14,25 +14,25 @@
 						<td class="th">{{ $t('pages.fleets.verband.col_target') }}</td>
 						<td class="th">{{ $t('pages.fleets.verband.col_return') }}</td>
 					</tr>
-					<FleetRow v-for="item in data['items']" :key="item['id']" :item="item"/>
-					<tr v-if="data['items'].length === 0"><td class="th" colspan="6">-</td></tr>
+					<FleetRow v-for="item in page['items']" :key="item['id']" :item="item"/>
+					<tr v-if="page['items'].length === 0"><td class="th" colspan="6">-</td></tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
-		<div v-if="!data['assault']" class="block">
+		<div v-if="!page['assault']" class="block">
 			<div class="title">{{ $t('pages.fleets.verband.block_create_association') }}</div>
 			<div class="content">
-				<Create :id="data['fleetid']"/>
+				<Create :id="page['fleetid']"/>
 			</div>
 		</div>
-		<div v-else-if="data['fleetid'] === data['assault']['fleet_id']" class="block">
-			<div class="title">{{ $t('pages.fleets.verband.block_association_title', { name: data['assault']['name'] }) }}</div>
+		<div v-else-if="page['fleetid'] === page['assault']['fleet_id']" class="block">
+			<div class="title">{{ $t('pages.fleets.verband.block_association_title', { name: page['assault']['name'] }) }}</div>
 			<div class="content">
 				<div class="block-table">
 					<div class="grid">
 						<div class="th">
-							<ChangeName :id="data['fleetid']" :name="data['assault']['name']"/>
+							<ChangeName :id="page['fleetid']" :name="page['assault']['name']"/>
 						</div>
 					</div>
 					<div class="grid">
@@ -46,12 +46,12 @@
 								<tr>
 									<td class="th" width="50%" valign="top">
 										<select size="10" style="width:75%;">
-											<option v-for="user in data['users']">{{ user }}</option>
-											<option v-if="data['users'].length === 0">{{ $t('pages.fleets.verband.option_no_participants') }}</option>
+											<option v-for="user in page['users']">{{ user }}</option>
+											<option v-if="page['users'].length === 0">{{ $t('pages.fleets.verband.option_no_participants') }}</option>
 										</select>
 									</td>
 									<td class="th">
-										<InviteUser :id="data['fleetid']" :friends="data['friends']" :alliance="data['alliance']"/>
+										<InviteUser :id="page['fleetid']" :friends="page['friends']" :alliance="page['alliance']"/>
 									</td>
 								</tr>
 								</tbody>
@@ -72,6 +72,6 @@
 	import { Head } from '@inertiajs/vue3';
 
 	defineProps({
-		data: Object,
+		page: Object,
 	})
 </script>

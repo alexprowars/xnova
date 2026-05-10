@@ -1,7 +1,7 @@
 <template>
 	<Head :title="$t('pages.referrals.head_title')"/>
 	<div class="page-referrals">
-		<div v-if="items.length > 0" class="block">
+		<div v-if="page.items.length > 0" class="block">
 			<div class="title">{{ $t('pages.referrals.recruited_players_title') }}</div>
 			<div class="content">
 				<div class="block-table text-center">
@@ -10,7 +10,7 @@
 						<div class="c">{{ $t('pages.referrals.table_col_registered_at') }}</div>
 						<div class="c">{{ $t('pages.referrals.table_col_development') }}</div>
 					</div>
-					<div class="grid grid-cols-3" v-for="item in items">
+					<div class="grid grid-cols-3" v-for="item in page.items">
 						<div class="th">
 							<Link :href="'/players/' + item['id']">{{ item['username'] }}</Link>
 						</div>
@@ -21,13 +21,13 @@
 			</div>
 		</div>
 
-		<div v-if="you !== undefined" class="block">
+		<div v-if="page.you !== undefined" class="block">
 			<div class="content">
 				<div class="block-table text-center">
 					<div class="grid grid-cols-2">
 						<div class="th">{{ $t('pages.referrals.referred_by_caption') }}</div>
 						<div class="th">
-							<Link :href="'/players/' + you['id']">{{ you['username'] }}</Link>
+							<Link :href="'/players/' + page.you['id']">{{ page.you['username'] }}</Link>
 						</div>
 					</div>
 				</div>
@@ -89,11 +89,7 @@
 	});
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		},
-		you: Object,
+		page: Object,
 	});
 
 	const state = useState();

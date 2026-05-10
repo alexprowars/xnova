@@ -50,4 +50,9 @@ class Exception extends \Exception
 
 		return new JsonResponse($result, $this->getCode());
 	}
+
+	public function report(): bool
+	{
+		return true;
+	}
 }

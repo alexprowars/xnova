@@ -1,7 +1,7 @@
 <template>
 	<Head :title="$t('pages.alliance.admin.ranks_head_title')"/>
 	<div>
-		<AllianceRanksForm :owner="user['id'] === data['alliance']['user_id']" :items="data['items']"/>
+		<AllianceRanksForm :owner="user['id'] === page['alliance']['user_id']" :items="page['items']"/>
 		<AllianceRanksCreate/>
 		<AllianceRanksInfo/>
 		<div class="mt-2">
@@ -29,7 +29,7 @@
 	});
 
 	defineProps({
-		data: Object,
+		page: Object,
 	})
 
 	const state = useState();

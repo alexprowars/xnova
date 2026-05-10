@@ -159,8 +159,6 @@ class EmpireController extends Controller
 			];
 		}
 
-		return Inertia::render('Empire', [
-			'data' => $result,
-		]);
+		return Inertia::render('Empire', $result);
 	}
 }

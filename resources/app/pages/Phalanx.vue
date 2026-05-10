@@ -7,10 +7,10 @@
 				{{ $t('pages.phalanx.activity_header') }}
 			</td>
 		</tr>
-		<tr v-if="items.length === 0">
+		<tr v-if="page.items.length === 0">
 			<td class="th" colspan="2">{{ $t('pages.phalanx.no_movement') }}</td>
 		</tr>
-		<tr v-for="item in items">
+		<tr v-for="item in page.items">
 			<td class="th">
 				<div class="z">{{ $formatTime(dayjs(item['time']).diff(now) / 1000, ':', true) }}</div>
 				<span :style="{ color: item['direction'] === 1 ? 'lime' : 'green' }">{{ $formatDate(item['time'], 'HH:mm:ss') }}</span>
@@ -61,11 +61,8 @@
 	});
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
-	})
+		page: Object,
+	});
 
 	const now = useNow({ interval: 1000 });
 </script>

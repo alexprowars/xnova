@@ -66,18 +66,18 @@
 					<br><br>
 				</div>
 			</div>
-			<div v-if="data['change_available']">
+			<div v-if="page['change_available']">
 				<div class="grid">
 					<div class="k big">
-						<span v-if="data['change']">
-							{{ $t('pages.race.change_free', { count: data['change'] }) }}
+						<span v-if="page['change']">
+							{{ $t('pages.race.change_free', { count: page['change'] }) }}
 						</span>
 						<span v-else>
 							{{ $t('pages.race.change_paid') }}
 						</span>
 					</div>
 				</div>
-				<div v-if="data['change_available']" class="th">
+				<div v-if="page['change_available']" class="th">
 					{{ $t('pages.race.change_requirements') }}<br><br>
 					<RaceChange/>
 				</div>
@@ -94,7 +94,7 @@
 	import { ModalLink, visitModal } from '@inertiaui/modal-vue';
 
 	defineProps({
-		data: { type: Object },
+		page: Object,
 	});
 
 	defineOptions({

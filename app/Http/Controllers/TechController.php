@@ -132,8 +132,6 @@ class TechController extends Controller
 			$result['items'][] = $item;
 		}
 
-		return Inertia::render('Tech/Detail', [
-			'data' => $result,
-		]);
+		return Inertia::render('Tech/Detail', $result);
 	}
 }

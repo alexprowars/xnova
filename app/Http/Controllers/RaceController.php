@@ -17,10 +17,8 @@ class RaceController extends Controller
 			&& !$this->user->isVacation();
 
 		return Inertia::render('Race', [
-			'data' => [
-				'change' => $this->user->race_change_count,
-				'change_available' => $isChangeAvailable,
-			],
+			'change' => $this->user->race_change_count,
+			'change_available' => $isChangeAvailable,
 		]);
 	}
 

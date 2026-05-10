@@ -33,9 +33,7 @@ class ContentController extends Controller
 		$component = $request->hasHeader(Modal::HEADER_MODAL)
 			? 'Content/Modal' : 'Content/Detail';
 
-		return Inertia::modal($component, [
-			'data' => $result,
-		])
-		->baseRoute('content', [$content->alias]);
+		return Inertia::modal($component, $result)
+			->baseRoute('content', [$content->alias]);
 	}
 }

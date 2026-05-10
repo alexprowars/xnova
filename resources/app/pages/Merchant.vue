@@ -17,7 +17,7 @@
 						</select>
 
 						<div class="my-4">
-							{{ $t('pages.merchant.rate_info', rate) }}
+							{{ $t('pages.merchant.rate_info', page.rate) }}
 						</div>
 					</div>
 					<div v-if="type !== ''" class="th">
@@ -32,7 +32,7 @@
 							</div>
 							<div v-for="res in ['metal', 'crystal', 'deuterium']" class="grid grid-cols-12">
 								<div class="col-span-3 th middle">{{ $t('resources.' + res) }}</div>
-								<div class="col-span-3 th middle">{{ rate[res] / rate[type] }}</div>
+								<div class="col-span-3 th middle">{{ page.rate[res] / page.rate[type] }}</div>
 								<div class="col-span-6 th middle">
 									<Number v-if="type !== res" min="0" v-model="resources[res]" :placeholder="$t('pages.merchant.quantity')" @input="calculate"/>
 									<span v-else>{{ resources[res] }}</span>
@@ -58,13 +58,10 @@
 	import { ref } from 'vue';
 	import { Head, useForm } from '@inertiajs/vue3';
 	import Number from '~/components/Number.vue';
-	import { useI18n } from 'vue-i18n';
 
 	const props = defineProps({
-		rate: Object,
-	})
-
-	const { t } = useI18n();
+		page: Object,
+	});
 
 	const type = ref('');
 	const resources = ref({ metal: 0, crystal: 0, deuterium: 0 });
@@ -74,7 +71,7 @@
 
 		['metal', 'crystal', 'deuterium'].forEach((item) => {
 			if (type.value !== item) {
-				res += resources.value[item] * (props.rate[item] / props.rate[type.value]);
+				res += resources.value[item] * (props.page.rate[item] / props.page.rate[type.value]);
 			}
 		});
 
@@ -88,7 +85,7 @@
 		})
 		.post('/merchant/exchange', {
 			preserveUrl: true,
-			onSuccess(result) {
+			onSuccess() {
 				type.value = '';
 			}
 		});

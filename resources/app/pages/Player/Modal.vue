@@ -1,7 +1,7 @@
 <template>
 	<Modal>
 		<Head :title="$t('pages.players.meta_info_title')" />
-		<PlayerInfo :item="data"/>
+		<PlayerInfo :item="page"/>
 	</Modal>
 </template>
 
@@ -11,8 +11,6 @@
 	import { Modal } from '@inertiaui/modal-vue';
 
 	defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 </script>

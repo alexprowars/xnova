@@ -1,8 +1,8 @@
 <template>
-	<Head :title="data.title"/>
+	<Head :title="page.title"/>
 	<div class="block">
-		<div v-if="data.title" class="title" v-html="data.title"></div>
-		<div class="content p-1" v-html="data.body"></div>
+		<div v-if="page.title" class="title" v-html="page.title"></div>
+		<div class="content p-1" v-html="page.body"></div>
 	</div>
 </template>
 
@@ -17,7 +17,7 @@
 		}
 	});
 
-	const props = defineProps({
-		data: Object,
+	defineProps({
+		page: Object,
 	});
 </script>

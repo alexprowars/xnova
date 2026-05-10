@@ -1,6 +1,6 @@
 <template>
 	<Head :title="$t('pages.players.meta_stats_title')"/>
-	<Stats type="user" :data="data"/>
+	<Stats type="user" :data="page"/>
 </template>
 
 <script setup>
@@ -16,8 +16,6 @@
 	});
 
 	defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 </script>

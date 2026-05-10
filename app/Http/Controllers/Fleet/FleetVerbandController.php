@@ -96,9 +96,7 @@ class FleetVerbandController extends Controller
 			}
 		}
 
-		return Inertia::render('Fleet/Verband', [
-			'data' => $result,
-		]);
+		return Inertia::render('Fleet/Verband', $result);
 	}
 
 	public function create(int $fleetId, Request $request): void

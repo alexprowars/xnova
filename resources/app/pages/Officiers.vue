@@ -30,7 +30,7 @@
 					</div>
 				</div>
 			</div>
-			<Row v-for="item in items" :key="item['id']" :item="item"/>
+			<Row v-for="item in page.items" :key="item['id']" :item="item"/>
 		</div>
 	</div>
 </template>
@@ -49,11 +49,8 @@
 		}
 	});
 
-	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => []
-		}
+	defineProps({
+		page: Object,
 	});
 
 	const state = useState();

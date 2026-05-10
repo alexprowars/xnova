@@ -28,13 +28,13 @@
 
 				<MessagesRow v-for="item in messages" :key="item['id']" :item="item" v-model:delete="deleteItems"/>
 
-				<div v-if="pagination['total'] === 0" class="grid text-center">
+				<div v-if="page.pagination['total'] === 0" class="grid text-center">
 					<div class="th">{{ $t('pages.messages.index.no_messages') }}</div>
 				</div>
 			</div>
 
-			<div v-if="pagination['total'] > pagination['limit']" class="float-start">
-				<Pagination :options="pagination"/>
+			<div v-if="page.pagination['total'] > page.pagination['limit']" class="float-start">
+				<Pagination :options="page.pagination"/>
 			</div>
 			<div v-if="deleteItems.length > 0" class="float-end" style="padding: 5px">
 				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
@@ -58,17 +58,11 @@
 	});
 
 	const props = defineProps({
-		limit: Number,
-		category: Number,
-		items: Array,
-		pagination: Object,
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
-	const category = ref(props.category);
-	const limit = ref(props.limit);
+	const category = ref(props.page.category);
+	const limit = ref(props.page.limit);
 
 	const checkAll = ref(false);
 	const limitItems = ref([5, 10, 25, 50, 100, 200]);
@@ -83,7 +77,7 @@
 		}
 	});
 
-	const messages = computed(() => props.items || []);
+	const messages = computed(() => props.page.items || []);
 
 	const deleteItems = ref([]);
 

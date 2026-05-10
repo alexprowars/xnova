@@ -218,8 +218,6 @@ class GalaxyController extends Controller
 			$result['items'][] = $row;
 		}
 
-		return Inertia::render('Galaxy', [
-			'data' => $result,
-		]);
+		return Inertia::render('Galaxy', $result);
 	}
 }

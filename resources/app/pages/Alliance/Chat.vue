@@ -5,7 +5,7 @@
 			<div class="c text-center">
 				<a href="" @click.prevent="router.reload()">{{ $t('pages.alliance.chat.link_refresh') }}</a>
 			</div>
-			<div v-for="item in items" class="grid grid-cols-12">
+			<div v-for="item in page.items" class="grid grid-cols-12">
 				<div class="col-span-2 b text-center middle">
 					<div>
 						{{ $formatDate(item['time'], 'HH:mm:ss') }}
@@ -18,18 +18,18 @@
 					<TextViewer v-if="user['options']['bb_parser']" :text="item['message']"/>
 					<div v-else>{{ item['message'] }}</div>
 				</div>
-				<div v-if="owner" class="col-span-1 b text-center middle">
+				<div v-if="page.owner" class="col-span-1 b text-center middle">
 					<input type="checkbox" :value="item['id']" v-model="marked">
 				</div>
 			</div>
 
-			<div v-if="items.length === 0" class="grid">
+			<div v-if="page.items.length === 0" class="grid">
 				<div class="b text-center">{{ $t('pages.alliance.chat.empty_messages') }}</div>
 			</div>
 
 			<div>
 				<div class="th">
-					<Pagination :options="pagination"/>
+					<Pagination :options="page.pagination"/>
 				</div>
 			</div>
 
@@ -70,10 +70,8 @@
 		}
 	});
 
-	const props = defineProps({
-		items: Array,
-		pagination: Object,
-		owner: Boolean,
+	defineProps({
+		page: Object,
 	});
 
 	const form = useForm({

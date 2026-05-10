@@ -49,9 +49,7 @@ class AllianceDiplomacyController extends Controller
 			$parse['items'][] = $ally->only(['id', 'name', 'tag']);
 		}
 
-		return Inertia::render('Alliance/Diplomacy', [
-			'data' => $parse,
-		]);
+		return Inertia::render('Alliance/Diplomacy', $parse);
 	}
 
 	public function accept(Request $request): void

@@ -14,7 +14,7 @@
 				<UnitActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction"/>
 			</div>
 			<div class="buldings-list">
-				<UnitItem v-for="(item, i) in items"
+				<UnitItem v-for="(item, i) in page.items"
 					:class="{ active: activeElement === item['id'] }"
 					:key="i"
 					:item="item"
@@ -37,10 +37,7 @@
 	import { queueByType } from '~/utils/buildings.js';
 
 	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => []
-		}
+		page: Object,
 	});
 
 	const state = useState();
@@ -48,7 +45,7 @@
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
-		return props.items.filter((item) => item.id === activeElement.value)[0] || null;
+		return props.page.items.filter((item) => item.id === activeElement.value)[0] || null;
 	});
 
 	function selectAction(id) {

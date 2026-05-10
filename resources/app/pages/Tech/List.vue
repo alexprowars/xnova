@@ -1,7 +1,7 @@
 <template>
 	<Head title="Технологии"/>
 	<Tabs class="page-techtree">
-		<Tab v-for="(group, i) in items" :key="i" :name="group['title']">
+		<Tab v-for="(group, i) in page.items" :key="i" :name="group['title']">
 			<div v-for="list in group['items']" class="grid grid-cols-2">
 				<div class="title flex items-center justify-between">
 					<Link :href="'/info/' + list['id']">{{ list['name'] }}</Link>
@@ -28,10 +28,7 @@
 		}
 	});
 
-	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => []
-		}
+	defineProps({
+		page: Object,
 	});
 </script>

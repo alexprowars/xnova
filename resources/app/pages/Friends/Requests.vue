@@ -13,8 +13,8 @@
 						<div class="col-span-2 c">{{ $t('pages.friends.list.text') }}</div>
 						<div class="c">&nbsp;</div>
 					</div>
-					<RequestRow v-for="item in items" :key="item['id']" :item="item" :is-my="isMy"/>
-					<div v-if="items.length === 0" class="grid">
+					<RequestRow v-for="item in page.items" :key="item['id']" :item="item" :is-my="isMy"/>
+					<div v-if="page.items.length === 0" class="grid">
 						<div class="th">{{ $t('pages.friends.requests.no_requests') }}</div>
 					</div>
 				</div>
@@ -32,13 +32,9 @@
 	import { Link, usePage } from '@inertiajs/vue3';
 
 	const page = usePage();
-
 	const isMy = computed(() => page.url.indexOf('/my') !== -1);
 
 	defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+		page: Object,
 	});
 </script>

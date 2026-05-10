@@ -1,15 +1,15 @@
 <template>
 	<div class="block">
 		<div class="title">
-			{{ $t('pages.support.detail.subject_prefix') }} {{ item['subject'] }}
-			<div class="float-end">{{ $t('pages.support.detail.status_prefix') }} {{ $t('pages.support.status.' + item['status']) }}</div>
+			{{ $t('pages.support.detail.subject_prefix') }} {{ page.item['subject'] }}
+			<div class="float-end">{{ $t('pages.support.detail.status_prefix') }} {{ $t('pages.support.status.' + page.item['status']) }}</div>
 		</div>
 		<div class="content">
 			<div class="block-table">
 				<div class="grid">
-					<div class="th text-left" v-html="item['message']"></div>
+					<div class="th text-left" v-html="page.item['message']"></div>
 				</div>
-				<div v-for="message in item['messages']" class="th">
+				<div v-for="message in page.item['messages']" class="th">
 					<div class="positive">
 						{{ $formatDate(message['date'], 'DD.MM.YYYY HH:mm') }} {{ $t('pages.support.detail.message_from') }}
 						<a :href="'/players/' + message['user_id']" target="_blank">{{ message['user'] }}</a>
@@ -24,7 +24,7 @@
 		<Link href="/support" class="button">{{ $t('pages.support.detail.back') }}</Link>
 	</div>
 
-	<div v-if="item['status'] !== 0" class="block mt-4">
+	<div v-if="page.item['status'] !== 0" class="block mt-4">
 		<div class="title">
 			{{ $t('pages.support.detail.answer_title') }}
 		</div>
@@ -54,9 +54,7 @@
 	const { t } = useI18n();
 
 	const props = defineProps({
-		item: {
-			type: Object,
-		}
+		page: Object,
 	});
 
 	const form = useForm({
@@ -80,7 +78,7 @@
 			return
 		}
 
-		form.post('/support/' + props.item['id'] + '/answer', {
+		form.post('/support/' + props.page.item['id'] + '/answer', {
 			preserveUrl: true,
 			preserveScroll: true,
 			onSuccess() {

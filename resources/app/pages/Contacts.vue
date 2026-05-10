@@ -12,7 +12,7 @@
 					<div class="c">{{ $t('pages.contacts.table_header_role') }}</div>
 					<div class="c">{{ $t('pages.contacts.table_header_email') }}</div>
 				</div>
-				<template v-for="item in items">
+				<template v-for="item in page.items">
 					<div class="grid grid-cols-3">
 						<div class="th">{{ item['name'] }}</div>
 						<div class="th">{{ item['role'] }}</div>
@@ -41,10 +41,7 @@
 		}
 	});
 
-	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => [],
-		}
+	defineProps({
+		page: Object,
 	});
 </script>

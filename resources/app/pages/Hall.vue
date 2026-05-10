@@ -14,15 +14,15 @@
 			</div>
 		</div>
 		<div class="block-table text-center">
-			<div v-if="data['items'].length > 0" class="grid grid-cols-12">
+			<div v-if="page['items'].length > 0" class="grid grid-cols-12">
 				<div class="col-span-1 c">{{ $t('pages.hall.col_place') }}</div>
 				<div class="col-span-7 c">
-					{{ data['type'] === 'single' ? $t('pages.hall.subtitle_single') : $t('pages.hall.subtitle_team') }}
+					{{ page['type'] === 'single' ? $t('pages.hall.subtitle_single') : $t('pages.hall.subtitle_team') }}
 				</div>
 				<div class="col-span-1 c">{{ $t('pages.hall.col_outcome') }}</div>
 				<div class="col-span-3 c">{{ $t('pages.hall.col_date') }}</div>
 			</div>
-			<div v-for="(item, i) in data['items']" class="grid grid-cols-12">
+			<div v-for="(item, i) in page['items']" class="grid grid-cols-12">
 				<div class="col-span-1 th">{{ i + 1 }}</div>
 				<div class="col-span-7 th text-left">
 					<a v-if="item['report_id']" :href="'/logs/' + item['report_id']" target="_blank">{{ item['title'] }}</a>
@@ -33,11 +33,11 @@
 					<template v-else-if="item['won'] === 1">{{ $t('pages.hall.outcome_win') }}</template>
 					<template v-else>{{ $t('pages.hall.outcome_draw') }}</template>
 				</div>
-				<div class="col-span-3 th" :class="{ positive: data['last'] === item['id'] }">
+				<div class="col-span-3 th" :class="{ positive: page['last'] === item['id'] }">
 					{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm:ss') }}
 				</div>
 			</div>
-			<div v-if="data['items'].length === 0" class="grid">
+			<div v-if="page['items'].length === 0" class="grid">
 				<div class="th">{{ $t('pages.hall.empty_list') }}</div>
 			</div>
 		</div>
@@ -57,12 +57,10 @@
 	});
 
 	const props = defineProps({
-		data: {
-			type: Object,
-		}
+		page: Object,
 	});
 
-	const type = ref(props.data['type']);
+	const type = ref(props.page['type']);
 
 	watch(type, (value) => {
 		router.get('/hall', { type: value });

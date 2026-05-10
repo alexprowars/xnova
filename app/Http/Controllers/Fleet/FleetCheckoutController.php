@@ -209,8 +209,6 @@ class FleetCheckoutController extends Controller
 
 		$result['mission'] = $mission;
 
-		return Inertia::render('Fleet/Checkout', [
-			'data' => $result,
-		]);
+		return Inertia::render('Fleet/Checkout', $result);
 	}
 }

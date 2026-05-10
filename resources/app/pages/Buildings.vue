@@ -30,7 +30,7 @@
 				<BuildActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="addAction"/>
 			</div>
 			<div class="buldings-list">
-				<BuildItem v-for="(item, i) in items" :key="i"
+				<BuildItem v-for="(item, i) in page.items" :key="i"
 					:class="{ active: activeElement === item['id'] }"
 					:item="item"
 					@select="selectAction(item['id'])"
@@ -51,10 +51,7 @@
 	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 
 	const props = defineProps({
-		items: {
-			type: Array,
-			default: () => []
-		}
+		page: Object,
 	});
 
 	const state = useState();
@@ -62,7 +59,7 @@
 
 	const activeElement = ref(null);
 	const activeItem = computed(() => {
-		return props.items.filter((item) => item.id === activeElement.value)[0] || null;
+		return props.page.items.filter((item) => item.id === activeElement.value)[0] || null;
 	});
 
 	function selectAction(id) {

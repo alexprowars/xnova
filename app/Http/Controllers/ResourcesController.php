@@ -70,9 +70,7 @@ class ResourcesController extends Controller
 
 		$result['production_level'] = $productionLevel;
 
-		return Inertia::render('Resources', [
-			'data' => $result,
-		]);
+		return Inertia::render('Resources', $result);
 	}
 
 	public function buy(): void

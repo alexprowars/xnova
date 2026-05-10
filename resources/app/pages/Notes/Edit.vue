@@ -68,13 +68,13 @@
 	});
 
 	const props = defineProps({
-		item: Object,
+		page: Object,
 	});
 
 	const form = useForm({
-		priority: props.item['priority'],
-		title: props.item['title'],
-		message: props.item['message'],
+		priority: props.page.item['priority'],
+		title: props.page.item['title'],
+		message: props.page.item['message'],
 	});
 
 	function reset() {
@@ -82,6 +82,6 @@
 	}
 
 	function update() {
-		form.post('/notes/' + props.item['id']);
+		form.post('/notes/' + props.page.item['id']);
 	}
 </script>
