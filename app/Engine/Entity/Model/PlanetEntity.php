@@ -32,9 +32,9 @@ class PlanetEntity implements Arrayable, JsonSerializable
 	public function toArray(): array
 	{
 		return [
+			'f' => $this->factor,
 			'i' => $this->id,
 			'l' => $this->level,
-			'f' => $this->factor,
 		];
 	}
 

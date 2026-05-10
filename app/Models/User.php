@@ -152,7 +152,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	/** @return BelongsTo<Alliance, $this> */
 	public function alliance(): BelongsTo
 	{
-		return $this->belongsTo(Alliance::class);
+		return $this->belongsTo(Alliance::class, 'alliance_id');
 	}
 
 	public function registerMediaCollections(): void

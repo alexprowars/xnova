@@ -12,7 +12,7 @@ return new class extends Migration {
 			$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->string('username', 35)->default('');
 			$table->tinyInteger('race')->default(0);
-			$table->foreignId('alliance_id')->nullable()->constrained('users')->nullOnDelete();
+			$table->foreignId('alliance_id')->nullable()->constrained('alliances')->nullOnDelete();
 			$table->string('alliance_name', 50)->nullable();
 			$table->tinyInteger('stat_type')->default(0)->index();
 			$table->integer('stat_code')->default(0);

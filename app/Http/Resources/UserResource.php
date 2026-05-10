@@ -24,6 +24,10 @@ class UserResource extends JsonResource
 			return $this->resource->getPlanets();
 		});
 
+		$photo = Cache::remember('media::user_' . $this->resource->id, 3600, function () {
+			return $this->resource->getFirstMediaUrl(conversionName: 'thumb');
+		});
+
 		$data = [
 			'id' => $this->resource->id,
 			'name' => trim($this->resource->username),
@@ -31,7 +35,7 @@ class UserResource extends JsonResource
 			'race' => $this->resource->race,
 			'sex' => $this->resource->sex,
 			'avatar' => $this->resource->avatar,
-			'photo' => $this->resource->getFirstMediaUrl(conversionName: 'thumb'),
+			'photo' => $photo,
 			'locale' => $this->resource->locale,
 			'messages' => $this->resource->messages,
 			'alliance' => $this->resource->alliance_id > 0 ? [

@@ -21,11 +21,11 @@ class GalaxyController extends Controller
 		$system = $this->planet->system;
 
 		if ($request->input('galaxy')) {
-			$galaxy = (int) $request->input('galaxy', 1);
+			$galaxy = $request->integer('galaxy', 1);
 		}
 
 		if ($request->input('system')) {
-			$system = (int) $request->input('system', 1);
+			$system = $request->integer('system', 1);
 		}
 
 		$galaxy = (int) min(max($galaxy, 1), config('game.maxGalaxyInWorld'));
@@ -85,7 +85,7 @@ class GalaxyController extends Controller
 		}
 
 		$items = Models\Planet::query()
-			->with(['moon', 'user', 'user.alliance', 'user.statistics', 'user.roles'])
+			->with(['moon', 'user', 'user.media', 'user.alliance', 'user.statistics', 'user.roles'])
 			->where('galaxy', $galaxy)
 			->where('system', $system)
 			->whereNot('planet_type', PlanetType::MOON)

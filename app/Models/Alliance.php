@@ -3,17 +3,22 @@
 namespace App\Models;
 
 use App\Engine\Enums\AllianceAccess;
+use App\Models\Observers\AllianceObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+#[ObservedBy([AllianceObserver::class])]
 class Alliance extends Model implements HasMedia
 {
 	use InteractsWithMedia;
+	use SoftDeletes;
 
 	protected $table = 'alliances';
 	protected $guarded = [];
@@ -24,19 +29,6 @@ class Alliance extends Model implements HasMedia
 	protected $casts = [
 		'ranks' => 'json:unicode',
 	];
-
-	protected static function booted()
-	{
-		static::deleted(function (Alliance $model) {
-			User::query()->where('alliance_id', $model->id)
-				->update(['alliance_id' => null, 'alliance_name' => null]);
-
-			Statistic::query()->where('stat_type', 1)
-				->where('user_id', null)
-				->where('alliance_id', $model->id)
-				->delete();
-		});
-	}
 
 	/** @return BelongsTo<User, $this> */
 	public function user(): BelongsTo

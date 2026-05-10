@@ -3,22 +3,24 @@
 use App\Http\Controllers;
 use App\Http\Middleware\CheckReferral;
 use App\Http\Middleware\IsVacationMode;
+use App\Http\Middleware\RedirectToGame;
+use App\Http\Middleware\RedirectToStart;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [Controllers\IndexController::class, 'index'])->middleware(CheckReferral::class)->name('index');
-Route::post('login', [Controllers\LoginController::class, 'credentials'])->name('login');
-Route::get('login/social/{service}', [Controllers\LoginController::class, 'services']);
-Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback']);
-Route::get('remind', [Controllers\ResetPasswordController::class, 'remind'])->name('remind');
-Route::get('login/reset', [Controllers\ResetPasswordController::class, 'resetPage']);
-Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset']);
-Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot']);
+Route::get('/', [Controllers\IndexController::class, 'index'])->middleware([CheckReferral::class, RedirectToGame::class])->name('index');
+Route::post('login', [Controllers\LoginController::class, 'credentials'])->middleware(RedirectToGame::class)->name('login');
+Route::get('login/social/{service}', [Controllers\LoginController::class, 'services'])->middleware(RedirectToGame::class);
+Route::get('login/callback/{service}', [Controllers\LoginController::class, 'callback'])->middleware(RedirectToGame::class);
+Route::get('remind', [Controllers\ResetPasswordController::class, 'remind'])->name('remind')->middleware(RedirectToGame::class);
+Route::get('login/reset', [Controllers\ResetPasswordController::class, 'resetPage'])->middleware(RedirectToGame::class);
+Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset'])->middleware(RedirectToGame::class);
+Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot'])->middleware(RedirectToGame::class);
 Route::get('state', [Controllers\StateController::class, 'index']);
 Route::get('blocked', [Controllers\BlockedController::class, 'index']);
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->name('content');
-Route::get('registration', [Controllers\RegistrationController::class, 'index']);
-Route::post('registration', [Controllers\RegistrationController::class, 'create']);
+Route::get('registration', [Controllers\RegistrationController::class, 'index'])->middleware(RedirectToGame::class);
+Route::post('registration', [Controllers\RegistrationController::class, 'create'])->middleware(RedirectToGame::class);
 Route::get('logs/{id}', [Controllers\LogsController::class, 'detail'])->whereNumber('id');
 Route::match(['get', 'post'], 'stats', [Controllers\StatsController::class, 'index']);
 Route::match(['get', 'post'], 'stats/players', [Controllers\StatsController::class, 'index']);
@@ -27,8 +29,8 @@ Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id')->name('players.detail');
 Route::get('userbar{id}.jpg', [Controllers\UserBarController::class, 'index'])->whereNumber('id');
 
-Route::middleware(['auth'])->group(function () {
-	Route::post('logout', [Controllers\LogoutController::class, 'index']);
+Route::middleware(['auth', RedirectToStart::class])->group(function () {
+	Route::post('logout', [Controllers\LogoutController::class, 'index'])->withoutMiddleware(RedirectToStart::class);
 	Route::get('tech', [Controllers\TechController::class, 'index']);
 	Route::get('tech/{id}', [Controllers\TechController::class, 'info'])->whereNumber('id');
 
@@ -38,7 +40,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 
-	Route::get('info/{id}', [Controllers\InfoController::class, 'detail'])->whereNumber('id')->name('info.detail');
+	Route::get('info/{id}', [Controllers\InfoController::class, 'detail'])->whereNumber('id')->withoutMiddleware(RedirectToStart::class)->name('info.detail');
 	Route::post('info/{id}/missiles', [Controllers\InfoController::class, 'missiles'])->whereNumber('id');
 	Route::post('info/{id}/alliance', [Controllers\InfoController::class, 'alliance'])->whereNumber('id');
 
@@ -87,9 +89,11 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('alliance/admin/ranks/create', [Controllers\Alliance\AllianceRanksController::class, 'create']);
 	Route::delete('alliance/admin/ranks/{id}', [Controllers\Alliance\AllianceRanksController::class, 'remove']);
 
-	Route::get('start', [Controllers\StartController::class, 'index'])->name('start');
-	Route::post('start', [Controllers\StartController::class, 'save']);
-	Route::post('start/race', [Controllers\StartController::class, 'race']);
+	Route::withoutMiddleware(RedirectToStart::class)->group(function () {
+		Route::get('start', [Controllers\StartController::class, 'index'])->name('start');
+		Route::post('start', [Controllers\StartController::class, 'save']);
+		Route::post('start/race', [Controllers\StartController::class, 'race']);
+	});
 
 	Route::get('quests', [Controllers\QuestController::class, 'index'])->name('quests');
 	Route::get('quests/{id}', [Controllers\QuestController::class, 'info'])->whereNumber('id');

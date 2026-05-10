@@ -15,4 +15,10 @@ class Statistic extends Model
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
+
+	/** @return BelongsTo<Alliance, $this> */
+	public function alliance(): BelongsTo
+	{
+		return $this->belongsTo(Alliance::class, 'alliance_id');
+	}
 }

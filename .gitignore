@@ -28,3 +28,6 @@ Thumbs.db
 /public/fonts/filament
 /bootstrap/ssr/
 /public/hot
+/.agents
+/.codex
+/AGENTS.md

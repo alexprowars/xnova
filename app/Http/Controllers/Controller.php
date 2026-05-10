@@ -19,20 +19,6 @@ class Controller extends BaseController
 	public function __construct()
 	{
 		$this->middleware(function (Request $request, Closure $next) {
-			$controller = $request->route()->getController();
-
-			if ($request->path() == '/' && $request->user() !== null) {
-				return redirect()->route('overview');
-			}
-
-			if ($request->user() && (!$request->user()->race || !$request->user()->sex) && $controller && !in_array($controller::class, [StateController::class, InfoController::class, ContentController::class, StartController::class, LogoutController::class])) {
-				return redirect()->route('start');
-			}
-
-			return $next($request);
-		});
-
-		$this->middleware(function (Request $request, Closure $next) {
 			$this->init($request->user());
 
 			return $next($request);
