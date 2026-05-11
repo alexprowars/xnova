@@ -32,9 +32,6 @@ export default defineConfig({
 					whitespace: 'preserve'
 				}
 			},
-			features: {
-				prodDevtools: true
-			},
 		}),
 		inertia({
 			ssr: {

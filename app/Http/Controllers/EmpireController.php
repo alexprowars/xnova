@@ -90,7 +90,7 @@ class EmpireController extends Controller
 			}
 
 			foreach (Vars::getItemsByType([ItemType::BUILDING, ItemType::FLEET]) as $objectId) {
-				$row['factor'][$objectId] = $planet->entities->getByEntityId($objectId)->factor * 10;
+				$row['factor'][$objectId] = $planet->getEntity($objectId)->getFactor() * 10;
 			}
 
 			$build_hangar = [];

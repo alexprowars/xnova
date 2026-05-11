@@ -51,14 +51,14 @@ class PlanetResource extends JsonResource
 		$basicProduction = $planetProduction->getBasicProduction();
 
 		foreach (Vars::getResources() as $res) {
-			$entity = $this->resource->entities->getByEntityId(Vars::getIdByName($res . '_mine'));
+			$entity = $this->resource->getEntity(Vars::getIdByName($res . '_mine'));
 
 			$data['resources'][$res] = [
 				'value' => floor((float) $this->resource->{$res}),
 				'capacity' => $storage->get($res),
 				'basic' => $basicProduction->get($res),
 				'production' => $production->get($res),
-				'factor' => $entity->factor / 10,
+				'factor' => $entity->getFactor() / 10,
 			];
 		}
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\Resources;
@@ -11,6 +10,7 @@ use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
 use App\Models\Planet;
+use App\Models\PlanetEntity;
 use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -43,8 +43,8 @@ class ResourcesController extends Controller
 			$item = [
 				'id' => $entityId,
 				'code' => Vars::getName($entityId),
-				'factor' => $entity->factor ?? 10,
-				'level' => $entity->level,
+				'factor' => $entity->getFactor(),
+				'level' => $entity->amount,
 				'bonus' => 0,
 			];
 
@@ -123,8 +123,11 @@ class ResourcesController extends Controller
 				->filter(fn(BaseObject $object) => $object->getProduction() !== null)
 				->pluck(fn(BaseObject $object) => $object->getId());
 
-			$planet->entities->whereIn('id', $itemsId)->each(fn(PlanetEntity $entity) => $entity->factor = $production);
-			$planet->save();
+			$planet->entities->whereIn('entity_id', $itemsId)
+				->each(function (PlanetEntity $entity) use ($production) {
+					$entity->setFactor($production);
+					$entity->save();
+				});
 		});
 	}
 
@@ -143,12 +146,10 @@ class ResourcesController extends Controller
 
 			$value = max(0, min(10, (int) $value));
 
-			$this->planet->entities
-				->getByEntityId($entityId)
-				->factor = $value;
+			$entity = $this->planet->getEntity($entityId);
+			$entity->setFactor($value);
+			$entity->save();
 		}
-
-		$this->planet->save();
 	}
 
 	protected function getBuyResourcesAmount(): array

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Engine\Entity\Model\PlanetEntity;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Format;
@@ -10,6 +9,7 @@ use App\Http\Requests\ChangeEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Models;
 use App\Models\Planet;
+use App\Models\PlanetEntity;
 use App\Models\UserAuthentication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -246,8 +246,11 @@ class OptionsController extends Controller
 		}
 
 		$this->user->planets->each(function (Planet $planet) use ($buildsId) {
-			$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
-			$planet->save();
+			$planet->entities->whereIn('entity_id', $buildsId)
+				->each(function (PlanetEntity $entity) {
+					$entity->setFactor(0);
+					$entity->save();
+				});
 		});
 
 		$this->user->vacation = $vacationTime;

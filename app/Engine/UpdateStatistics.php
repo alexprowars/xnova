@@ -3,13 +3,13 @@
 namespace App\Engine;
 
 use App\Engine\Entity\Model\FleetEntityCollection;
-use App\Engine\Entity\Model\PlanetEntity;
 use App\Engine\Enums\ItemType;
 use App\Engine\Objects\ObjectsFactory;
 use App\Facades\Vars;
 use App\Models;
 use App\Models\Fleet;
 use App\Models\LogsStat;
+use App\Models\PlanetEntity;
 use App\Models\Statistic;
 use App\Models\User;
 use App\Notifications\UserDeleteNotification;
@@ -96,24 +96,24 @@ class UpdateStatistics
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->level <= 0) {
+			if ($item->amount <= 0) {
 				continue;
 			}
 
 			if ($user->getOption('records')) {
-				$this->setMaxInfo($item->id, $item->level, $user);
+				$this->setMaxInfo($item->entity_id, $item->amount, $user);
 			}
 
-			$object = ObjectsFactory::get($item->id);
+			$object = ObjectsFactory::get($item->entity_id);
 
-			$price = ObjectsFactory::get($item->id)->getPrice();
+			$price = $object->getPrice();
 			$Units = $object->getTotalPrice(true);
 
-			for ($Level = 1; $Level <= $item->level; $Level++) {
+			for ($Level = 1; $Level <= $item->amount; $Level++) {
 				$BuildPoints += $Units * ($price['factor'] ** $Level);
 			}
 
-			$BuildCounts += $item->level;
+			$BuildCounts += $item->amount;
 		}
 
 		$RetValue['BuildCount'] = $BuildCounts;
@@ -132,17 +132,17 @@ class UpdateStatistics
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->level <= 0) {
+			if ($item->amount <= 0) {
 				continue;
 			}
 
-			$RecordArray[$item->id] ??= 0;
-			$RecordArray[$item->id] += $item->level;
+			$RecordArray[$item->entity_id] ??= 0;
+			$RecordArray[$item->entity_id] += $item->amount;
 
-			$itemObject = ObjectsFactory::get($item->id);
+			$itemObject = ObjectsFactory::get($item->entity_id);
 
-			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->level);
-			$UnitsCounts += $item->level;
+			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->amount);
+			$UnitsCounts += $item->amount;
 		}
 
 		$RetValue['DefenseCount'] = $UnitsCounts;
@@ -161,19 +161,19 @@ class UpdateStatistics
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
-			if ($item->level <= 0) {
+			if ($item->amount <= 0) {
 				continue;
 			}
 
-			$RecordArray[$item->id] ??= 0;
-			$RecordArray[$item->id] += $item->level;
+			$RecordArray[$item->entity_id] ??= 0;
+			$RecordArray[$item->entity_id] += $item->amount;
 
-			$itemObject = ObjectsFactory::get($item->id);
+			$itemObject = ObjectsFactory::get($item->entity_id);
 
-			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->level);
+			$UnitsPoints += ($itemObject->getTotalPrice(true) * $item->amount);
 
-			if ($item->id != 212) {
-				$UnitsCounts += $item->level;
+			if ($item->entity_id != 212) {
+				$UnitsCounts += $item->amount;
 			}
 		}
 

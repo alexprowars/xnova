@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -35,7 +34,6 @@ return new class extends Migration {
 			$table->integer('debris_metal')->default(0);
 			$table->integer('debris_crystal')->default(0);
 			$table->timestamp('merchand')->nullable();
-			$table->json('entities')->default(new Expression('(JSON_ARRAY())'));
 			$table->softDeletes();
 			$table->timestamps();
 		});

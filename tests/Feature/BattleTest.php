@@ -69,7 +69,7 @@ test('battle combat', function () {
 	$planet = Galaxy::createPlanet(new Coordinates(1, 1, 1), $user, null, true);
 
 	foreach ($fleets as $id => $lvl) {
-		$planet->entities->getByEntityId($id)->setLevel($lvl);
+		$planet->getEntity($id)->setLevel($lvl);
 	}
 
 	$battle->addPlanet($planet);

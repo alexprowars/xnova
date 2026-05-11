@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use App\Engine\Entity\Model\PlanetEntity;
 use App\Facades\Vars;
 use App\Filament\HasPageForm;
 use App\Models\Blocked;
 use App\Models\Planet;
+use App\Models\PlanetEntity;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -140,8 +140,11 @@ class UserBan extends Page
 			}
 
 			$user->planets->each(function (Planet $planet) use ($buildsId) {
-				$planet->entities->whereIn('id', $buildsId)->each(fn(PlanetEntity $entity) => $entity->factor = 0);
-				$planet->save();
+				$planet->entities->whereIn('entity_id', $buildsId)
+					->each(function (PlanetEntity $entity) {
+						$entity->setFactor(0);
+						$entity->save();
+					});
 			});
 		}
 

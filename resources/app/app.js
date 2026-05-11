@@ -18,6 +18,7 @@ import FloatingVue from 'floating-vue';
 import Vue3TouchEvents from 'vue3-touch-events'
 import { createVfm } from 'vue-final-modal';
 import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
+import { createState, StateSymbol } from '~/composables/useState.js';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -44,6 +45,8 @@ createInertiaApp({
 		},
 	},
 	withApp(app) {
+		app.provide(StateSymbol, createState());
+
 		withInertiaModal(app);
 		app.use(i18n);
 

@@ -63,7 +63,7 @@ class Build
 				'object_id' => $element->getId(),
 				'date' => null,
 				'date_end' => null,
-				'level' => $build->level + (!$destroy ? 1 : 0) + $inArray
+				'level' => $build->amount + (!$destroy ? 1 : 0) + $inArray
 			]);
 
 			$this->queue->loadQueue();

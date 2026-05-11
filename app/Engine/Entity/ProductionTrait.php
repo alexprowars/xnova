@@ -18,7 +18,7 @@ trait ProductionTrait
 		}
 
 		if ($factor === null) {
-			$factor = $this->planet?->entities->getByEntityId($this->entityId)->factor ?? 10;
+			$factor = $this->planet?->getEntity($this->entityId)->getFactor() ?? 10;
 		}
 
 		$factor = min(max($factor, 0), 10);

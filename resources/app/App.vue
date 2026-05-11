@@ -36,10 +36,6 @@
 	const state = useState();
 	const user = computed(() => state.user);
 
-	watch(user, () => {
-		console.log('user')
-	})
-
 	setLocale(state.locale);
 	dayjs.locale(state.locale);
 
