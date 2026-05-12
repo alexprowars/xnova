@@ -21,9 +21,9 @@
 	});
 
 	const now = useNow({ interval: 1000 });
-	const endTime = computed(() =>
-		props.queue.length ? dayjs(props.queue[0].time).diff(now.value) / 1000 : 0
-	);
+	const endTime = computed(() => {
+		return props.queue.length ? dayjs(props.queue[0].date).diff(now.value) / 1000 : 0
+	});
 
 	let timeout;
 

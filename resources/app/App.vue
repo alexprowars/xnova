@@ -68,9 +68,9 @@
 				chatStore.addMessage(message);
 			})
 			.listen('PlanetEntityUpdated', () => {
-				router.reload({
-					only: ['state']
-				});
+				//router.reload({
+				//	only: ['state']
+				//});
 			});
 	}
 </script>

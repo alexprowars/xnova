@@ -51,7 +51,7 @@
 		if (diff <= 0) {
 			props.queue.splice(0, 1);
 		} else {
-			props.queue[0]['count'] = Math.ceil(diff / first['time']);
+			props.queue[0]['count'] = Math.ceil(diff / first['date']);
 		}
 	}
 </script>

@@ -17,6 +17,7 @@ class StateController extends Controller
 		$user = Auth::user();
 
 		$data = [
+			'date' => now()->utc()->toAtomString(),
 			'messages' => [],
 			'speed' => [
 				'game' => Game::getSpeed('build'),
