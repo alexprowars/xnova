@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Format;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -11,7 +13,7 @@ class SearchController extends Controller
 {
 	public function index(Request $request)
 	{
-		$query = $request->post('query', '');
+		$querySearch = $request->post('query', '');
 		$type = $request->post('type', 'playername');
 
 		$items = [];
@@ -20,16 +22,54 @@ class SearchController extends Controller
 
 		switch ($type) {
 			case 'playername':
-				$search = DB::select("SELECT u.id, u.username, u.race, p.name AS planet_name, u.alliance_name, u.galaxy AS g, u.system AS s, u.planet AS p, s.total_rank FROM users u LEFT JOIN planets p ON p.id = u.planet_id LEFT JOIN statistics s ON s.user_id = u.id AND s.stat_type = 1 WHERE u.username LIKE '%" . $query . "%' LIMIT 30;");
-				break;
 			case 'planetname':
-				$search = DB::select("SELECT u.id, u.username, u.race, p.name AS planet_name, u.alliance_name, p.galaxy AS g, p.system AS s, p.planet AS p, s.total_rank FROM planets p LEFT JOIN users u ON u.id = p.user_id LEFT JOIN statistics s ON s.user_id = u.id AND s.stat_type = 1 WHERE p.name LIKE '%" . $query . "%' LIMIT 30");
+				$search = DB::query()
+					->select(['u.id', 'u.username', 'u.race', 'p.name AS planet_name', 'u.alliance_name', 'u.galaxy AS g', 'u.system AS s', 'u.planet AS p', 's.total_rank'])
+					->from('users', 'u')
+					->leftJoin('planets as p', 'p.id', '=', 'u.planet_id')
+					->leftJoin('statistics as s', function (JoinClause $join) {
+						$join->on('s.user_id', '=', 'u.id');
+						$join->on('s.stat_type', '=', DB::raw(1));
+					})
+					->when(
+						$type == 'playername',
+						function (Builder $query) use ($querySearch) {
+							$query->whereLike('u.username', '%' . $querySearch . '%');
+						}
+					)
+					->when(
+						$type == 'planetname',
+						function (Builder $query) use ($querySearch) {
+							$query->whereLike('p.name', '%' . $querySearch . '%');
+						}
+					)
+					->limit(30)
+					->get();
 				break;
+
 			case 'allytag':
-				$search = DB::select("SELECT a.id, a.name, a.tag, a.total_members, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.tag LIKE '%" . $query . "%' LIMIT 30");
-				break;
 			case 'allyname':
-				$search = DB::select("SELECT a.id, a.name, a.tag, a.total_members, s.total_points FROM alliances a LEFT JOIN statistics s ON s.alliance_id = a.id AND s.stat_type = 2 WHERE a.name LIKE '%" . $query . "%' LIMIT 30");
+				$search = DB::query()
+					->select(['a.id', 'a.name', 'a.tag', 'a.total_members', 's.total_points'])
+					->from('alliances', 'a')
+					->leftJoin('statistics as s', function ($join) {
+						$join->on('s.alliance_id', '=', 'a.id');
+						$join->on('s.stat_type', '=', DB::raw(2));
+					})
+					->when(
+						$type == 'allytag',
+						function (Builder $query) use ($querySearch) {
+							$query->whereLike('a.tag', '%' . $querySearch . '%');
+						}
+					)
+					->when(
+						$type == 'allyname',
+						function (Builder $query) use ($querySearch) {
+							$query->whereLike('a.name', '%' . $querySearch . '%');
+						}
+					)
+					->limit(30)
+					->get();
 		}
 
 		if ($search) {
@@ -38,6 +78,7 @@ class SearchController extends Controller
 					if (!$r->total_rank) {
 						$r->total_rank = 0;
 					}
+
 					if (!$r->alliance_name) {
 						$r->alliance_name = '-';
 					}

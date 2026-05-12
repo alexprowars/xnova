@@ -25,12 +25,12 @@ class LoginController extends Controller
 				throw new Exception('Введите Email');
 			}
 
-			$existUser = User::query()
+			$exist = User::query()
 				->where('email', $request->post('email'))
 				->exists();
 
-			if (!$existUser) {
-				throw new Exception('Игрока с таким E-mail адресом не найдено');
+			if (!$exist) {
+				throw new Exception('Игрок с таким E-mail адресом и паролем не найден');
 			}
 
 			$credentials = $request->only(['email', 'password']);

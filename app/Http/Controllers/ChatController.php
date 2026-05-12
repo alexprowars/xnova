@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ChatController extends Controller
@@ -23,7 +24,7 @@ class ChatController extends Controller
 
 	public function send(Request $request): void
 	{
-		$message = $request->post('message');
+		$message = Str::sanitize($request->post('message'));
 
 		if (empty($message)) {
 			throw new Exception('Введите текст сообщения');
