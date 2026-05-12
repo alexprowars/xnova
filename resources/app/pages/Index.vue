@@ -15,7 +15,7 @@
 					<div class="sm">
 						{{ $t('pages.index.social_login_label') }}<br><br>
 
-						<a href="" @click.prevent="socialLogin('vkontakte')">Vkontakte</a>
+						<a href="" @click.prevent="socialLogin('vkid')">Vkontakte</a>
 					</div>
 				</div>
 			</div>

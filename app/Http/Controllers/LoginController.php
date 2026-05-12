@@ -15,7 +15,7 @@ use Throwable;
 class LoginController extends Controller
 {
 	private array $socialDrivers = [
-		'vkontakte',
+		'vkid',
 	];
 
 	public function credentials(Request $request)
@@ -94,7 +94,7 @@ class LoginController extends Controller
 				'user_id' 		=> $user->id,
 				'provider'		=> $service,
 				'provider_id' 	=> $profile->getId(),
-				'enter_time' 	=> now(),
+				'login_date' 	=> now(),
 			]);
 
 			Auth::login($user, true);

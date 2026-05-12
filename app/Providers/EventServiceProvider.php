@@ -15,7 +15,7 @@ class EventServiceProvider extends ServiceProvider
 			UserAuthenticated::class,
 		],
 		\SocialiteProviders\Manager\SocialiteWasCalled::class => [
-			'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
+			'SocialiteProviders\\VKID\\VKIDExtendSocialite@handle',
 		],
 	];
 

@@ -34,7 +34,7 @@
         "league/flysystem-path-prefixing": "^3.28",
         "nubs/random-name-generator": "^2.1",
         "shuvroroy/filament-spatie-laravel-backup": "^v3.1.0",
-        "socialiteproviders/vkontakte": "^5.0.0",
+        "socialiteproviders/vkid": "^5.1",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^7.2",
         "technikermathe/blade-lucide-icons": "^3.102"

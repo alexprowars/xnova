@@ -6,7 +6,7 @@ return [
 		'client_secret' => env('FB_CLIENT_SECRET'),
 		'redirect' => env('FB_REDIRECT')
 	],
-	'vkontakte' => [
+	'vkid' => [
 		'client_id' => env('VK_CLIENT_ID'),
 		'client_secret' => env('VK_CLIENT_SECRET'),
 		'redirect' => env('VK_REDIRECT')
