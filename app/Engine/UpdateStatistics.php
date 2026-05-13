@@ -92,7 +92,7 @@ class UpdateStatistics
 		$BuildPoints = 0;
 
 		$items = $planet->entities
-			->whereIn('id', Vars::getItemsByType(ItemType::BUILDING));
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::BUILDING));
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
@@ -128,7 +128,7 @@ class UpdateStatistics
 		$UnitsPoints = 0;
 
 		$items = $planet->entities
-			->whereIn('id', Vars::getItemsByType(ItemType::DEFENSE));
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::DEFENSE));
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {
@@ -157,7 +157,7 @@ class UpdateStatistics
 		$UnitsPoints = 0;
 
 		$items = $planet->entities
-			->whereIn('id', Vars::getItemsByType(ItemType::FLEET));
+			->whereIn('entity_id', Vars::getItemsByType(ItemType::FLEET));
 
 		/** @var PlanetEntity $item */
 		foreach ($items as $item) {

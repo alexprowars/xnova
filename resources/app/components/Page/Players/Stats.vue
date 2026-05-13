@@ -121,38 +121,38 @@
 
 		new Chart(rankChartRef.value, {
 			type: 'line',
-			item: {
+			data: {
 				labels: labels,
 				datasets: [{
 					label: t('pages.players.chart_label_buildings'),
 					fill: false,
 					borderColor: typeChartColors.value.build,
 					backgroundColor: typeChartColors.value.build,
-					item: ranks.build,
+					data: ranks.build,
 				}, {
 					label: t('pages.players.chart_label_technologies'),
 					fill: false,
 					borderColor: typeChartColors.value.tech,
 					backgroundColor: typeChartColors.value.tech,
-					item: ranks.tech
+					data: ranks.tech
 				}, {
 					label: t('pages.players.chart_label_defense'),
 					fill: false,
 					borderColor: typeChartColors.value.defs,
 					backgroundColor: typeChartColors.value.defs,
-					item: ranks.defs
+					data: ranks.defs
 				}, {
 					label: t('pages.players.chart_label_fleet'),
 					fill: false,
 					borderColor: typeChartColors.value.fleet,
 					backgroundColor: typeChartColors.value.fleet,
-					item: ranks.fleet
+					data: ranks.fleet
 				}, {
 					label: t('pages.players.chart_label_rank_total'),
 					fill: false,
 					borderColor: typeChartColors.value.total,
 					backgroundColor: typeChartColors.value.total,
-					item: ranks.total
+					data: ranks.total
 				}, ]
 			},
 			options: {
@@ -195,14 +195,14 @@
 
 		let config = {
 			type: 'line',
-			item: {
+			data: {
 				labels: labels,
 				datasets: [{
 					label: typeChartLabels.value[typeChart.value],
 					fill: false,
 					borderColor: typeChartColors.value[typeChart.value],
 					backgroundColor: typeChartColors.value[typeChart.value],
-					item: points
+					data: points
 				}]
 			},
 			options: {
@@ -245,7 +245,7 @@
 		if (pointsChart === null) {
 			pointsChart = new Chart(pointChartRef.value, config);
 		} else {
-			pointsChart.item = config.item;
+			pointsChart.data = config.data;
 			pointsChart.update('none');
 		}
 	}
