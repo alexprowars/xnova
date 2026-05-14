@@ -102,7 +102,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#adba74\" \"php artisan serve\" \"php artisan schedule:run\" \"php artisan queue:listen --tries=1\" \"php artisan game:daemon\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,schedule,queue,daemon,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#adba74\" \"php artisan serve\" \"php artisan schedule:run\" \"php artisan queue:listen --tries=1\" \"php artisan reverb:start\" \"php artisan game:daemon\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,schedule,queue,reverb,daemon,logs,vite"
         ],
 		"pre-package-uninstall": [
 			"Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"

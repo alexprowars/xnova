@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite --host 0.0.0.0",
+        "dev": "vite --host 127.0.0.1",
         "watch": "vite build --watch",
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr"
