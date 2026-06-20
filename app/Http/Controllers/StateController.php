@@ -34,11 +34,11 @@ class StateController extends Controller
 		];
 
 		if ($user) {
-			$data['user'] = fn () => UserResource::make($user);
+			$data['user'] = UserResource::make($user);
 
 			if ($planet = $user->getCurrentPlanet()) {
-				$data['planet'] = fn () => PlanetResource::make($planet);
-				$data['queue'] = fn () => QueueResource::make($user);
+				$data['planet'] = PlanetResource::make($planet);
+				$data['queue'] = QueueResource::make($user);
 			}
 
 			$globalMessage = $settings->globalMessage ?: '';

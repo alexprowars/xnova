@@ -1,5 +1,5 @@
 import { createInertiaApp } from '@inertiajs/vue3';
-import i18n from './i18n.js';
+import i18n, { setLocale } from './i18n.js';
 import './styles.css';
 import toastPlugin from './plugins/toast';
 import { morph, number, time } from './utils/format.js';
@@ -44,7 +44,7 @@ createInertiaApp({
 			};
 		},
 	},
-	withApp(app) {
+	withApp(app, options) {
 		app.provide(StateSymbol, createState());
 
 		withInertiaModal(app);
@@ -75,6 +75,11 @@ createInertiaApp({
 
 		app.config.errorHandler = (error) => {
 			console.error(error);
+		}
+
+		if (options.page.props?.state.locale) {
+			setLocale(options.page.props.state.locale);
+			dayjs.locale(options.page.props.state.locale);
 		}
 	},
 	progress: {

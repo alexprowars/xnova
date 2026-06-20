@@ -5,11 +5,11 @@
 </template>
 
 <script setup>
-	import { computed, inject } from 'vue';
+import { computed, inject, useId } from 'vue';
 
 	const props = defineProps({
 		id: {
-			default: null
+			default: () => 'tab-' + useId(),
 		},
 		name: {
 			required: true

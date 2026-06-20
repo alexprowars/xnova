@@ -8,9 +8,9 @@
 </template>
 
 <script setup>
-	import useState from '~/composables/useState.js';
+	import useState, { updateState } from '~/composables/useState.js';
 	import { computed, provide, watch } from 'vue';
-	import { router, usePoll } from '@inertiajs/vue3';
+	import { router } from '@inertiajs/vue3';
 	import { ModalsContainer } from 'vue-final-modal';
 	import Loader from '~/components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
@@ -36,8 +36,10 @@
 	const state = useState();
 	const user = computed(() => state.user);
 
-	setLocale(state.locale);
-	dayjs.locale(state.locale);
+	watch(() => state.locale, (value) => {
+		setLocale(value);
+		dayjs.locale(value);
+	});
 
 	router.on('navigate', () => {
 		closeModals();
@@ -53,10 +55,16 @@
 		}
 	}, { immediate: true });
 
+	let updateStateTimer;
+
+	function stateUpdate() {
+		clearTimeout(updateStateTimer);
+		updateState();
+		updateStateTimer = setTimeout(stateUpdate, 60000);
+	}
+
 	if (user.value) {
-		/*usePoll(60000, {
-			only: ['state']
-		});*/
+		updateStateTimer = setTimeout(stateUpdate, 60000);
 
 		echo?.channel('chat')
 			.listen('ChatMessage', ({ message }) => {
@@ -68,9 +76,7 @@
 				chatStore.addMessage(message);
 			})
 			.listen('PlanetEntityUpdated', () => {
-				//router.reload({
-				//	only: ['state']
-				//});
+				stateUpdate();
 			});
 	}
 </script>

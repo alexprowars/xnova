@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/vue3';
+import { useHttp, usePage } from '@inertiajs/vue3';
 import { computed, hasInjectionContext, inject, reactive } from 'vue';
 
 export const StateSymbol = Symbol('state');
@@ -28,4 +28,14 @@ export default function useState () {
 	}
 
 	return createState();
+}
+
+export function updateState() {
+	useHttp().get('/state', {
+		onSuccess: (response) => {
+			const page = usePage();
+
+			page.props.state = response || {};
+		}
+	})
 }

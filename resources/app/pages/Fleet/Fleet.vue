@@ -201,7 +201,7 @@
 	async function checkout() {
 		useForm({
 			ships: fleets.value,
-			...page['selected'],
+			...props.page['selected'],
 		})
 		.post('/fleet/checkout', {
 			onSuccess(result) {
