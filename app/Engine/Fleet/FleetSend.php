@@ -188,15 +188,14 @@ class FleetSend
 			throw new Exception('Игрок в режиме отпуска!');
 		}
 
-		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && $this->mission == MissionType::Attack) {
+		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && in_array($this->mission, [MissionType::Attack, MissionType::StayAlly])) {
 			$this->diplomacy = AllianceDiplomacy::query()
 				->where('alliance_id', $targerUser->alliance_id)
 				->where('diplomacy_id', $this->planet->user->alliance_id)
 				->where('status', 1)
-				->where('type', '<', 3)
 				->first();
 
-			if ($this->diplomacy) {
+			if ($this->mission == MissionType::Attack && $this->diplomacy && $this->diplomacy->type < 3) {
 				throw new Exception('Заключён мир или перемирие с альянсом атакуемого игрока.');
 			}
 		}

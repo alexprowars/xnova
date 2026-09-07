@@ -127,7 +127,7 @@ class Battle
 			if ($planet->getLevel($object) > 0 && $object instanceof DefenceObject) {
 				$unit = $this->getUnitData($object, $planet->getLevel($object), $res);
 
-				if ($planet->user->officier_engineer?->isFuture() && $object instanceof ShipObject) {
+				if ($planet->user->officier_engineer?->isFuture() && !($object instanceof ShipObject)) {
 					$unit->setRepairProb(0.8);
 				}
 

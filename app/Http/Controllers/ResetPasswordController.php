@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Inertia\Inertia;
 use InertiaUI\Modal\Modal;
@@ -56,15 +57,16 @@ class ResetPasswordController extends Controller
 		$data = $request->validate([
 			'token' => ['required'],
 			'email' => ['required', 'email'],
-			'password' => ['required', PasswordRule::min(6), 'confirmed'],
+			'password' => ['required', PasswordRule::defaults(), 'confirmed'],
 		]);
 
 		$status = Password::reset(
 			$data,
-			function (User $user, $password) {
+			function (User $user, string $password): void {
 				$user->forceFill([
 					'password' => Hash::make($password),
 				]);
+				$user->setRememberToken(Str::random(60));
 				$user->save();
 
 				event(new PasswordReset($user));

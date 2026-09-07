@@ -147,7 +147,7 @@
 				<div class="block-table text-center">
 					<div class="grid">
 						<div class="th">
-							<TextEditor v-model="data['about']"/>
+							<TextEditor name="about" v-model="data['about']"/>
 						</div>
 					</div>
 					<div class="grid">

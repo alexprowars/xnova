@@ -106,9 +106,9 @@ class BuildingsController extends Controller
 
 	public function queue(Request $request, string $action): void
 	{
-		$index = (int) $request->post('index', 0);
+		$queueId = (int) $request->post('queue_id', 0);
 
-		if (!$index) {
+		if ($queueId <= 0) {
 			return;
 		}
 
@@ -116,10 +116,8 @@ class BuildingsController extends Controller
 
 		switch ($action) {
 			case 'cancel':
-				$queueManager->delete(ObjectsFactory::get(1));
-				break;
 			case 'remove':
-				$queueManager->delete(ObjectsFactory::get(1), $index);
+				$queueManager->delete(ObjectsFactory::get(1), $queueId);
 				break;
 		}
 	}

@@ -19,7 +19,7 @@ class Destruction extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
-		return $target->getType() == PlanetType::MOON && !empty($units[214]) && $targetPlanet && $planet->user_id == $targetPlanet->user_id;
+		return $target->getType() == PlanetType::MOON && !empty($units[214]) && $targetPlanet && $planet->user_id != $targetPlanet->user_id;
 	}
 
 	public function targetEvent(): void
@@ -28,10 +28,6 @@ class Destruction extends BaseMission
 		$mission->targetEvent();
 
 		$checkFleet = Models\Fleet::findOne($this->fleet);
-
-		if ($checkFleet && $checkFleet->mess == 1) {
-			return;
-		}
 
 		if ($checkFleet && $checkFleet->won == 1) {
 			$this->fleet->entities = $checkFleet->entities;
@@ -101,7 +97,7 @@ class Destruction extends BaseMission
 
 					$debris = FleetService::convertFleetToDebris($this->fleet->entities);
 
-					if ($debris['metal'] > 0 && $debris['crystal'] > 0) {
+					if ($debris['metal'] > 0 || $debris['crystal'] > 0) {
 						Models\Planet::query()->coordinates($this->fleet->getDestinationCoordinates(false))
 							->whereNot('planet_type', PlanetType::MOON)
 							->incrementEach([

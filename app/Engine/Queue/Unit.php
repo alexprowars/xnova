@@ -20,6 +20,21 @@ class Unit
 	public function add(BaseObject $element, int $count): void
 	{
 		$planet = $this->queue->getPlanet();
+
+		$planet->getConnection()
+			->transaction(function () use ($planet, $element, $count) {
+				$planet->refreshForUpdate();
+				$planet->getProduction()->reset();
+
+				$this->queue->loadQueue();
+
+				$this->addLocked($element, $count);
+			});
+	}
+
+	protected function addLocked(BaseObject $element, int $count): void
+	{
+		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
 		$entity = EntityFactory::get($element->getId(), 1, $planet);

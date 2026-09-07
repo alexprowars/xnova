@@ -154,7 +154,7 @@ class AllianceAdminController extends Controller
 
 		$members = $alliance->members()
 			->whereNot('user_id', $alliance->user_id)
-			->where('rank', '>', 0)
+			->whereNotNull('rank')
 			->with('user')
 			->get();
 
@@ -163,7 +163,7 @@ class AllianceAdminController extends Controller
 		];
 
 		foreach ($members as $member) {
-			if ($alliance->ranks[$member->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] == 1) {
+			if (($alliance->ranks[$member->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] ?? 0) == 1) {
 				$result['members'][] = [
 					'id' => $member->id,
 					'name' => $member->user?->username,
@@ -195,7 +195,7 @@ class AllianceAdminController extends Controller
 		$alliance->user()->associate($user);
 		$alliance->save();
 
-		$member->update(['rank' => 0]);
+		$member->update(['rank' => null]);
 
 		return to_route('alliance');
 	}

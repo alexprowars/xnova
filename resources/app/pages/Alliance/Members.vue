@@ -55,7 +55,7 @@
 									<div class="th">{{ $t('pages.alliance.members.set_rank_for', [m['username']]) }}</div>
 									<div class="th">
 										<select v-model="m['rank']">
-											<option value="0">{{ $t('pages.alliance.members.novice') }}</option>
+											<option :value="null">{{ $t('pages.alliance.members.novice') }}</option>
 											<option v-for="rank in page['ranks']" :value="rank['id']">{{ rank['name'] }}</option>
 										</select>
 									</div>

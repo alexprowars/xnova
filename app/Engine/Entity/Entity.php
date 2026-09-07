@@ -143,13 +143,19 @@ abstract class Entity implements EntityInterface, EntityProductionInterface
 
 		foreach ($requeriments as $reqElement => $level) {
 			if ($reqElement == 'race') {
-				return $this->planet->user->race == $level;
+				if ($this->planet->user->race != $level) {
+					return false;
+				}
+
+				continue;
 			}
 
 			$object = ObjectsFactory::get($reqElement);
 
 			if ($object instanceof ResearchObject) {
-				return $this->planet->user->getTechLevel($object->getId()) >= $level;
+				if ($this->planet->user->getTechLevel($object->getId()) < $level) {
+					return false;
+				}
 			}
 
 			if ($object instanceof BuildingObject) {

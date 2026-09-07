@@ -97,9 +97,9 @@ class Alliance extends Model implements HasMedia
 			foreach ($this->rights as $key => $value) {
 				$this->rights[$key] = true;
 			}
-		} elseif (isset($this->ranks[$this->member->rank])) {
+		} elseif ($this->member?->rank !== null && isset($this->ranks[$this->member->rank])) {
 			foreach (AllianceAccess::cases() as $case) {
-				$this->rights[$case->value] = $this->ranks[$this->member->rank][$case->value] == 1;
+				$this->rights[$case->value] = ($this->ranks[$this->member->rank][$case->value] ?? 0) == 1;
 			}
 		}
 	}
@@ -115,7 +115,7 @@ class Alliance extends Model implements HasMedia
 
 	public function deleteMember(int $userId): void
 	{
-		$this->decrement('members');
+		$this->decrement('total_members');
 		AllianceMember::query()->where('user_id', $userId)->delete();
 
 		Planet::query()->where('user_id', $userId)->update(['alliance_id' => null]);

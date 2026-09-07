@@ -143,7 +143,7 @@ class OptionsController extends Controller
 			}
 
 			if ($request->has('about')) {
-				$this->user->about = Format::text($request->post('text', ''));
+				$this->user->about = Format::text((string) $request->input('about', ''));
 			}
 
 			if ($request->has('records')) {

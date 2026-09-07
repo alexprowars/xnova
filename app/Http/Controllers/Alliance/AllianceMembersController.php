@@ -6,8 +6,6 @@ use App\Engine\Enums\AllianceAccess;
 use App\Exceptions\Exception;
 use App\Format;
 use App\Http\Controllers\Controller;
-use App\Models\AllianceMember;
-use App\Models\Planet;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -60,7 +58,7 @@ class AllianceMembersController extends Controller
 				'id' => $member->user_id,
 				'username' => $member->user->username,
 				'race' => $member->user->race,
-				'rank' => (int) $member->rank,
+				'rank' => $member->rank,
 				'galaxy' => $member->user->galaxy,
 				'system' => $member->user->system,
 				'planet' => $member->user->planet,
@@ -83,7 +81,7 @@ class AllianceMembersController extends Controller
 
 			if ($alliance->user_id == $member->user_id) {
 				$item['range'] = empty($alliance->owner_range) ? 'Основатель' : $alliance->owner_range;
-			} elseif ($member->rank && isset($alliance->ranks[$member->rank]['name'])) {
+			} elseif ($member->rank !== null && isset($alliance->ranks[$member->rank]['name'])) {
 				$item['range'] = $alliance->ranks[$member->rank]['name'];
 			} else {
 				$item['range'] = __('alliance.Novate');
@@ -102,7 +100,7 @@ class AllianceMembersController extends Controller
 		if (is_array($alliance->ranks) && !empty($alliance->ranks)) {
 			foreach ($alliance->ranks as $a => $b) {
 				$result['ranks'][] = [
-					'id' => $a + 1,
+					'id' => (int) $a,
 					'name' => $b['name'],
 				];
 			}
@@ -133,27 +131,22 @@ class AllianceMembersController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		Planet::query()->whereBelongsTo($user)
-			->where('alliance_id', $alliance->id)
-			->update(['alliance_id' => null]);
-
-		$user->alliance_id = null;
-		$user->alliance_name = null;
-		$user->save();
-
-		AllianceMember::query()->whereBelongsTo($user)->delete();
+		$alliance->deleteMember($user->id);
 	}
 
 	public function rank(Request $request): void
 	{
 		$alliance = $this->getAlliance();
 
-		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_KICK)) {
+		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS)) {
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
 		$id = (int) $request->input('id');
-		$rank = (int) $request->input('rank', 0);
+		$data = $request->validate([
+			'rank' => ['present', 'nullable', 'integer', 'min:0'],
+		]);
+		$rank = $data['rank'] === null ? null : (int) $data['rank'];
 
 		$user = User::find($id);
 
@@ -161,11 +154,15 @@ class AllianceMembersController extends Controller
 			throw new Exception('Игрок не найден');
 		}
 
-		if ($user->id == $alliance->user_id) {
-			$rank = 0;
+		if ($user->id == $this->user->id) {
+			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		if ((isset($alliance->ranks[$rank - 1]) || $rank == 0) && $user->alliance_id == $alliance->id) {
+		if ($user->id == $alliance->user_id) {
+			$rank = null;
+		}
+
+		if (($rank === null || isset($alliance->ranks[$rank])) && $user->alliance_id == $alliance->id) {
 			$alliance->members()->whereBelongsTo($user)
 				->update(['rank' => $rank]);
 		}

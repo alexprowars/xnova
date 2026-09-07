@@ -46,7 +46,7 @@ class FleetVerbandController extends Controller
 				'id' => $item->id,
 				'mission' => $item->mission,
 				'amount' => $item->entities->getTotal(),
-				'units' => $fleet->entities,
+				'units' => $item->entities,
 				'start' => [
 					...$item->getOriginCoordinates()->toArray(),
 					'time' => $item->start_date?->utc()->toAtomString(),

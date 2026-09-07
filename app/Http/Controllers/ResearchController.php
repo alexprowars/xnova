@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Engine\Building;
+use App\Engine\Entity\Research;
 use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\QueueType;
 use App\Engine\Objects\ObjectsFactory;
 use App\Engine\Objects\ResearchObject;
 use App\Engine\QueueManager;
+use App\Exceptions\Exception;
 use App\Facades\Vars;
-use App\Models\Planet;
 use App\Models\Queue as QueueModel;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -90,22 +91,27 @@ class ResearchController extends Controller
 
 				if ($techHandle) {
 					if ($techHandle->object_id == $element->getId()) {
+						$planet = $techHandle->planet_id == $this->planet->id
+							? $this->planet : $techHandle->planet;
+
+						if (!$planet) {
+							throw new Exception('Planet not found');
+						}
+
+						$planet->setRelation('user', $this->user);
+
+						$research = Research::createEntity($techHandle->object_id, $techHandle->level - 1, $planet);
+
 						$row['build'] = [
 							'planet_id' => $techHandle->planet_id,
 							'item' => $techHandle->object_id,
 							'name' => null,
 							'level' => $techHandle->level,
-							'date' => $techHandle->date->addSeconds($row['time'])->utc()->toAtomString(),
+							'date' => $techHandle->date->addSeconds($research->getTime())->utc()->toAtomString(),
 						];
 
 						if ($techHandle->planet_id != $this->planet->id) {
-							$planet = Planet::select(['name'])
-								->where('id', $techHandle->planet_id)
-								->first();
-
-							if ($planet) {
-								$row['build']['planet'] = $planet->name;
-							}
+							$row['build']['planet'] = $planet->name;
 						}
 					} else {
 						$row['build'] = true;

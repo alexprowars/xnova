@@ -31,7 +31,7 @@ class FleetService
 			}
 
 			if (!empty($res['crystal']) && $res['crystal'] > 0) {
-				$debris['crystal'] += (int) floor($entity->count * $res['crystal'] * config('game.combat.debrisFactor_DEFENSE', 0));
+				$debris['crystal'] += (int) floor($entity->count * $res['crystal'] * config('game.combat.debrisFactor_FLEET', 0));
 			}
 		}
 

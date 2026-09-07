@@ -69,11 +69,11 @@ class Build
 		}
 	}
 
-	public function delete(int $indexId): void
+	public function delete(int $queueId): void
 	{
 		$queueArray = $this->queue->get(QueueType::BUILDING);
 
-		$queueItem = $queueArray->get($indexId);
+		$queueItem = $queueArray->firstWhere('id', $queueId);
 
 		if (!$queueItem) {
 			return;
@@ -103,8 +103,7 @@ class Build
 		}
 
 		if ($queueArray->count() > 1) {
-			$queueArray->forget($indexId);
-			$queueArray = $queueArray->values();
+			$queueArray = $queueArray->reject(fn (Models\Queue $item): bool => $item->is($queueItem));
 
 			foreach ($queueArray as $item) {
 				if ($queueItem->object_id == $item->object_id && $queueItem->id < $item->id) {

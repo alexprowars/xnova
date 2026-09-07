@@ -53,7 +53,7 @@
 			}, {
 				title: t('pages.building.remove_confirm_action'),
 				async handler() {
-					useForm({ index: props.index })
+					useForm({ queue_id: props.item.id })
 						.post('/buildings/queue/remove', {
 							preserveUrl: true,
 							preserveScroll: true,
@@ -72,7 +72,7 @@
 			}, {
 				title: t('pages.building.cancel_confirm_action'),
 				async handler() {
-					useForm({ index: props.index - 1 })
+					useForm({ queue_id: props.item.id })
 						.post('/buildings/queue/cancel', {
 							preserveUrl: true,
 							preserveScroll: true,

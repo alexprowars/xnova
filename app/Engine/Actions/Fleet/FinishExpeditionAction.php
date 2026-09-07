@@ -211,7 +211,7 @@ class FinishExpeditionAction
 			'type' => $eventType,
 		];
 
-		switch ($this->determineEventSize()) {
+		switch ($eventType) {
 			case 2:
 				$size = random_int(102, 200);
 				$message['event'] = random_int(1, 2);
@@ -283,9 +283,9 @@ class FinishExpeditionAction
 			$mame = __('fleet_engine.sys_expe_attackname_1');
 			$add = 0;
 			$defenderFleetArray = [
-				[204 => 5],
-				[206 => 3],
-				[207 => 2],
+				204 => 5,
+				206 => 3,
+				207 => 2,
 			];
 		} else {
 			$points = [-4, -6, -9];
@@ -293,9 +293,9 @@ class FinishExpeditionAction
 			$mame = __('fleet_engine.sys_expe_attackname_2');
 			$add = 0.1;
 			$defenderFleetArray = [
-				[205 => 5],
-				[207 => 5],
-				[213 => 2],
+				205 => 5,
+				207 => 5,
+				213 => 2,
 			];
 		}
 
@@ -414,16 +414,17 @@ class FinishExpeditionAction
 	{
 		$MoreTime = random_int(0, 100);
 		$Wrapper = [2, 2, 2, 2, 2, 2, 2, 3, 3, 5];
+		$timeMultiplier = $Wrapper[array_rand($Wrapper)];
 
 		if ($MoreTime < 75) {
-			$this->fleet->end_date = $this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * (array_rand($Wrapper) - 1));
+			$this->fleet->end_date = $this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * ($timeMultiplier - 1));
 
 			$message = new MissionExpeditionDelayMessage([
 				'time' => 'slow',
 				'type' => random_int(1, 6),
 			]);
 		} else {
-			$this->fleet->end_date = $this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * array_rand($Wrapper))));
+			$this->fleet->end_date = $this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * $timeMultiplier)));
 
 			$message = new MissionExpeditionDelayMessage([
 				'time' => 'fast',

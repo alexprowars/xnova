@@ -60,10 +60,10 @@ class QueueManager
 		}
 	}
 
-	public function delete(BaseObject $element, int $listId = 0): void
+	public function delete(BaseObject $element, int $queueId = 0): void
 	{
 		if ($element->getType() == ItemType::BUILDING) {
-			(new Queue\Build($this))->delete($listId);
+			(new Queue\Build($this))->delete($queueId);
 		} elseif ($element->getType() == ItemType::TECH) {
 			(new Queue\Tech($this))->delete($element);
 		}
@@ -209,24 +209,14 @@ class QueueManager
 			return false;
 		}
 
-		$loop = true;
-
-		while ($loop) {
-			$buildItem = $queueArray->first();
-
+		foreach ($queueArray as $buildItem) {
 			$haveNoMoreLevel = false;
 
 			$entity = $this->planet->getEntityUnit($buildItem->object_id);
 
 			if (!($entity instanceof Entity\Building)) {
-				$queueArray->shift();
-
 				if (!$this->deleteInQueue($buildItem)) {
 					$buildItem->delete();
-				}
-
-				if ($queueArray->isEmpty()) {
-					$loop = false;
 				}
 
 				continue;
@@ -262,8 +252,6 @@ class QueueManager
 					'level' => $entity->getLevel() + ($isDestroy ? 0 : 1),
 				]);
 
-				$loop = false;
-
 				if (config('game.log.buildings', false)) {
 					LogsHistory::create([
 						'user_id' 			=> $this->planet->user->id,
@@ -279,6 +267,8 @@ class QueueManager
 						'amount' 			=> $entity->getLevel() + 1,
 					]);
 				}
+
+				break;
 			} else {
 				if ($haveNoMoreLevel) {
 					$this->planet->user->notify(
@@ -314,14 +304,8 @@ class QueueManager
 					);
 				}
 
-				$queueArray->shift();
-
 				if (!$this->deleteInQueue($buildItem)) {
 					$buildItem->delete();
-				}
-
-				if ($queueArray->isEmpty()) {
-					$loop = false;
 				}
 			}
 		}
@@ -393,7 +377,7 @@ class QueueManager
 
 	public function checkUnitQueue(): bool
 	{
-		$queue = $this->get(QueueType::SHIPYARD);
+		$queue = $this->get(QueueType::SHIPYARD)->values();
 
 		if ($queue->isEmpty()) {
 			return false;

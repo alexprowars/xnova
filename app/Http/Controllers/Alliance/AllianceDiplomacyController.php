@@ -60,7 +60,8 @@ class AllianceDiplomacyController extends Controller
 			throw new PageException(__('alliance.Denied_access'));
 		}
 
-		$item = $alliance->diplomacy()->where('id', (int) $request->query('id'))
+		$item = $alliance->diplomacy()->where('id', (int) $request->input('id'))
+			->where('primary', 0)
 			->first();
 
 		if (!$item) {
@@ -84,7 +85,7 @@ class AllianceDiplomacyController extends Controller
 			throw new PageException(__('alliance.Denied_access'));
 		}
 
-		$item = $alliance->diplomacy()->where('id', (int) $request->query('id'))
+		$item = $alliance->diplomacy()->where('id', (int) $request->input('id'))
 			->first();
 
 		if (!$item) {

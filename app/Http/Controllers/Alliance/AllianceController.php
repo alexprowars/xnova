@@ -67,7 +67,7 @@ class AllianceController extends Controller
 
 		if ($alliance->user_id == $this->user->id) {
 			$range = ($alliance->owner_rank == '') ? 'Основатель' : $alliance->owner_rank;
-		} elseif ($alliance->member->rank != null && isset($alliance->ranks[$alliance->member->rank]['name'])) {
+		} elseif ($alliance->member->rank !== null && isset($alliance->ranks[$alliance->member->rank]['name'])) {
 			$range = $alliance->ranks[$alliance->member->rank]['name'];
 		} else {
 			$range = __('alliance.member');
@@ -199,6 +199,7 @@ class AllianceController extends Controller
 		$alliance->tag = addslashes($tag);
 		$alliance->user_id = $this->user->id;
 		$alliance->ranks = [];
+		$alliance->total_members = 1;
 
 		if (!$alliance->save()) {
 			throw new PageException('Произошла ошибка при создании альянса');
@@ -229,7 +230,9 @@ class AllianceController extends Controller
 				throw new PageException('Строка поиска содержит запрещённые символы');
 			}
 
-			$search = Alliance::query()->where('name', 'LIKE', '%' . $query . '%')
+			$search = Alliance::query()
+				->select(['id', 'name', 'tag', 'total_members as members'])
+				->where('name', 'LIKE', '%' . $query . '%')
 				->orWhere('tag', 'LIKE', '%' . $query . '%')
 				->limit(30)->get();
 

@@ -8,6 +8,7 @@ use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\MissionType;
+use App\Engine\Formulas;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\Fleet;
@@ -31,9 +32,18 @@ class RocketController extends Controller
 		$destroyType = $request->post('target', 'all');
 
 		$distance = abs($system - $this->planet->system);
-		$maxDistance = ($this->user->getTechLevel('impulse_motor') * 5) - 1;
+		$maxDistance = Formulas::getMissileRange($this->user->getTechLevel('impulse_motor'));
 
 		$targetPlanet = Planet::findByCoordinates(new Coordinates($galaxy, $system, $planet, PlanetType::PLANET));
+
+		if (!$targetPlanet) {
+			throw new Exception('Планета не найдена');
+		}
+
+		if ($targetPlanet->user_id == $this->user->id) {
+			throw new Exception(__('fleet.fl_ownpl_err'));
+		}
+
 		$targetUser = $targetPlanet->user;
 
 		if (!$targetUser) {
@@ -44,13 +54,11 @@ class RocketController extends Controller
 			throw new Exception('Игрок в режиме отпуска');
 		}
 
-		if (!$targetPlanet) {
-			throw new Exception('Планета не найдена');
-		} elseif ($this->planet->getLevel('missile_facility') < 4) {
+		if ($this->planet->getLevel('missile_facility') < 4) {
 			throw new Exception('Постройте ракетную шахту');
 		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
 			throw new Exception('Необходима технология "Импульсный двигатель"');
-		} elseif ($distance >= $maxDistance || $galaxy != $this->planet->galaxy) {
+		} elseif ($distance > $maxDistance || $galaxy != $this->planet->galaxy) {
 			throw new Exception('Превышена дистанция ракетной атаки');
 		} elseif ($count <= 0 || $count > $this->planet->getLevel('interplanetary_misil')) {
 			throw new Exception('У вас нет такого кол-ва ракет');

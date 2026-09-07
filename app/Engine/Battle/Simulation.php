@@ -77,8 +77,8 @@ class Simulation
 	{
 		$maxSlots = $this->getMaxSlots();
 
-		for ($i = $s; $i < $maxSlots * 2; $i++) {
-			if ($i <= $maxSlots && $i < ($maxSlots + $s) && !empty($this->slots[$i])) {
+		for ($i = $s; $i < $s + $maxSlots; $i++) {
+			if (!empty($this->slots[$i])) {
 				$units = [];
 				$fleets = [];
 

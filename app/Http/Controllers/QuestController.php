@@ -256,7 +256,6 @@ class QuestController extends Controller
 				'quest' => (bool) $this->user->quests->firstWhere('quest_id', $value)?->finish,
 				'level_minier' => $this->user->lvl_minier >= $value,
 				'level_raid' => $this->user->lvl_raid >= $value,
-				default => false,
 			};
 
 			if (!$satisfied) {

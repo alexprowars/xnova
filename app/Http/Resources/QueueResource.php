@@ -78,6 +78,7 @@ class QueueResource extends JsonResource
 				->addSeconds($item->getTime());
 
 			$result[] = [
+				'id' => $item->id,
 				'item' 	=> $item->object_id,
 				'type'	=> $item->type,
 				'level' => $item->level,

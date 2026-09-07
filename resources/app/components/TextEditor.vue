@@ -92,7 +92,7 @@
 
 
 		
-		<textarea ref="textRef" rows="10" v-model="value"></textarea>
+		<textarea ref="textRef" :name="name" rows="10" v-model="value"></textarea>
 
 		<div v-if="showPreview" class="editor-component-preview table">
 			<div class="grid">
@@ -109,6 +109,10 @@
 	import parser from '~/utils/parser.js';
 	import { computed, ref } from 'vue';
 	import Popper from './Popper.vue';
+
+	defineProps({
+		name: String,
+	});
 
 	const value = defineModel();
 

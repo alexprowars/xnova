@@ -112,7 +112,7 @@ class PhalanxController extends Controller
 				];
 			}
 
-			if ($row->mission != MissionType::Stay && !$end && $row->start_type != PlanetType::MOON) {
+			if ($row->end_date !== null && $row->mission != MissionType::Stay && !$end && $row->start_type != PlanetType::MOON) {
 				$items[] = [
 					'time' => $row->end_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),

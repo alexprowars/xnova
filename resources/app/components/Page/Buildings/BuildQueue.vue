@@ -1,7 +1,7 @@
 <template>
 	<div v-if="queue.length" class="page-building-build-queue">
 		<div class="block-table">
-			<BuildQueueRow v-for="(item, index) in queue" :key="index" :index="index" :item="item"/>
+			<BuildQueueRow v-for="(item, index) in queue" :key="item.id" :index="index" :item="item"/>
 		</div>
 	</div>
 </template>

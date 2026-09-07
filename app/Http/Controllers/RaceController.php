@@ -60,7 +60,7 @@ class RaceController extends Controller
 
 			LogsCredit::create([
 				'user_id' => $this->user->id,
-				'amount' => 100,
+				'amount' => -100,
 				'type' => 7,
 			]);
 		}
