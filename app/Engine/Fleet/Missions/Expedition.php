@@ -13,7 +13,7 @@ class Expedition extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
-		if ($target->getPlanet() != 16) {
+		if ($target->getPlanet() != (int) config('game.maxPlanetInSystem') + 1) {
 			return false;
 		}
 

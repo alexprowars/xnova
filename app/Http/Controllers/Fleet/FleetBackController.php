@@ -32,7 +32,7 @@ class FleetBackController extends Controller
 			if ($fleet->start_date->isFuture()) {
 				$flyingTime = $fleet->created_at->diffInSeconds(now());
 			} else {
-				$flyingTime = $fleet->created_at->diffInSeconds($fleet->created_at);
+				$flyingTime = $fleet->created_at->diffInSeconds($fleet->start_date);
 			}
 		} else {
 			$flyingTime = $fleet->created_at->diffInSeconds(now());

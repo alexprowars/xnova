@@ -165,8 +165,10 @@ class MessagesController extends Controller
 				})
 				->value('message');
 
-			if ($message) {
-				$result['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', '', $message) . '[/quote]';
+			$quotedMessage = $message ? MessageFactory::get($message) : null;
+
+			if ($quotedMessage) {
+				$result['message'] = '[quote]' . preg_replace('/<br(\s*)?\/?>/iu', "\n", $quotedMessage->render()) . '[/quote]';
 			}
 		}
 
@@ -196,7 +198,8 @@ class MessagesController extends Controller
 
 		if ($this->user->lvl_minier == 1 && $this->user->lvl_raid == 1 && $this->user->created_at?->addDay()->isFuture()) {
 			$lastSend = Message::query()
-				->whereBelongsTo($this->user)
+				->whereBelongsTo($this->user, 'from')
+				->where('type', MessageType::User)
 				->where('date', '>', now()->subMinute())
 				->count();
 
@@ -206,14 +209,16 @@ class MessagesController extends Controller
 		}
 
 		$similar = Message::query()
-			->whereBelongsTo($this->user)
+			->whereBelongsTo($this->user, 'from')
 			->where('type', MessageType::User)
 			->where('date', '>', now()->subMinutes(5))
 			->orderByDesc('date')
 			->first();
 
-		if ($similar && mb_strlen($similar->message['text']) < 1000) {
-			similar_text($message, $similar->message['text'], $sim);
+		$similarText = $similar?->message['data']['text'] ?? null;
+
+		if (is_string($similarText) && mb_strlen($similarText) < 1000) {
+			similar_text($message, $similarText, $sim);
 
 			if ($sim > 80) {
 				throw new Exception(__('messages.mess_similar'));
@@ -222,7 +227,11 @@ class MessagesController extends Controller
 
 		$message = Format::text($message);
 		$message = preg_replace('/ +/', ' ', $message);
-		$message = strtr($message, __('messages.stopwords'));
+		$stopwords = __('messages.stopwords');
+
+		if (is_array($stopwords)) {
+			$message = strtr($message, $stopwords);
+		}
 
 		$user->notify(new SystemMessage(MessageType::User, $message, $this->user->username_formatted));
 

@@ -200,12 +200,13 @@ class Production
 		$storageCapacity->set(ResourcesEnum::ENERGY, $this->planet->energy);
 
 		foreach (Vars::getResources() as $res) {
-			if ($this->planet->{$res} >= $storageCapacity->get($res)) {
-				continue;
-			}
+			$resourceChange = $time * ($resourceProduction->get($res) / 3600);
 
-			$this->planet->{$res} += $time * (($resourceProduction->get($res) / 3600));
-			$this->planet->{$res} = max(0, min($this->planet->{$res}, $storageCapacity->get($res)));
+			if ($resourceChange < 0) {
+				$this->planet->{$res} = max(0, $this->planet->{$res} + $resourceChange);
+			} elseif ($this->planet->{$res} < $storageCapacity->get($res)) {
+				$this->planet->{$res} = max(0, min($this->planet->{$res} + $resourceChange, $storageCapacity->get($res)));
+			}
 		}
 	}
 }

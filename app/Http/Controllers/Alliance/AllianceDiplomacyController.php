@@ -134,7 +134,7 @@ class AllianceDiplomacyController extends Controller
 			'primary' => 1,
 		]);
 
-		$alliance->diplomacy()->create([
+		$ally->diplomacy()->create([
 			'diplomacy_id' => $alliance->id,
 			'type' => $stts,
 			'status' => 0,

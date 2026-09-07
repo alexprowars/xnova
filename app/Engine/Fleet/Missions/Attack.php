@@ -86,7 +86,7 @@ class Attack extends BaseMission
 		}
 
 		if ($this->fleet->assault_id) {
-			$fleets = Models\Fleet::where('id', $this->fleet->id)
+			$fleets = Models\Fleet::whereNot('id', $this->fleet->id)
 				->where('assault_id', $this->fleet->assault_id)
 				->get()
 				->filter(fn(Models\Fleet $fleet) => $this->checkFleet($fleet));

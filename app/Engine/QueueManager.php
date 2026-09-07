@@ -259,6 +259,7 @@ class QueueManager
 				$buildItem->update([
 					'date' => now(),
 					'date_end' => now()->addSeconds($buildTime),
+					'level' => $entity->getLevel() + ($isDestroy ? 0 : 1),
 				]);
 
 				$loop = false;
@@ -413,20 +414,6 @@ class QueueManager
 		$builded = 0;
 
 		foreach ($queue as $item) {
-			if ($item->object_id == 502 || $item->object_id == 503) {
-				if ($item->object_id == 502) {
-					if ($item->level > $missilesSpace) {
-						$item->level = $missilesSpace;
-					} else {
-						$missilesSpace -= $item->level;
-					}
-				} elseif ($item->level > floor($missilesSpace / 2)) {
-					$item->level = (int) floor($missilesSpace / 2);
-				} else {
-					$missilesSpace -= $item->level;
-				}
-			}
-
 			$object = ObjectsFactory::get($item->object_id);
 
 			if ($object->getMaxConstructable()) {
@@ -456,6 +443,16 @@ class QueueManager
 			$buildTime = $entity->getTime();
 
 			while ($item->date->addSeconds($buildTime)->isPast()) {
+				if ($item->object_id == 502 || $item->object_id == 503) {
+					$requiredSpace = $item->object_id == 503 ? 2 : 1;
+
+					if ($missilesSpace < $requiredSpace) {
+						break;
+					}
+
+					$missilesSpace -= $requiredSpace;
+				}
+
 				$item->date = $item->date->addSeconds($buildTime);
 
 				$builded++;

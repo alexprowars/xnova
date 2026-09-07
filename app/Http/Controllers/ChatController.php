@@ -71,6 +71,8 @@ class ChatController extends Controller
 
 		$items = $items->get();
 
-		return Resources\ChatMessage::collection($items->reverse());
+		$messages = Resources\ChatMessage::collection($items->reverse())->resolve();
+
+		return new JsonResource(array_values(array_filter($messages)));
 	}
 }

@@ -15,10 +15,10 @@ class OverviewController extends Controller
 
 		$dailyBonus = null;
 
-		if ($user->daily_bonus->isPast()) {
+		if (!$user->daily_bonus?->isFuture()) {
 			$bonusFactor = min(50, $user->daily_bonus_factor + 1);
 
-			if ($user->daily_bonus->subDay()->isPast()) {
+			if (!$user->daily_bonus || $user->daily_bonus->addDay()->isPast()) {
 				$bonusFactor = 1;
 			}
 

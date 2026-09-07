@@ -12,6 +12,7 @@ use App\Models\AllianceMember;
 use App\Models\AllianceRequest;
 use App\Notifications\MessageNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AllianceRequestsController extends Controller
@@ -74,18 +75,20 @@ class AllianceRequestsController extends Controller
 
 		$user = $req->user;
 
-		AllianceRequest::query()->whereBelongsTo($user)->delete();
-		AllianceMember::query()->whereBelongsTo($user)->delete();
+		DB::transaction(function () use ($user, $alliance) {
+			AllianceRequest::query()->whereBelongsTo($user)->delete();
+			AllianceMember::query()->whereBelongsTo($user)->delete();
 
-		$alliance->members()->create([
-			'user_id' => $user->id,
-		]);
+			$alliance->members()->create([
+				'user_id' => $user->id,
+			]);
 
-		$alliance->increment('members');
+			$alliance->increment('total_members');
 
-		$user->alliance_id = $alliance->id;
-		$user->alliance_name = $alliance->name;
-		$user->save();
+			$user->alliance_id = $alliance->id;
+			$user->alliance_name = $alliance->name;
+			$user->save();
+		});
 
 		$notification = new MessageNotification(
 			$this->user->id,

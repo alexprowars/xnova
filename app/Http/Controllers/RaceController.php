@@ -41,7 +41,7 @@ class RaceController extends Controller
 			throw new Exception('Выберите фракцию');
 		}
 
-		$queueCount = $this->user->queue_count;
+		$queueCount = $this->user->queue()->count();
 
 		$flyingFleets = Fleet::query()->whereBelongsTo($this->user)->count();
 

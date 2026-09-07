@@ -52,7 +52,7 @@ class RocketController extends Controller
 			throw new Exception('Необходима технология "Импульсный двигатель"');
 		} elseif ($distance >= $maxDistance || $galaxy != $this->planet->galaxy) {
 			throw new Exception('Превышена дистанция ракетной атаки');
-		} elseif ($count > $this->planet->getLevel('interplanetary_misil')) {
+		} elseif ($count <= 0 || $count > $this->planet->getLevel('interplanetary_misil')) {
 			throw new Exception('У вас нет такого кол-ва ракет');
 		} elseif ((!is_numeric($destroyType) && $destroyType != 'all') || (!in_array($destroyType, Vars::getItemsByType(ItemType::DEFENSE)) && $destroyType != 'all')) {
 			throw new Exception('Не найдена цель');

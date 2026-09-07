@@ -27,12 +27,17 @@ class PlanetController extends Controller
 			throw new Exception(__('overview.deletemessage_wrong'));
 		}
 
-		$checkFleets = Fleet::query()
+		$fleetsQuery = Fleet::query()
 			->where(fn(Builder $query) => $query->coordinates(FleetDirection::START, $this->planet->coordinates))
-			->orWhere(fn(Builder $query) => $query->coordinates(FleetDirection::END, $this->planet->coordinates))
-			->exists();
+			->orWhere(fn(Builder $query) => $query->coordinates(FleetDirection::END, $this->planet->coordinates));
 
-		if ($checkFleets) {
+		if ($this->planet->moon) {
+			$fleetsQuery
+				->orWhere(fn(Builder $query) => $query->coordinates(FleetDirection::START, $this->planet->moon->coordinates))
+				->orWhere(fn(Builder $query) => $query->coordinates(FleetDirection::END, $this->planet->moon->coordinates));
+		}
+
+		if ($fleetsQuery->exists()) {
 			throw new Exception(__('overview.planet_delete_fleet_in_transit'));
 		}
 

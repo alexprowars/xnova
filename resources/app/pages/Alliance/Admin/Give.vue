@@ -7,13 +7,13 @@
 				<div>
 					<div class="th">
 						{{ $t('pages.alliance.admin.give_transfer_player_label') }}
-						<select v-model="form.user">
+						<select v-model="form.member">
 							<option value="">{{ $t('pages.alliance.admin.give_player_placeholder') }}</option>
 							<option v-for="item in page['members']" :value="item['id']">{{ item['name'] }} [{{ item['rank'] }}]</option>
 						</select>
 					</div>
 				</div>
-				<div v-if="form.user">
+				<div v-if="form.member">
 					<div class="th">
 						<button type="submit" class="button">{{ $t('pages.alliance.admin.give_submit_transfer') }}</button>
 					</div>
@@ -44,7 +44,7 @@
 	});
 
 	const form = useForm({
-		user: null,
+		member: null,
 	});
 
 	const { t } = useI18n();

@@ -37,16 +37,14 @@ class Build
 		$currentMaxFields = $planet->getMaxFields();
 
 		if ($planet->field_current < ($currentMaxFields - $actualCount) || $destroy) {
-			if ($queueId > 1) {
-				$inArray = 0;
+			$queuedLevelChange = 0;
 
+			if ($queueId > 1) {
 				foreach ($this->queue->get(QueueType::BUILDING) as $item) {
 					if ($item->object_id == $element->getId()) {
-						$inArray++;
+						$queuedLevelChange += $item->operation == QueueConstructionType::DESTROY ? -1 : 1;
 					}
 				}
-			} else {
-				$inArray = 0;
 			}
 
 			$build = $planet->getEntity($element->getId());
@@ -63,7 +61,7 @@ class Build
 				'object_id' => $element->getId(),
 				'date' => null,
 				'date_end' => null,
-				'level' => $build->amount + (!$destroy ? 1 : 0) + $inArray
+				'level' => $build->amount + (!$destroy ? 1 : 0) + $queuedLevelChange
 			]);
 
 			$this->queue->loadQueue();
@@ -88,7 +86,11 @@ class Build
 		if ($queueItem->date) {
 			$planet = $this->queue->getPlanet();
 
-			$entity = Entity\Building::createEntity($queueItem->object_id, $queueItem->level, $planet);
+			$entity = Entity\Building::createEntity(
+				$queueItem->object_id,
+				$queueItem->level - ($queueItem->operation == QueueConstructionType::BUILDING ? 1 : 0),
+				$planet
+			);
 
 			$cost = $queueItem->operation == QueueConstructionType::DESTROY
 				? $entity->getDestroyPrice() : $entity->getPrice();
@@ -104,9 +106,9 @@ class Build
 			$queueArray->forget($indexId);
 			$queueArray = $queueArray->values();
 
-			foreach ($queueArray as $i => $item) {
-				if ($queueItem->object_id == $item->object_id && $indexId <= $i) {
-					$item->level--;
+			foreach ($queueArray as $item) {
+				if ($queueItem->object_id == $item->object_id && $queueItem->id < $item->id) {
+					$item->level += $queueItem->operation == QueueConstructionType::DESTROY ? 1 : -1;
 					$item->update();
 				}
 			}

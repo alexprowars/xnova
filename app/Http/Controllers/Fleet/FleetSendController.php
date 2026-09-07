@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class FleetSendController extends Controller
@@ -35,7 +34,7 @@ class FleetSendController extends Controller
 		$moon = $request->integer('moon');
 
 		if ($moon && $moon != $this->planet->id) {
-			$this->checkJumpGate(Planet::findOne($moon));
+			$this->checkJumpGate($this->user->planets()->findOrFail($moon));
 		}
 
 		$galaxy = $request->integer('galaxy');
@@ -90,7 +89,7 @@ class FleetSendController extends Controller
 		}
 
 		try {
-			$fleet = DB::transaction(fn() => $sender->send());
+			$fleet = $sender->send();
 		} catch (Exception $e) {
 			throw new PageException('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
@@ -123,10 +122,10 @@ class FleetSendController extends Controller
 		return Inertia::render('Fleet/Send', $result);
 	}
 
-	private function checkJumpGate(Planet $planet): void
+	private function checkJumpGate(Planet $targetPlanet): void
 	{
 		$planetService = resolve(PlanetServiceFactory::class)
-			->make($planet);
+			->make($this->planet);
 
 		if (!$planetService->isAvailableJumpGate()) {
 			throw new Exception(__('fleet.gate_no_dest_g'));
@@ -137,8 +136,6 @@ class FleetSendController extends Controller
 		if ($nextJumpTime > 0) {
 			throw new Exception(__('fleet.gate_wait_star') . ' - ' . Format::time($nextJumpTime));
 		}
-
-		$targetPlanet = Planet::findOne($planet);
 
 		$targetPlanetService = resolve(PlanetServiceFactory::class)
 			->make($targetPlanet);

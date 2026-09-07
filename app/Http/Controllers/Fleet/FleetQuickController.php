@@ -13,7 +13,6 @@ use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Planet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class FleetQuickController extends Controller
@@ -78,7 +77,7 @@ class FleetQuickController extends Controller
 		$sender->setFleets($fleetArray);
 
 		try {
-			$fleet = DB::transaction(fn() => $sender->send());
+			$fleet = $sender->send();
 		} catch (Exception $e) {
 			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}

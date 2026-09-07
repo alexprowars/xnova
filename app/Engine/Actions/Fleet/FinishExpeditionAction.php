@@ -416,14 +416,14 @@ class FinishExpeditionAction
 		$Wrapper = [2, 2, 2, 2, 2, 2, 2, 3, 3, 5];
 
 		if ($MoreTime < 75) {
-			$this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * (array_rand($Wrapper) - 1));
+			$this->fleet->end_date = $this->fleet->end_date->addSeconds((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) * (array_rand($Wrapper) - 1));
 
 			$message = new MissionExpeditionDelayMessage([
 				'time' => 'slow',
 				'type' => random_int(1, 6),
 			]);
 		} else {
-			$this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * array_rand($Wrapper))));
+			$this->fleet->end_date = $this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * array_rand($Wrapper))));
 
 			$message = new MissionExpeditionDelayMessage([
 				'time' => 'fast',

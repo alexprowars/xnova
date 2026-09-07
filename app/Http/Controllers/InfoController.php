@@ -200,8 +200,9 @@ class InfoController extends Controller
 		$this->planet->deuterium -= $cur;
 		$this->planet->update();
 
-		$fleet->end_stay->addSeconds($times);
-		$fleet->end_date->addSeconds($times);
+		$fleet->end_stay = $fleet->end_stay->addSeconds($times);
+		$fleet->end_date = $fleet->end_date->addSeconds($times);
+		$fleet->updated_at = $fleet->end_stay;
 		$fleet->update();
 	}
 

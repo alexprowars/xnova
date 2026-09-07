@@ -17,6 +17,8 @@ use App\Models\LogsFleet;
 use App\Models\LogsTransfer;
 use App\Models\Planet;
 use App\Models\Statistic;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class FleetSend
 {
@@ -31,9 +33,6 @@ class FleetSend
 
 	public function __construct(protected Planet $planet, protected Coordinates $target, protected MissionType $mission)
 	{
-		$this->targetPlanet = Planet::query()->coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
-			->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])
-			->first();
 	}
 
 	public function setMission(MissionType $mission): void
@@ -73,11 +72,17 @@ class FleetSend
 
 	protected function verify(): void
 	{
+		$maxPlanetPosition = (int) config('game.maxPlanetInSystem');
+
+		if ($this->mission == MissionType::Expedition) {
+			$maxPlanetPosition++;
+		}
+
 		if ($this->target->getGalaxy() > (int) config('game.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
 			throw new Exception('Ошибочная галактика!');
 		} elseif ($this->target->getSystem() > (int) config('game.maxSystemInGalaxy') || $this->target->getSystem() < 1) {
 			throw new Exception('Ошибочная система!');
-		} elseif ($this->target->getPlanet() > (int) config('game.maxPlanetInSystem') || $this->target->getPlanet() < 1) {
+		} elseif ($this->target->getPlanet() > $maxPlanetPosition || $this->target->getPlanet() < 1) {
 			throw new Exception('Ошибочная планета!');
 		} elseif (!in_array($this->target->getType(), PlanetType::cases())) {
 			throw new Exception('Неизвестный тип планеты!');
@@ -274,6 +279,35 @@ class FleetSend
 
 	public function send(): Fleet
 	{
+		return DB::transaction(function (): Fleet {
+			$user = User::query()
+				->lockForUpdate()
+				->findOrFail($this->planet->user->id);
+
+			$ownerId = $this->planet->user_id;
+
+			$this->planet->refreshForUpdate();
+
+			if ($this->planet->trashed() || $this->planet->user_id != $ownerId) {
+				throw new Exception('Планета недоступна для отправки флота!');
+			}
+
+			$this->planet->setRelation('user', $user);
+			$this->planet->setRelation('entities', $this->planet->entities()->lockForUpdate()->get());
+
+			$this->planet->getProduction()->reset();
+			$this->planet->getProduction()->update(true);
+
+			$this->targetPlanet = Planet::query()->coordinates(new Coordinates($this->target->getGalaxy(), $this->target->getSystem(), $this->target->getPlanet()))
+				->whereIn('planet_type', $this->target->getType() == PlanetType::DEBRIS ? [PlanetType::PLANET, PlanetType::MILITARY_BASE] : [$this->target->getType()])
+				->first();
+
+			return $this->sendFleet();
+		});
+	}
+
+	private function sendFleet(): Fleet
+	{
 		$this->verify();
 
 		$fleet = new Fleet();
@@ -331,7 +365,7 @@ class FleetSend
 		$TransCrystal = max(0, (int) ($this->resources['crystal'] ?? 0));
 		$TransDeuterium = max(0, (int) ($this->resources['deuterium'] ?? 0));
 
-		$storageNeeded = array_sum($this->resources);
+		$storageNeeded = $TransMetal + $TransCrystal + $TransDeuterium;
 
 		$totalFleetCons = 0;
 
@@ -374,7 +408,7 @@ class FleetSend
 			throw new Exception('Не хватает топлива на полёт! (необходимо еще ' . ($consumption - $this->planet->deuterium) . ')');
 		}
 
-		if (!$hasResources && !$this->targetPlanet) {
+		if (!$hasResources) {
 			throw new Exception(__('fleet.fl_noressources') . Format::number($consumption));
 		}
 

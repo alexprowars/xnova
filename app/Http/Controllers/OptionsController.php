@@ -183,8 +183,8 @@ class OptionsController extends Controller
 
 				if ($file->isValid()) {
 					$validator = Validator::make(
-						['file' => $file],
-						['photo' => 'image,mimetypes:image/jpg,image/webp,image/png']
+						['photo' => $file],
+						['photo' => 'image|mimetypes:image/jpeg,image/webp,image/png']
 					);
 
 					if ($validator->passes()) {
@@ -223,7 +223,7 @@ class OptionsController extends Controller
 			return;
 		}
 
-		$queueCount = $this->user->queue_count;
+		$queueCount = $this->user->queue()->count();
 
 		$flyingFleets = Models\Fleet::query()
 			->whereBelongsTo($this->user)

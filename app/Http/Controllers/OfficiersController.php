@@ -6,6 +6,7 @@ use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class OfficiersController extends Controller
@@ -46,28 +47,32 @@ class OfficiersController extends Controller
 
 		$time = $duration * 86400;
 
-		if ($this->user->credits < $credits) {
-			throw new Exception(__('officier.NoPoints'));
-		}
-
 		if (!in_array($code, Vars::getOfficiers())) {
 			throw new Exception('Выбран неверный элемент');
 		}
 
-		if ($this->user->{'officier_' . $code}?->isFuture()) {
-			$date = $this->user->{'officier_' . $code};
-		} else {
-			$date = now();
-		}
+		DB::transaction(function () use ($code, $credits, $time): void {
+			$this->user->refreshForUpdate();
 
-		$this->user->{'officier_' . $code} = $date->addSeconds($time);
-		$this->user->credits -= $credits;
-		$this->user->update();
+			if ($this->user->credits < $credits) {
+				throw new Exception(__('officier.NoPoints'));
+			}
 
-		LogsCredit::create([
-			'user_id' => $this->user->id,
-			'amount' => $credits * (-1),
-			'type' => 5
-		]);
+			if ($this->user->{'officier_' . $code}?->isFuture()) {
+				$date = $this->user->{'officier_' . $code};
+			} else {
+				$date = now();
+			}
+
+			$this->user->{'officier_' . $code} = $date->addSeconds($time);
+			$this->user->credits -= $credits;
+			$this->user->update();
+
+			LogsCredit::create([
+				'user_id' => $this->user->id,
+				'amount' => $credits * (-1),
+				'type' => 5
+			]);
+		});
 	}
 }

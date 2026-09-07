@@ -49,8 +49,14 @@ class ChatMessage extends JsonResource
 
 		if (count($users)) {
 			$receiversId = User::query()
-				->where('username', $users)
+				->whereIn('username', $users)
 				->pluck('id')->all();
+		}
+
+		$user = Auth::user();
+
+		if ($isPrivate && (!$user || ($this->user_id != $user->id && !in_array($user->id, $receiversId)))) {
+			return [];
 		}
 
 		$result = [
@@ -64,8 +70,6 @@ class ChatMessage extends JsonResource
 			'me' => null,
 			'my' => null,
 		];
-
-		$user = Auth::user();
 
 		if ($user) {
 			if (!$isPrivate && count($receiversId)) {

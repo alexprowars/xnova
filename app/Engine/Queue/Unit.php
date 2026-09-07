@@ -99,6 +99,8 @@ class Unit
 			'level' => $count
 		]);
 
+		$this->queue->loadQueue();
+
 		if (config('game.log.units', false)) {
 			LogsHistory::create([
 				'user_id' 			=> $user->id,

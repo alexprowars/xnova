@@ -30,8 +30,8 @@ class MissileAttack extends BaseMission
 			return;
 		}
 
-		$attTech = $this->fleet->user->getTech('defence');
-		$defTech = $this->fleet->target->getTech('military');
+		$attTech = $this->fleet->user->getTech('military');
+		$defTech = $this->fleet->target->getTech('defence');
 
 		$fleetEntity = $this->fleet->entities->getByEntityId(503);
 
@@ -95,6 +95,7 @@ class MissileAttack extends BaseMission
 
 	public function returnEvent(): void
 	{
+		$this->killFleet();
 	}
 
 	private function raketenangriff(int $targetDefTech, int $ownerAttTech, int $missiles, array $targetDefensive, ?int $firstTarget = null): array

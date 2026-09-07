@@ -83,7 +83,7 @@ class AllianceController extends Controller
 		}
 
 		if ($alliance->user_id == $this->user->id || $alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
-			$result['requests'] = AllianceDiplomacy::query()->where('alliance_id', $alliance->id)->count();
+			$result['requests'] = $alliance->requests()->count();
 		}
 
 		$result['access'] = $alliance->rights;

@@ -19,7 +19,7 @@ class UserController extends Controller
 		$factor = $this->user->daily_bonus_factor < 50
 			? $this->user->daily_bonus_factor + 1 : 50;
 
-		if (!$this->user->daily_bonus || $this->user->daily_bonus->subDay()->isPast()) {
+		if (!$this->user->daily_bonus || $this->user->daily_bonus->addDay()->isPast()) {
 			$factor = 1;
 		}
 

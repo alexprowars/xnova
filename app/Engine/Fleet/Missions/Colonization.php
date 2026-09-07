@@ -19,7 +19,7 @@ class Colonization extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
-		return !empty($units[208]) && $targetPlanet;
+		return !empty($units[208]) && !$targetPlanet && $target->getType() == PlanetType::PLANET;
 	}
 
 	public function targetEvent(): void

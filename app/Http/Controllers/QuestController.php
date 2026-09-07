@@ -26,30 +26,12 @@ class QuestController extends Controller
 		$result['quests'] = $userQuests;
 
 		foreach ($quests as $questId => $quest) {
-			$available = true;
-
-			if (isset($quest['required'])) {
-				foreach ($quest['required'] as $key => $req) {
-					if ($key == 'quest' && (!isset($userQuests[$req]) || ($userQuests[$req]['finish'] == 0))) {
-						$available = false;
-					}
-
-					if ($key == 'level_minier' && $this->user->lvl_minier < $req) {
-						$available = false;
-					}
-
-					if ($key == 'level_raid' && $this->user->lvl_raid < $req) {
-						$available = false;
-					}
-				}
-			}
-
 			$result['items'][] = [
 				'id' => $questId,
 				'title' => __('quests.' . $questId . '.title'),
 				'finish' => isset($userQuests[$questId]) && $userQuests[$questId]['finish'] == 1,
 				'required' => $quest['required'],
-				'available' => $available,
+				'available' => $this->meetsRequirements($quest['required'] ?? []),
 			];
 		}
 
@@ -150,7 +132,7 @@ class QuestController extends Controller
 			$errors += !$check ? 1 : 0;
 		}
 
-		if ($qInfo->finish > 0) {
+		if ($qInfo->finish > 0 || !$this->meetsRequirements($quest[$id]['required'] ?? [])) {
 			$errors++;
 		}
 
@@ -217,7 +199,7 @@ class QuestController extends Controller
 			$errors += !($checks[$taskKey] ?? false) ? 1 : 0;
 		}
 
-		if ($errors || $qInfo->finish) {
+		if ($errors || $qInfo->finish || !$this->meetsRequirements($quest[$id]['required'] ?? [])) {
 			throw new Exception('Задание не выполнено');
 		}
 
@@ -262,5 +244,26 @@ class QuestController extends Controller
 		$this->planet->save();
 
 		return to_route('quests');
+	}
+
+	/**
+	 * @param array{quest?: int, level_minier?: int, level_raid?: int} $requirements
+	 */
+	private function meetsRequirements(array $requirements): bool
+	{
+		foreach ($requirements as $key => $value) {
+			$satisfied = match ($key) {
+				'quest' => (bool) $this->user->quests->firstWhere('quest_id', $value)?->finish,
+				'level_minier' => $this->user->lvl_minier >= $value,
+				'level_raid' => $this->user->lvl_raid >= $value,
+				default => false,
+			};
+
+			if (!$satisfied) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

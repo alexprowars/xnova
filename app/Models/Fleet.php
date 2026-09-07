@@ -71,7 +71,11 @@ class Fleet extends Model
 
 	public function canBack(): bool
 	{
-		return ($this->mess == 0 || (($this->mess == 3 && $this->mission != MissionType::Expedition) && $this->mission != MissionType::MissileAttack && $this->target_user_id != 1));
+		if ($this->mission == MissionType::MissileAttack) {
+			return false;
+		}
+
+		return $this->mess == 0 || ($this->mess == 3 && $this->mission != MissionType::Expedition && $this->target_user_id != 1);
 	}
 
 	public function getOriginCoordinates(bool $withType = true): Coordinates

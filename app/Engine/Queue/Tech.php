@@ -79,7 +79,7 @@ class Tech
 			$planet = Planet::query()
 				->find((int) $techHandle->planet_id);
 
-			$entity = Entity\Research::createEntity($element->getId(), $techHandle->level, $planet);
+			$entity = Entity\Research::createEntity($element->getId(), $techHandle->level - 1, $planet);
 
 			$cost = $entity->getPrice();
 

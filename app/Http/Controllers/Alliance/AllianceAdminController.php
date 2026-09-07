@@ -7,7 +7,6 @@ use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Format;
 use App\Http\Controllers\Controller;
-use App\Models\AllianceMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -184,7 +183,10 @@ class AllianceAdminController extends Controller
 			throw new PageException('Доступ запрещён');
 		}
 
-		$user = User::find((int) $request->post('user', 0));
+		$member = $alliance->members()->with('user')
+			->find((int) $request->post('member', 0));
+
+		$user = $member?->user;
 
 		if (!$user || $user->alliance_id != $this->user->alliance_id) {
 			throw new PageException('Операция невозможна.');
@@ -193,8 +195,7 @@ class AllianceAdminController extends Controller
 		$alliance->user()->associate($user);
 		$alliance->save();
 
-		AllianceMember::query()->whereBelongsTo($user)
-			->update(['rank' => 0]);
+		$member->update(['rank' => 0]);
 
 		return to_route('alliance');
 	}

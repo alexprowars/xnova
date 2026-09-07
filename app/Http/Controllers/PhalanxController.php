@@ -75,6 +75,7 @@ class PhalanxController extends Controller
 			)
 			->orWhere(
 				fn (Builder $query) => $query->coordinates(FleetDirection::END, $target)
+					->where('end_type', PlanetType::PLANET)
 			)
 			->orderBy('start_date')
 			->get();
