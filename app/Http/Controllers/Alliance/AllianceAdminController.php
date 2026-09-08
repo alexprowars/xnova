@@ -221,8 +221,8 @@ class AllianceAdminController extends Controller
 
 			if ($file->isValid()) {
 				$validator = Validator::make(
-					['file' => $file],
-					['image' => 'image,mimetypes:image/jpg,image/webp,image/png']
+					['image' => $file],
+					['image' => ['image', 'mimetypes:image/jpeg,image/webp,image/png']]
 				);
 
 				if ($validator->passes()) {

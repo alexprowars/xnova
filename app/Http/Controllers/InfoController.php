@@ -55,7 +55,6 @@ class InfoController extends Controller
 				$list = [];
 
 				$fleets = Models\Fleet::query()
-					->where('id', $this->user->id)
 					->where('end_galaxy', $this->planet->galaxy)
 					->where('end_system', $this->planet->system)
 					->where('end_planet', $this->planet->planet)

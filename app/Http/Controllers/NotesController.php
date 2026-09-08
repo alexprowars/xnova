@@ -88,7 +88,7 @@ class NotesController extends Controller
 			'id' => $note->id,
 			'priority' => (int) $note->priority,
 			'title' => $note->title,
-			'message' => str_replace(["\n", "\r", "\n\r"], '<br>', stripslashes($note->text)),
+			'message' => $note->text,
 		];
 
 		return Inertia::render('Notes/Edit', [

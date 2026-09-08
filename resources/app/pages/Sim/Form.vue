@@ -42,7 +42,7 @@
 					</td>
 
 					<td class="th" v-for="i in range(0, Math.min(page.slots['max'], defenders) - 1)">
-						<input class="number" :value="page.slots['defenders'][i] !== undefined && page.slots['defenders'][i][techId] !== undefined ? page.slots['defenders'][i]['c'] : 0" type="text" :name="'gr'+(i +page.slots['max'])+'-'+techId" maxlength="2">
+						<input class="number" :value="page.slots['defenders'][i] !== undefined && page.slots['defenders'][i][techId] !== undefined ? page.slots['defenders'][i][techId]['c'] : 0" type="text" :name="'gr'+(i +page.slots['max'])+'-'+techId" maxlength="2">
 					</td>
 				</tr>
 				<tr>

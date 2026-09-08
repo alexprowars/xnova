@@ -7,37 +7,45 @@ use App\Exceptions\Exception;
 use App\Format;
 use App\Support\ToastType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
 	public function daily()
 	{
-		if ($this->user->daily_bonus?->isFuture()) {
-			throw new Exception('Вы не можете получить ежедневный бонус в данное время');
-		}
+		$add = DB::transaction(function () {
+			$this->user->refreshForUpdate();
+			$this->planet->refreshForUpdate();
 
-		$factor = $this->user->daily_bonus_factor < 50
-			? $this->user->daily_bonus_factor + 1 : 50;
+			if ($this->user->daily_bonus?->isFuture()) {
+				throw new Exception('Вы не можете получить ежедневный бонус в данное время');
+			}
 
-		if (!$this->user->daily_bonus || $this->user->daily_bonus->addDay()->isPast()) {
-			$factor = 1;
-		}
+			$factor = $this->user->daily_bonus_factor < 50
+				? $this->user->daily_bonus_factor + 1 : 50;
 
-		$add = $factor * 500 * Game::getSpeed('mine');
+			if (!$this->user->daily_bonus || $this->user->daily_bonus->addDay()->isPast()) {
+				$factor = 1;
+			}
 
-		$this->planet->metal += $add;
-		$this->planet->crystal += $add;
-		$this->planet->deuterium += $add;
-		$this->planet->update();
+			$add = $factor * 500 * Game::getSpeed('mine');
 
-		$this->user->daily_bonus = now()->addSeconds(86400);
-		$this->user->daily_bonus_factor = $factor;
+			$this->planet->metal += $add;
+			$this->planet->crystal += $add;
+			$this->planet->deuterium += $add;
+			$this->planet->update();
 
-		if ($this->user->daily_bonus_factor > 1) {
-			$this->user->credits++;
-		}
+			$this->user->daily_bonus = now()->addSeconds(86400);
+			$this->user->daily_bonus_factor = $factor;
 
-		$this->user->update();
+			if ($this->user->daily_bonus_factor > 1) {
+				$this->user->credits++;
+			}
+
+			$this->user->update();
+
+			return $add;
+		});
 
 		if ($this->user->daily_bonus_factor > 1) {
 			toast(ToastType::SUCCESS, 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия, а также 1 кредит.');

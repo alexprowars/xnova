@@ -14,6 +14,7 @@ use App\Models\PlanetEntity;
 use App\Support\ToastType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ResourcesController extends Controller
@@ -75,36 +76,44 @@ class ResourcesController extends Controller
 
 	public function buy(): void
 	{
-		if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
-			throw new Exception('На этой планете нельзя купить ресурсы');
-		}
+		$resources = DB::transaction(function () {
+			$this->planet->refreshForUpdate();
 
-		if ($this->user->credits < 10) {
-			throw new Exception('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
-		}
+			if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
+				throw new Exception('На этой планете нельзя купить ресурсы');
+			}
 
-		if ($this->planet->merchand?->isFuture()) {
-			throw new Exception('Покупать ресурсы можно только раз в 48 часов');
-		}
+			$this->user->refreshForUpdate();
 
-		$this->planet->merchand = now()->addDays(2);
+			if ($this->user->credits < 10) {
+				throw new Exception('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
+			}
 
-		$resources = $this->getBuyResourcesAmount();
+			if ($this->planet->merchand?->isFuture()) {
+				throw new Exception('Покупать ресурсы можно только раз в 48 часов');
+			}
 
-		foreach (Vars::getResources() as $res) {
-			$this->planet->{$res} += $resources[$res];
-		}
+			$this->planet->merchand = now()->addDays(2);
 
-		$this->planet->update();
+			$resources = $this->getBuyResourcesAmount();
 
-		$this->user->credits -= 10;
-		$this->user->update();
+			foreach (Vars::getResources() as $res) {
+				$this->planet->{$res} += $resources[$res];
+			}
 
-		LogsCredit::create([
-			'user_id' => $this->user->id,
-			'amount' => 10 * (-1),
-			'type' => 2,
-		]);
+			$this->planet->update();
+
+			$this->user->credits -= 10;
+			$this->user->update();
+
+			LogsCredit::create([
+				'user_id' => $this->user->id,
+				'amount' => 10 * (-1),
+				'type' => 2,
+			]);
+
+			return $resources;
+		});
 
 		toast(ToastType::SUCCESS, 'Вы успешно купили ' . $resources['metal'] . ' металла, ' . $resources['crystal'] . ' кристалла, ' . $resources['deuterium'] . ' дейтерия');
 	}

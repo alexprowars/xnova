@@ -112,7 +112,7 @@ class LogsController extends Controller
 			throw new PageException('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
 		}
 
-		if (!$raport->user_id && Carbon::parse($raport->data['date'])->isAfter(now()->subHours(2)) && !$this->user->isAdmin()) {
+		if (!$raport->user_id && Carbon::parse($raport->data['date'])->isAfter(now()->subHours(2)) && !$this->user?->isAdmin()) {
 			throw new PageException('Данный лог боя пока недоступен для просмотра!');
 		}
 

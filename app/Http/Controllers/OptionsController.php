@@ -11,6 +11,7 @@ use App\Models;
 use App\Models\Planet;
 use App\Models\PlanetEntity;
 use App\Models\UserAuthentication;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -237,7 +238,9 @@ class OptionsController extends Controller
 			throw new Exception(__('options.mode_vacations_fleet_error'));
 		}
 
-		$vacationTime = now()->addDays(config('game.vacationModeTime', 2));
+		$vacationStartedAt = CarbonImmutable::now();
+
+		$vacationTime = $vacationStartedAt->addDays(config('game.vacationModeTime', 2));
 
 		$buildsId = [4, 12, 212];
 
@@ -245,7 +248,10 @@ class OptionsController extends Controller
 			$buildsId[] = Vars::getIdByName($res . '_mine');
 		}
 
-		$this->user->planets->each(function (Planet $planet) use ($buildsId) {
+		$this->user->planets()->get()->each(function (Planet $planet) use ($buildsId, $vacationStartedAt) {
+			$planet->setRelation('user', $this->user);
+			$planet->getProduction($vacationStartedAt)->update();
+
 			$planet->entities->whereIn('entity_id', $buildsId)
 				->each(function (PlanetEntity $entity) {
 					$entity->setFactor(0);

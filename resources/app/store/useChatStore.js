@@ -103,8 +103,8 @@ export default function useChatStore () {
 		unread.value += 1;
 	}
 
-	function setMessages (messages) {
-		messages.value = messages.map((message) => ({ ...message, text: reformatMessage(message['text']) }));
+	function setMessages (newMessages) {
+		messages.value = newMessages.map((message) => ({ ...message, text: reformatMessage(message['text']) }));
 	}
 
 	function clearUnread () {

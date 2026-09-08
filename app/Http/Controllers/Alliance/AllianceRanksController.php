@@ -7,6 +7,7 @@ use App\Exceptions\PageException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AllianceRanksController extends Controller
@@ -108,13 +109,20 @@ class AllianceRanksController extends Controller
 			throw new PageException(__('alliance.Denied_access'));
 		}
 
-		$ranks = $alliance->ranks;
+		DB::transaction(function () use ($alliance, $id) {
+			$alliance->refreshForUpdate();
 
-		if (isset($ranks[$id])) {
-			unset($ranks[$id]);
+			$ranks = $alliance->ranks;
 
-			$alliance->ranks = $ranks;
-			$alliance->save();
-		}
+			if (isset($ranks[$id])) {
+				unset($ranks[$id]);
+
+				$alliance->members()->where('rank', $id)
+					->update(['rank' => null]);
+
+				$alliance->ranks = $ranks;
+				$alliance->save();
+			}
+		});
 	}
 }

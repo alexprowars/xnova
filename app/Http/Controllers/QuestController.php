@@ -6,6 +6,7 @@ use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Format;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class QuestController extends Controller
@@ -184,64 +185,70 @@ class QuestController extends Controller
 			throw new Exception('Задание не существует');
 		}
 
-		$qInfo = $this->user->quests()
-			->where('quest_id', $id)
-			->first();
+		DB::transaction(function () use ($id, $quest) {
+			$this->user->refreshForUpdate();
+			$this->planet->refreshForUpdate();
 
-		if (!$qInfo) {
-			throw new Exception('Задание не существует');
-		}
+			$qInfo = $this->user->quests()
+				->where('quest_id', $id)
+				->lockForUpdate()
+				->first();
 
-		$errors = 0;
-		$checks = $qInfo->checkFinished($this->user, $this->planet);
-
-		foreach ($quest[$id]['task'] as $taskKey => $taskVal) {
-			$errors += !($checks[$taskKey] ?? false) ? 1 : 0;
-		}
-
-		if ($errors || $qInfo->finish || !$this->meetsRequirements($quest[$id]['required'] ?? [])) {
-			throw new Exception('Задание не выполнено');
-		}
-
-		foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
-			if ($rewardKey == 'metal') {
-				$this->planet->metal += $rewardVal;
-			} elseif ($rewardKey == 'crystal') {
-				$this->planet->crystal += $rewardVal;
-			} elseif ($rewardKey == 'deuterium') {
-				$this->planet->deuterium += $rewardVal;
-			} elseif ($rewardKey == 'credits') {
-				$this->user->credits += $rewardVal;
-			} elseif ($rewardKey == 'build') {
-				foreach ($rewardVal as $element => $level) {
-					$type = Vars::getItemType($element);
-
-					if ($type == ItemType::TECH) {
-						$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
-					} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
-						$this->planet->updateAmount($element, $level, true);
-					} elseif ($type == ItemType::OFFICIER) {
-						if ($this->user->{Vars::getName($element)}?->isFuture()) {
-							$this->user->{Vars::getName($element)} = $this->user->{Vars::getName($element)}->addSeconds($level);
-						} else {
-							$this->user->{Vars::getName($element)} = now()->addSeconds($level);
-						}
-					} elseif ($type == ItemType::BUILDING) {
-						$this->planet->updateAmount($element, (int) $level, true);
-					}
-				}
-			} elseif ($rewardKey == 'storage_rand') {
-				$this->planet->updateAmount(random_int(22, 24), 1, true);
+			if (!$qInfo) {
+				throw new Exception('Задание не существует');
 			}
-		}
 
-		$qInfo->finish = true;
-		$qInfo->update();
+			$errors = 0;
+			$checks = $qInfo->checkFinished($this->user, $this->planet);
+
+			foreach ($quest[$id]['task'] as $taskKey => $taskVal) {
+				$errors += !($checks[$taskKey] ?? false) ? 1 : 0;
+			}
+
+			if ($errors || $qInfo->finish || !$this->meetsRequirements($quest[$id]['required'] ?? [])) {
+				throw new Exception('Задание не выполнено');
+			}
+
+			foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
+				if ($rewardKey == 'metal') {
+					$this->planet->metal += $rewardVal;
+				} elseif ($rewardKey == 'crystal') {
+					$this->planet->crystal += $rewardVal;
+				} elseif ($rewardKey == 'deuterium') {
+					$this->planet->deuterium += $rewardVal;
+				} elseif ($rewardKey == 'credits') {
+					$this->user->credits += $rewardVal;
+				} elseif ($rewardKey == 'build') {
+					foreach ($rewardVal as $element => $level) {
+						$type = Vars::getItemType($element);
+
+						if ($type == ItemType::TECH) {
+							$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
+						} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
+							$this->planet->updateAmount($element, $level, true);
+						} elseif ($type == ItemType::OFFICIER) {
+							if ($this->user->{Vars::getName($element)}?->isFuture()) {
+								$this->user->{Vars::getName($element)} = $this->user->{Vars::getName($element)}->addSeconds($level);
+							} else {
+								$this->user->{Vars::getName($element)} = now()->addSeconds($level);
+							}
+						} elseif ($type == ItemType::BUILDING) {
+							$this->planet->updateAmount($element, (int) $level, true);
+						}
+					}
+				} elseif ($rewardKey == 'storage_rand') {
+					$this->planet->updateAmount(random_int(22, 24), 1, true);
+				}
+			}
+
+			$qInfo->finish = true;
+			$qInfo->update();
+
+			$this->user->save();
+			$this->planet->save();
+		});
 
 		cache()->forget('app::quests::' . $this->user->id);
-
-		$this->user->save();
-		$this->planet->save();
 
 		return to_route('quests');
 	}

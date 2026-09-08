@@ -1,7 +1,7 @@
 <template>
 	<form method="post" @submit.prevent="invite">
 		<div v-if="friends.length > 0 || alliance.length > 0">
-			<select v-model="form.userId" size="10" style="width:75%;">
+			<select v-model="form.user_id" size="10" style="width:75%;">
 				<option value="">{{ $t('pages.fleets.verband.invite_select_none') }}</option>
 				<optgroup v-if="friends.length > 0" :label="$t('pages.fleets.verband.invite_optgroup_friends_list')">
 					<option v-for="user in friends" :value="user['id']">{{ user['username'] }}</option>
@@ -12,14 +12,13 @@
 			</select>
 			<div class="separator"></div>
 		</div>
-		<input type="text" v-model="form.userName" size="40" :placeholder="$t('pages.fleets.verband.invite_username_placeholder')">
+		<input type="text" v-model="form.user_name" size="40" :placeholder="$t('pages.fleets.verband.invite_username_placeholder')">
 		<br>
 		<button type="submit" class="button">{{ $t('pages.fleets.verband.invite_submit') }}</button>
 	</form>
 </template>
 
 <script setup>
-	import { ref } from 'vue';
 	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
@@ -29,8 +28,8 @@
 	});
 
 	const form = useForm({
-		userId: '',
-		userName: '',
+		user_id: '',
+		user_name: '',
 	});
 
 	function invite() {

@@ -78,6 +78,11 @@ class Fleet extends Model
 		return $this->mess == 0 || ($this->mess == 3 && $this->mission != MissionType::Expedition && $this->target_user_id != 1);
 	}
 
+	public function getCargo(): int
+	{
+		return $this->resource_metal + $this->resource_crystal + $this->resource_deuterium;
+	}
+
 	public function getOriginCoordinates(bool $withType = true): Coordinates
 	{
 		return new Coordinates($this->start_galaxy, $this->start_system, $this->start_planet, $withType ? $this->start_type : null);

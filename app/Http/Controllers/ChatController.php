@@ -7,6 +7,7 @@ use App\Events\ChatPrivateMessage;
 use App\Exceptions\Exception;
 use App\Http\Resources;
 use App\Models\Chat;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,11 +31,18 @@ class ChatController extends Controller
 			throw new Exception('Введите текст сообщения');
 		}
 
-		$chatMessage = Chat::create([
+		$chatMessage = new Chat([
 			'user_id' => Auth::id(),
 			'message' => $message,
 			'date' => now(),
 		]);
+
+		$recipients = $chatMessage->getRecipients();
+
+		$chatMessage->recipient_ids = !empty($recipients['users'])
+			? User::query()->whereIn('username', $recipients['users'])->pluck('id')->all()
+			: [];
+		$chatMessage->save();
 
 		$parsedMessage = Resources\ChatMessage::make($chatMessage)->resolve();
 

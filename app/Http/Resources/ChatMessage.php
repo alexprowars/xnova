@@ -3,11 +3,11 @@
 namespace App\Http\Resources;
 
 use App\Models\Chat;
-use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
 /**
+ * @property Chat $resource
  * @mixin Chat
  */
 class ChatMessage extends JsonResource
@@ -16,22 +16,10 @@ class ChatMessage extends JsonResource
 	{
 		$message = $this->message;
 
-		$publicUsers = [];
-		$privateUsers = [];
+		$recipients = $this->resource->getRecipients();
 
-		if (preg_match_all('/приватно \[(.*?)]/iu', $message, $match)) {
-			$privateUsers = array_map('trim', $match[1]);
-		}
-
-		if (preg_match_all('/для \[(.*?)]/iu', $message, $match)) {
-			$publicUsers = array_map('trim', $match[1]);
-
-			if (!empty($privateUsers)) {
-				$privateUsers = array_unique(array_merge($privateUsers, $publicUsers));
-
-				$publicUsers = [];
-			}
-		}
+		$users = $recipients['users'];
+		$isPrivate = $recipients['private'];
 
 		$message = preg_replace('/(приватно|для) \[.*?]/iu', '', $message);
 
@@ -42,16 +30,7 @@ class ChatMessage extends JsonResource
 			$message = '<span style="color: ' . ___('main.colors.' . $color, 'white') . '">' . $message . '</span>';
 		}
 
-		$users = count($privateUsers) ? $privateUsers : $publicUsers;
-		$isPrivate = count($privateUsers) > 0;
-
-		$receiversId = [];
-
-		if (count($users)) {
-			$receiversId = User::query()
-				->whereIn('username', $users)
-				->pluck('id')->all();
-		}
+		$receiversId = $this->recipient_ids ?? [];
 
 		$user = Auth::user();
 

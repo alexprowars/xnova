@@ -45,6 +45,8 @@ class Recycling extends BaseMission
 					'resource_metal' => $recycled['metal'],
 					'resource_crystal' => $recycled['crystal'],
 				]);
+
+			$this->fleet->refresh();
 		}
 
 		$this->return();

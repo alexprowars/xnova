@@ -43,7 +43,7 @@ trait Unit
 	{
 		$user = $this->planet->user;
 
-		$tech = 1 + $user->getTechLevel('military') * 0.05;
+		$tech = $user->getTechLevel('military') * 0.05;
 
 		if ($this->getObject()->getWeaponType() == 1) {
 			$tech += $user->getTechLevel('laser') * 0.05;

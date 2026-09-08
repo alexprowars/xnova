@@ -33,6 +33,7 @@
 	const { t } = useI18n();
 
 	const props = defineProps({
+		item: Number,
 		data: Object
 	});
 
@@ -40,7 +41,7 @@
 
 	function send() {
 		useForm({
-			fleetId: fleet.value,
+			fleet: fleet.value,
 		})
 		.post('/info/' + props.item + '/alliance', {
 			onSuccess() {

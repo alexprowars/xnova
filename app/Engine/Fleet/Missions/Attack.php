@@ -79,6 +79,10 @@ class Attack extends BaseMission
 
 		$battle = new Battle();
 
+		$fleetCargo = [
+			$this->fleet->id => $this->fleet->getCargo(),
+		];
+
 		if ($this->checkFleet($this->fleet)) {
 			$battle->addAttackerFleet($this->fleet);
 		} else {
@@ -93,6 +97,8 @@ class Attack extends BaseMission
 
 			foreach ($fleets as $fleet) {
 				$battle->addAttackerFleet($fleet);
+
+				$fleetCargo[$fleet->id] = $fleet->getCargo();
 			}
 		}
 
@@ -129,7 +135,7 @@ class Attack extends BaseMission
 					$units = FleetEntityCollection::createFromArray($fleet->getUnitsCount())
 						->filter(fn(FleetEntity $entity) => $entity->id !== 210);
 
-					$maxFleetStorage[$fleet->getId()] = $units->getCapacity();
+					$maxFleetStorage[$fleet->getId()] = max(0, $units->getCapacity() - $fleetCargo[$fleet->getId()]);
 
 					$maxStorage += $maxFleetStorage[$fleet->getId()];
 				}

@@ -92,7 +92,7 @@ class FleetVerbandController extends Controller
 				->get();
 
 			foreach ($friends as $friend) {
-				$result['friends'][] = $friend->only(['friend.id', 'friend.username']);
+				$result['friends'][] = $friend->friend->only(['id', 'username']);
 			}
 		}
 

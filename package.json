@@ -9,10 +9,10 @@
         "build:ssr": "vite build && vite build --ssr"
     },
     "devDependencies": {
-        "@fancyapps/ui": "^6.1.14",
+        "@fancyapps/ui": "^6.1.15",
         "@popperjs/core": "^2.11.8",
         "@tailwindcss/vite": "^4.3.3",
-        "laravel-echo": "^2.4.0",
+        "laravel-echo": "^2.5.0",
         "laravel-vite-plugin": "^3.2",
         "mini-svg-data-uri": "^1.4.4",
         "pusher-js": "^8.6.0",
