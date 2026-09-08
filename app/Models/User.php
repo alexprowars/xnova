@@ -92,6 +92,28 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 
 	protected static function booted(): void
 	{
+		static::updated(function (User $model) {
+			if (!$model->wasChanged(['officier_architect', 'officier_technocrat'])) {
+				return;
+			}
+
+			$model->bonusData = [];
+
+			$queue = $model->queue()
+				->whereNotNull('date')
+				->with('planet')
+				->get();
+
+			foreach ($queue as $item) {
+				if (!$item->planet) {
+					continue;
+				}
+
+				$item->planet->setRelation('user', $model);
+				$item->update(['date_end' => $item->date->addSeconds($item->getTime())]);
+			}
+		});
+
 		static::deleting(static function (User $model) {
 			if ($model->alliance) {
 				if ($model->alliance->user_id != $model->id) {

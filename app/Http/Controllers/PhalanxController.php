@@ -58,15 +58,15 @@ class PhalanxController extends Controller
 			throw new PageException('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
 		}
 
-		$this->planet->deuterium -= $consumption;
-		$this->planet->update();
-
 		$planetExist = Models\Planet::query()->coordinates($target)
 			->exists();
 
 		if (!$planetExist) {
-			throw new PageException('Чит детектед! Режим бога активирован! Приятной игры!');
+			throw new PageException('Планета не существует!');
 		}
+
+		$this->planet->deuterium -= $consumption;
+		$this->planet->update();
 
 		$fleets = Models\Fleet::query()
 			->where(

@@ -37,7 +37,7 @@ class Building
 			->get(QueueType::BUILDING);
 
 		if ($BuildQueue->isNotEmpty()) {
-			if ($BuildQueue->first()->object_id == 31 && config('game.BuildLabWhileRun', 0) != 1) {
+			if ($BuildQueue->first()->object_id == 31 && $BuildQueue->first()->date && config('game.BuildLabWhileRun', 0) != 1) {
 				return true;
 			}
 

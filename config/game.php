@@ -18,8 +18,8 @@ return [
 	'universe' => env('GAME_UNIVERSE', 'x'),
 	// Защита новичков
 	'noobprotection' => env('GAME_NOOB_PROTECTION', 1),
-	'noobprotectiontime' => env('GAME_NOOB_PROTECTION_TIME', 50),
-	'noobprotectionmulti' => env('GAME_NOOB_PROTECTION_MULTI', 5),
+	'noobprotectionPoints' => env('GAME_NOOB_PROTECTION_POINTS', 5000),
+	'noobprotectionFactor' => env('GAME_NOOB_PROTECTION_FACTOR', 5),
 	// Поля на главной планете
 	'initial_fields' => env('GAME_PLANET_FILEDS', 170),
 	// Поля на военной базе

@@ -188,14 +188,14 @@ class FleetSend
 			throw new Exception('Игрок в режиме отпуска!');
 		}
 
-		if ($this->planet->user->alliance_id != 0 && $targerUser->alliance_id != 0 && in_array($this->mission, [MissionType::Attack, MissionType::StayAlly])) {
+		if ($this->planet->user->alliance_id && $targerUser->alliance_id && in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::StayAlly])) {
 			$this->diplomacy = AllianceDiplomacy::query()
 				->where('alliance_id', $targerUser->alliance_id)
 				->where('diplomacy_id', $this->planet->user->alliance_id)
 				->where('status', 1)
 				->first();
 
-			if ($this->mission == MissionType::Attack && $this->diplomacy && $this->diplomacy->type < 3) {
+			if (in_array($this->mission, [MissionType::Attack, MissionType::Assault]) && $this->diplomacy && $this->diplomacy->type < 3) {
 				throw new Exception('Заключён мир или перемирие с альянсом атакуемого игрока.');
 			}
 		}
@@ -258,19 +258,22 @@ class FleetSend
 				throw new Exception('На планете нет склада альянса!');
 			}
 
+			$isOwnPlanet = $this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user_id;
+
 			if ($this->mission == MissionType::StayAlly) {
+				$isSameAlliance = $this->planet->user->alliance_id && $targerUser->alliance_id == $this->planet->user->alliance_id;
 				$isFriends = Friend::hasFriends($this->planet->user, $targerUser);
 
-				if ($targerUser->alliance_id != $this->planet->user->alliance_id && !$isFriends && (!$this->diplomacy || $this->diplomacy->type != 2)) {
+				if (!$isOwnPlanet && !$isSameAlliance && !$isFriends && (!$this->diplomacy || $this->diplomacy->type != 2)) {
 					throw new Exception('Нельзя охранять вражеские планеты!');
 				}
 			}
 
-			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && ($this->mission == MissionType::Attack || $this->mission == MissionType::Assault)) {
+			if ($isOwnPlanet && ($this->mission == MissionType::Attack || $this->mission == MissionType::Assault)) {
 				throw new Exception('Невозможно атаковать самого себя!');
 			}
 
-			if ($this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user->id && $this->mission == MissionType::Spy) {
+			if ($isOwnPlanet && $this->mission == MissionType::Spy) {
 				throw new Exception('Невозможно шпионить самого себя!');
 			}
 		}
@@ -410,6 +413,8 @@ class FleetSend
 		if (!$hasResources) {
 			throw new Exception(__('fleet.fl_noressources') . Format::number($consumption));
 		}
+
+		$storageNeeded += $totalFleetCons;
 
 		if ($storageNeeded > $fleetStorage) {
 			throw new Exception(__('fleet.fl_nostoragespa') . Format::number($storageNeeded - $fleetStorage));

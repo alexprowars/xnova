@@ -131,10 +131,6 @@ class ResearchController extends Controller
 
 	public function action(Request $request, string $action): void
 	{
-		if (Building::checkLabInQueue($this->planet)) {
-			return;
-		}
-
 		$elementId = (int) $request->post('element', 0);
 
 		if (!$elementId) {
@@ -154,6 +150,10 @@ class ResearchController extends Controller
 				$queueManager->delete($object);
 				break;
 			case 'search':
+				if (Building::checkLabInQueue($this->planet)) {
+					return;
+				}
+
 				$queueManager->add($object);
 				break;
 		}

@@ -17,6 +17,7 @@ use App\Models;
 use App\Models\LogsHistory;
 use App\Models\Planet;
 use App\Notifications\SystemMessage;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 class QueueManager
@@ -115,11 +116,13 @@ class QueueManager
 			$this->nextBuildingQueue();
 
 			for ($i = 0; $i < $buildingsCount; $i++) {
-				if ($this->checkBuildQueue()) {
-					$this->planet->update();
+				$completedAt = $this->checkBuildQueue();
+
+				if ($completedAt) {
+					$this->planet->getProduction()->reset();
 					$this->planet->getProduction()->update();
 
-					$this->nextBuildingQueue();
+					$this->nextBuildingQueue($completedAt instanceof CarbonImmutable ? $completedAt : null);
 				} else {
 					break;
 				}
@@ -130,7 +133,7 @@ class QueueManager
 		$this->checkUnitQueue();
 	}
 
-	protected function checkBuildQueue(): bool
+	protected function checkBuildQueue(): CarbonImmutable|bool
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
@@ -139,6 +142,10 @@ class QueueManager
 		}
 
 		$buildItem = $queueArray->first();
+
+		if (!$buildItem->date) {
+			return false;
+		}
 
 		$entity = $this->planet->getEntityUnit($buildItem->object_id);
 
@@ -195,13 +202,13 @@ class QueueManager
 				]);
 			}
 
-			return true;
+			return $buildItem->date_end;
 		}
 
 		return false;
 	}
 
-	public function nextBuildingQueue(): bool
+	public function nextBuildingQueue(?CarbonImmutable $startedAt = null): bool
 	{
 		$queueArray = $this->get(QueueType::BUILDING);
 
@@ -210,6 +217,16 @@ class QueueManager
 		}
 
 		foreach ($queueArray as $buildItem) {
+			if ($buildItem->object_id == 31 && config('game.BuildLabWhileRun', 0) != 1) {
+				$researchInProgress = $this->planet->user->queue()
+					->where('type', QueueType::RESEARCH)
+					->exists();
+
+				if ($researchInProgress) {
+					return false;
+				}
+			}
+
 			$haveNoMoreLevel = false;
 
 			$entity = $this->planet->getEntityUnit($buildItem->object_id);
@@ -246,9 +263,11 @@ class QueueManager
 					$buildTime = ceil($buildTime / 2);
 				}
 
+				$buildStartedAt = $startedAt ?? now();
+
 				$buildItem->update([
-					'date' => now(),
-					'date_end' => now()->addSeconds($buildTime),
+					'date' => $buildStartedAt,
+					'date_end' => $buildStartedAt->addSeconds($buildTime),
 					'level' => $entity->getLevel() + ($isDestroy ? 0 : 1),
 				]);
 
@@ -315,6 +334,43 @@ class QueueManager
 		return true;
 	}
 
+	public function resumeBuildingQueues(?CarbonImmutable $startedAt = null): void
+	{
+		$user = $this->getUser();
+
+		$user->getConnection()->transaction(function () use ($user, $startedAt) {
+			$user->refreshForUpdate();
+
+			if ($user->queue()->where('type', QueueType::RESEARCH)->exists()) {
+				return;
+			}
+
+			$planetIds = $user->queue()
+				->where('type', QueueType::BUILDING)
+				->whereNull('date')
+				->distinct()
+				->orderBy('planet_id')
+				->pluck('planet_id');
+
+			foreach ($planetIds as $planetId) {
+				$planet = $planetId == $this->planet->id
+					? $this->planet->refreshForUpdate()
+					: $user->planets()->lockForUpdate()->find($planetId);
+
+				if (!$planet || $planet->trashed() || $planet->user_id != $user->id) {
+					continue;
+				}
+
+				$planet->setRelation('user', $user);
+				$planet->getProduction()->reset();
+
+				$manager = $planet === $this->planet ? $this : new self($planet);
+				$manager->loadQueue();
+				$manager->nextBuildingQueue($startedAt);
+			}
+		});
+	}
+
 	public function checkTechQueue(): void
 	{
 		$queueItem = $this->planet->user->queue()
@@ -372,6 +428,7 @@ class QueueManager
 			}
 
 			$this->planet->user->update();
+			$this->resumeBuildingQueues($queueItem->date_end);
 		}
 	}
 

@@ -124,6 +124,31 @@ class FleetSendController extends Controller
 
 	private function checkJumpGate(Planet $targetPlanet): void
 	{
+		$nextJumpTime = $this->planet->getConnection()->transaction(function () use ($targetPlanet): int {
+			$this->user->refreshForUpdate();
+
+			$planets = [$this->planet, $targetPlanet];
+			usort($planets, fn (Planet $first, Planet $second) => $first->id <=> $second->id);
+
+			foreach ($planets as $planet) {
+				$planet->refreshForUpdate();
+
+				if ($planet->trashed() || $planet->user_id != $this->user->id) {
+					throw new Exception(__('fleet.gate_no_dest_g'));
+				}
+
+				$planet->setRelation('user', $this->user);
+				$planet->setRelation('entities', $planet->entities()->lockForUpdate()->get());
+			}
+
+			return $this->jump($targetPlanet);
+		});
+
+		throw new Exception(__('fleet.gate_jump_done') . ' ' . Format::time($nextJumpTime));
+	}
+
+	private function jump(Planet $targetPlanet): int
+	{
 		$planetService = resolve(PlanetServiceFactory::class)
 			->make($this->planet);
 
@@ -187,6 +212,6 @@ class FleetSendController extends Controller
 
 		$this->user->update(['planet_current' => $targetPlanet->id]);
 
-		throw new Exception(__('fleet.gate_jump_done') . ' ' . Format::time($planetService->getNextJumpTime()));
+		return $planetService->getNextJumpTime();
 	}
 }

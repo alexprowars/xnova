@@ -22,6 +22,23 @@ class Tech
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
+		$planet->getConnection()
+			->transaction(function () use ($planet, $user, $element) {
+				$user->refreshForUpdate();
+
+				$planet->refreshForUpdate();
+				$planet->setRelation('user', $user);
+				$planet->getProduction()->reset();
+
+				$this->addLocked($element);
+			});
+	}
+
+	protected function addLocked(BaseObject $element): void
+	{
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
+
 		$techHandle = Models\Queue::query()
 			->whereBelongsTo($user)
 			->where('type', QueueType::RESEARCH)
@@ -73,11 +90,32 @@ class Tech
 	{
 		$user = $this->queue->getUser();
 
-		$techHandle = $user->queue->firstWhere('type', QueueType::RESEARCH);
+		$user->getConnection()
+			->transaction(function () use ($user, $element) {
+				$user->refreshForUpdate();
+
+				$this->deleteLocked($element);
+			});
+
+		$user->unsetRelation('queue');
+		$this->queue->loadQueue();
+	}
+
+	protected function deleteLocked(BaseObject $element): void
+	{
+		$user = $this->queue->getUser();
+
+		$techHandle = $user->queue()
+			->where('type', QueueType::RESEARCH)
+			->lockForUpdate()
+			->first();
 
 		if ($techHandle && $techHandle->object_id == $element->getId()) {
 			$planet = Planet::query()
-				->find((int) $techHandle->planet_id);
+				->lockForUpdate()
+				->findOrFail($techHandle->planet_id);
+
+			$planet->setRelation('user', $user);
 
 			$entity = Entity\Research::createEntity($element->getId(), $techHandle->level - 1, $planet);
 
@@ -89,7 +127,8 @@ class Tech
 			$planet->update();
 
 			$techHandle->delete();
-			$this->queue->loadQueue();
+
+			$this->queue->resumeBuildingQueues();
 
 			if (config('game.log.research', false)) {
 				LogsHistory::create([

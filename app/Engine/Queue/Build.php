@@ -17,6 +17,10 @@ class Build
 
 	public function add(BaseObject $element, bool $destroy = false): void
 	{
+		if ($destroy && in_array($element->getId(), [33, 41], true)) {
+			return;
+		}
+
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
@@ -36,7 +40,11 @@ class Build
 
 		$currentMaxFields = $planet->getMaxFields();
 
-		if ($planet->field_current < ($currentMaxFields - $actualCount) || $destroy) {
+		$reservedFields = $this->queue->get(QueueType::BUILDING)
+			->where('operation', QueueConstructionType::BUILDING)
+			->count();
+
+		if ($planet->field_current < ($currentMaxFields - $reservedFields) || $destroy) {
 			$queuedLevelChange = 0;
 
 			if ($queueId > 1) {

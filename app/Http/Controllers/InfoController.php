@@ -161,6 +161,8 @@ class InfoController extends Controller
 
 	public function alliance(int $itemId, Request $request): void
 	{
+		abort_if($itemId != 34, 404);
+
 		$fleetId = (int) $request->post('fleet', 0);
 
 		if ($fleetId <= 0) {
@@ -187,7 +189,7 @@ class InfoController extends Controller
 			}
 		}
 
-		$max = $this->planet->getLevel($itemId) * 10000;
+		$max = $this->planet->getLevel('ally_deposit') * 10000;
 
 		if ($max > $this->planet->deuterium) {
 			$cur = $this->planet->deuterium;
