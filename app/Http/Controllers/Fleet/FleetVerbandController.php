@@ -13,6 +13,7 @@ use App\Models\Friend;
 use App\Models\Planet;
 use App\Models\User;
 use App\Notifications\SystemMessage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Throwable;
@@ -49,12 +50,12 @@ class FleetVerbandController extends Controller
 				'units' => $item->entities,
 				'start' => [
 					...$item->getOriginCoordinates()->toArray(),
-					'time' => $item->start_date?->utc()->toAtomString(),
+					'date' => $item->start_date?->utc()->toAtomString(),
 					'name' => $item->user_name,
 				],
 				'target' => [
 					...$item->getDestinationCoordinates()->toArray(),
-					'time' => $item->end_date?->utc()->toAtomString(),
+					'date' => $item->end_date?->utc()->toAtomString(),
 					'name' => $item->target_user_name,
 				],
 			];
@@ -86,13 +87,19 @@ class FleetVerbandController extends Controller
 
 			$result['friends'] = [];
 
-			$friends = Friend::query()->whereBelongsTo($this->user)
+			$friends = Friend::query()
+				->where(function (Builder $query) {
+					$query->whereBelongsTo($this->user)
+						->orWhereBelongsTo($this->user, 'friend');
+				})
 				->where('active', true)
-				->with('friend')
+				->with(['user', 'friend'])
 				->get();
 
 			foreach ($friends as $friend) {
-				$result['friends'][] = $friend->friend->only(['id', 'username']);
+				$user = $friend->user_id == $this->user->id ? $friend->friend : $friend->user;
+
+				$result['friends'][] = $user->only(['id', 'username']);
 			}
 		}
 

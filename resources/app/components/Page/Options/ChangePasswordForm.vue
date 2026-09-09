@@ -2,15 +2,15 @@
 	<div class="block-table border-0! text-center">
 		<div class="grid grid-cols-2">
 			<div class="th middle">Старый пароль</div>
-			<div class="th middle"><input name="current_password" v-model="form.currentPassword" :class="{error: v$.currentPassword.$error}" size="20" type="password" autocomplete="current-password"></div>
+			<div class="th middle"><input name="current_password" v-model="form.current_password" :class="{error: v$.current_password.$error}" size="20" type="password" autocomplete="current-password"></div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th middle">Новый пароль (мин. 8 Знаков)</div>
-			<div class="th middle"><input name="password" v-model="form.newPassword" :class="{error: v$.newPassword.$error}" size="20" maxlength="40" type="password" autocomplete="new-password"></div>
+			<div class="th middle"><input name="password" v-model="form.password" :class="{error: v$.password.$error}" size="20" maxlength="40" type="password" autocomplete="new-password"></div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th middle">Новый пароль (повтор)</div>
-			<div class="th middle"><input name="password_confirmation" v-model="form.newPasswordConfirmation" :class="{error: v$.newPasswordConfirmation.$error}" size="20" maxlength="40" type="password" autocomplete="new-password"></div>
+			<div class="th middle"><input name="password_confirmation" v-model="form.password_confirmation" :class="{error: v$.password_confirmation.$error}" size="20" maxlength="40" type="password" autocomplete="new-password"></div>
 		</div>
 		<div class="grid">
 			<div class="th">
@@ -28,21 +28,21 @@
 	import { useForm } from '@inertiajs/vue3';
 
 	const form = useForm({
-		currentPassword: '',
-		newPassword: '',
-		newPasswordConfirmation: '',
+		current_password: '',
+		password: '',
+		password_confirmation: '',
 	});
 
 	const validations = {
-		currentPassword: {
+		current_password: {
 			required
 		},
-		newPassword: {
+		password: {
 			required,
 		},
-		newPasswordConfirmation: {
+		password_confirmation: {
 			required,
-			sameAsPassword: sameAs(computed(() => form.newPassword))
+			sameAsPassword: sameAs(computed(() => form.password))
 		},
 	}
 

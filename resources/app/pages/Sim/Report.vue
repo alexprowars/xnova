@@ -4,7 +4,7 @@
 		<div v-html="page.report"></div>
 		Ссылка на результат симуляции
 		<div class="my-4 text-center">
-			<input type="text" :value="host + '/sim/page.report/' + page.uuid" class="w-125 p-4">
+			<input type="text" :value="host + '/sim/report/' + page.uuid" class="w-125 p-4">
 		</div>
 		<div v-if="page.statistics" class="my-4">
 			<div class="mb-2">Результаты потерь после 50 симуляций:</div>

@@ -16,7 +16,7 @@
 						<input :value="item['id']" v-model="deleteItems" type="checkbox">
 					</div>
 					<div class="col-span-3 th text-center">
-						{{ $formatDate(item['time'], 'DD MMM YYYY HH:mm') }}
+						{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm') }}
 					</div>
 					<div class="col-span-8 th">
 						<Link :href="'/notes/' + item['id']">

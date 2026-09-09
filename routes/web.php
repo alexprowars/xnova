@@ -36,7 +36,7 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 
 	Route::get('sim', [Controllers\SimController::class, 'index']);
 	Route::get('sim/report', [Controllers\SimController::class, 'report']);
-	Route::post('sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
+	Route::match(['get', 'post'], 'sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 

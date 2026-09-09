@@ -83,7 +83,7 @@ class PhalanxController extends Controller
 		$items = [];
 
 		foreach ($fleets as $row) {
-			$end = !($row->start_galaxy == $galaxy && $row->start_system == $system && $row->start_planet == $planet);
+			$end = !($row->start_galaxy == $galaxy && $row->start_system == $system && $row->start_planet == $planet && $row->start_type == PlanetType::PLANET);
 
 			if ($row->start_type == PlanetType::MOON) {
 				$type = 'лун';

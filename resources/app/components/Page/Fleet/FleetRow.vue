@@ -3,7 +3,7 @@
 		<div class="col-span-3 sm:col-span-1 th">{{ i + 1 }}</div>
 		<div class="col-span-6 sm:col-span-2 th">
 			<div>{{ $t('fleet_mission.' + item.mission) }}</div>
-			<div v-if="item.start.time + 1 === item.target.time">
+			<div v-if="item.stage === 1">
 				<a v-tooltip="$t('pages.fleets.list.mission_R')">(R)</a>
 			</div>
 			<div v-else>

@@ -45,7 +45,9 @@ createInertiaApp({
 		},
 	},
 	withApp(app, options) {
-		app.provide(StateSymbol, createState());
+		const state = createState();
+
+		app.provide(StateSymbol, state);
 
 		withInertiaModal(app);
 		app.use(i18n);
@@ -55,7 +57,12 @@ createInertiaApp({
 		};
 
 		app.config.globalProperties.$formatDate = (value, format) => {
-			return dayjs(value).tz().format(format)
+			const offset = state.user?.options?.timezone;
+			const date = dayjs(value);
+
+			return (offset === null || offset === undefined || offset === ''
+				? date.tz()
+				: date.utcOffset(Number(offset))).format(format);
 		};
 
 		app.config.globalProperties.$formatNumber = number;

@@ -6,7 +6,7 @@ use App\Engine\Messages\AbstractMessage;
 
 class MissionExpeditionDelayMessage extends AbstractMessage
 {
-	protected string $type = 'MissionExpeditionGainCredits';
+	protected string $type = 'MissionExpeditionDelay';
 
 	public function getSubject(): ?string
 	{

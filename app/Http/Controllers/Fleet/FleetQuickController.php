@@ -60,7 +60,7 @@ class FleetQuickController extends Controller
 				/** @var ShipObject $fleetObject */
 				$fleetObject = ObjectsFactory::get('recycler');
 
-				$recyclerNeeded = floor($debrisSize / ($fleetObject->getCapacity())) + 1;
+				$recyclerNeeded = ceil($debrisSize / $fleetObject->getCapacity());
 				$recyclerNeeded = min($recyclerNeeded, $this->planet->getLevel('recycler'));
 			}
 

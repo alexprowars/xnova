@@ -8,6 +8,7 @@ use App\Exceptions\Exception;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Notifications\SystemMessage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -100,7 +101,10 @@ class SupportController extends Controller
 	{
 		$ticket = SupportTicket::query()
 			->with(['messages', 'messages.user'])
-			->whereBelongsTo($this->user)
+			->when(!$this->user->isAdmin(), fn (Builder $query) => $query->where(function (Builder $query) {
+				$query->whereBelongsTo($this->user)
+					->orWhereHas('messages', fn (Builder $query) => $query->whereBelongsTo($this->user));
+			}))
 			->findOne($id);
 
 		if (!$ticket) {

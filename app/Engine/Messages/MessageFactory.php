@@ -31,6 +31,7 @@ class MessageFactory
 		'MissionExpeditionGainCredits' => Types\MissionExpeditionGainCreditsMessage::class,
 		'MissionExpeditionGainResources' => Types\MissionExpeditionGainResourcesMessage::class,
 		'MissionExpeditionBattle' => Types\MissionExpeditionBattleMessage::class,
+		'MissionExpeditionReturn' => Types\MissionExpeditionReturnMessage::class,
 		'MissionMissileAttack' => Types\MissionMissileAttackMessage::class,
 		'MissionRecycling' => Types\MissionRecyclingMessage::class,
 		'MissionStay' => Types\MissionStayMessage::class,

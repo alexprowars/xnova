@@ -51,7 +51,7 @@ class RwController extends Controller
 
 		$html .= '<div class="text-center mt-2">ID боевого доклада: <a href="/logs/create?code=' . $logCode . '"><span style="color: red">' . $logCode . '</span></a></div>';
 
-		return Inertia::render('Stats', [
+		return Inertia::render('Rw', [
 			'raport' => $html,
 		]);
 	}

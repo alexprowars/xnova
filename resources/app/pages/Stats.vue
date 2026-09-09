@@ -24,8 +24,8 @@
 								<option :value="5">{{ $t('pages.stats.type_buildings') }}</option>
 								<option :value="3">{{ $t('pages.stats.type_research') }}</option>
 								<option :value="4">{{ $t('pages.stats.type_defense') }}</option>
-								<option v-if="form.list !== 'races'" :value="6">{{ $t('pages.stats.type_peace_level') }}</option>
-								<option v-if="form.list !== 'races'" :value="7">{{ $t('pages.stats.type_combat_level') }}</option>
+								<option v-if="form.list === 'players'" :value="6">{{ $t('pages.stats.type_peace_level') }}</option>
+								<option v-if="form.list === 'players'" :value="7">{{ $t('pages.stats.type_combat_level') }}</option>
 							</select>
 						</div>
 						<div v-if="form.list !== 'races'" class="th col-span-2 middle">{{ $t('pages.stats.label_place') }}</div>

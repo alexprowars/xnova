@@ -9,6 +9,10 @@
 	import { Head } from '@inertiajs/vue3';
 	import DefaultLayout from '~/layouts/DefaultLayout.vue';
 
+	defineProps({
+		page: Object,
+	});
+
 	defineOptions({
 		layout: (props) => props.state.user ? [App, DefaultLayout] : [App, EmptyLayout],
 	});

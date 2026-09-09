@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Engine\Enums\PlanetType;
 use App\Format;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -22,7 +23,6 @@ class SearchController extends Controller
 
 		switch ($type) {
 			case 'playername':
-			case 'planetname':
 				$search = DB::query()
 					->select(['u.id', 'u.username', 'u.race', 'p.name AS planet_name', 'u.alliance_name', 'u.galaxy AS g', 'u.system AS s', 'u.planet AS p', 's.total_rank'])
 					->from('users', 'u')
@@ -31,18 +31,23 @@ class SearchController extends Controller
 						$join->on('s.user_id', '=', 'u.id');
 						$join->on('s.stat_type', '=', DB::raw(1));
 					})
-					->when(
-						$type == 'playername',
-						function (Builder $query) use ($querySearch) {
-							$query->whereLike('u.username', '%' . $querySearch . '%');
-						}
-					)
-					->when(
-						$type == 'planetname',
-						function (Builder $query) use ($querySearch) {
-							$query->whereLike('p.name', '%' . $querySearch . '%');
-						}
-					)
+					->whereLike('u.username', '%' . $querySearch . '%')
+					->limit(30)
+					->get();
+				break;
+
+			case 'planetname':
+				$search = DB::query()
+					->select(['u.id', 'u.username', 'u.race', 'p.name AS planet_name', 'u.alliance_name', 'p.galaxy AS g', 'p.system AS s', 'p.planet AS p', 's.total_rank'])
+					->from('planets', 'p')
+					->join('users as u', 'u.id', '=', 'p.user_id')
+					->leftJoin('statistics as s', function (JoinClause $join) {
+						$join->on('s.user_id', '=', 'u.id');
+						$join->on('s.stat_type', '=', DB::raw(1));
+					})
+					->where('p.planet_type', PlanetType::PLANET)
+					->whereNull('p.deleted_at')
+					->whereLike('p.name', '%' . $querySearch . '%')
 					->limit(30)
 					->get();
 				break;

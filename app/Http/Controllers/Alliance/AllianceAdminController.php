@@ -7,6 +7,7 @@ use App\Exceptions\Exception;
 use App\Exceptions\PageException;
 use App\Format;
 use App\Http\Controllers\Controller;
+use App\Models\Alliance;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -125,7 +126,18 @@ class AllianceAdminController extends Controller
 			throw new PageException('Абревиатура альянса содержит запрещённые символы');
 		}
 
-		$alliance->tag = addslashes(htmlspecialchars($tag));
+		$tag = addslashes(htmlspecialchars($tag));
+
+		$tagExists = Alliance::query()
+			->where('tag', $tag)
+			->whereNot('id', $alliance->id)
+			->exists();
+
+		if ($tagExists) {
+			throw new PageException(str_replace('%s', $tag, __('alliance.always_exist')));
+		}
+
+		$alliance->tag = $tag;
 		$alliance->save();
 
 		return to_route('alliance.admin');

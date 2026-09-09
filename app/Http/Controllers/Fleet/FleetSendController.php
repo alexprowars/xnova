@@ -104,7 +104,7 @@ class FleetSendController extends Controller
 		$consumption = $fleetCollection->getConsumption($duration, $distance);
 
 		$result = [
-			'mission' => $fleetMission->value,
+			'mission' => $fleet->mission->value,
 			'distance' => $distance,
 			'speed' => $maxFleetSpeed,
 			'consumption' => $consumption,

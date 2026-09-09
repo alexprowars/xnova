@@ -80,7 +80,7 @@ class AllianceMembersController extends Controller
 			}
 
 			if ($alliance->user_id == $member->user_id) {
-				$item['range'] = empty($alliance->owner_range) ? 'Основатель' : $alliance->owner_range;
+				$item['range'] = empty($alliance->owner_rank) ? 'Основатель' : $alliance->owner_rank;
 			} elseif ($member->rank !== null && isset($alliance->ranks[$member->rank]['name'])) {
 				$item['range'] = $alliance->ranks[$member->rank]['name'];
 			} else {

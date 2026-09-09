@@ -37,11 +37,11 @@
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.arrival_target') }}</div>
-			<div class="th">{{ $formatDate(page['start_time'], 'DD MMM HH:mm:ss') }}</div>
+			<div class="th">{{ $formatDate(page['start_date'], 'DD MMM HH:mm:ss') }}</div>
 		</div>
 		<div class="grid grid-cols-2">
 			<div class="th">{{ $t('pages.fleets.send.arrival_home') }}</div>
-			<div class="th">{{ $formatDate(page['end_time'], 'DD MMM HH:mm:ss') }}</div>
+			<div class="th">{{ $formatDate(page['end_date'], 'DD MMM HH:mm:ss') }}</div>
 		</div>
 		<div v-if="['units'].length" class="grid">
 			<div class="c">{{ $t('pages.fleets.send.ships') }}</div>

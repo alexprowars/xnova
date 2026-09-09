@@ -123,10 +123,6 @@ class EmpireController extends Controller
 			$row['elements'] = [];
 
 			foreach (Vars::getItemsByType([ItemType::BUILDING, ItemType::FLEET, ItemType::DEFENSE]) as $id) {
-				if (!$planet->getLevel($id)) {
-					continue;
-				}
-
 				$item = [
 					'id' => $id,
 					'fly' => 0
@@ -137,6 +133,10 @@ class EmpireController extends Controller
 
 				if (Vars::getItemType($id) == ItemType::FLEET) {
 					$item['fly'] = $fleetsFly[$planet->galaxy . ':' . $planet->system . ':' . $planet->planet . ':' . $planet->planet_type->value][$id] ?? 0;
+				}
+
+				if (!$item['value'] && !$item['build'] && !$item['fly']) {
+					continue;
 				}
 
 				$row['elements'][$id] = $item;

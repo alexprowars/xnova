@@ -16,10 +16,10 @@ class MissionExpeditionFoundShipsMessage extends AbstractMessage
 
 	public function render(): string
 	{
-		$result = match ($this->data['event_type']) {
-			2 => __('fleet_engine.sys_expe_found_ships_3_' . $this->data['event_subtype']),
-			1 => __('fleet_engine.sys_expe_found_ships_2_' . $this->data['event_subtype']),
-			default => __('fleet_engine.sys_expe_found_ships_1_' . $this->data['event_subtype']),
+		$result = match ($this->data['type']) {
+			2 => __('fleet_engine.sys_expe_found_ships_3_' . $this->data['event']),
+			1 => __('fleet_engine.sys_expe_found_ships_2_' . $this->data['event']),
+			default => __('fleet_engine.sys_expe_found_ships_1_' . $this->data['event']),
 		};
 
 		foreach ($this->data['units'] as $id => $count) {

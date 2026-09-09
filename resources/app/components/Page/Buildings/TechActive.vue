@@ -30,7 +30,7 @@
 					<BuildRowPrice :price="item['price']"/>
 				</div>
 
-				<div v-if="item['available'] && !user.vacation" class="building-active-upgrade">
+				<div v-if="(item['available'] || typeof item['build'] === 'object') && !user.vacation" class="building-active-upgrade">
 					<TechQueue v-if="typeof item['build'] === 'object'" :build="item['build']"/>
 					<div v-else-if="item['max'] > 0 && item['max'] <= level" class="negative">
 						{{ $t('pages.research.max_level') }}

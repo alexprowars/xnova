@@ -12,6 +12,7 @@ use Inertia\Inertia;
 class StatsController extends Controller
 {
 	private string $field;
+	private int $type;
 	private int $page;
 
 	public function __construct(Request $request)
@@ -22,11 +23,13 @@ class StatsController extends Controller
 		$this->page = max($this->page, 1);
 
 		$type = $request->integer('type', 1);
-		$view = $request->input('view', 'players');
+		$view = $request->route()?->getActionMethod();
 
-		if ($view != 'players' && $type > 5) {
+		if ($view != 'index' && $type > 5) {
 			$type = 1;
 		}
+
+		$this->type = $type;
 
 		$this->field = match ($type) {
 			2 => 'fleet',
@@ -41,7 +44,7 @@ class StatsController extends Controller
 
 	public function index(Settings $settings, Request $request)
 	{
-		$type = $request->integer('type', 1);
+		$type = $this->type;
 
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
@@ -105,7 +108,7 @@ class StatsController extends Controller
 
 	public function alliances(Settings $settings, Request $request)
 	{
-		$type = $request->integer('type', 1);
+		$type = $this->type;
 
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),

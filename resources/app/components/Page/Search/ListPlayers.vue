@@ -21,10 +21,10 @@
 				<td class="th">
 					<img v-if="item['race'] !== 0" :src="'/assets/images/skin/race'+item['race']+'.gif'" width="16" height="16" alt="">
 				</td>
-				<td class="th">{{ item['ally_name'] }}</td>
+				<td class="th">{{ item['alliance_name'] }}</td>
 				<td class="th">{{ item['planet_name'] }}</td>
 				<td class="th"><Link :href="'/galaxy?galaxy='+item['g']+'&system='+item['s']">{{ item['g'] }}:{{ item['s'] }}:{{ item['p'] }}</Link></td>
-				<td class="th"><Link :href="'/stats?view=players&range='+item['total_rank']">{{ item['total_rank'] }}</Link></td>
+				<td class="th"><Link :href="'/stats?view=players&page='+Math.ceil(item['total_rank'] / 100)">{{ item['total_rank'] }}</Link></td>
 			</tr>
 			<tr v-if="items.length === 0">
 				<td class="th" colspan="7">{{ $t('pages.search.no_results') }}</td>

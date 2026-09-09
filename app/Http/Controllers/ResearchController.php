@@ -44,8 +44,9 @@ class ResearchController extends Controller
 			$entity = EntityFactory::get($element->getId(), $this->user->getTechLevel($element->getId()), $this->planet);
 
 			$available = $entity->isAvailable();
+			$isResearching = $techHandle?->object_id == $element->getId();
 
-			if (!$available && $viewOnlyAvailable) {
+			if (!$available && $viewOnlyAvailable && !$isResearching) {
 				continue;
 			}
 
@@ -88,37 +89,37 @@ class ResearchController extends Controller
 				}
 
 				$row['time'] = $entity->getTime();
-
-				if ($techHandle) {
-					if ($techHandle->object_id == $element->getId()) {
-						$planet = $techHandle->planet_id == $this->planet->id
-							? $this->planet : $techHandle->planet;
-
-						if (!$planet) {
-							throw new Exception('Planet not found');
-						}
-
-						$planet->setRelation('user', $this->user);
-
-						$research = Research::createEntity($techHandle->object_id, $techHandle->level - 1, $planet);
-
-						$row['build'] = [
-							'planet_id' => $techHandle->planet_id,
-							'item' => $techHandle->object_id,
-							'name' => null,
-							'level' => $techHandle->level,
-							'date' => $techHandle->date->addSeconds($research->getTime())->utc()->toAtomString(),
-						];
-
-						if ($techHandle->planet_id != $this->planet->id) {
-							$row['build']['planet'] = $planet->name;
-						}
-					} else {
-						$row['build'] = true;
-					}
-				}
 			} else {
 				$row['requirements'] = Building::getTechTree($element, $this->user, $this->planet);
+			}
+
+			if ($techHandle && ($available || $isResearching)) {
+				if ($isResearching) {
+					$planet = $techHandle->planet_id == $this->planet->id
+						? $this->planet : $techHandle->planet;
+
+					if (!$planet) {
+						throw new Exception('Planet not found');
+					}
+
+					$planet->setRelation('user', $this->user);
+
+					$research = Research::createEntity($techHandle->object_id, $techHandle->level - 1, $planet);
+
+					$row['build'] = [
+						'planet_id' => $techHandle->planet_id,
+						'item' => $techHandle->object_id,
+						'name' => null,
+						'level' => $techHandle->level,
+						'date' => $techHandle->date->addSeconds($research->getTime())->utc()->toAtomString(),
+					];
+
+					if ($techHandle->planet_id != $this->planet->id) {
+						$row['build']['planet'] = $planet->name;
+					}
+				} else {
+					$row['build'] = true;
+				}
 			}
 
 			$items[] = $row;

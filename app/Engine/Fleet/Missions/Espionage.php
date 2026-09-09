@@ -60,6 +60,8 @@ class Espionage extends BaseMission
 		$spySondeEntity = $this->fleet->entities->getByEntityId(210);
 
 		if ($spySondeEntity && $spySondeEntity->count) {
+			$alliedFleetUnits = [];
+
 			$defenders = Fleet::query()
 				->coordinates(FleetDirection::END, $this->fleet->getDestinationCoordinates())
 				->where('mess', 3)
@@ -71,7 +73,7 @@ class Espionage extends BaseMission
 						continue;
 					}
 
-					$TargetPlanet->updateAmount($entity->id, $entity->count, true);
+					$alliedFleetUnits[$entity->id] = ($alliedFleetUnits[$entity->id] ?? 0) + $entity->count;
 				}
 			}
 
@@ -93,7 +95,7 @@ class Espionage extends BaseMission
 
 			$resultMessage['rows'][] = $this->spyTarget($TargetPlanet, 0, 'fleet_engine.sys_spy_maretials');
 
-			$PlanetFleetInfo = $this->spyTarget($TargetPlanet, 1, 'fleet_engine.sys_spy_fleet');
+			$PlanetFleetInfo = $this->spyTarget($TargetPlanet, 1, 'fleet_engine.sys_spy_fleet', $alliedFleetUnits);
 
 			if ($ST >= 2) {
 				$resultMessage['rows'][] = $PlanetFleetInfo;
@@ -156,7 +158,7 @@ class Espionage extends BaseMission
 		}
 	}
 
-	private function spyTarget(User|Planet $target, int $mode, string $title): array
+	private function spyTarget(User|Planet $target, int $mode, string $title, array $alliedFleetUnits = []): array
 	{
 		if ($mode == 0 && $target instanceof Planet) {
 			$result = [
@@ -213,7 +215,9 @@ class Espionage extends BaseMission
 
 				if ($type == ItemType::BUILDING) {
 					$level = $target->getLevel($item);
-				} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
+				} elseif ($type == ItemType::FLEET) {
+					$level = $target->getLevel($item) + ($alliedFleetUnits[$item] ?? 0);
+				} elseif ($type == ItemType::DEFENSE) {
 					$level = $target->getLevel($item);
 				} elseif ($type == ItemType::TECH) {
 					$level = $target->getTechLevel($item);

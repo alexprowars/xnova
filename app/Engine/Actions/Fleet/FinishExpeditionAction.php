@@ -193,6 +193,7 @@ class FinishExpeditionAction
 
 		$message = new MissionExpeditionGainCreditsMessage([
 			'type' => random_int(1, 5),
+			'credits' => $size,
 		]);
 
 		$this->fleet->user->notify(
@@ -424,7 +425,10 @@ class FinishExpeditionAction
 				'type' => random_int(1, 6),
 			]);
 		} else {
-			$this->fleet->end_date = $this->fleet->end_date->subSeconds(max(1, ((($this->fleet->end_stay?->getTimestamp() ?? 0) - $this->fleet->start_date->getTimestamp()) / 3 * $timeMultiplier)));
+			$returnStartedAt = $this->fleet->end_stay ?? $this->fleet->start_date;
+			$returnDuration = $this->fleet->end_date->getTimestamp() - $returnStartedAt->getTimestamp();
+
+			$this->fleet->end_date = $returnStartedAt->addSeconds(max(1, ceil($returnDuration / $timeMultiplier)));
 
 			$message = new MissionExpeditionDelayMessage([
 				'time' => 'fast',

@@ -63,6 +63,15 @@ class OptionsController extends Controller
 
 	public function save(Request $request): void
 	{
+		if (empty($this->user->email) && $request->filled('email')) {
+			$data = $request->validate([
+				'email' => 'required|email:rfc,dns|unique:users,email',
+			]);
+
+			$this->user->email = $data['email'];
+			$this->user->email_verified_at = null;
+		}
+
 		if ($this->user->vacation?->isPast() && $request->has('vacation') && !((int) $request->post('vacation', 0))) {
 			$this->user->vacation = null;
 		}
@@ -103,7 +112,7 @@ class OptionsController extends Controller
 					throw new Exception(__('options.username_exist_error'));
 				}
 
-				if (!preg_match('/^[a-zA-Za-яA-Я0-9_.,\-!?* ]+$/u', $username) || Str::length($username) < 5) {
+				if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $username) || Str::length($username) < 5) {
 					throw new Exception(__('options.username_invalid_error'));
 				}
 
@@ -202,6 +211,8 @@ class OptionsController extends Controller
 
 			if ($request->post('photo_delete')) {
 				$this->user->clearMediaCollection();
+
+				cache()->forget('media::user_' . $this->user->id);
 			}
 		}
 

@@ -74,7 +74,7 @@ class UpdateStatistics
 			$Units = $object->getTotalPrice(true);
 
 			for ($Level = 1; $Level <= $item->level; $Level++) {
-				$TechPoints += $Units * ($price['factor'] ** $Level);
+				$TechPoints += $Units * ($price['factor'] ** ($Level - 1));
 			}
 
 			$TechCounts += $item->level;
@@ -110,7 +110,7 @@ class UpdateStatistics
 			$Units = $object->getTotalPrice(true);
 
 			for ($Level = 1; $Level <= $item->amount; $Level++) {
-				$BuildPoints += $Units * ($price['factor'] ** $Level);
+				$BuildPoints += $Units * ($price['factor'] ** ($Level - 1));
 			}
 
 			$BuildCounts += $item->amount;
@@ -451,8 +451,6 @@ class UpdateStatistics
 			DB::statement(sprintf($qryFormat, $rankName, 1));
 		}
 
-		Statistic::where('stat_code', '>=', 2)->delete();
-
 		DB::statement("INSERT INTO " . app(Statistic::class)->getTable() . "
 		      (`tech_points`, `tech_count`, `build_points`, `build_count`, `defs_points`, `defs_count`,
 		        `fleet_points`, `fleet_count`, `total_points`, `total_count`, `user_id`, `alliance_id`, `stat_type`, `stat_code`,
@@ -468,16 +466,7 @@ class UpdateStatistics
 		      WHERE u.`stat_type` = 1 AND u.stat_code = 1 AND u.alliance_id IS NOT NULL
 		      GROUP BY u.`alliance_id`");
 
-		DB::statement("UPDATE " . app(Statistic::class)->getTable() . " as new
-		      LEFT JOIN " . app(Statistic::class)->getTable() . " as old ON old.alliance_id = new.alliance_id AND old.stat_code = 2 AND old.stat_type = 1
-		    SET
-		      new.tech_old_rank = old.tech_rank,
-		      new.build_old_rank = old.build_rank,
-		      new.defs_old_rank  = old.defs_rank ,
-		      new.fleet_old_rank = old.fleet_rank,
-		      new.total_old_rank = old.total_rank
-		    WHERE
-		      new.stat_type = 2 AND new.stat_code = 2;");
+		Statistic::query()->where('stat_code', '>=', 2)->delete();
 
 		foreach ($rankNames as $rankName) {
 			DB::statement('SET @rownum=0;');
