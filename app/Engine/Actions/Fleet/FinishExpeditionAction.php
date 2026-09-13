@@ -173,6 +173,8 @@ class FinishExpeditionAction
 		Fleet::query()->whereKey($this->fleet)
 			->incrementEach($update);
 
+		$this->fleet->refresh();
+
 		$this->return();
 
 		$this->fleet->user->notify(
@@ -337,7 +339,7 @@ class FinishExpeditionAction
 
 		$alienUser = new User(['id' => 0, 'username' => $mame]);
 
-		$defenderFleet = new Fleet();
+		$defenderFleet = new Fleet(['id' => 0]);
 		$defenderFleet->entities = FleetEntityCollection::createFromArray($defenderFleetArray);
 		$defenderFleet->user()->associate($alienUser);
 		$defenderFleet->end_galaxy = $this->fleet->end_galaxy;

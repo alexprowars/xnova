@@ -217,7 +217,7 @@ class UpdateStatistics
 		$list = Models\User::query()
 			->whereNotNull('delete_time')
 			->wherePast('delete_time')
-			->get(['id', 'username']);
+			->get();
 
 		foreach ($list as $user) {
 			$user->delete();

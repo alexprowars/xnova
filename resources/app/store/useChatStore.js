@@ -66,7 +66,7 @@ export default function useChatStore () {
 	const unread = ref(0);
 
 	const sortedMessages = computed(() => {
-		return messages.value.sort((a, b) => a['time'] < b['time'] ? -1 : 1);
+		return [...messages.value].sort((a, b) => Date.parse(a['date']) - Date.parse(b['date']));
 	});
 
 	async function sendMessage (message) {

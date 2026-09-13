@@ -35,7 +35,7 @@ class LoginController extends Controller
 
 			$credentials = $request->only(['email', 'password']);
 
-			if (!Auth::attempt($credentials, $request->has('rememberme'))) {
+			if (!Auth::attempt($credentials, $request->boolean('remember'))) {
 				throw new Exception('Неверный E-mail и/или пароль');
 			}
 		} catch (Throwable $e) {

@@ -41,7 +41,6 @@ class InfoController extends Controller
 			'production' => null,
 			'destroy' => null,
 			'combat' => null,
-			'missile' => null,
 		];
 
 		if (($itemId >= 1 && $itemId <= 4) || $itemId == 12) {

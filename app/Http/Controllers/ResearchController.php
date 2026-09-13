@@ -79,7 +79,7 @@ class ResearchController extends Controller
 				} elseif ($element->getId() == 109) {
 					$row['effects'] = '<span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 110) {
-					$row['effects'] = '<span class="icon shield" title="Щиты"></span><span class="positive">' . (3 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon shield" title="Щиты"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 111) {
 					$row['effects'] = '<span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 123) {

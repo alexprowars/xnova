@@ -177,7 +177,7 @@ class FleetSendController extends Controller
 
 		$success = false;
 
-		$ships = Arr::wrap(request()->post('ship', []));
+		$ships = Arr::wrap(request()->post('ships', []));
 		$ships = array_map('intval', $ships);
 		$ships = array_map('abs', $ships);
 

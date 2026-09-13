@@ -127,8 +127,8 @@ class GalaxyService
 				'image' => 'mond',
 				'diameter' => $size,
 				'field_max' => 1,
-				'temp_min' => $maxtemp,
-				'temp_max' => $mintemp,
+				'temp_min' => $mintemp,
+				'temp_max' => $maxtemp,
 			]);
 
 			$moon->user()->associate($user);
@@ -136,6 +136,8 @@ class GalaxyService
 			if ($moon->save()) {
 				$planet->moon()->associate($moon);
 				$planet->save();
+
+				cache()->forget('app::planetlist_' . $user->id);
 
 				return $moon;
 			}

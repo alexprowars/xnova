@@ -31,6 +31,7 @@ class SearchController extends Controller
 						$join->on('s.user_id', '=', 'u.id');
 						$join->on('s.stat_type', '=', DB::raw(1));
 					})
+					->whereNull('u.deleted_at')
 					->whereLike('u.username', '%' . $querySearch . '%')
 					->limit(30)
 					->get();
@@ -47,6 +48,7 @@ class SearchController extends Controller
 					})
 					->where('p.planet_type', PlanetType::PLANET)
 					->whereNull('p.deleted_at')
+					->whereNull('u.deleted_at')
 					->whereLike('p.name', '%' . $querySearch . '%')
 					->limit(30)
 					->get();
@@ -61,6 +63,7 @@ class SearchController extends Controller
 						$join->on('s.alliance_id', '=', 'a.id');
 						$join->on('s.stat_type', '=', DB::raw(2));
 					})
+					->whereNull('a.deleted_at')
 					->when(
 						$type == 'allytag',
 						function (Builder $query) use ($querySearch) {

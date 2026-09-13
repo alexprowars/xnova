@@ -56,7 +56,7 @@ class CreateMoon extends CreateRecord
 
 	protected function handleRecordCreation(array $data): Planet
 	{
-		$diameter = min(max($data['diameter'], 20), 0);
+		$diameter = min(max($data['diameter'], 1), 20);
 
 		$moon = Galaxy::createMoon(
 			new Coordinates($data['galaxy'], $data['system'], $data['planet']),

@@ -14,7 +14,7 @@
 
 		<InfoProduction v-if="item['production']" :item="item['id']" :production="item['production']"/>
 		<InfoCombat v-if="item['combat']" :item="item['id']" :data="item['combat']"/>
-		<InfoMissile v-if="item['missile']" :item="item['id']"/>
+		<InfoMissile v-if="item['id'] === 44" :item="item['id']"/>
 		<InfoAlliance v-if="item['alliance']" :item="item['id']" :data="item['alliance']"/>
 
 		<InfoDestroy v-if="item['destroy']" :item="item['id']" :data="item['destroy']"/>

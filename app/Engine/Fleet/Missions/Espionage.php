@@ -28,17 +28,17 @@ class Espionage extends BaseMission
 
 		$TargetPlanet = Planet::findByCoordinates($this->fleet->getDestinationCoordinates());
 
-		if ($TargetPlanet->user_id == 0) {
+		if (!$TargetPlanet) {
+			$this->return();
+			return;
+		}
+
+		if (!$TargetPlanet->user_id) {
 			$this->return();
 			return;
 		}
 
 		$targetUser = $TargetPlanet->user;
-
-		if (!$TargetPlanet) {
-			$this->return();
-			return;
-		}
 
 		$TargetPlanet->getProduction($this->fleet->start_date)->update();
 

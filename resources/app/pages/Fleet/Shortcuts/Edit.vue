@@ -34,6 +34,7 @@
 
 <script setup>
 	import { Head, Link, useForm } from '@inertiajs/vue3';
+	import { useI18n } from 'vue-i18n';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 
 	const props = defineProps({
@@ -47,6 +48,8 @@
 		planet: props.page.planet,
 		planet_type: props.page.planet_type,
 	});
+
+	const { t } = useI18n();
 
 	function update() {
 		form.post('/fleet/shortcut/' + props.page.id, {

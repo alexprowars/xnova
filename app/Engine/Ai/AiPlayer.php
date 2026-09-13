@@ -141,7 +141,7 @@ class AiPlayer
 			return false;
 		}
 
-		$energyFree = $this->planet->energy < $this->planet->energy_used;
+		$energyFree = $this->planet->energy - $this->planet->energy_used;
 
 		if ($energyFree < 0) {
 			foreach ([4, 12] as $id) {

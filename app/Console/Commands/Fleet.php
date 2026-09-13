@@ -21,7 +21,7 @@ class Fleet extends Command
 			->orWhere(function (Builder $query) {
 				$query->whereNotNull('end_stay')
 					->whereNowOrPast('end_stay')
-					->whereNot('mess', 0);
+					->where('mess', 3);
 			})
 			->orWhere(function (Builder $query) {
 				$query->whereNowOrPast('end_date')

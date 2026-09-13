@@ -56,7 +56,7 @@ class MessagesController extends Controller
 			$limit = 10;
 		}
 
-		$page = (int) $request->query('p', 0);
+		$page = (int) $request->query('page', 0);
 
 		if ($page <= 0) {
 			$page = 1;

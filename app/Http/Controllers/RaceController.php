@@ -6,6 +6,7 @@ use App\Exceptions\Exception;
 use App\Models\Fleet;
 use App\Models\LogsCredit;
 use App\Support\ToastType;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -55,6 +56,14 @@ class RaceController extends Controller
 			throw new Exception('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe');
 		}
 
+		$raceChangedAt = CarbonImmutable::now();
+		$planets = $this->user->planets()->get();
+
+		foreach ($planets as $planet) {
+			$planet->setRelation('user', $this->user);
+			$planet->getProduction($raceChangedAt)->update();
+		}
+
 		$this->user->race = $r;
 
 		if ($this->user->race_change_count > 0) {
@@ -71,7 +80,7 @@ class RaceController extends Controller
 
 		$this->user->update();
 
-		foreach ($this->user->planets as $planet) {
+		foreach ($planets as $planet) {
 			$planet->updateAmount('corvete', 0);
 			$planet->updateAmount('interceptor', 0);
 			$planet->updateAmount('dreadnought', 0);

@@ -90,7 +90,7 @@
 						<input type="radio" v-model="moon" :value="item['id']" :id="'moon' + item['id']">
 						<label :for="'moon'+item['id']">
 							{{ item['name'] }} [{{ item['galaxy'] }}:{{ item['system'] }}:{{ item['planet'] }}]
-							<span v-if="item['jumpgate']">{{ $formatTime((dayjs(page['jumpgate']).diff(now) / 1000), ':', true) }}</span>
+							<span v-if="item['jumpgate']">{{ $formatTime((dayjs(item['jumpgate']).diff(now) / 1000), ':', true) }}</span>
 						</label>
 					</div>
 				</div>
@@ -138,17 +138,17 @@
 									<div class="grid grid-cols-5">
 										<div class="th col-span-2 middle">{{ $t('resources.metal') }}</div>
 										<div class="th middle"><a @click.prevent="maxRes('metal')">{{ $t('pages.fleets.checkout.resources_max') }}</a></div>
-										<div class="th col-span-2 middle"><input v-model="resource.metal" :alt="$t('resources.metal')" size="10" type="text"></div>
+										<div class="th col-span-2 middle"><input v-model.number="resource.metal" :alt="$t('resources.metal')" size="10" type="text"></div>
 									</div>
 									<div class="grid grid-cols-5">
 										<div class="th col-span-2 middle">{{ $t('resources.crystal') }}</div>
 										<div class="th middle"><a @click.prevent="maxRes('crystal')">{{ $t('pages.fleets.checkout.resources_max') }}</a></div>
-										<div class="th col-span-2 middle"><input v-model="resource.crystal" :alt="$t('resources.crystal')" size="10" type="text"></div>
+										<div class="th col-span-2 middle"><input v-model.number="resource.crystal" :alt="$t('resources.crystal')" size="10" type="text"></div>
 									</div>
 									<div class="grid grid-cols-5">
 										<div class="th col-span-2 middle">{{ $t('resources.deuterium') }}</div>
 										<div class="th middle"><a @click.prevent="maxRes('deuterium')">{{ $t('pages.fleets.checkout.resources_max') }}</a></div>
-										<div class="th col-span-2 middle"><input v-model="resource.deuterium" :alt="$t('resources.deuterium')" size="10" type="text"></div>
+										<div class="th col-span-2 middle"><input v-model.number="resource.deuterium" :alt="$t('resources.deuterium')" size="10" type="text"></div>
 									</div>
 									<div class="grid grid-cols-5">
 										<div class="th col-span-2">{{ $t('pages.fleets.checkout.resources_remaining') }}</div>
@@ -163,12 +163,12 @@
 										<div class="th">&nbsp;</div>
 									</div>
 
-									<div v-if="mission === 15 && mission.indexOf(15) >= 0" class="mission m_15">
+									<div v-if="mission === 15 && page['missions'].indexOf(15) >= 0" class="mission m_15">
 										<div class="c">{{ $t('pages.fleets.checkout.expedition_time') }}</div>
 									</div>
 									<div v-if="mission === 15 && page['missions'].indexOf(15) >= 0" class="mission m_15">
 										<div class="th">
-											<select name="expeditiontime">
+											<select name="expeditiontime" v-model.number="expedition_hours">
 												<option v-for="i in page['expedition_hours']" :value="i">{{ i }} {{ $t('pages.fleets.checkout.expedition_hour') }}</option>
 											</select>
 										</div>
@@ -179,7 +179,7 @@
 									</div>
 									<div v-if="mission === 5 && page['missions'].indexOf(5) >= 0" class="mission m_5">
 										<div class="th">
-											<select name="holdingtime" v-model="hold_hours">
+											<select name="holdingtime" v-model.number="hold_hours">
 												<option value="0">0</option>
 												<option value="1">1</option>
 												<option value="2">2</option>
@@ -238,6 +238,7 @@
 	const target_time = computed(() => now.value.getTime() + (duration.value * 1000));
 
 	const alliance = ref(0);
+	const expedition_hours = ref(1);
 	const hold_hours = ref(1);
 
 	const state = useState();
@@ -247,7 +248,7 @@
 		let hold = 0;
 
 		if (mission.value === 5) {
-			hold = props.page['ships'].reduce((summ, item) => item['stay'] * hold_hours.value, 0);
+			hold = props.page['ships'].reduce((summ, item) => summ + item['stay'] * item['count'] * hold_hours.value, 0);
 		}
 
 		return hold;
@@ -261,12 +262,13 @@
 		info();
 	});
 
-	watch(target, () => {
+	watch([target, alliance], () => {
 		let ships = {}
 		props.page['ships'].forEach((item) => ships[item['id']] = item['count']);
 
 		useForm({
 			...target.value, ships,
+			alliance: alliance.value,
 		})
 		.post('/fleet/checkout', {
 			preserveScroll: true,
@@ -329,27 +331,20 @@
 		let current = resource.value.metal + resource.value.crystal + resource.value.deuterium
 		current -= resource.value[type]
 
-		let free = storage.value - current
+		let free = storage.value - hold.value - current
 
 		if (type === 'deuterium') {
-			resource.value[type] = Math.max(Math.min(Math.floor(planet.value['resources'][type]['value'] - consumption.value), free), 0)
+			resource.value[type] = Math.max(Math.min(Math.floor(planet.value['resources'][type]['value'] - consumption.value - hold.value), free), 0)
 		} else {
 			resource.value[type] = Math.max(Math.min(Math.floor(planet.value['resources'][type]['value']), free), 0)
 		}
 	}
 
 	function maxResAll () {
-		let free = storage.value - Math.floor(planet.value['resources']['metal']['value']) - Math.floor(planet.value['resources']['crystal']['value']) - Math.floor(planet.value['resources']['deuterium']['value'] - consumption.value)
-
-		if (free < 0) {
-			resource.value.metal = Math.max(Math.min(Math.floor(planet.value['resources']['metal']['value']), storage.value), 0)
-			resource.value.crystal = Math.max(Math.min(Math.floor(planet.value['resources']['crystal']['value']), storage.value - resource.value.metal), 0)
-			resource.value.deuterium = Math.max(Math.min(Math.floor(planet.value['resources']['deuterium']['value'] - consumption.value), storage.value - resource.value.metal - resource.value.crystal), 0)
-		} else {
-			resource.value.metal = Math.max(Math.floor(planet.value['resources']['metal']['value']), 0)
-			resource.value.crystal = Math.max(Math.floor(planet.value['resources']['crystal']['value']), 0)
-			resource.value.deuterium = Math.max(Math.floor(planet.value['resources']['deuterium']['value'] - consumption.value), 0)
-		}
+		clearResAll()
+		maxRes('metal')
+		maxRes('crystal')
+		maxRes('deuterium')
 	}
 
 	function clearResAll () {
@@ -366,6 +361,8 @@
 			alliance: alliance.value,
 			fleet: props.page['fleet'],
 			mission: mission.value,
+			expeditiontime: mission.value === 15 ? expedition_hours.value : 0,
+			holdingtime: mission.value === 5 ? hold_hours.value : 0,
 			moon: moon.value,
 			speed: speed.value,
 			resource: resource.value,
