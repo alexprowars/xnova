@@ -160,7 +160,7 @@
 							<div class="w-2/3 th text-center flex flex-col justify-center gap-2">
 								<Link v-if="item.user['id'] !== currentUser['id']" :href="'/messages/write/' + item.user['id']">Послать сообщение</Link>
 								<Link :href="'/friends/new/' + item.user['id']">Добавить в друзья</Link>
-								<Link :href="'/stats?range=' + stat_page + '&id=' + item.user['id']">Статистика</Link>
+								<Link :href="'/stats/players?page=' + stat_page + '&id=' + item.user['id']">Статистика</Link>
 							</div>
 						</div>
 					</div>
@@ -199,7 +199,7 @@
 						</div>
 						<div class="grid">
 							<div class="th">
-								<Link href="/stat?view=alliance&start=0">{{ $t('pages.galaxy.alliance_stats') }}</Link>
+								<Link href="/stats/alliances">{{ $t('pages.galaxy.alliance_stats') }}</Link>
 							</div>
 						</div>
 					</div>
@@ -398,11 +398,11 @@
 	});
 
 	const stat_page = computed(() => {
-		if (!item || !item?.user?.stats || item.user.stats.rank < 100) {
+		if (!item?.user?.stats) {
 			return 1;
 		}
 
-		return (Math.floor(item.user.stats.rank / 100 ) * 100) + 1;
+		return Math.max(1, Math.ceil(item.user.stats.rank / 100));
 	})
 
 	async function spy (planet_type, event) {

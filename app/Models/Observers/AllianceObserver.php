@@ -26,8 +26,7 @@ class AllianceObserver
 
 		Statistic::query()
 			->whereBelongsTo($model)
-			->where('stat_type', 1)
-			->where('user_id', null)
+			->where('stat_type', 2)
 			->delete();
 	}
 }

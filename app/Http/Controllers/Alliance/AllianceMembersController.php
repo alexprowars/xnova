@@ -23,7 +23,9 @@ class AllianceMembersController extends Controller
 			throw new Exception(__('alliance.Denied_access'));
 		}
 
-		$result = [];
+		$result = [
+			'status' => $alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS),
+		];
 
 		if (str_contains(Route::current()->uri(), '/admin')) {
 			$result['admin'] = true;
@@ -34,7 +36,7 @@ class AllianceMembersController extends Controller
 		$sort  = $request->query('sort');
 		$order = $request->query('order', 'asc');
 
-		if ($sort == 'active' && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
+		if ($sort == 'active' && !$result['status']) {
 			$sort = '';
 		}
 
@@ -67,7 +69,7 @@ class AllianceMembersController extends Controller
 				'online' => null,
 			];
 
-			if ($alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST_STATUS)) {
+			if ($result['status']) {
 				if (strtotime($member->user->onlinetime) + 60 * 10 >= time()) {
 					$item['online'] = '<span class="positive">' . __('alliance.On') . '</span>';
 				} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time()) {

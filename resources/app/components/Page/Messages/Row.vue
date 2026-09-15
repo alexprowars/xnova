@@ -1,7 +1,7 @@
 <template>
 	<div class="grid grid-cols-12 text-center">
 		<div class="col-span-1 th middle">
-			<input name="delete[]" type="checkbox" :value="item['id']" v-model="deleteModel" :title="$t('pages.messages.row.delete_title')">
+			<input v-if="canDelete" name="delete[]" type="checkbox" :value="item['id']" v-model="deleteModel" :title="$t('pages.messages.row.delete_title')">
 		</div>
 		<div class="col-span-3 th middle">{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm:ss') }}</div>
 		<div class="col-span-6 th middle">
@@ -45,7 +45,8 @@
 	const { t } = useI18n();
 
 	const props = defineProps({
-		item: Object
+		item: Object,
+		canDelete: Boolean,
 	});
 
 	const state = useState();

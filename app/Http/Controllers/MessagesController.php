@@ -80,7 +80,7 @@ class MessagesController extends Controller
 		}
 
 		$messages = Message::query()
-			->select(['messages.id', 'type', 'date', 'message', 'from_id'])
+			->select(['messages.id', 'messages.user_id', 'type', 'date', 'message', 'from_id'])
 			->orderByDesc('date');
 
 		if ($category == 101) {
@@ -107,7 +107,7 @@ class MessagesController extends Controller
 				'id' => $item->id,
 				'type' => $item->type,
 				'date' => $item->date->utc()->toAtomString(),
-				'from' => $item->from_id,
+				'from' => $category == 101 ? $item->user_id : $item->from_id,
 				'subject' => $item->subject ? __($item->subject) : null,
 				'message' => null,
 			];

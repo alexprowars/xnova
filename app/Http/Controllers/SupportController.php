@@ -75,8 +75,14 @@ class SupportController extends Controller
 			throw new Exception('Не заполнены все поля');
 		}
 
+		$message = Str::sanitize($message);
+
+		if (mb_strlen($message) > 255) {
+			throw new Exception('Ответ слишком длинный. Сократите текст.');
+		}
+
 		$ticket->messages()->make([
-			'message' => Str::sanitize($message),
+			'message' => $message,
 		])
 		->user()->associate($this->user)
 		->save();

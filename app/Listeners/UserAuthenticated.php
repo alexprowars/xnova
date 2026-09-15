@@ -16,7 +16,7 @@ class UserAuthenticated
 	{
 		$route = Route::current()->getName();
 
-		if ($route === 'banned') {
+		if ($route === 'blocked') {
 			return;
 		}
 
@@ -25,7 +25,7 @@ class UserAuthenticated
 
 		if ($user->blocked_at) {
 			if ($user->blocked_at->isFuture()) {
-				throw new Exception('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->blocked_at->timezone($user->getOption('timezone'))) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::to('/banned') . '">сюда</a>');
+				throw new Exception('Ваш аккаунт заблокирован. Срок окончания блокировки: ' . Game::datezone("d.m.Y H:i:s", $user->blocked_at->timezone($user->getOption('timezone'))) . '<br>Для получения дополнительной информации зайдите <a href="' . URL::route('blocked') . '">сюда</a>');
 			}
 
 			$user->blocked_at = null;

@@ -30,6 +30,7 @@ class SearchController extends Controller
 					->leftJoin('statistics as s', function (JoinClause $join) {
 						$join->on('s.user_id', '=', 'u.id');
 						$join->on('s.stat_type', '=', DB::raw(1));
+						$join->where('s.stat_code', 1);
 					})
 					->whereNull('u.deleted_at')
 					->whereLike('u.username', '%' . $querySearch . '%')
@@ -45,6 +46,7 @@ class SearchController extends Controller
 					->leftJoin('statistics as s', function (JoinClause $join) {
 						$join->on('s.user_id', '=', 'u.id');
 						$join->on('s.stat_type', '=', DB::raw(1));
+						$join->where('s.stat_code', 1);
 					})
 					->where('p.planet_type', PlanetType::PLANET)
 					->whereNull('p.deleted_at')
@@ -57,11 +59,12 @@ class SearchController extends Controller
 			case 'allytag':
 			case 'allyname':
 				$search = DB::query()
-					->select(['a.id', 'a.name', 'a.tag', 'a.total_members', 's.total_points'])
+					->select(['a.id', 'a.name', 'a.tag', 'a.total_members as members', 's.total_points'])
 					->from('alliances', 'a')
 					->leftJoin('statistics as s', function ($join) {
 						$join->on('s.alliance_id', '=', 'a.id');
 						$join->on('s.stat_type', '=', DB::raw(2));
+						$join->where('s.stat_code', 1);
 					})
 					->whereNull('a.deleted_at')
 					->when(

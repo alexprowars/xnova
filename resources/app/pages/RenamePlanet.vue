@@ -86,7 +86,7 @@
 	});
 
 	function changeName() {
-		useForm({ image: image.value }).delete('/planet/rename', {
+		useForm({ name: name.value }).post('/planet/rename', {
 			preserveUrl: true,
 			onSuccess() {
 				useSuccessNotification(t('pages.overview.rename.toast_renamed'));
@@ -95,7 +95,7 @@
 	}
 
 	function changeImage() {
-		useForm({ image: image.value }).delete('/planet/image', {
+		useForm({ image: image.value }).post('/planet/image', {
 			preserveUrl: true,
 			onSuccess() {
 				useSuccessNotification(t('pages.overview.rename.toast_image_changed'));

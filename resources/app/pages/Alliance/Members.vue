@@ -37,7 +37,7 @@
 							</Link>
 						</td>
 						<td class="th">{{ $formatDate(m['date'], 'DD MMM YYYY') }}</td>
-						<td class="th" v-html="m['online'] || ''"></td>
+						<td class="th" v-if="page['status']" v-html="m['online'] || ''"></td>
 						<td class="th" v-if="page['admin']">
 							<a href="" @click.prevent="kick(m['id'])">
 								<img src="/assets/images/abort.gif" alt="">
@@ -49,7 +49,7 @@
 						</td>
 					</tr>
 					<tr v-if="m['id'] === changeRank && page['admin']">
-						<td colspan="10" class="th p-0">
+						<td :colspan="page['status'] ? 10 : 9" class="th p-0">
 							<div class="table border-0">
 								<div>
 									<div class="th">{{ $t('pages.alliance.members.set_rank_for', [m['username']]) }}</div>

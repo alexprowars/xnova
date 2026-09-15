@@ -16,7 +16,7 @@ Route::get('login/reset', [Controllers\ResetPasswordController::class, 'resetPag
 Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset'])->middleware(RedirectToGame::class);
 Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot'])->middleware(RedirectToGame::class);
 Route::get('state', [Controllers\StateController::class, 'index']);
-Route::get('blocked', [Controllers\BlockedController::class, 'index']);
+Route::get('blocked', [Controllers\BlockedController::class, 'index'])->name('blocked');
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->name('content');
 Route::get('registration', [Controllers\RegistrationController::class, 'index'])->middleware(RedirectToGame::class);

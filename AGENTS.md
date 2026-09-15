@@ -4,6 +4,7 @@
 
 ## Development Commands
 
+- Database: MySQL in normal environments, SQLite in-memory for tests via `phpunit.xml`
 - Build assets: `npm run build`
 - Run tests: `composer test`
 - Run static analysis: `composer analyse`

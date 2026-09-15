@@ -294,9 +294,15 @@ class AllianceController extends Controller
 			throw new Exception('Вы уже отсылали заявку на вступление в этот альянс!');
 		}
 
+		$message = strip_tags($request->post('message', ''));
+
+		if (mb_strlen($message) > 255) {
+			throw new Exception('Максимальная длина заявки — 255 символов.');
+		}
+
 		$alliance->requests()->create([
 			'user_id' => $this->user->id,
-			'message' => strip_tags($request->post('message')),
+			'message' => $message,
 		]);
 
 		return to_route('alliance');

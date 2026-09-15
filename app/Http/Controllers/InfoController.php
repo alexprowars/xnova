@@ -319,7 +319,7 @@ class InfoController extends Controller
 			}
 
 			if (isset($rapidfire[$item->getId()]) && $rapidfire[$item->getId()] > 1) {
-				$result['from'][$item->getId()] = $rapidfire[$item->getId()];
+				$result['from'][$object->getId()] = $rapidfire[$item->getId()];
 			}
 		}
 

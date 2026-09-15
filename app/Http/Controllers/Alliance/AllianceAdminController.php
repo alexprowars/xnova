@@ -86,6 +86,10 @@ class AllianceAdminController extends Controller
 			throw new PageException('Название альянса содержит запрещённые символы');
 		}
 
+		if (mb_strlen($name) > 32) {
+			throw new PageException('Максимальная длина названия альянса — 32 символа.');
+		}
+
 		$alliance->name = $name;
 		$alliance->update();
 
@@ -127,6 +131,10 @@ class AllianceAdminController extends Controller
 		}
 
 		$tag = addslashes(htmlspecialchars($tag));
+
+		if (mb_strlen($tag) > 8) {
+			throw new PageException('Максимальная длина аббревиатуры альянса — 8 символов.');
+		}
 
 		$tagExists = Alliance::query()
 			->where('tag', $tag)

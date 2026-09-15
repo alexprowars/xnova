@@ -50,7 +50,7 @@
 	const { t } = useI18n();
 
 	function send() {
-		form.post('alliance/admin/give', {
+		form.post('/alliance/admin/give', {
 			onSuccess() {
 				useSuccessNotification(t('pages.alliance.admin.give_transfer_success_notice'));
 			}

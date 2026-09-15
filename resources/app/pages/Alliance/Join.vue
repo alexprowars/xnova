@@ -17,7 +17,7 @@
 					</div>
 				</template>
 				<div>
-					<div class="th"><textarea cols="40" rows="10" v-model="form.message"></textarea></div>
+					<div class="th"><textarea cols="40" rows="10" v-model="form.message" maxlength="255"></textarea></div>
 				</div>
 				<div>
 					<div class="c"><button type="submit" class="button">{{ $t('pages.alliance.join.submit_request') }}</button></div>

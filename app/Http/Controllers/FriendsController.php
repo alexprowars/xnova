@@ -163,8 +163,8 @@ class FriendsController extends Controller
 
 		$message = strip_tags($request->post('message', ''));
 
-		if (mb_strlen($message) > 5000) {
-			throw new Exception('Максимальная длинна сообщения 5000 символов!');
+		if (mb_strlen($message) > 250) {
+			throw new Exception('Максимальная длина сообщения — 250 символов.');
 		}
 
 		Friend::create([

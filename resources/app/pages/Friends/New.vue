@@ -10,7 +10,7 @@
 					<div class="th">{{ $t('pages.friends.new.player') }} {{ page['username'] }}</div>
 				</div>
 				<div>
-					<div class="th"><textarea cols="60" rows="10" v-model="form.message"></textarea></div>
+					<div class="th"><textarea cols="60" rows="10" v-model="form.message" maxlength="250"></textarea></div>
 				</div>
 				<div>
 					<div class="c"><button type="submit" class="button">{{ $t('pages.friends.new.submit') }}</button></div>

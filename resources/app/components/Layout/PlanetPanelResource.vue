@@ -1,6 +1,6 @@
 <template>
 	<div class="resource-panel-item">
-		<ModalLink navigate :href="'info/' + building[type]" class="resource-panel-item-icon">
+		<ModalLink navigate :href="'/info/' + building[type]" class="resource-panel-item-icon">
 			<Popper>
 				<span class="sprite" :class="['skin_' + type]"></span>
 				<span class="sprite" :class="['skin_s_' + type]"></span>

@@ -116,6 +116,10 @@ class AllianceDiplomacyController extends Controller
 			throw new PageException('Ошибка ввода параметров');
 		}
 
+		if ($ally->id == $alliance->id) {
+			throw new PageException('Нельзя заключить соглашение с собственным альянсом.');
+		}
+
 		$ad = $alliance->diplomacy()
 			->where('diplomacy_id', $ally->id)
 			->count();

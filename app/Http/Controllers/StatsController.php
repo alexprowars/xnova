@@ -46,16 +46,16 @@ class StatsController extends Controller
 	{
 		$type = $this->type;
 
+		if (!$request->has('page') && !in_array($type, [6, 7]) && $points = $this->user?->getPoints()) {
+			$this->page = max(1, (int) ceil($points->{$this->field . '_rank'} / 100));
+		}
+
 		$result = [
 			'update' => Date::createFromTimestamp($settings->statUpdate, config('app.timezone'))->utc()->toAtomString(),
 			'list' => 'players',
 			'type' => $type,
 			'page' => $this->page,
 		];
-
-		if (!$this->page && $points = $this->user?->getPoints()) {
-			$this->page = $points->{$this->field . '_rank'};
-		}
 
 		$result['elements'] = $settings->activeUsers;
 
@@ -121,7 +121,7 @@ class StatsController extends Controller
 
 		$position = ($result['page'] - 1) * 100;
 
-		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`total_members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
+		$query = DB::select("SELECT s.*, a.`tag`, a.`name`, a.`total_members` FROM statistics s, alliances a WHERE s.`stat_type` = '2' AND s.`stat_code` = '1' AND a.id = s.alliance_id AND a.deleted_at IS NULL ORDER BY s.`" . $this->field . "_rank` ASC LIMIT " . $position . ",100;");
 
 		$position++;
 

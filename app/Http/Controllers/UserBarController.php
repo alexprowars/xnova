@@ -44,7 +44,9 @@ class UserBarController extends Controller
 		imagettftext($image, 7, 0, 380, 75, $txt_color, public_path('/assets/images/terminator.ttf'), config('app.name'));
 
 		// Планета
-		imagettftext($image, 6, 0, 13, 37, $txt_color2, public_path('/assets/images/KLMNFP2005.ttf'), $planet->name . ' ' . $planet->coordinates);
+		if ($planet) {
+			imagettftext($image, 6, 0, 13, 37, $txt_color2, public_path('/assets/images/KLMNFP2005.ttf'), $planet->name . ' ' . $planet->coordinates);
+		}
 
 		// Очки
 		imagettftext($image, 6, 0, 13, 55, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), 'Очки: ' . Format::number($stats->total_points ?? 0));

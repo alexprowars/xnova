@@ -6,7 +6,7 @@
 			<form method="post" @submit.prevent="save" class="block-table text-center">
 				<div>
 					<div class="th">
-						<input type="text" v-model="form.name">
+						<input type="text" v-model="form.name" maxlength="32">
 					</div>
 				</div>
 				<div>

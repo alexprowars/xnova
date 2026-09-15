@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-	import { required } from '@vuelidate/validators';
+	import { maxLength, required } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { Link, useForm } from '@inertiajs/vue3';
 	import TextEditor from '~/components/TextEditor.vue';
@@ -63,7 +63,8 @@
 
 	const validations = {
 		message: {
-			required
+			required,
+			maxLength: maxLength(255),
 		},
 	}
 

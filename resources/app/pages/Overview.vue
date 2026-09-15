@@ -190,7 +190,7 @@
 							<div class="grid grid-cols-12 divide-x">
 								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.place') }}:</div>
 								<div class="col-span-6 sm:col-span-7 th">
-									<Link :href="'/stats?view=players&range=' + user['points']['place']">{{ user['points']['place'] }}</Link>
+									<Link :href="'/stats/players?page=' + Math.max(1, Math.ceil(user['points']['place'] / 100))">{{ user['points']['place'] }}</Link>
 									<span :title="$t('pages.overview.place_diff')">
 										<span v-if="user['points']['diff'] >= 1" class="positive">+{{ user['points']['diff'] }}</span>
 										<span v-else-if="user['points']['diff'] < 0" class="negative">{{ user['points']['diff'] }}</span>

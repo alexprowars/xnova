@@ -11,7 +11,7 @@
 				<option v-for="i in limitItems" :value="i">{{ i }}</option>
 			</select>
 			{{ $t('pages.messages.index.per_page') }}
-			<div v-if="deleteItems.length > 0" class="inline-block">
+			<div v-if="canDelete && deleteItems.length > 0" class="inline-block">
 				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
 			</div>
 		</div>
@@ -19,14 +19,14 @@
 			<div class="block-table">
 				<div v-if="messages.length" class="grid grid-cols-12 text-center">
 					<div class="col-span-1 th">
-						<input type="checkbox" class="checkAll" v-model="checkAll">
+						<input v-if="canDelete" type="checkbox" class="checkAll" v-model="checkAll">
 					</div>
 					<div class="col-span-3 th">{{ $t('pages.messages.index.date') }}</div>
 					<div class="col-span-6 th">{{ $t('pages.messages.index.from') }}</div>
 					<div class="col-span-2 th"></div>
 				</div>
 
-				<MessagesRow v-for="item in messages" :key="item['id']" :item="item" v-model:delete="deleteItems"/>
+				<MessagesRow v-for="item in messages" :key="item['id']" :item="item" :can-delete="canDelete" v-model:delete="deleteItems"/>
 
 				<div v-if="page.pagination['total'] === 0" class="grid text-center">
 					<div class="th">{{ $t('pages.messages.index.no_messages') }}</div>
@@ -36,7 +36,7 @@
 			<div v-if="page.pagination['total'] > page.pagination['limit']" class="float-start">
 				<Pagination :options="page.pagination"/>
 			</div>
-			<div v-if="deleteItems.length > 0" class="float-end" style="padding: 5px">
+			<div v-if="canDelete && deleteItems.length > 0" class="float-end" style="padding: 5px">
 				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
 			</div>
 		</div>
@@ -63,6 +63,7 @@
 
 	const category = ref(props.page.category);
 	const limit = ref(props.page.limit);
+	const canDelete = computed(() => props.page.category !== 101);
 
 	const checkAll = ref(false);
 	const limitItems = ref([5, 10, 25, 50, 100, 200]);
@@ -70,7 +71,7 @@
 	watch(checkAll, (value) => {
 		deleteItems.value = [];
 
-		if (value) {
+		if (value && canDelete.value) {
 			messages.value.forEach((item) => {
 				deleteItems.value.push(item['id']);
 			});
@@ -82,10 +83,16 @@
 	const deleteItems = ref([]);
 
 	watch([category, limit], () => {
+		checkAll.value = false;
+		deleteItems.value = [];
 		router.get(usePage().url, { category: category.value, limit: limit.value });
 	});
 
 	function deleteMessages() {
+		if (!canDelete.value) {
+			return;
+		}
+
 		useForm({ id: deleteItems.value }).delete('/messages/delete', {
 			preserveUrl: true,
 			preserveScroll: true,

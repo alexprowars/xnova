@@ -1,6 +1,6 @@
 <template>
 	<div class="resource-panel-item">
-		<ModalLink navigate href="info/4" :title="$t('resources.energy')" class="resource-panel-item-icon">
+		<ModalLink navigate href="/info/4" :title="$t('resources.energy')" class="resource-panel-item-icon">
 			<Popper>
 				<div>
 					<span class="sprite skin_energy"></span>

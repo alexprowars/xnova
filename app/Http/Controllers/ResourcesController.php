@@ -77,13 +77,12 @@ class ResourcesController extends Controller
 	public function buy(): void
 	{
 		$resources = DB::transaction(function () {
+			$this->user->refreshForUpdate();
 			$this->planet->refreshForUpdate();
 
 			if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
 				throw new Exception('На этой планете нельзя купить ресурсы');
 			}
-
-			$this->user->refreshForUpdate();
 
 			if ($this->user->credits < 10) {
 				throw new Exception('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
@@ -149,7 +148,7 @@ class ResourcesController extends Controller
 				continue;
 			}
 
-			if (!Vars::getItemObject($entityId)->getProduction()) {
+			if (!Vars::getItemObject($entityId)?->getProduction()) {
 				continue;
 			}
 

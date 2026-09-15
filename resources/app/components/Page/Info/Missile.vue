@@ -8,7 +8,7 @@
 					<div class="th"><Number v-model="interceptor"/></div>
 				</div>
 				<div v-if="planet['units']['interplanetary_misil']" class="grid grid-cols-2">
-					<div class="th">{{ $t('tech.502') }}: {{ planet['units']['interplanetary_misil'] }}</div>
+					<div class="th">{{ $t('tech.503') }}: {{ planet['units']['interplanetary_misil'] }}</div>
 					<div class="th"><Number v-model="interplanetary"/></div>
 				</div>
 				<div v-if="interceptor > 0 || interplanetary > 0" class="grid">
