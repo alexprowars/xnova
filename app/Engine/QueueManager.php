@@ -507,8 +507,10 @@ class QueueManager
 						$item->delete();
 					}
 
-					if ($queue->get($i + 1)) {
-						$queue->get($i + 1)->date = $item->date;
+					$nextItem = $queue->get($i + 1);
+
+					if ($nextItem && $nextItem->date->lessThan($item->date)) {
+						$nextItem->date = $item->date;
 					}
 
 					break;

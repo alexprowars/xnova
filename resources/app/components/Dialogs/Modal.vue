@@ -1,30 +1,48 @@
 <template>
-	<vue-final-modal
-		v-bind="$attrs"
-		content-class="absolute inset-0"
-		content-transition="vfm-modal"
-		:reserve-scroll-bar-gap="false"
-	>
-		<div
-			class="absolute inset-0 h-full overflow-auto"
-			@click.self="() => emit('update:modelValue', false)"
-		>
-			<div class="dialog-content">
-				<button class="dialog-close" @click="emit('update:modelValue', false)">×</button>
-				<slot></slot>
-			</div>
-		</div>
-	</vue-final-modal>
+	<ModalRoot class="dialog-root">
+		<ModalContent :class="[contentClass, { 'dialog-content--waiting': isTopmost && !isClosing }]">
+			<ModalTitle class="sr-only">{{ title || $t('dialogs.title') }}</ModalTitle>
+			<button type="button" class="dialog-close" :aria-label="$t('dialogs.close')" @click="closeModal">×</button>
+			<ModalDescription as="div">
+				<component :is="component" v-bind="componentAttrs" @close="closeModal" @close-modal="closeModal"/>
+			</ModalDescription>
+		</ModalContent>
+	</ModalRoot>
 </template>
 
 <script setup>
-	import { VueFinalModal } from 'vue-final-modal';
+	import { ModalContent, ModalDescription, ModalRoot, ModalTitle, useModalContext } from '@kolirt/vue-modal';
 
-	const emit = defineEmits(['update:modelValue'])
-</script>
+	const props = defineProps({
+		component: {
+			type: [Object, Function],
+			required: true,
+		},
+		componentAttrs: {
+			type: Object,
+			default: () => ({}),
+		},
+		contentClass: {
+			type: String,
+			default: 'dialog-content',
+		},
+		title: {
+			type: String,
+			default: '',
+		},
+		persistent: {
+			type: Boolean,
+			default: false,
+		},
+	});
 
-<script>
-	export default {
-		inheritAttrs: false,
+	const { close, isClosing, isTopmost, onBeforeClose } = useModalContext();
+
+	if (props.persistent) {
+		onBeforeClose(() => false);
+	}
+
+	function closeModal() {
+		close({ ignoreGuard: true });
 	}
 </script>

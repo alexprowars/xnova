@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Models\LogsCredit;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -51,17 +52,28 @@ class OfficiersController extends Controller
 			throw new Exception('Выбран неверный элемент');
 		}
 
-		DB::transaction(function () use ($code, $credits, $time): void {
+		DB::transaction(function () use ($code, $credits, $time) {
 			$this->user->refreshForUpdate();
 
 			if ($this->user->credits < $credits) {
 				throw new Exception(__('officier.NoPoints'));
 			}
 
-			if ($this->user->{'officier_' . $code}?->isFuture()) {
+			$planets = $code === 'geologist'
+				? $this->user->planets()->orderBy('id')->lockForUpdate()->get()
+				: collect();
+
+			$purchasedAt = CarbonImmutable::now();
+
+			foreach ($planets as $planet) {
+				$planet->setRelation('user', $this->user);
+				$planet->getProduction($purchasedAt)->update();
+			}
+
+			if ($this->user->{'officier_' . $code}?->greaterThan($purchasedAt)) {
 				$date = $this->user->{'officier_' . $code};
 			} else {
-				$date = now();
+				$date = $purchasedAt;
 			}
 
 			$this->user->{'officier_' . $code} = $date->addSeconds($time);

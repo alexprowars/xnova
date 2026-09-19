@@ -111,6 +111,7 @@
 				title: t('pages.overview.rename.modal_close'),
 			}, {
 				title: t('pages.overview.rename.modal_confirm_delete'),
+				class: 'dialog-button--danger',
 				handler() {
 					useForm().delete('/planet/delete', {
 						preserveUrl: true,

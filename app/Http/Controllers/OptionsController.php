@@ -73,6 +73,13 @@ class OptionsController extends Controller
 		}
 
 		if ($this->user->vacation?->isPast() && $request->has('vacation') && !((int) $request->post('vacation', 0))) {
+			$vacationEndedAt = CarbonImmutable::now();
+
+			$this->user->planets()->get()->each(function (Planet $planet) use ($vacationEndedAt) {
+				$planet->setRelation('user', $this->user);
+				$planet->getProduction($vacationEndedAt)->update();
+			});
+
 			$this->user->vacation = null;
 		}
 

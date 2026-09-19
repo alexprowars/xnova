@@ -1,4 +1,8 @@
 {
+	"dialogs": {
+		"title": "Диалог",
+		"close": "Закрыть"
+	},
 	"menu": {
 		"overview": "Обзор",
 		"empire": "Империя",

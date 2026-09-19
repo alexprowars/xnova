@@ -1,69 +1,40 @@
-import { useModal, useModalSlot, useVfm } from 'vue-final-modal';
+import { closeAllModals, openModal } from '@kolirt/vue-modal';
+import { markRaw } from 'vue';
 import Modal from '~/components/Dialogs/Modal.vue';
 import ConfirmPopup from '~/components/Dialogs/Confirm.vue';
 import { stopLoading } from '~/composables/useLoading.js';
 import i18n from '~/i18n.js';
 
-export const openPopupModal = (component, attrs = {}, events = {}) => {
-	const { open, close } = useModal({
-		component: Modal,
-		attrs: {
-			...events,
+const openDialog = (component, attrs = {}, options = {}) => {
+	return openModal(Modal, {
+		group: 'default',
+		props: {
+			component: markRaw(component),
+			componentAttrs: attrs,
+			title: typeof attrs.title === 'string' ? attrs.title.replace(/<[^>]*>/g, '') : '',
+			...options,
 		},
-		slots: {
-			default: useModalSlot({
-				component,
-				attrs: {
-					...attrs,
-					onClose() {
-						close?.()
-					}
-				},
-			})
-		}
-	});
-
-	return open?.();
+	}).catch(() => null);
 }
 
-export const openConfirmModal = (title, content, buttons = []) => {
-	const { open, close } = useModal({
-		component: Modal,
-		slots: {
-			default: useModalSlot({
-				component: ConfirmPopup,
-				attrs: {
-					title, content, buttons,
-					onClose() {
-						close?.()
-					}
-				},
-			})
-		}
-	});
+export const openPopupModal = (component, attrs = {}, options = {}) => {
+	return openDialog(component, attrs, options);
+}
 
-	return open?.();
+export const openConfirmModal = (title, content, buttons = [], options = {}) => {
+	return openDialog(ConfirmPopup, { title, content, buttons }, {
+		contentClass: 'dialog-content dialog-content--confirm',
+		persistent: true,
+		...options,
+	});
 }
 
 export const openAlertModal = (title, content) => {
 	stopLoading();
 
-	const { open, close } = useModal({
-		component: Modal,
-		slots: {
-			default: useModalSlot({
-				component: ConfirmPopup,
-				attrs: {
-					title, content,
-					onClose() {
-						close?.()
-					}
-				},
-			})
-		}
+	return openDialog(ConfirmPopup, { title, content }, {
+		contentClass: 'dialog-content dialog-content--confirm',
 	});
-
-	return open?.();
 }
 
 export const openErrorModal = (e) => {
@@ -71,9 +42,9 @@ export const openErrorModal = (e) => {
 
 	const { t } = i18n.global;
 
-	openAlertModal(t?.('forms.error'), e.message);
+	return openAlertModal(t('forms.error'), e.message);
 }
 
 export const closeModals = async () => {
-	await useVfm().closeAll();
+	await closeAllModals({ ignoreGuard: true });
 }

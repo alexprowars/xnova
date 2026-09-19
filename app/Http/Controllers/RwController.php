@@ -36,7 +36,7 @@ class RwController extends Controller
 				throw new PageException('Вы не можете просматривать этот боевой доклад');
 			}
 
-			if ($report->users_id[0] == $this->user->id && $report->no_contact == 1) {
+			if ($report->hasLostContact($this->user->id)) {
 				throw new PageException('Контакт с вашим флотом потерян<br>(Ваш флот был уничтожен в первой волне атаки)');
 			}
 		}

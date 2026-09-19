@@ -1,13 +1,58 @@
-.vfm-modal-enter-active, .vfm-modal-leave-active {
-    transition: all .4s
+.dialog-target {
+	z-index: 1000;
 }
 
-.vfm-modal-enter-from, .vfm-modal-leave-active {
-    opacity: 0;
-    transform: translateY(-20px)
+.dialog-root {
+	overflow-y: auto;
+}
+
+.dialog-overlay {
+	background-color: rgba(0, 0, 0, .5);
+
+	&[data-state='open'] {
+		animation: dialog-overlay-in .3s ease forwards;
+	}
+
+	&[data-state='closed'] {
+		animation: dialog-overlay-out .3s ease forwards;
+	}
+}
+
+@keyframes dialog-overlay-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes dialog-overlay-out {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes dialog-content-in {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes dialog-content-out {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
 }
 
 .dialog-content {
+	display: flow-root;
+	outline: none;
 	vertical-align: middle;
 	text-align: left;
 	background-color: #344566;
@@ -17,6 +62,20 @@
 	max-width: 600px;
 	margin: 40px auto;
 	@apply xl:min-w-100;
+
+	&[data-state='open'] {
+		animation: dialog-content-in .4s ease forwards;
+	}
+
+	&[data-state='closed'] {
+		animation: dialog-content-out .4s ease forwards;
+	}
+
+	&[data-state='closed'].dialog-content--waiting {
+		animation: none;
+		opacity: 0;
+		transform: translateY(-20px);
+	}
 
 	.dialog-close {
 		color: #fff;
@@ -42,50 +101,124 @@
 		opacity: 1;
 	}
 
+}
+
+.dialog-content--confirm {
+	width: min(420px, calc(100% - 32px));
+	min-width: 0;
+	margin: clamp(24px, 14vh, 140px) auto;
+	padding: 0;
+	border-radius: 8px;
+	background: var(--head-bg-color);
+	box-shadow: 0 16px 48px rgb(0 0 0 / .45);
+
+	.dialog-close {
+		top: 12px;
+		right: 12px;
+		width: 32px;
+		height: 32px;
+		border-radius: 4px;
+		line-height: 1;
+		cursor: pointer;
+
+		&:hover {
+			background: rgb(255 255 255 / .08);
+		}
+	}
+
+	.dialog-message {
+		padding: 24px 56px 24px 24px;
+		overflow-wrap: anywhere;
+	}
+
 	.dialog-title {
-		user-select: none;
-		display: inline-block;
-		vertical-align: middle;
-		padding-bottom: 15px;
+		color: #f0f4fc;
 		font-size: 18px;
-		line-height: 20px;
+		font-weight: 600;
+		line-height: 1.4;
 	}
 
 	.dialog-text {
-		height: auto;
-		min-height: 50px;
+		color: #c0cbe0;
+		font-size: 14px;
+		line-height: 1.6;
 
 		a {
-			color: #9a1915;
+			color: #9bc4ff;
+			text-decoration: underline;
 		}
 
-		a:hover {
-			text-decoration: underline;
+		&.dialog-text--heading {
+			color: #f0f4fc;
+			font-size: 17px;
+			font-weight: 500;
+			line-height: 1.4;
 		}
 	}
 
+	.dialog-title + .dialog-text {
+		margin-top: 10px;
+	}
+
 	.dialog-buttons {
-		margin-top: 25px;
-		float: right;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 8px;
+		padding: 16px 20px;
+		border-top: 1px solid rgb(139 165 208 / .16);
+		border-radius: 0 0 8px 8px;
+		background: rgb(0 0 0 / .12);
 
 		button {
-			color: var(--text-color);
-			background: var(--head-bg-color);
+			min-height: 38px;
+			padding: 8px 16px;
 			border: 1px solid var(--border-color);
-			padding: 6px 12px;
-			height: auto;
-			text-transform: uppercase;
-			font-size: 14px;
+			border-radius: 4px;
+			background: transparent;
+			color: #d5deed;
+			font-size: 13px;
+			font-weight: 500;
+			line-height: 1.4;
+			overflow-wrap: anywhere;
+			max-width: 100%;
 			cursor: pointer;
+			transition: background-color .15s, border-color .15s;
 
 			&:hover {
-				border-color: var(--border-hover-color);
-				color: #fbff6f;
+				background: #344566;
+				border-color: #6a87b5;
+			}
+
+			&.dialog-button--primary {
+				background: #355c91;
+				border-color: #537eb7;
+				color: #fff;
+
+				&:hover {
+					background: #416eaa;
+					border-color: #719bd1;
+				}
+			}
+
+			&.dialog-button--danger {
+				@apply bg-red-500/15 border-red-500 text-red-500;
+
+				&:hover {
+					@apply bg-red-500/25 border-red-500;
+				}
 			}
 		}
+	}
 
-		button + button {
-			margin-left: 5px;
+	button:focus-visible {
+		outline: 2px solid #9bc4ff;
+		outline-offset: 3px;
+	}
+
+	@media (max-width: 480px) {
+		.dialog-buttons button {
+			flex: 1 1 auto;
 		}
 	}
 }

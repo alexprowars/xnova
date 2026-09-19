@@ -24,4 +24,9 @@ class Report extends Model
 	{
 		return static::query()->where('created_at', '<', now()->subDays(7));
 	}
+
+	public function hasLostContact(int $userId): bool
+	{
+		return $this->no_contact && isset($this->data['attackers'][$userId]);
+	}
 }

@@ -16,7 +16,7 @@ import App from './App.vue';
 import DefaultLayout from './layouts/DefaultLayout.vue';
 import FloatingVue from 'floating-vue';
 import Vue3TouchEvents from 'vue3-touch-events'
-import { createVfm } from 'vue-final-modal';
+import { createModal } from '@kolirt/vue-modal';
 import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
 import { createState, StateSymbol } from '~/composables/useState.js';
 
@@ -76,7 +76,11 @@ createInertiaApp({
 			touchHoldTolerance: 100,
 		});
 
-		app.use(createVfm());
+		app.use(createModal({
+			groups: {
+				default: {},
+			},
+		}));
 
 		app.use(toastPlugin);
 

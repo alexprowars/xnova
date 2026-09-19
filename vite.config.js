@@ -13,7 +13,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'~': resolve(__dirname, 'resources/app'),
+			'~': resolve(import.meta.dirname, 'resources/app'),
 		},
 	},
 	plugins: [

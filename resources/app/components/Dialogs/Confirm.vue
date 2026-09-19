@@ -1,9 +1,19 @@
 <template>
 	<div class="confirm-box">
-		<div v-if="title" class="dialog-title" v-html="title"></div>
-		<div class="dialog-text" v-html="content"></div>
+		<div class="dialog-message">
+			<div v-if="title" class="dialog-title" v-html="title"></div>
+			<div v-if="content" class="dialog-text" :class="{ 'dialog-text--heading': !title }" v-html="content"></div>
+		</div>
 		<div class="dialog-buttons">
-			<button v-for="button in buttons" type="button" class="btn" :class="button.class || ''" @click.stop="handle(button.handler)" v-html="button.title"></button>
+			<button
+				v-for="(button, index) in buttons"
+				:key="index"
+				type="button"
+				class="btn"
+				:class="[button.class, { 'dialog-button--primary': typeof button.handler === 'function' }]"
+				@click.stop="handle(button.handler)"
+				v-html="button.title"
+			></button>
 		</div>
 	</div>
 </template>

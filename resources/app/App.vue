@@ -3,7 +3,9 @@
 		<slot/>
 
 		<Loader v-if="loading"/>
-		<ModalsContainer />
+		<ModalTarget group="default" class="dialog-target">
+			<ModalOverlay class="dialog-overlay"/>
+		</ModalTarget>
 	</div>
 </template>
 
@@ -11,7 +13,7 @@
 	import useState, { updateState } from '~/composables/useState.js';
 	import { computed, provide, watch } from 'vue';
 	import { router } from '@inertiajs/vue3';
-	import { ModalsContainer } from 'vue-final-modal';
+	import { ModalOverlay, ModalTarget } from '@kolirt/vue-modal';
 	import Loader from '~/components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
 	import useChatStore from './store/useChatStore.js';

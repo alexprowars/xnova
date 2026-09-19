@@ -17,24 +17,18 @@
 			</td>
 			<td class="th">
 				<span :style="{ color: item['mission'] !== 6 ? 'lime' : 'orange' }">
-					<i18n-t
-						keypath="pages.phalanx.fleet_row"
-						tag="span"
-						scope="global"
-						:values="{
-							type1: item['type_1'],
-							planetName: item['planet_name'],
-							direction: item['direction'] === 1 ? $t('pages.phalanx.dir_outbound') : $t('pages.phalanx.dir_inbound'),
-							type2: item['type_2'],
-							targetName: item['target_name'],
-						}"
-					>
+					<i18n-t keypath="pages.phalanx.fleet_row" tag="span" scope="global">
 						<template #fleet>
 							<span v-html="item['fleet']"></span>
 						</template>
+						<template #type1>{{ item['type_1'] }}</template>
+						<template #planetName>{{ item['planet_name'] }}</template>
 						<template #pos1>
 							<span style="color: white"> [<span v-html="item['planet_position']"></span>]</span>
 						</template>
+						<template #direction>{{ item['direction'] === 1 ? $t('pages.phalanx.dir_outbound') : $t('pages.phalanx.dir_inbound') }}</template>
+						<template #type2>{{ item['type_2'] }}</template>
+						<template #targetName>{{ item['target_name'] }}</template>
 						<template #pos2>
 							<span style="color: white"> [<span v-html="item['target_position']"></span>]</span>
 						</template>

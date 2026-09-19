@@ -80,7 +80,7 @@ class LogsController extends Controller
 			throw new PageException('Боевой отчёт не найден в базе');
 		}
 
-		if ($log->users_id[0] == $this->user->id && $log->no_contact) {
+		if ($log->hasLostContact($this->user->id)) {
 			$dataLog = [];
 		} else {
 			$dataLog = $log->data;
