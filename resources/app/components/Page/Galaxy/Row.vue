@@ -12,7 +12,7 @@
 							<div class="th">
 								<img :src="'/assets/images/planeten/small/s_' + item['planet']['image'] + '.jpg'" height="75" width="75" alt="">
 							</div>
-							<div class="th grow middle flex-col" v-if="!isVacation">
+							<div class="th grow middle flex-col" v-if="!isVacation && item.user">
 								<div v-if="user['phalanx'] > 0">
 									<Link :href="'/phalanx?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet" target="_blank">{{ $t('pages.galaxy.phalanx') }}</Link>
 								</div>
@@ -35,7 +35,7 @@
 			<div v-if="item && !item['planet']['destruyed']">
 				<span v-if="item['planet']['active'] <= 10" class="star">(*)</span>
 				<span v-else-if="item['planet']['active'] < 60" class="star">({{ Math.floor(item['planet']['active']) }})</span>
-				<span :class="{ negative: item.user['id'] === currentUser['id'] }">{{ item['planet']['name'] }}</span>
+				<span :class="{ negative: item.user?.id === currentUser['id'] }">{{ item['planet']['name'] }}</span>
 			</div>
 			<div v-else-if="item && item['planet']['destruyed']">
 				{{ $t('pages.galaxy.planet_destruyed') }}
@@ -71,14 +71,14 @@
 										<div class="grid">
 											<div class="c">{{ $t('pages.galaxy.actions') }}</div>
 										</div>
-										<div v-if="!isVacation" class="grid">
+										<div v-if="!isVacation && item.user" class="grid">
 											<div class="th text-center">
 												<div v-if="item.user['id'] !== currentUser['id']">
 													<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=1'">{{ $t('fleet_mission.1') }}</Link>
 													<br>
 													<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=5'">{{ $t('fleet_mission.5') }}</Link>
 
-													<div v-if="planet['units']['dearth_star'] > 0">
+													<div v-if="currentPlanet['units']['dearth_star'] > 0">
 														<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=9'">{{ $t('fleet_mission.9') }}</Link>
 													</div>
 												</div>
@@ -179,7 +179,7 @@
 			</Popper>
 		</td>
 		<td class="th">
-			<Link v-if="item && !item.delete && item.user['race']" :href="'/info/70' + item.user['race']">
+			<Link v-if="item && !item['planet']['destruyed'] && item.user && item.user['race']" :href="'/info/70' + item.user['race']">
 				<img :src="'/assets/images/skin/race' + item.user['race'] + '.gif'" width="20" height="20" :alt="$t('races.' + item.user['race'])" :title="$t('races.' + item.user['race'])">
 			</Link>
 		</td>
@@ -216,7 +216,7 @@
 		</td>
 		<td class="th whitespace-nowrap">
 			<div class="actions">
-				<template v-if="item && item.user['id'] !== currentUser['id'] && !item['planet']['destruyed']">
+				<template v-if="item && !item['planet']['destruyed'] && item.user && item.user['id'] !== currentUser['id']">
 					<SendMessagePopup v-tooltip="$t('send_message')" :id="item.user['id']"/>
 					<Link :href="'/friends/new/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_friend')">
 						<span class="sprite skin_b"></span>
@@ -309,7 +309,7 @@
 	const spyCount = ref(parseInt(currentUser.value['options']['spy']) || 1);
 
 	const user_status = computed(() => {
-		if (!item.user) {
+		if (!item?.user) {
 			return '';
 		}
 

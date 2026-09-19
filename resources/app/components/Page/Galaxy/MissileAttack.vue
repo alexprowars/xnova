@@ -2,7 +2,7 @@
 	<form class="block-table text-center mb-1.5" action="" method="post" @submit.prevent="send">
 		<div class="grid">
 			<div class="c">
-				{{ $t('pages.missile_attack.title', [page['galaxy'], page['system'], planet]) }}
+				{{ $t('pages.missile_attack.title', [target.galaxy, target.system, target.planet]) }}
 			</div>
 		</div>
 		<div class="grid grid-cols-2">
@@ -12,7 +12,7 @@
 			</div>
 			<div class="th">
 				{{ $t('pages.missile_attack.target') }}:
-				<select name="target" v-model="target">
+				<select name="target" v-model="destroyType">
 					<option value="all">{{ $t('pages.missile_attack.target_all') }}</option>
 					<option value="401">{{ $t('tech.401') }}</option>
 					<option value="402">{{ $t('tech.402') }}</option>
@@ -39,28 +39,26 @@
 	import { computed, ref } from 'vue';
 	import { useForm } from '@inertiajs/vue3';
 
-	const props = defineProps({
-		page: {
-			type: Object
-		},
-		planet: {
-			type: Number
+	const { target } = defineProps({
+		target: {
+			type: Object,
+			required: true,
 		}
 	});
 
 	const state = useState();
 	const currentPlanet = computed(() => state.planet);
 
-	const target = ref('all');
+	const destroyType = ref('all');
 	const count = ref(currentPlanet.value['units']['interplanetary_misil'] || 0);
 
 	async function send() {
 		useForm({
-			galaxy: props.page['galaxy'],
-			system: props.page['system'],
-			planet: props.planet,
+			galaxy: target.galaxy,
+			system: target.system,
+			planet: target.planet,
 			count: count.value,
-			target: target.value,
+			target: destroyType.value,
 		})
 		.post('/rocket', {
 			preserveUrl: true,

@@ -90,6 +90,10 @@ class Planet extends Model
 
 	public function checkOwnerPlanet(): bool
 	{
+		if ($this->destroyed_at) {
+			return false;
+		}
+
 		if ($this->user_id != $this->user->id) {
 			return false;
 		}

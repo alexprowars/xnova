@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Statistic;
+use App\Models\User;
 use App\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -62,7 +63,7 @@ class StatsController extends Controller
 		$position = ($result['page'] - 1) * 100;
 
 		if ($type == 6 || $type == 7) {
-			$query = DB::select("SELECT u.username, u.race, u.id as user_id, a.name as alliance_name, u.alliance_id as alliance_id, u.lvl_" . $this->field . " as " . $this->field . "_points, 0 as " . $this->field . "_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.alliance_id WHERE 1 = 1 ORDER BY u.lvl_" . $this->field . " DESC, u.xp" . $this->field . " DESC LIMIT " . $position . ", 100");
+			$query = DB::select('SELECT u.username, u.race, u.id as user_id, a.name as alliance_name, u.alliance_id as alliance_id, u.lvl_' . $this->field . ' as ' . $this->field . '_points, 0 as ' . $this->field . '_old_rank FROM users u LEFT JOIN alliances a ON a.id = u.alliance_id WHERE u.deleted_at IS NULL ORDER BY u.lvl_' . $this->field . ' DESC, u.xp' . $this->field . ' DESC LIMIT ' . $position . ', 100');
 		} else {
 			$query = DB::select("SELECT s.*, u.username, u.race FROM statistics s LEFT JOIN users u ON u.id = s.user_id WHERE s.stat_type = '1' AND s.stat_code = '1' AND s.stat_hide = 0 ORDER BY s." . $this->field . "_rank ASC LIMIT " . $position . ", 100");
 		}

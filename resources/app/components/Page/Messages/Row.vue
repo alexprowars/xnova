@@ -27,7 +27,7 @@
 			<div v-if="user['options']?.['bb_parser']">
 				<TextViewer :text="item['message']"/>
 			</div>
-			<div v-else v-html="item['message']"></div>
+			<div v-else v-html="sanitizeHtml(item['message'])"></div>
 		</div>
 	</div>
 </template>
@@ -36,10 +36,11 @@
 	import useState from '~/composables/useState.js';
 	import { Link, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
+	import { sanitizeHtml } from '~/utils/parser.js';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { computed } from 'vue';
-	import { useSuccessNotification } from '~/composables/useToast.js';;
+	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
 
 	const { t } = useI18n();

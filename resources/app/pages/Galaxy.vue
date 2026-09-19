@@ -10,7 +10,7 @@
 			@change="changeCoordinates"
 		/>
 
-		<MissileAttack v-if="missile" :page="page" :planet="missilePlanet" @close="missile = false"/>
+		<MissileAttack v-if="missile" :target="missile" @close="missile = null"/>
 
 		<div class="block">
 			<div class="title">
@@ -39,7 +39,7 @@
 								:galaxy="page['galaxy']"
 								:system="page['system']"
 								:planet="index + 1"
-								@sendMissile="sendMissile(item['planet'])"
+								@sendMissile="missile = item.position"
 							/>
 
 							<tr v-if="user['technology']['expedition_tech']">
@@ -101,8 +101,7 @@
 		page: Object,
 	});
 
-	const missile = ref(false);
-	const missilePlanet = ref(0);
+	const missile = ref(null);
 
 	const state = useState();
 	const user = computed(() => state.user);
@@ -117,11 +116,6 @@
 
 		return result;
 	});
-
-	function sendMissile (planet) {
-		missile.value = true
-		missilePlanet.value = planet
-	}
 
 	function changeCoordinates(value) {
 		router.visit('/galaxy', {

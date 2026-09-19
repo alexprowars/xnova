@@ -96,7 +96,7 @@ class SearchController extends Controller
 
 					$items[] = $r;
 				} elseif ($type == 'allytag' || $type == 'allyname') {
-					$r->total_points = Format::number($r->total_points);
+					$r->total_points = Format::number($r->total_points ?? 0);
 
 					$items[] = (array) $r;
 				}

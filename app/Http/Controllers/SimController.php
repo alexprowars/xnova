@@ -93,11 +93,11 @@ class SimController extends Controller
 	{
 		$r = explode('|', $request->input('r', ''));
 
-		if (empty($r[0]) || empty($r[10])) {
+		$sim = new Simulation();
+
+		if (empty($r[0]) || empty($r[$sim->getMaxSlots()])) {
 			throw new PageException('Нет данных для симуляции боя');
 		}
-
-		$sim = new Simulation();
 
 		foreach ($r as $slot) {
 			$items = [];

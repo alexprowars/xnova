@@ -106,7 +106,7 @@
 							<Colored :value="planet['resources'][res]['production'] * 24 * 7"/>
 						</div>
 						<div class="col-span-3 th text-center">
-							<Colored :value="planet['resources'][res]['production'] * 24 * 7 * 30"/>
+							<Colored :value="planet['resources'][res]['production'] * 24 * 30"/>
 						</div>
 					</div>
 				</div>

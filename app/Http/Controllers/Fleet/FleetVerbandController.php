@@ -114,9 +114,13 @@ class FleetVerbandController extends Controller
 			throw new PageException('Для этого флота уже задана ассоциация!');
 		}
 
+		$data = $request->validate([
+			'name' => ['required', 'string', 'min:5', 'max:20', 'regex:/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u'],
+		]);
+
 		try {
 			$assault = Assault::create([
-				'name' 			=> $request->post('name', 'ACS'),
+				'name' 			=> $data['name'],
 				'fleet_id' 		=> $fleet->id,
 				'galaxy' 		=> $fleet->end_galaxy,
 				'system' 		=> $fleet->end_system,

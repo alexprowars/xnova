@@ -7,6 +7,7 @@ use App\Engine\Battle\Entities\Player;
 use App\Engine\Battle\Entities\PlayerGroup;
 use App\Engine\Battle\Entities\Unit;
 use App\Engine\Battle\Result\Result;
+use App\Engine\Coordinates;
 use App\Engine\Enums\ItemType;
 use App\Engine\Objects\DefenceObject;
 use App\Engine\Objects\ShipObject;
@@ -30,12 +31,12 @@ class Battle
 
 	public function addAttackerFleet(FleetModel $fleet): void
 	{
-		$this->addFleetToGroup($this->attackers, $fleet);
+		$this->addFleetToGroup($this->attackers, $fleet, $fleet->getOriginCoordinates(false));
 	}
 
 	public function addDefenderFleet(FleetModel $fleet): void
 	{
-		$this->addFleetToGroup($this->defenders, $fleet);
+		$this->addFleetToGroup($this->defenders, $fleet, $fleet->getDestinationCoordinates(false));
 	}
 
 	public function addPlanet(Planet $planet): void
@@ -43,7 +44,7 @@ class Battle
 		$this->addPlanetToGroup($this->defenders, $planet);
 	}
 
-	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet): void
+	public function addFleetToGroup(PlayerGroup $group, FleetModel $fleet, Coordinates $position): void
 	{
 		if ($fleet->entities->isEmpty()) {
 			return;
@@ -71,7 +72,7 @@ class Battle
 		);
 
 		$fleetObj = new Fleet($fleet->id)
-			->setPosition($fleet->getDestinationCoordinates(false));
+			->setPosition($position);
 
 		foreach ($fleet->entities as $entity) {
 			$object = $entity->getObjectData();

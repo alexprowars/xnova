@@ -19,7 +19,7 @@
 				</div>
 				<div class="grid grid-cols-2">
 					<div class="th">{{ $t('pages.alliance.info.label_members') }}</div>
-					<div class="th">{{ page['member_scount'] }}</div>
+					<div class="th">{{ page['total_members'] }}</div>
 				</div>
 				<div v-if="page['description']">
 					<div class="b min-h-20 p-2 text-left">

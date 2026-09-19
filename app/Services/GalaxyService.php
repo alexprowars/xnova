@@ -152,7 +152,9 @@ class GalaxyService
 			return false;
 		}
 
-		return !Planet::query()->coordinates($target)->exists();
+		$position = new Coordinates($target->getGalaxy(), $target->getSystem(), $target->getPlanet());
+
+		return !Planet::query()->coordinates($position)->exists();
 	}
 
 	public function getFreePositions(Coordinates $target, int $startPosition, int $endPosition): array

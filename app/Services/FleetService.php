@@ -157,7 +157,7 @@ class FleetService
 				}
 
 				if (!($fleet->mission == MissionType::Colonization && $fleet->mess == 0)) {
-					if (($fleet->end_date->isFuture() && $fleet->mission != MissionType::Stay) or ($fleet->mess == 1 && $fleet->mission == MissionType::Stay)) {
+					if (($fleet->end_date?->isFuture() && $fleet->mission != MissionType::Stay) or ($fleet->mess == 1 && $fleet->mission == MissionType::Stay)) {
 						$result[] = FleetRow::make($fleet, 2, true);
 					}
 				}
@@ -186,7 +186,9 @@ class FleetService
 			}
 		}
 
-		usort($result, fn ($a, $b) => $a['time'] <=> $b['time']);
+		$result = array_map(fn (FleetRow $row) => $row->resolve(), $result);
+
+		usort($result, fn (array $a, array $b) => $a['date'] <=> $b['date']);
 
 		return $result;
 	}

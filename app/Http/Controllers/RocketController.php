@@ -20,13 +20,15 @@ class RocketController extends Controller
 {
 	public function index(Request $request): void
 	{
-		$galaxy = (int) $request->post('galaxy', 0);
-		$system = (int) $request->post('system', 0);
-		$planet = (int) $request->post('planet', 0);
+		$data = $request->validate([
+			'galaxy' => ['required', 'integer', 'min:1', 'max:' . config('game.maxGalaxyInWorld')],
+			'system' => ['required', 'integer', 'min:1', 'max:' . config('game.maxSystemInGalaxy')],
+			'planet' => ['required', 'integer', 'min:1', 'max:' . config('game.maxPlanetInSystem')],
+		]);
 
-		if ($galaxy <= 0 || $system <= 0 || $planet <= 0) {
-			throw new Exception('Координаты не определены');
-		}
+		$galaxy = (int) $data['galaxy'];
+		$system = (int) $data['system'];
+		$planet = (int) $data['planet'];
 
 		$count = (int) $request->post('count', 1);
 		$destroyType = $request->post('target', 'all');

@@ -1,8 +1,38 @@
+import DOMPurify from 'isomorphic-dompurify';
+
+export function sanitizeHtml(html) {
+	return DOMPurify.sanitize(html ?? '', {
+		USE_PROFILES: { html: true },
+		FORBID_TAGS: ['style'],
+		ADD_ATTR: ['target'],
+	});
+}
+
+function tableAttributes(value) {
+	const attributes = [];
+	const width = value.match(/\(w=([0-9]{1,3})\)/i);
+	const colspan = value.match(/\(cs=([0-9]{1,2})\)/i);
+	const classes = value.match(/\(cl=([a-z0-9_ -]+)\)/i);
+
+	if (width) {
+		attributes.push('style="width:' + Math.max(1, Math.min(Number(width[1]), 100)) + '%"');
+	}
+
+	if (colspan) {
+		attributes.push('colspan="' + Math.max(1, Number(colspan[1])) + '"');
+	}
+
+	if (classes) {
+		attributes.push('class="' + classes[1] + '"');
+	}
+
+	return attributes.length ? ' ' + attributes.join(' ') : '';
+}
+
 export default {
 	patterns: {
 		find: [
 			/\n/g,
-			/script/g,
 			/\[quote\](.*?)\[\/quote\]/gi,
 			/\[quote author=(.*?)\](.*?)\[\/quote\]/gi,
 			/\[b\](.*?)\[\/b\]/gi,
@@ -32,13 +62,9 @@ export default {
 			/\[tr\](.*?)\[\/tr\]/gi,
 			/\[td(.*?)\](.*?)\[\/td\]/gi,
 			/\[th(.*?)\](.*?)\[\/th\]/gi,
-			/\(w=([0-9]{1,3})\)/gi,
-			/\(cs=([0-9]{1,2})\)/gi,
-			/\(cl=(.*?)\)/gi,
 		],
 		replace: [
 			'<br>',
-			'',
 			'<div class="quotewrapper"><div class="quotecontent">$1</div></div>',
 			'<div class="quotewrapper"><div class="quotetitle">$1 написал(а):</div><div class="quotecontent">$2</div></div>',
 			'<strong>$1</strong>',
@@ -58,19 +84,16 @@ export default {
 			"<ol>$1</ol>",
 			"<ul>$1</ul>",
 			"<li>$1</li>",
-			'<object><param name="movie" value="http://www.youtube.com/v/$1"><param name="wmode" value="transparent"><embed src="http://www.youtube.com/v/$1" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>',
-			'<div><div class="quotetitle"><b>$1</b> <input type="button" value="Показать" onclick="if (this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display != \'\') { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'\'; this.value = \'Скрыть\'; } else { this.parentNode.parentNode.getElementsByTagName(\'div\')[1].getElementsByTagName(\'div\')[0].style.display = \'none\'; this.value = \'Показать\'; }"></div><div class="quotecontent"><div style="display: none;">$2</div></div></div>',
+			'<a href="https://www.youtube.com/watch?v=$1" target="_blank" rel="noopener noreferrer">YouTube</a>',
+			'<details><summary class="quotetitle">$1</summary><div class="quotecontent">$2</div></details>',
 			'<span style="background-color:#$1;">$2</span>',
 			'<span style="background-image:url($1);background-repeat:no-repeat;display:block;width:$2;height:$3;max-width:716px;">$4</span>',
 			'<p>$1</p>',
 			'<a href="/galaxy?galaxy=$1&system=$2">[$1:$2:$3]</a>',
-			'<table$1>$2</table>',
+			(match, attributes, content) => '<table' + tableAttributes(attributes) + '>' + content + '</table>',
 			'<tr>$1</tr>',
-			'<td$1>$2</td>',
-			'<th$1>$2</th>',
-			' style="width:$1%"',
-			' colspan="$1"',
-			' class="$1"',
+			(match, attributes, content) => '<td' + tableAttributes(attributes) + '>' + content + '</td>',
+			(match, attributes, content) => '<th' + tableAttributes(attributes) + '>' + content + '</th>',
 		],
 		smiles: [
 			'adolf','am','angel','angl','aplause','baby','boxing','bye','crazy','dollar','duel','evil','face1','face2','face5','fingal','fuu','girl','gun1','ha',
@@ -102,14 +125,14 @@ export default {
 		this.patterns.find.forEach((part, i) => {
 			txt = txt.replace(part, this.patterns.replace[i]);
 
-			if (i === 3 || i === 4 || i === 23) {
+			if (i === 2 || i === 3 || i === 22) {
 				while (txt.match(part)) {
 					txt = txt.replace(part, this.patterns.replace[i]);
 				}
 			}
 		});
 
-		return txt;
+		return sanitizeHtml(txt);
 	},
 	addTag (tag, select, type) {
 		if (typeof type === 'undefined') {

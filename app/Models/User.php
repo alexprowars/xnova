@@ -244,21 +244,27 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 
 	public function setSelectedPlanet(int $planetId): bool
 	{
-		if ($this->planet_current == $planetId || $planetId <= 0) {
-			return true;
+		if ($planetId <= 0) {
+			return false;
 		}
 
 		$isExistPlanet = Planet::query()
 			->whereKey($planetId)
 			->whereBelongsTo($this)
+			->whereNull('destroyed_at')
 			->exists();
 
 		if (!$isExistPlanet) {
 			return false;
 		}
 
+		if ($this->planet_current == $planetId) {
+			return true;
+		}
+
 		$this->setAttribute('planet_current', $planetId);
 		$this->update();
+		$this->currentPlanet = null;
 
 		return true;
 	}
@@ -268,7 +274,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	 */
 	public function getPlanets(bool $withMoons = true): array
 	{
-		$query = Planet::query();
+		$query = Planet::query()->whereNull('destroyed_at');
 
 		if ($this->alliance_id) {
 			$query->where(function (Builder $query) {
@@ -293,18 +299,24 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 			return $this->currentPlanet;
 		}
 
+		$this->currentPlanet = null;
+
 		if (!$this->planet_current && !$this->planet_id && $this->race) {
 			Galaxy::createPlanetByUser($this);
 		}
 
 		if ($this->planet_current && $this->planet_id) {
-			$planet = Planet::findOne($this->planet_current);
+			$planet = Planet::query()
+				->whereNull('destroyed_at')
+				->findOne($this->planet_current);
 
 			if (!$planet) {
 				$this->setAttribute('planet_current', $this->planet_id);
 				$this->update();
 
-				$planet = Planet::findOne($this->planet_current);
+				$planet = Planet::query()
+					->whereNull('destroyed_at')
+					->findOne($this->planet_current);
 			}
 
 			if ($planet) {
@@ -322,14 +334,18 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	 */
 	public function getPlanetListSortQuery(Builder $query): void
 	{
-		$qryPlanets = match ($this->getOption('planet_sort')) {
-			1 => 'galaxy, system, planet, planet_type',
-			2 => 'name',
-			3 => 'planet_type',
-			default => 'id',
+		$columns = match ($this->getOption('planet_sort')) {
+			1 => ['galaxy', 'system', 'planet', 'planet_type'],
+			2 => ['name'],
+			3 => ['planet_type'],
+			default => ['id'],
 		};
 
-		$query->orderBy($qryPlanets, $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc');
+		$direction = $this->getOption('planet_sort_order') > 0 ? 'desc' : 'asc';
+
+		foreach ($columns as $column) {
+			$query->orderBy($column, $direction);
+		}
 	}
 
 	public static function getRankId(int $lvl): int

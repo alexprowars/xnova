@@ -17,6 +17,7 @@ class BattleReport
 	public function report(): string
 	{
 		$usersInfo = [];
+		$position = null;
 
 		foreach ($this->resultData['attackers'] as $userId => $u) {
 			foreach ($u['fleet'] as $f) {
@@ -37,6 +38,8 @@ class BattleReport
 
 				$usersInfo[$f['id']] = $f;
 				$usersInfo[$f['id']]['user_id'] = $userId;
+
+				$position ??= $f;
 			}
 		}
 
@@ -87,8 +90,6 @@ class BattleReport
 
 		$html .= '</div>';
 
-		$position = null;
-
 		foreach ($this->resultData['rounds'] as $round => $data) {
 			if ($data['hits_attacker'] > 0 && $data['hits_defender'] > 0) {
 				$html .= '<div class="text-center">';
@@ -108,14 +109,6 @@ class BattleReport
 
 			foreach ($attackers as $fleet_id => $data2) {
 				$user = $usersInfo[$fleet_id]['user_id'];
-
-				if ($position === null) {
-					$position = [
-						'galaxy' => $usersInfo[$fleet_id]['galaxy'],
-						'system' => $usersInfo[$fleet_id]['system'],
-						'planet' => $usersInfo[$fleet_id]['planet'],
-					];
-				}
 
 				$html .= '<div class="report_fleet">';
 				$html .= '<div class="mb-2 negative">Атакующий ' . $this->resultData['attackers'][$user]['name'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';

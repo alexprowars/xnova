@@ -46,6 +46,7 @@ class EmpireController extends Controller
 		$result['planets'] = [];
 
 		$planets = Planet::query()
+			->whereNull('destroyed_at')
 			->whereBelongsTo($this->user);
 
 		$this->user->getPlanetListSortQuery($planets);

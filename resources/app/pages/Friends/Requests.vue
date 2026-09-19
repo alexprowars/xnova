@@ -31,8 +31,8 @@
 	import { computed } from 'vue';
 	import { Link, usePage } from '@inertiajs/vue3';
 
-	const page = usePage();
-	const isMy = computed(() => page.url.indexOf('/my') !== -1);
+	const inertia = usePage();
+	const isMy = computed(() => inertia.url.indexOf('/my') !== -1);
 
 	defineProps({
 		page: Object,

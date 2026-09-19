@@ -73,7 +73,7 @@ class PlanetResource extends JsonResource
 		if ($this->resource->moon_id && $this->resource->planet_type != PlanetType::MOON && $this->resource->id) {
 			/** @var ?Planet $moon */
 			$moon = Cache::remember('app::moon_' . $this->resource->moon_id, 300, function () {
-				return PlanetResource::query()
+				return Planet::query()
 					->select(['id', 'name', 'image'])
 					->whereKey($this->resource->moon_id)
 					->where('planet_type', PlanetType::MOON)

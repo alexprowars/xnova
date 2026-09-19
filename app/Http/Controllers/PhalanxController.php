@@ -17,6 +17,10 @@ class PhalanxController extends Controller
 {
 	public function index(Request $request)
 	{
+		if ($this->planet->destroyed_at) {
+			throw new PageException('Нельзя использовать фалангу на уничтоженной луне!');
+		}
+
 		$galaxy = $request->integer('galaxy');
 		$system = $request->integer('system');
 		$planet = $request->integer('planet');

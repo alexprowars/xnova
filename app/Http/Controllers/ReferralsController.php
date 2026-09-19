@@ -11,6 +11,7 @@ class ReferralsController extends Controller
 	{
 		$referals = Referal::query()
 			->whereBelongsTo($this->user, 'user')
+			->whereHas('referal')
 			->orderByDesc('referal_id')
 			->with('referal')
 			->get();
@@ -33,7 +34,7 @@ class ReferralsController extends Controller
 			->with('user')
 			->first();
 
-		if ($refers) {
+		if ($refers?->user) {
 			$parse['you'] = [
 				'id' => $refers->user->id,
 				'username' => $refers->user->username,

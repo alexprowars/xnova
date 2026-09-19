@@ -160,9 +160,9 @@
 				if (item['mission'] !== 15 && item['mission'] !== 5) {
 					if (item['target']['planet_type'] === 1) {
 						result = 'планете';
-					} else if (item['target']['planet_type'] === 2) {
-						result = 'луне';
 					} else if (item['target']['planet_type'] === 3) {
+						result = 'луне';
+					} else if (item['target']['planet_type'] === 2) {
 						result = 'полю обломков';
 					} else if (item['target']['planet_type'] === 5) {
 						result = ' военной базе ';
@@ -180,9 +180,9 @@
 				if (item['mission'] !== 15) {
 					if (item['target']['planet_type'] === 1) {
 						result = 'с планеты';
-					} else if (item['target']['planet_type'] === 2) {
-						result = 'с луны';
 					} else if (item['target']['planet_type'] === 3) {
+						result = 'с луны';
+					} else if (item['target']['planet_type'] === 2) {
 						result = 'с поля обломков';
 					} else if (item['target']['planet_type'] === 5) {
 						result = ' с военной базы ';

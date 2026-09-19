@@ -62,6 +62,8 @@ class UserController extends Controller
 			throw new Exception('planet_id undefined');
 		}
 
-		$this->user->setSelectedPlanet($planetId);
+		if (!$this->user->setSelectedPlanet($planetId)) {
+			throw new Exception('Планета недоступна для выбора');
+		}
 	}
 }

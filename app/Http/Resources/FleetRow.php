@@ -18,13 +18,11 @@ class FleetRow extends JsonResource
 
 	public function toArray($request): array
 	{
-		if ($this->status == 0) {
-			$date = $this->resource->start_date;
-		} elseif ($this->status == 1) {
-			$date = $this->resource->end_stay;
-		} else {
-			$date = $this->resource->end_date;
-		}
+		$date = match ($this->status) {
+			0 => $this->resource->start_date,
+			1 => $this->resource->end_stay,
+			default => $this->resource->end_date,
+		};
 
 		return [
 			'id' => $this->resource->id,
