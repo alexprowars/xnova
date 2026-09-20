@@ -1,13 +1,14 @@
 <template>
 	<div class="main-planets">
-		<a :class="{ active }" class="planet-toggle" @click.prevent="emit('toggle')">
+		<button type="button" :class="{ active }" class="planet-toggle" :aria-label="$t('interface.colonies')" :aria-expanded="active" aria-controls="game-planets" @click="emit('toggle')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
 				<span class="third"></span>
 			</span>
-		</a>
-		<div :class="{ active }" class="planet-sidebar">
+		</button>
+		<div id="game-planets" :class="{ active }" class="planet-sidebar">
+			<div class="sidebar-caption">{{ $t('interface.colonies') }} <span>{{ items.length }}</span></div>
 			<div class="list">
 				<PlanetRow v-for="item in items" :key="item['id']" :item="item"></PlanetRow>
 			</div>

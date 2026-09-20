@@ -115,6 +115,7 @@ class FriendsController extends Controller
 
 		return Inertia::render('Friends/Requests', [
 			'items' => $result,
+			'isMy' => $isMyRequests,
 		]);
 	}
 

@@ -1,53 +1,25 @@
 <template>
 	<Head :title="$t('pages.alliance.admin.main_heading')"/>
-	<div>
-		<div class="block">
-			<div class="title">{{ $t('pages.alliance.admin.main_heading') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div>
-						<div class="th"><Link href="/alliance/admin/ranks">{{ $t('pages.alliance.admin.index_link_ranks') }}</Link></div>
-					</div>
-					<div v-if="page['access']['kick']">
-						<div class="th"><Link href="/alliance/admin/members">{{ $t('pages.alliance.admin.index_link_members') }}</Link></div>
-					</div>
-					<div>
-						<div class="th"><Link href="/alliance/admin/tag">{{ $t('pages.alliance.admin.index_link_change_tag') }}</Link></div>
-					</div>
-					<div>
-						<div class="th"><Link href="/alliance/admin/name">{{ $t('pages.alliance.admin.index_link_change_name') }}</Link></div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<AllianceTextForm :data="page"/>
+	<div class="page-alliance page-alliance-admin">
+		<AllianceBack/>
+		<header class="alliance-heading"><h1>{{ $t('pages.alliance.admin.main_heading') }}</h1></header>
+		<nav class="alliance-admin-links">
+			<Link href="/alliance/admin/ranks">{{ $t('pages.alliance.admin.index_link_ranks') }}<span aria-hidden="true">→</span></Link>
+			<Link v-if="page.access.kick" href="/alliance/admin/members">{{ $t('pages.alliance.admin.index_link_members') }}<span aria-hidden="true">→</span></Link>
+			<Link href="/alliance/admin/tag">{{ $t('pages.alliance.admin.index_link_change_tag') }}<span aria-hidden="true">→</span></Link>
+			<Link href="/alliance/admin/name">{{ $t('pages.alliance.admin.index_link_change_name') }}<span aria-hidden="true">→</span></Link>
+		</nav>
+		<AllianceTextForm :key="page.text_type" :data="page"/>
 		<AllianceUpdateForm :data="page"/>
-
-		<div class="block">
-			<div class="content">
-				<div class="block-table text-center">
-					<div class="grid grid-cols-2">
-						<div v-if="page['access']['delete'] || false">
-							<div class="c">{{ $t('pages.alliance.admin.index_dissolve_caption') }}</div>
-							<div class="th"><button class="button" @click.prevent="remove">{{ $t('pages.alliance.admin.action_continue') }}</button></div>
-						</div>
-						<div v-if="page['owner'] === user['id']">
-							<div class="c">{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</div>
-							<div class="th"><Link href="/alliance/admin/give" class="button">{{ $t('pages.alliance.admin.action_continue') }}</Link></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="mt-2">
-			<Link href="/alliance" class="button">{{ $t('pages.alliance.admin.nav_back_alliance_root') }}</Link>
+		<div v-if="page.access.delete || page.owner === user.id" class="alliance-danger-zone">
+			<div v-if="page.access.delete"><span>{{ $t('pages.alliance.admin.index_dissolve_caption') }}</span><button type="button" class="button is-danger" @click="remove">{{ $t('pages.alliance.ui.dissolve') }}</button></div>
+			<div v-if="page.owner === user.id"><span>{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</span><Link href="/alliance/admin/give" class="button is-secondary">{{ $t('pages.alliance.admin.give_page_title') }}</Link></div>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	import AllianceBack from '~/components/Page/Alliance/Back.vue';
 	import useState from '~/composables/useState.js';
 	import AllianceUpdateForm from '~/components/Page/Alliance/AllianceUpdateForm.vue';
 	import AllianceTextForm from '~/components/Page/Alliance/AllianceTextForm.vue';

@@ -1,25 +1,615 @@
+.overview-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin: 0 0 12px;
+}
+
+.overview-heading > div {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.overview-heading h1 {
+	width: auto;
+	text-align: left;
+	font-size: clamp(24px, 2.5vw, 30px);
+	margin: 0;
+	font-weight: 600;
+	letter-spacing: -.03em;
+}
+
+.overview-title-line {
+	margin-top: 4px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.overview-rename {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	border-radius: 4px;
+	color: var(--text-muted);
+	transition: color .15s, background-color .15s;
+
+	&:hover {
+		color: var(--accent-color);
+		background-color: #1b3043;
+	}
+
+	svg {
+		width: 17px;
+		height: 17px;
+	}
+}
+
+.overview-coordinates {
+	flex-shrink: 0;
+	color: var(--accent-color);
+	font-family: ui-monospace, monospace;
+	font-size: 14px;
+}
+
+.page-overview .block .content {
+	padding: 10px;
+}
+
+.overview-panel {
+	container: overview / inline-size;
+
+	.overview-dashboard {
+		display: grid;
+		grid-template-columns: minmax(180px, .85fr) minmax(0, 1fr) minmax(0, 1.1fr);
+		align-items: start;
+		gap: 16px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.overview-dashboard > div {
+		min-width: 0;
+	}
+
+	.overview-notice {
+		padding: 7px 10px;
+		margin-bottom: 12px;
+		border-left: 2px solid #528c83;
+		border-radius: 0 4px 4px 0;
+		background: #16302e66;
+		color: var(--text-muted);
+		font-size: 14px;
+		line-height: 1.6;
+
+		&.is-warning {
+			border-color: #dfb977;
+			background: #dfb9770d;
+			color: #dfb977;
+		}
+	}
+
+	.overview-world-image {
+		position: relative;
+
+		> a {
+			display: block;
+			overflow: hidden;
+			border-radius: 6px;
+			background: #050c15;
+		}
+
+		> a > img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 1;
+			object-fit: cover;
+		}
+	}
+
+	.overview-moon {
+		position: absolute;
+		right: 8px;
+		bottom: 8px;
+		padding: 3px;
+		border: 1px solid #7ca4b5;
+		border-radius: 50%;
+		background: #07101ecc;
+		cursor: pointer;
+
+		img {
+			display: block;
+			border-radius: 50%;
+		}
+	}
+
+	.overview-section-label {
+		color: var(--text-muted);
+		font-size: 14px;
+		font-weight: 400;
+	}
+
+	.overview-section-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 3px 8px;
+	}
+
+	.overview-details {
+		margin: 0;
+
+		> div {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 8px;
+			padding: 8px 0;
+			border-bottom: 1px solid #263b4d80;
+		}
+
+		dt {
+			color: var(--text-muted);
+			font-size: 14px;
+		}
+
+		dd {
+			margin: 0;
+			text-align: right;
+			font-size: 14px;
+		}
+	}
+
+	.overview-fact-group {
+		padding: 10px 0;
+		border-bottom: 1px solid #263b4d80;
+	}
+
+	.overview-text-action {
+		color: var(--accent-color);
+		font-size: 14px;
+		cursor: pointer;
+	}
+
+	.overview-debris {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 16px;
+		margin-top: 7px;
+
+		> span {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		svg {
+			width: 18px;
+			height: 18px;
+			flex-shrink: 0;
+			color: #a8bbce;
+
+			&.crystal {
+				color: #7cd7ee;
+			}
+		}
+	}
+
+	.overview-battles {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+		margin-top: 6px;
+
+		> div {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 6px;
+		}
+
+		span {
+			font-size: 14px;
+			color: var(--text-muted);
+		}
+
+		strong {
+			font-weight: 500;
+			color: #a8d8c7;
+		}
+
+		> div:last-child strong {
+			color: #d6a6a6;
+		}
+	}
+
+	.overview-referrals {
+		padding-top: 10px;
+
+		> div {
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+			margin-top: 4px;
+		}
+
+		a {
+			min-width: 0;
+			font-size: 14px;
+			color: var(--accent-color);
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.overview-referrals-count {
+		padding: 1px 5px;
+		border-radius: 3px;
+		background: #233548;
+		color: var(--text-muted);
+		font-size: 14px;
+	}
+
+	.overview-commander {
+		padding-left: 16px;
+		border-left: 1px solid var(--border-color);
+	}
+
+	.overview-player-name {
+		display: block;
+		margin: 2px 0;
+		font-size: 17px;
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+
+	.overview-player-race {
+		font-size: 14px;
+		color: var(--text-muted);
+	}
+
+	.overview-score {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+		padding: 10px 0;
+
+		> div > .overview-section-label {
+			display: block;
+		}
+
+		strong {
+			font-size: 24px;
+			font-weight: 500;
+			line-height: 1.3;
+			color: #b7dfeb;
+		}
+	}
+
+	.overview-rank {
+		text-align: right;
+
+		a {
+			font-size: 18px;
+		}
+
+		div > span {
+			margin-left: 5px;
+			font-size: 14px;
+		}
+	}
+
+	.overview-points {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 4px;
+		margin: 0;
+
+		> div {
+			padding: 6px 8px;
+			border-radius: 4px;
+			background: #182b3c;
+		}
+
+		dt {
+			font-size: 14px;
+			color: var(--text-muted);
+		}
+
+		dd {
+			margin: 2px 0 0;
+			font-size: 14px;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.overview-levels {
+		display: grid;
+		gap: 10px;
+		margin-top: 12px;
+	}
+
+	.overview-level {
+		font-size: 14px;
+		color: var(--text-muted);
+
+		strong {
+			font-weight: 500;
+			color: var(--text-color);
+
+			span {
+				color: var(--text-muted);
+				font-size: 14px;
+			}
+		}
+
+		progress {
+			margin-top: 6px;
+		}
+
+		&.overview-level-raid {
+			--accent-color: #d4b084;
+		}
+	}
+
+	.overview-level-exp {
+		margin-top: 4px;
+		font-size: 14px;
+		text-align: right;
+	}
+
+	.overview-queue {
+		display: grid;
+		gap: 6px;
+		margin-top: 14px;
+		padding-top: 12px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.overview-queue-row {
+		display: grid;
+		grid-template-columns: 38px minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 10px;
+		padding: 8px 10px;
+		border-radius: 5px;
+		background: #142737;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.overview-queue-image {
+		width: 38px;
+		height: 38px;
+		object-fit: cover;
+		border: 1px solid #355166;
+		border-radius: 4px;
+	}
+
+	.overview-queue-description {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.overview-queue-name {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 4px 8px;
+		font-size: 14px;
+
+		strong {
+			font-weight: 500;
+		}
+	}
+
+	.overview-queue-amount {
+		padding: 1px 5px;
+		border-radius: 3px;
+		background: #203c4d;
+		color: #b7dbe7;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.overview-queue-planet {
+		display: block;
+		margin-top: 3px;
+		color: var(--text-muted);
+		font-size: 12px;
+		text-align: left;
+
+		&.is-link {
+			color: var(--accent-color);
+			cursor: pointer;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.overview-queue-time {
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	.overview-queue-countdown {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 6px;
+		color: #b7dbe7;
+		font-size: 14px;
+
+		svg {
+			width: 14px;
+			height: 14px;
+			color: var(--text-muted);
+		}
+	}
+
+	.overview-queue-date {
+		margin-top: 3px;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+}
+
+.planet-development {
+	padding: 10px 0 12px;
+
+	> div {
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+		color: var(--text-muted);
+		font-size: 14px;
+		margin-bottom: 6px;
+	}
+
+	strong {
+		color: var(--text-color);
+	}
+}
+
+.planet-development progress, .overview-level progress {
+	display: block;
+	appearance: none;
+	width: 100%;
+	height: 4px;
+	border: 0;
+	border-radius: 4px;
+	overflow: hidden;
+	background: #233548;
+	color: var(--accent-color);
+
+	&::-webkit-progress-bar {
+		background: #233548;
+	}
+
+	&::-webkit-progress-value {
+		background: var(--accent-color);
+	}
+
+	&::-moz-progress-bar {
+		background: var(--accent-color);
+	}
+
+	&.is-warning {
+		--accent-color: #e7bd6c;
+	}
+
+	&.is-full {
+		--accent-color: #ef7a7a;
+	}
+}
+
 .page-overview-officiers {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	flex-wrap: wrap;
+	gap: 4px;
 	margin-top: 5px;
 }
 
 .page-overview-officiers-item {
-	display: block;
-	margin: 5px 2px 0 2px;
+	display: flex;
+	justify-content: center;
+	width: 28px;
+	border-bottom: 2px solid transparent;
+	padding-bottom: 3px;
 
-	a {
-		display: inline-block;
+	&.is-active {
+		border-color: #83cfb2;
+	}
+
+	.v-popper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 28px;
+	}
+
+	.officier {
+		flex-shrink: 0;
+		transform: scale(.875);
 	}
 }
 
-.page-overview-officiers-item + .page-overview-officiers-item {
-	margin-left: 0;
+@container overview (max-width: 740px) {
+	.overview-panel .overview-dashboard {
+		grid-template-columns: minmax(180px, .8fr) minmax(0, 1fr);
+	}
+
+	.overview-panel .overview-commander {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0 16px;
+		padding: 12px 0 0;
+		border-left: 0;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.overview-panel .overview-levels {
+		margin-top: 6px;
+	}
 }
 
-.page-overview .block .content {
-	@apply p-1.5;
+@container overview (max-width: 480px) {
+	.overview-panel .overview-queue-row {
+		grid-template-columns: 38px minmax(0, 1fr);
+		gap: 6px 10px;
+	}
+
+	.overview-panel .overview-queue-time {
+		grid-column: 2;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 4px 10px;
+		text-align: left;
+	}
+
+	.overview-panel .overview-queue-date {
+		margin-top: 0;
+	}
+
+	.overview-panel .overview-dashboard {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 12px;
+	}
+
+	.overview-panel .overview-world {
+		display: grid;
+		grid-template-columns: minmax(90px, .8fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 12px;
+	}
+
+	.overview-panel .overview-commander {
+		display: block;
+	}
+
+	.overview-panel .overview-levels {
+		margin-top: 12px;
+	}
+
+	.overview-panel .planet-development {
+		padding-top: 0;
+	}
+}
+
+@media (max-width: 479px) {
+	.overview-heading {
+		padding: 0 4px;
+	}
 }
 
 .page-overview-planet-image input[type=radio] {
@@ -38,139 +628,529 @@
 	border-color: #3abc55;
 }
 
+.overview-fleets {
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
 .overview-fleets-row {
+	--fleet-accent: #8cb9d1;
+	display: grid;
+	grid-template-columns: 150px minmax(0, 1fr);
+	gap: 14px;
+	padding: 12px;
+	border-left: 2px solid var(--fleet-accent);
+	background: #0e1b29;
+	color: var(--text-color);
+	font-size: 14px;
+	line-height: 1.55;
+
+	+ .overview-fleets-row {
+		border-top: 1px solid #263b4d;
+	}
+
+	&:where(.own) {
+		--fleet-accent: #9bdcb4;
+	}
+
+	&:where(.own.espionage) {
+		--fleet-accent: #e3b17d;
+	}
+
+	&:where(.own.harvest) {
+		--fleet-accent: #d9cb85;
+	}
+
+	&:where(.own.colony, .federation) {
+		--fleet-accent: #a0bfe8;
+	}
+
+	&:where(.own.federation) {
+		--fleet-accent: #89c5a4;
+	}
+
+	&:where(.own.missile) {
+		--fleet-accent: #95d5da;
+	}
+
+	&:where(:not(.own):is(.attack, .espionage, .missile, .destroy)) {
+		--fleet-accent: #e6a09b;
+	}
+
+	&:where(.return) {
+		--fleet-accent: #8cb99d;
+	}
+
+	.overview-fleet-time {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 4px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.overview-fleet-countdown {
+		color: var(--fleet-accent);
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	time {
+		color: var(--text-muted);
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.overview-fleet-details {
+		min-width: 0;
+	}
+
+	.overview-fleet-description {
+		color: var(--fleet-accent);
+		overflow-wrap: anywhere;
+	}
+
+	.overview-fleet-description > a {
+		color: #d5e5ee;
+		white-space: nowrap;
+	}
+
+	.overview-fleet-description > a:hover {
+		color: #f0f7fb;
+	}
+
 	.v-popper {
 		display: inline-block;
+	}
+
+	.overview-fleet-trigger {
+		display: inline;
+		padding: 0;
+		border: 0;
+		border-bottom: 1px dashed currentColor;
+		border-radius: 0;
+		background: transparent;
+		color: inherit;
+		font-size: inherit;
+		line-height: inherit;
 		cursor: pointer;
 	}
 
-	.own {
-		&.deploy {
-			color: #33ff33;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.transport {
-			color: #33ff33;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.espionage {
-			color: #ff9900;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.harvest {
-			color: #f9f900;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.colony {
-			color: #007dfb;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.federation {
-			color: #3aaf3a;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.attack {
-			color: #33ff33;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.missile {
-			color: #99ffff;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.destroy {
-			color: #33ff33;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
-
-		&.hold {
-			color: #33ff33;
-
-			a {
-				color: #d8d8d8;
-			}
-		}
+	.overview-fleet-trigger:hover {
+		color: #f0f7fb;
 	}
 
-	.attack {
-		color: red;
-
-		a {
-			color: #d8d8d8;
-		}
+	.overview-fleet-mission {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-top: 6px;
+		color: var(--fleet-accent);
+		font-size: 12px;
 	}
 
-	.espionage {
-		color: #ff0000;
-
-		a {
-			color: #d8d8d8;
-		}
+	.overview-fleet-mission-label {
+		color: var(--text-muted);
 	}
 
-	.missile {
-		color: #cc3333;
+	@media (max-width: 639px) {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+		padding: 10px;
 
-		a {
-			color: #d8d8d8;
+		.overview-fleet-time {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: baseline;
+			flex-wrap: wrap;
+			gap: 4px 12px;
 		}
 	}
+}
 
-	.destroy {
-		color: #ff0000;
+.overview-fleet-tooltip-content {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	padding: 8px;
+	color: var(--text-color);
+	font-size: 12px;
+	line-height: 1.5;
+	font-variant-numeric: tabular-nums;
 
-		a {
-			color: #d8d8d8;
-		}
+	> .grid {
+		gap: 4px 8px;
+		padding-block: 5px;
 	}
 
-	.federation {
-		color: #007dfb;
-
-		a {
-			color: #d8d8d8;
-		}
+	> .grid + .grid {
+		border-top: 1px solid #2b4354;
 	}
 
-	.return, .own.return {
-		color: #339900;
+	.text-right {
+		color: #b9ddea;
+	}
+}
 
-		a {
-			color: #d8d8d8;
+.v-popper__popper.v-popper--theme-tooltip.overview-fleet-tooltip {
+	.v-popper__inner {
+		background: #0d1b29;
+		border-color: #355166;
+		box-shadow: 0 8px 24px #0006;
+	}
+
+	.v-popper__arrow-outer {
+		border-color: #355166;
+	}
+
+	.v-popper__arrow-inner {
+		border-color: #0d1b29;
+	}
+}
+
+.page-overview-rename {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	.planet-settings-back {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 10px;
+		color: #a6c6d8;
+		font-size: 12px;
+	}
+
+	.planet-settings-back svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	.planet-settings-heading {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		margin-bottom: 10px;
+		padding: 12px 14px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: linear-gradient(110deg, #172e40, #0e1b29);
+	}
+
+	.planet-settings-heading > img {
+		flex-shrink: 0;
+		width: 64px;
+		height: 64px;
+		border: 1px solid #355166;
+		border-radius: 5px;
+		object-fit: cover;
+	}
+
+	.planet-settings-heading > div {
+		min-width: 0;
+	}
+
+	.planet-settings-heading h1 {
+		margin: 0 0 5px;
+		width: auto;
+		color: #e0edf5;
+		font-size: 16px;
+		font-weight: 600;
+		text-align: left;
+		line-height: 1.4;
+	}
+
+	.planet-settings-identity {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 3px 10px;
+		overflow-wrap: anywhere;
+	}
+
+	.planet-settings-identity strong {
+		color: #bdd3e1;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.planet-settings-identity > span {
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.planet-settings-panel {
+		margin-bottom: 10px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		background: #0e1b29;
+	}
+
+	.planet-settings-panel > h2 {
+		margin: 0;
+		padding: 9px 14px;
+		background: #142737;
+		color: #c5dce9;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.planet-name-form {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		padding: 12px 14px;
+	}
+
+	.planet-name-field {
+		display: grid;
+		gap: 5px;
+		flex: 1;
+		min-width: 150px;
+		max-width: 420px;
+	}
+
+	.planet-name-field label {
+		color: #a6c1d1;
+		font-size: 12px;
+	}
+
+	.planet-name-field input {
+		width: 100%;
+		min-width: 0;
+		min-height: 32px;
+		padding: 5px 9px;
+		border-radius: 4px;
+		background: #091623;
+		color: #d5e5ef;
+		font-size: 14px;
+		text-align: left;
+	}
+
+	.planet-settings-hint {
+		color: #8faabb;
+		font-size: 12px;
+		line-height: 1.5;
+	}
+
+	.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		min-height: 32px;
+		padding: 6px 10px;
+		font-size: 12px;
+	}
+
+	.button:disabled {
+		opacity: .45;
+		cursor: default;
+	}
+
+	.planet-image-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+		gap: 10px;
+		min-width: 0;
+		margin: 0;
+		padding: 12px 14px;
+		border: 0;
+	}
+
+	.planet-image-option {
+		position: relative;
+		min-width: 0;
+		padding: 4px;
+		border: 1px solid #2d4557;
+		border-radius: 5px;
+		background: #0a1723;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s;
+	}
+
+	.planet-image-option:hover {
+		border-color: #6894aa;
+		background: #193445;
+	}
+
+	.planet-image-option.is-selected {
+		border-color: #86bbce;
+		background: #1b3c4d;
+	}
+
+	.planet-image-option:has(input:focus-visible) {
+		border-color: #c3e7ee;
+	}
+
+	.planet-image-option input {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	.planet-image-option > img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		object-fit: cover;
+		border-radius: 3px;
+	}
+
+	.planet-image-caption {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 3px;
+		padding: 5px 2px 1px;
+		color: #9eb8c9;
+		font-size: 12px;
+	}
+
+	.is-selected .planet-image-caption {
+		color: #c5e5ee;
+	}
+
+	.planet-image-caption svg {
+		width: 15px;
+		height: 15px;
+		flex-shrink: 0;
+		color: #a4dbc4;
+	}
+
+	.planet-image-current {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		padding: 1px 5px;
+		border: 1px solid #427365;
+		border-radius: 3px;
+		background: #102820e8;
+		color: #a4dbc4;
+		font-size: 12px;
+		pointer-events: none;
+	}
+
+	.planet-image-actions {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 10px;
+		padding: 0 14px 14px;
+	}
+
+	.planet-settings-errors {
+		display: grid;
+		flex-basis: 100%;
+		gap: 4px;
+		color: #dba29e;
+		font-size: 12px;
+	}
+
+	.planet-image-errors {
+		padding: 0 14px 12px;
+	}
+
+	.planet-abandon {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 12px;
+		padding: 12px 14px;
+		border: 1px solid #563d45;
+		border-radius: 6px;
+		background: #231c2666;
+	}
+
+	.planet-abandon h2 {
+		margin: 0 0 3px;
+		color: #d3a19c;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.planet-abandon .button {
+		border-color: #704a50;
+		background: #39262e;
+		color: #dba9a5;
+	}
+
+	.planet-abandon .button:hover:enabled {
+		border-color: #986269;
+		background: #51313b;
+		color: #f0c2bc;
+	}
+
+	.planet-abandon .button svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	@media (max-width: 639px) {
+		.planet-settings-heading {
+			gap: 10px;
+			padding: 10px;
 		}
+
+		.planet-settings-heading > img {
+			width: 52px;
+			height: 52px;
+		}
+
+		.planet-settings-panel > h2 {
+			padding-inline: 10px;
+		}
+
+		.planet-name-form {
+			padding: 10px;
+			gap: 10px;
+		}
+
+		.planet-name-field {
+			flex-basis: 100%;
+			max-width: none;
+		}
+
+		.planet-name-form > .button {
+			margin-left: auto;
+		}
+
+		.planet-image-grid {
+			grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+			gap: 8px;
+			padding: 10px;
+		}
+
+		.planet-image-actions {
+			padding: 0 10px 10px;
+		}
+
+		.planet-image-actions .button {
+			margin-left: auto;
+		}
+
+		.planet-abandon {
+			padding: 10px;
+		}
+
+		.planet-abandon > .button {
+			margin-left: auto;
+		}
+	}
+}
+
+@layer base {
+	.page-overview-rename .planet-name-field input.is-invalid {
+		border-color: #bd7e79 !important;
 	}
 }

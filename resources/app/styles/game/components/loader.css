@@ -16,52 +16,52 @@
 }
 
 .modal-loading {
-    height: 120px;
+	height: 120px;
 }
 
 .modal-loading:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    background: transparent;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 10px;
-    z-index: 1;
+	content: '';
+	position: absolute;
+	left: 0;
+	background: transparent;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	border-radius: 10px;
+	z-index: 1;
 }
 
 .modal-loading:after {
-    opacity: 0.6;
-    content: '';
-    height: 30px;
-    width: 30px;
-    border: solid 3px transparent;
-    position: absolute;
-    left: 50%;
-    margin-left: -15px;
-    border-radius: 50%;
-    animation: loading-spin 1s infinite linear;
-    border-bottom-color: dodgerblue;
-    top: 50%;
-    margin-top: -15px;
-    z-index: 2;
+	opacity: 0.6;
+	content: '';
+	height: 30px;
+	width: 30px;
+	border: solid 3px transparent;
+	position: absolute;
+	left: 50%;
+	margin-left: -15px;
+	border-radius: 50%;
+	animation: loading-spin 1s infinite linear;
+	border-bottom-color: dodgerblue;
+	top: 50%;
+	margin-top: -15px;
+	z-index: 2;
 }
 
 @-webkit-keyframes loading-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes loading-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }

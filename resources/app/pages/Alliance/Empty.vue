@@ -1,72 +1,36 @@
 <template>
 	<Head :title="$t('pages.alliance.index.page_title_no_alliance')"/>
-	<div class="block">
-		<div class="title">
-			Альянсы
+	<div class="page-alliance page-alliance-overview">
+		<header class="alliance-heading"><h1>{{ $t('pages.alliance.index.page_title_no_alliance') }}</h1></header>
+		<div class="alliance-entry-actions">
+			<Link href="/alliance/search"><AllianceIcon aria-hidden="true"/><span><strong>{{ $t('pages.alliance.search.page_heading') }}</strong><small>{{ $t('pages.alliance.ui.find_hint') }}</small></span><span aria-hidden="true">→</span></Link>
+			<Link href="/alliance/create"><PlusIcon aria-hidden="true"/><span><strong>{{ $t('pages.alliance.create.title') }}</strong><small>{{ $t('pages.alliance.ui.create_hint') }}</small></span><span aria-hidden="true">→</span></Link>
 		</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid grid-cols-2">
-					<div class="th"><Link href="/alliance/create" class="button">Создать альянс</Link></div>
-					<div class="th"><Link href="/alliance/search" class="button">Поиск альянса</Link></div>
-				</div>
+		<section v-if="page.requests.length" class="alliance-panel"><h2>{{ $t('pages.alliance.ui.your_requests') }}<span class="alliance-count">{{ page.requests.length }}</span></h2>
+			<div v-for="item in page.requests" :key="item.id" class="alliance-list-row">
+				<Link :href="'/alliance/info/' + item.alliance_id"><span class="alliance-tag">[{{ item.tag }}]</span> {{ item.name }}</Link>
+				<time>{{ $formatDate(item.date, 'DD MMM YYYY HH:mm') }}</time>
+				<button type="button" class="button is-danger" @click="removeRequest(item.id)">{{ $t('pages.alliance.ui.withdraw') }}</button>
 			</div>
-		</div>
+		</section>
+		<section v-if="page.alliances.length" class="alliance-panel"><h2>{{ $t('pages.alliance.ui.top_alliances') }}</h2>
+			<div class="alliance-table-wrap"><table class="alliance-table"><thead><tr><th>{{ $t('pages.alliance.ui.place') }}</th><th>{{ $t('pages.alliance.index.page_title_no_alliance') }}</th><th>{{ $t('pages.alliance.info.label_members') }}</th><th>{{ $t('pages.alliance.members.points') }}</th></tr></thead>
+				<tbody><tr v-for="(item, i) in page.alliances" :key="item.id"><td class="alliance-muted">{{ i + 1 }}</td><td><Link :href="'/alliance/info/' + item.id"><span class="alliance-tag">[{{ item.tag }}]</span> {{ item.name }}</Link></td><td>{{ item.members }}</td><td class="alliance-number">{{ item.total_points }}</td></tr></tbody>
+			</table></div>
+		</section>
 	</div>
-
-	<div v-if="page.requests.length" class="block">
-		<div class="title">
-			Ваши заявки
-		</div>
-		<div class="content">
-			<table class="table text-center">
-				<tbody>
-				<template v-for="item in page.requests">
-					<tr>
-						<td class="th w-2/4">
-							<Link :href="'/alliance/info/' + item['alliance_id']">{{ item['name'] }} [{{ item['tag'] }}]</Link>
-						</td>
-						<td class="th">{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm') }}</td>
-						<td class="th"><button type="button" class="button" @click.prevent="removeRequest(item['id'])">Убрать заявку</button></td>
-					</tr>
-				</template>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	<div v-if="page.alliances.length" class="block">
-		<div class="title">
-			Лучшие альянсы
-		</div>
-		<div class="content">
-			<table class="table text-center">
-				<tbody>
-					<tr>
-						<td class="c w-8">Место</td>
-						<td class="c grow">Альянс</td>
-						<td class="c grow">Игроки</td>
-						<td class="c grow">Очки</td>
-					</tr>
-					<tr v-for="(item, i) in page.alliances">
-						<td class="th w-1/12">{{ i + 1 }}</td>
-						<td class="th grow">
-							<Link :href="'/alliance/info/' + item['id']">{{ item['name'] }} [{{ item['tag'] }}]</Link>
-						</td>
-						<td class="th grow">{{ item['members'] }}</td>
-						<td class="th grow">{{ item['total_points'] }}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
+
+	import AllianceIcon from '~/images/icons/alliance.svg?component';
+	import PlusIcon from '~/images/icons/plus.svg?component';
 	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
+
+	const { t } = useI18n();
 
 	defineOptions({
 		layout: {
@@ -83,17 +47,17 @@
 	function removeRequest(id) {
 		openConfirmModal(
 			null,
-			'Отозвать заявку?',
+			t('pages.alliance.ui.withdraw_confirm'),
 			[{
-				title: 'Нет',
+				title: t('pages.alliance.admin.confirm_decline'),
 			}, {
-				title: 'Да',
+				title: t('pages.alliance.admin.confirm_accept'),
 				handler() {
 					useForm().delete('/alliance/request/' + id, {
 						preserveUrl: true,
 						preserveScroll: true,
 						onSuccess() {
-							useSuccessNotification('Вы отозвали свою заявку на вступление в альянс');
+							useSuccessNotification(t('pages.alliance.ui.withdrawn'));
 						}
 					});
 				}

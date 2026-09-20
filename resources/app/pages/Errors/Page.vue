@@ -1,12 +1,9 @@
 <template>
-	<div class="block-table">
-		<div class="grid">
-			<div class="th error-message text-center" v-html="page.message"></div>
-		</div>
-	</div>
+	<div class="game-page page-error"><section class="error-notice" role="alert"><AlertIcon aria-hidden="true"/><div class="game-prose" v-html="page.message"></div></section></div>
 </template>
 
 <script setup>
+	import AlertIcon from '~/images/icons/alert.svg?component';
 	const props = defineProps({
 		page: Object,
 	});

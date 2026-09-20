@@ -1,39 +1,28 @@
 <template>
-	<div class="block">
-		<div class="title">
-			{{ $t('pages.messages.form.title') }}
-		</div>
-		<div class="content">
-			<form action="" method="post" @submit.prevent="send" class="block-table form-group text-center">
-				<div class="grid">
-					<div class="th">
-						{{ $t('pages.messages.form.recipient') }}
-					</div>
+	<section class="message-compose">
+		<header class="message-compose-heading"><MessageIcon name="mail"/><h1>{{ $t('pages.messages.form.title') }}</h1></header>
+		<form method="post" @submit.prevent="send">
+			<div class="message-recipient"><span class="message-recipient-icon"><MessageIcon name="user"/></span><div><span class="message-field-label">{{ $t('pages.messages.form.recipient') }}</span><div class="message-recipient-name" v-html="to || '—'"/></div></div>
+			<div class="message-compose-editor">
+				<div class="message-field-label">{{ $t('pages.messages.form.message') }}</div>
+				<TextEditor :class="{error: v$.message.$error || form.errors.message}" v-model="form.message"/>
+				<div v-if="v$.message.$error || Object.keys(form.errors).length" class="message-form-errors" role="alert">
+					<span v-if="v$.message.$error">{{ $t('pages.messages.form.required') }}</span>
+					<span v-for="(error, field) in form.errors" :key="field">{{ error }}</span>
 				</div>
-				<div v-if="to.length" class="grid">
-					<div class="c" v-html="to"></div>
-				</div>
-				<div class="grid">
-					<div class="th">
-						<TextEditor :class="{error: v$.message.$error}" v-model="form.message"/>
-					</div>
-				</div>
-				<div class="grid">
-					<div class="c">
-						<button type="submit" class="button">{{ $t('pages.messages.form.submit') }}</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+			</div>
+			<div class="message-compose-footer"><button type="submit" class="button" :disabled="form.processing || id <= 0"><MessageIcon name="send"/>{{ $t('pages.messages.form.submit') }}</button></div>
+		</form>
+	</section>
 </template>
 
 <script setup>
+	import MessageIcon from '~/components/Page/Messages/MessageIcon.vue';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
 	import TextEditor from '~/components/TextEditor.vue';
 	import { useForm } from '@inertiajs/vue3';
-	import { useModal } from '@inertiaui/modal-vue'
+	import { useModal } from '@inertiaui/modal-vue';
 
 	const props = defineProps({
 		id: {
@@ -69,21 +58,20 @@
 	const modal = useModal();
 
 	async function send () {
-		if (props.id <= 0) {
+		if (props.id <= 0 || form.processing) {
 			return;
 		}
 
 		if (!await v$.value.$validate()) {
-			return
+			return;
 		}
-
-		modal.close();
 
 		form.post('/messages/write/' + props.id, {
 			preserveUrl: true,
 			onSuccess: () => {
 				form.resetAndClearErrors();
 				v$.value.$reset();
+				modal?.close();
 			}
 		});
 	}

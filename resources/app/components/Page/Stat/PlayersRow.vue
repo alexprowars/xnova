@@ -1,53 +1,18 @@
 <template>
-	<div class="page-stat-players-row grid grid-cols-12">
-		<div class="th sm:col-span-1 col-span-2">
-			{{ item['place'] }}
-			<div class="sm:hidden">
-				<div v-if="item['diff'] === 0" :style="{color: '#87CEEB'}">*</div>
-				<span v-else-if="item['diff'] < 0" class="negative">{{ item['diff'] }}</span>
-				<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
-			</div>
-		</div>
-		<div class="th sm:col-span-1 hidden sm:block">
-			<div v-if="item['diff'] === 0" :style="{color: '#87CEEB'}">*</div>
-			<span v-else-if="item['diff'] < 0" class="negative">{{ item['diff'] }}</span>
-			<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
-		</div>
-		<div class="th sm:col-span-4 col-span-5">
-			<ModalLink navigate :href="'/players/' + item['id']">
-				<span :class="{ neutral: marked }">{{ item['name'] }}</span>
-			</ModalLink>
-			<div v-if="item['alliance']" class="sm:hidden">
-				<Link :class="{neutral: item['alliance']['marked']}" :href="'/alliance/info/' + item['alliance']['id']">
-					{{ item['alliance']['name'] }}
-				</Link>
-			</div>
-			<div v-else class="sm:hidden">
-				&nbsp;
-			</div>
-		</div>
-		<div class="th sm:col-span-1 col-span-2 middle">
-			<img v-if="item['race']" :src="'/assets/images/skin/race' + item['race'] + '.gif'" width="16" height="16" style="margin-right:7px;">
-
-			<SendMessagePopup v-if="user" :title="$t('send_message')" :id="item['id']"/>
-		</div>
-		<div class="th sm:col-span-3 hidden sm:block row-alliance">
-			<Link v-if="item['alliance']" :class="{ neutral: item['alliance']['marked'] }" :href="'/alliance/info/' + item['alliance']['id']">
-				{{ item['alliance']['name'] }}
-			</Link>
-			<div v-else>
-				&nbsp;
-			</div>
-		</div>
-		<div class="th sm:col-span-2 col-span-3 middle">
-			<Link :href="'/players/' + item['id'] + '/stats'">
-				{{ $formatNumber(item['points']) }}
-			</Link>
-		</div>
-	</div>
+	<tr class="page-stat-players-row" :class="{ 'is-marked': marked }">
+		<td class="stats-place"><Rank :place="item.place" :diff="item.diff"/></td>
+		<th scope="row" class="stats-player-name">
+			<div class="stats-player-identity"><img v-if="item.race" :src="'/assets/images/skin/race' + item.race + '.gif'" width="18" height="18" :alt="$t('races.' + item.race)" :title="$t('races.' + item.race)"><ModalLink navigate :href="'/players/' + item.id" :class="{ 'stats-highlight': marked }">{{ item.name }}</ModalLink></div>
+			<Link v-if="item.alliance" class="stats-mobile-alliance" :class="{ 'stats-highlight': item.alliance.marked }" :href="'/alliance/info/' + item.alliance.id">{{ item.alliance.name }}</Link>
+		</th>
+		<td class="stats-player-actions"><SendMessagePopup v-if="user" :title="$t('send_message')" :aria-label="$t('send_message')" :id="item.id" class="stats-message"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></SendMessagePopup></td>
+		<td class="stats-alliance-column"><Link v-if="item.alliance" :class="{ 'stats-highlight': item.alliance.marked }" :href="'/alliance/info/' + item.alliance.id">{{ item.alliance.name }}</Link><span v-else class="stats-muted">—</span></td>
+		<td class="stats-points"><Link :href="'/players/' + item.id + '/stats'">{{ $formatNumber(item.points) }}</Link></td>
+	</tr>
 </template>
 
 <script setup>
+	import Rank from './Rank.vue';
 	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link } from '@inertiajs/vue3';

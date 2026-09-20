@@ -1,4 +1,16 @@
 {
+	"interface": {
+		"navigation": "Navigation",
+		"colonies": "Colonies",
+		"command": "Command center",
+		"sector": "Space strategy",
+		"headline": "The galaxy awaits your command.",
+		"intro": "Develop colonies, research technologies and lead your fleet to new worlds. Your empire begins with a single planet.",
+		"start": "Build your empire",
+		"welcome": "Welcome back, Commander",
+		"login_hint": "Sign in to continue your expansion.",
+		"fields": "Planet development"
+	},
 	"dialogs": {
 		"title": "Dialog",
 		"close": "Close"
@@ -288,6 +300,93 @@
 	"send_message": "Send message",
 	"credits": "Credits",
 	"pages": {
+		"sim": {
+			"title": "Battle simulator",
+			"attackers": "Attackers",
+			"defenders": "Defenders",
+			"setup": "Initial setup",
+			"lead": "Leader",
+			"planet": "Planet",
+			"attacker": "Attacker",
+			"defender": "Defender",
+			"tech": "Research and officers",
+			"fleet": "Fleet",
+			"defense": "Defense",
+			"clear": "Clear",
+			"calculate": "Simulate",
+			"result": "Simulation result",
+			"result_link": "Link to the simulation result",
+			"losses_heading": "Losses after 50 simulations",
+			"attacker_losses": "Attacker losses",
+			"defender_losses": "Defender losses",
+			"battle_report": "Battle report"
+		},
+		"errors": {
+			"not_found": "Page not found",
+			"home": "Home"
+		},
+		"auth": {
+			"register_hint": "Create an account and start building your empire.",
+			"check_fields": "Check the fields and required agreements.",
+			"recovery": "Password recovery",
+			"recovery_hint": "Enter the email address used to register. We will send a link to change your password.",
+			"valid_email": "Enter a valid email address.",
+			"send_link": "Send recovery link",
+			"new_password": "New password",
+			"password_match": "Fill in both fields. The passwords must match.",
+			"change_password": "Change password"
+		},
+		"credits": {
+			"title": "Credits",
+			"intro": "Support the project and receive credits for your empire.",
+			"rate": "1 credit = 1 ruble",
+			"purchase": "Purchase credits",
+			"recipient": "Recipient ID",
+			"recipient_hint": "Leave blank to credit your own account.",
+			"amount": "Number of credits",
+			"buy": "Buy"
+		},
+		"quests": {
+			"title": "Tutorial",
+			"current": "Current quests",
+			"completed_count": "Completed {count} of {total}",
+			"progress": "Tutorial progress",
+			"requirements": "Requirements:",
+			"require_quest": "Complete quest #{id}",
+			"require_mine": "Industrial level {level}",
+			"require_raid": "Military level {level}",
+			"completed": "Completed",
+			"available": "Available",
+			"locked": "Locked",
+			"empty": "No quests yet.",
+			"detail_title": "Quest. {title}",
+			"back": "All quests",
+			"number": "Quest #{id}",
+			"tasks": "Objectives",
+			"task_progress": "Objective progress",
+			"task_done": "Completed",
+			"task_pending": "Not completed",
+			"reward": "Reward",
+			"finish": "Complete quest",
+			"solution": "How to complete",
+			"finished": "Quest completed"
+		},
+		"techtree": {
+			"title": "Technologies",
+			"requirements": "Requirements",
+			"fulfilled": "Requirements met",
+			"missing": "Requirements not met",
+			"no_requirements": "No requirements",
+			"tree_for": "Requirement tree: {name}",
+			"all_technologies": "All technologies",
+			"current_level": "Current level",
+			"description": "Description",
+			"requirement_tree": "Requirement tree",
+			"level_hint": "Current / required level",
+			"in_queue": "queued",
+			"collapse": "Collapse requirements: {name}",
+			"expand": "Expand requirements: {name}"
+		},
 		"index": {
 			"meta_title": "Login",
 			"login_heading": "Login to the game:",
@@ -295,7 +394,7 @@
 			"forgot_password": "Forgot your password?",
 			"social_login_label": "Sign in with:",
 			"intro_heading": "Star Empire is a browser-based space strategy game",
-			"intro_paragraph_1": "Epic battles, many alliances, an endless game world, thousands of opponents -\u00a0this is only part of what awaits you in the XNova space strategy.",
+			"intro_paragraph_1": "Epic battles, many alliances, an endless game world, thousands of opponents - this is only part of what awaits you in the XNova space strategy.",
 			"intro_paragraph_2": "Conquer planets, subdue galaxies, forge an unbreakable alliance of the strongest players! Face your rivals in fierce space battles and dive into the spectacular world of XNova!",
 			"registration_cta": "Registration",
 			"footer_desk": "Star Empire — online game",
@@ -350,9 +449,13 @@
 			"toolbar_insert_image": "Insert image",
 			"toolbar_smilies": "Smilies",
 			"button_clear": "Clear",
-			"button_send": "Send"
+			"button_send": "Send",
+			"message_placeholder": "Message…",
+			"empty_state": "No messages yet"
 		},
 		"search": {
+			"type_label": "Search by",
+			"query_label": "Search query",
 			"title": "Game Search",
 			"type_playername": "Player Login",
 			"type_planetname": "Planet Name",
@@ -381,9 +484,21 @@
 			"share_project_prompt": "Help the project — share it with your friends!",
 			"userbar_title": "Userbar",
 			"embed_html_label": "HTML code:",
-			"embed_bb_label": "BB code:"
+			"embed_bb_label": "BB code:",
+			"invite_title": "Invite friends",
+			"invite_link": "Your referral link",
+			"total_players": "Players invited: {count}",
+			"copy": "Copy",
+			"copied": "Copied",
+			"copy_field": "Copy: {field}",
+			"empty": "No players invited yet. Share your link with friends.",
+			"miner_level": "Industrial level",
+			"raid_level": "Military level",
+			"miner_short": "Ind.",
+			"raid_short": "Mil."
 		},
 		"records": {
+			"empty_list": "No records yet.",
 			"heading": "Records",
 			"updated_at": "Updated at {time}",
 			"col_player": "Player",
@@ -391,6 +506,11 @@
 			"page_title": "Records table"
 		},
 		"hall": {
+			"top": "Top 50",
+			"battle_type": "Battle type",
+			"draw": "Draw",
+			"attacker_win": "Attackers win",
+			"defender_win": "Defenders win",
 			"head_title": "Hall of Fame",
 			"block_heading": "Hall of Fame",
 			"type_single": "Solo",
@@ -406,6 +526,7 @@
 			"empty_list": "There have been no major battles in this universe yet"
 		},
 		"players": {
+			"about": "About the player",
 			"add_friend_title": "Add to friends",
 			"battle_stats_title": "Battle statistics",
 			"chart_axis_days": "Days",
@@ -439,6 +560,8 @@
 			"stat_total": "Total",
 			"stats_by_points_title": "Statistics by points",
 			"stats_by_rank_title": "Statistics by rank",
+			"stats_empty": "No statistics history yet.",
+			"meta_ally_stats_title": "Alliance statistics",
 			"stats_heading_ally": "Alliance",
 			"stats_heading_player": "Player",
 			"table_percent": "Percent",
@@ -469,9 +592,23 @@
 			"select_button": "Select",
 			"change_free": "Free faction change ({count} attempt(s) left)",
 			"change_paid": "Change faction for 100 credits",
-			"change_requirements": "There must be no construction or research on planets, no fleet in flight, and all faction ships must be dismantled (resources are not refunded)."
+			"change_requirements": "There must be no construction or research on planets, no fleet in flight, and all faction ships must be dismantled (resources are not refunded).",
+			"your_faction": "Your faction",
+			"change_title": "Change faction",
+			"new_faction": "New faction",
+			"choose_faction": "Choose a faction",
+			"description_race1": "A union of star systems whose strength lies in unity, industry and a coordinated fleet.",
+			"description_race2": "A civilization at the meeting point of nature and technology, where living systems and precise machinery work as one.",
+			"description_race3": "A machine civilization that values order and precision in everything, from resource extraction to battles in space.",
+			"description_race4": "Heirs to faded stellar empires. They preserve the knowledge of the past and seek new paths among the stars."
 		},
 		"stats": {
+			"updated_at": "Updated {time}",
+			"rating_by": "Ranked by",
+			"position_change": "Rank change",
+			"empty": "No data for this ranking.",
+			"per_player": "Per player",
+			"faction": "Faction",
 			"title": "Statistics",
 			"header": "Statistics: {0}",
 			"table_header_stats": "Statistics",
@@ -505,6 +642,22 @@
 			"races_table_points_per_player": "Points per player"
 		},
 		"options": {
+			"vacation_heading": "Vacation mode",
+			"title": "Settings",
+			"planets_fleets": "Planets and flights",
+			"display": "Display",
+			"messages_time": "Messages and time",
+			"sort_direction": "Sort order",
+			"avatar_upload": "Upload image",
+			"no_auth_accounts": "No linked accounts.",
+			"saved": "Settings updated successfully",
+			"current_password": "Current password",
+			"new_password": "New password (at least 8 characters)",
+			"repeat_password": "Repeat new password",
+			"password_saved": "Password updated successfully",
+			"vacation_confirm": "Enable vacation mode?",
+			"cancel": "No",
+			"confirm": "Yes",
 			"vacation_mode": "Vacation mode / Delete profile",
 			"vacation_mode_until": "Vacation mode enabled until",
 			"nickname": "Nickname",
@@ -601,19 +754,26 @@
 			"raid_level": "Military level",
 			"from": "from",
 			"rename": {
-				"page_title": "Rename planet",
-				"block_title": "Rename or leave the planet",
+				"page_title": "Planet settings",
+				"block_title": "Planet settings",
 				"abandon_colony": "Abandon colony",
 				"change_name_heading": "Change name",
 				"change_name_submit": "Change name",
-				"background_title": "Change planet background",
+				"background_title": "Planet image",
 				"change_image_one_credit": "Change image (1 credit)",
 				"toast_renamed": "Planet name has been changed",
 				"toast_image_changed": "Planet image has been changed",
 				"confirm_abandon": "Delete colony?",
 				"modal_close": "Close",
 				"modal_confirm_delete": "Delete",
-				"toast_colony_removed": "Colony removed successfully"
+				"toast_colony_removed": "Colony removed successfully",
+				"back": "Back to overview",
+				"new_name": "New name",
+				"name_hint": "Between 2 and 19 characters.",
+				"image_variant": "Variant {number}",
+				"current_image": "Current",
+				"image_hint": "Select an image and apply the changes.",
+				"abandon_hint": "The colony will be removed from your empire."
 			},
 			"daily_bonus": {
 				"title": "Daily Bonus",
@@ -623,7 +783,14 @@
 			}
 		},
 		"galaxy": {
+			"espionage": "Espionage",
 			"selector": {
+				"previous_galaxy": "Previous galaxy",
+				"next_galaxy": "Next galaxy",
+				"previous_system": "Previous system",
+				"next_system": "Next system",
+				"shortcuts": "My planets",
+				"go": "Go",
 				"galaxy": "Galaxy",
 				"system": "Solar system",
 				"select": "--- select planet ---"
@@ -681,6 +848,16 @@
 			"cancel": "Cancel"
 		},
 		"building": {
+			"queue_level": "lvl {level}",
+			"queue_in_progress": "In progress",
+			"queue_pending": "Queued",
+			"queue_dismantling": "Demolition",
+			"queue_completion": "Completion",
+			"production": "Production",
+			"required_resources": "Required resources",
+			"required_resources_level": "Required resources for level {level}",
+			"experience": "Experience",
+			"maximum": "Max.",
 			"fields_used": "Occupied fields {used} of {max}",
 			"fields_left": "Remaining",
 			"fields_left_2": "free field | free fields",
@@ -704,6 +881,9 @@
 			"remove_confirm_close": "Close",
 			"remove_confirm_action": "Remove",
 			"unit_queue": "Current production",
+			"unit_queue_next": "Next unit in",
+			"unit_queue_batch": "Batch ready in",
+			"unit_queue_total": "Queue completes in",
 			"unit_queue_left": "Time remaining"
 		},
 		"research": {
@@ -721,6 +901,24 @@
 			"cancel_confirm_action": "Cancel"
 		},
 		"empire": {
+			"colony_count": "Planets and moons: {count}",
+			"empire_total": "Empire total",
+			"empire_max": "Empire maximum",
+			"section": "Overview section",
+			"search": "Find a planet",
+			"search_placeholder": "Name or coordinates",
+			"compare_object": "Object to compare",
+			"compare_hint": "Comparison across planets",
+			"comparison": "Planet comparison",
+			"level": "Level",
+			"available": "Available",
+			"queued_level": "Queued level",
+			"queued": "Queued",
+			"in_flight": "In flight",
+			"no_planets": "No planets found.",
+			"research_scope": "Technologies apply to the entire empire.",
+			"no_research": "No technologies researched yet.",
+			"efficiency": "Efficiency",
 			"title": "Empire Overview",
 			"total": "Total",
 			"planet_name": "Name",
@@ -762,6 +960,9 @@
 			"resources_buy_confirm_yes": "Yes"
 		},
 		"merchant": {
+			"amount": "Amount",
+			"give": "You give",
+			"receive": "You receive",
 			"title": "Raw Materials Exchange",
 			"description_line_1": "You can call the intergalactic merchant to exchange resources.",
 			"description_line_2": "Each exchange operation will cost you 1 credit.",
@@ -786,6 +987,7 @@
 		},
 		"fleets": {
 			"main": {
+				"available": "Available",
 				"fleets": "Fleets",
 				"of": "of",
 				"expeditions": "Expeditions",
@@ -804,6 +1006,7 @@
 				"go_to_shipyard": "Go to shipyard"
 			},
 			"checkout": {
+				"target_type": "Target type",
 				"sending": "Sending Fleet",
 				"target": "Target",
 				"speed": "Speed",
@@ -962,8 +1165,16 @@
 				"submit": "Send request",
 				"back": "Go back",
 				"page_title": "Add friend",
-				"request_sent": "Request sent"
-			}
+				"request_sent": "Request sent",
+				"message": "Message to the player",
+				"message_hint": "Introduce yourself (optional)"
+			},
+			"navigation": "Friends navigation",
+			"tab_friends": "Friends",
+			"tab_incoming": "Incoming requests",
+			"tab_outgoing": "Outgoing requests",
+			"actions": "Actions",
+			"write_message": "Send a message"
 		},
 		"logs": {
 			"index": {
@@ -977,6 +1188,8 @@
 				"page_title": "Logs"
 			},
 			"create": {
+				"name_hint": "A short name to find the report in your list. Up to 100 characters.",
+				"code_hint": "Paste the full battle report ID.",
 				"title": "Save battle report",
 				"name_label": "Name:",
 				"code_label": "Battle report ID:",
@@ -1007,7 +1220,10 @@
 				"delete_selected": "Delete selected",
 				"date": "Date",
 				"from": "From",
-				"no_messages": "no messages"
+				"no_messages": "no messages",
+				"category": "Category",
+				"select_all": "Select all",
+				"selected": "Selected: {count}"
 			},
 			"write": {
 				"page_title": "Send message"
@@ -1015,7 +1231,10 @@
 			"form": {
 				"title": "Send message",
 				"recipient": "Recipient",
-				"submit": "Send"
+				"submit": "Send",
+				"message": "Message",
+				"required": "Enter a message.",
+				"back": "Back to messages"
 			},
 			"row": {
 				"delete_title": "Delete",
@@ -1028,7 +1247,8 @@
 					"yes": "Yes",
 					"no": "No",
 					"success": "Complaint sent to game administration"
-				}
+				},
+				"select": "Select message"
 			}
 		},
 		"notes": {
@@ -1070,7 +1290,12 @@
 				"reset": "Reset",
 				"save": "Save",
 				"back": "Back"
-			}
+			},
+			"message": "Note text",
+			"back_to_list": "Back to notes",
+			"select_all": "Select all",
+			"selected": "Selected: {count}",
+			"select_note": "Select note: {title}"
 		},
 		"info": {
 			"production": {
@@ -1256,6 +1481,73 @@
 				"label_website": "Alliance website:",
 				"button_join": "Join alliance",
 				"head_title": "Alliance {0}"
+			},
+			"ui": {
+				"back": "Alliance overview",
+				"about": "About the alliance",
+				"find_hint": "Find allies and send an application",
+				"create_hint": "Unite players under your banner",
+				"your_requests": "Your applications",
+				"withdraw": "Withdraw",
+				"top_alliances": "Top alliances",
+				"place": "Rank",
+				"search_label": "Name or tag",
+				"required": "Fill in this field",
+				"name_label": "Alliance name (up to 30 characters)",
+				"application": "Application message",
+				"dissolve": "Disband",
+				"review": "Review",
+				"edit_text": "Alliance texts",
+				"text_type_1": "Public text",
+				"text_type_2": "Internal text",
+				"text_type_3": "Application text",
+				"clear": "Clear",
+				"settings": "Alliance settings",
+				"owner_rank": "Founder rank",
+				"closed": "Closed alliance",
+				"open": "Open alliance",
+				"logo": "Logo",
+				"delete_logo": "Delete logo",
+				"create_rank": "Create a rank",
+				"rank_name": "Rank name",
+				"delete_rank": "Delete rank",
+				"no_ranks": "No ranks created yet",
+				"rights_help": "About rank permissions",
+				"owner_permissions": "Only the founder can grant permissions to disband the alliance and manage members.",
+				"successor_permissions": "The right-hand permission allows a member to receive alliance leadership. Only the founder can transfer leadership.",
+				"request_from": "Application from {0}",
+				"close": "Close",
+				"reply": "Application reply",
+				"reject": "Reject",
+				"accept": "Accept",
+				"accepted": "Player accepted into the alliance",
+				"rejected": "Application rejected",
+				"add_relation": "Add a diplomatic relation",
+				"alliance": "Alliance",
+				"choose_alliance": "Select an alliance",
+				"relation": "Relation",
+				"add": "Add",
+				"write_chat": "Message the alliance",
+				"kick": "Remove member",
+				"no_members": "No members",
+				"no_relations": "No diplomatic relations yet",
+				"quote": "Quote",
+				"select_message": "Select message from {0}",
+				"selected": "Selected",
+				"right_delete": "Disband alliance",
+				"right_kick": "Manage members",
+				"right_request": "View applications",
+				"right_memberlist": "Member list",
+				"right_accept": "Accept members",
+				"right_admin": "Manage alliance",
+				"right_onlinestatus": "Member online status",
+				"right_chat": "Alliance chat",
+				"right_rights": "Right hand",
+				"right_diplomacy": "Diplomacy",
+				"relation_created": "Diplomatic relation added",
+				"sent": "Message sent",
+				"withdraw_confirm": "Withdraw application?",
+				"withdrawn": "Your alliance application has been withdrawn"
 			}
 		},
 		"support": {
@@ -1284,13 +1576,23 @@
 				"message_from": "from",
 				"back": "Back",
 				"answer_title": "Reply",
-				"reply": "Send reply"
+				"reply": "Send reply",
+				"back_to_list": "Back to tickets",
+				"ticket": "Ticket #{id}",
+				"original": "Original message",
+				"closed": "This ticket is closed."
 			},
 			"status": {
 				"0": "closed",
 				"1": "open",
 				"2": "admin reply",
 				"3": "player reply"
+			},
+			"form": {
+				"subject_required": "Enter a subject.",
+				"message": "Message",
+				"message_required": "Enter a message.",
+				"message_limit": "Replies must be 255 characters or fewer."
 			}
 		}
 	}

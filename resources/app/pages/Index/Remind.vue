@@ -1,5 +1,5 @@
 <template>
-	<Head title="Восстановление пароля"/>
+	<Head :title="$t('pages.auth.recovery')"/>
 	<RemindForm/>
 </template>
 

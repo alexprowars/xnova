@@ -1,0 +1,257 @@
+.page-logs {
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	overflow: hidden;
+	background: #0e1b29;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	> .game-list-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+		margin: 0;
+		padding: 10px 12px;
+		border: 0;
+		border-radius: 0;
+	}
+
+	.game-list-scroll {
+		overflow-x: auto;
+	}
+
+	.game-list-table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 0;
+		font-size: 14px;
+
+		th, td {
+			padding: 9px 12px;
+			border: 0;
+			border-bottom: 1px solid #263b4d;
+			background: #0e1b29;
+			color: var(--text-color);
+			text-align: left;
+			vertical-align: middle;
+			font-weight: 400;
+			line-height: 1.45;
+		}
+
+		thead th, .game-list-section th {
+			padding-block: 8px;
+			background: #142737;
+			color: #9eb8c9;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		tbody tr:not(.game-list-section):hover > * {
+			background: #162e40;
+		}
+
+		tbody:last-child tr:last-child > * {
+			border-bottom: 0;
+		}
+
+		.game-list-empty {
+			padding: 18px 12px;
+			text-align: center;
+			color: var(--text-muted);
+		}
+	}
+
+	.game-list-empty {
+		padding: 26px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.logs-table {
+		min-width: 470px;
+	}
+
+	.logs-table .logs-number {
+		width: 60px;
+		color: var(--text-muted);
+		text-align: center;
+	}
+
+	.logs-name {
+		overflow-wrap: anywhere;
+	}
+
+	.logs-table .logs-action-cell {
+		width: 105px;
+		text-align: center;
+	}
+
+	.logs-open {
+		color: #a0d0e0;
+		background: #192f3f;
+		transition: background-color .15s;
+	}
+
+	.logs-open:hover {
+		background: #24495c;
+	}
+
+	.logs-delete {
+		color: #d4a09d;
+		background: transparent;
+		border: 1px solid #60454c;
+		transition: background-color .15s, border-color .15s;
+	}
+
+	.logs-delete:hover {
+		background: #452e37;
+		border-color: #8b6168;
+	}
+
+	.game-list-action {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		min-height: 28px;
+		padding: 4px 7px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-weight: 400;
+		white-space: nowrap;
+		cursor: pointer;
+
+		svg {
+			width: 15px;
+			height: 15px;
+			flex-shrink: 0;
+		}
+	}
+
+	@media (max-width: 479px) {
+		> .game-list-heading {
+			padding: 9px 10px;
+		}
+
+		.game-list-table th, .game-list-table td {
+			padding: 8px;
+		}
+	}
+}
+
+.page-logs-create {
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	overflow: hidden;
+	background: #0e1b29;
+	font-size: 14px;
+
+	> .logs-create-heading {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 12px;
+		border: 0;
+		border-bottom: 1px solid var(--border-color);
+		border-radius: 0;
+
+		svg {
+			width: 18px;
+			height: 18px;
+			flex-shrink: 0;
+			color: #91bacc;
+		}
+	}
+
+	.logs-create-fields {
+		display: grid;
+		gap: 18px;
+		max-width: 660px;
+		padding: 20px;
+	}
+
+	.logs-create-field {
+		display: grid;
+		gap: 7px;
+		min-width: 0;
+	}
+
+	label {
+		color: #c6dce8;
+		font-weight: 500;
+	}
+
+	input {
+		width: 100%;
+		min-width: 0;
+		min-height: 36px;
+		padding: 8px 10px;
+		font-size: 14px;
+		text-align: left;
+		background-color: #091623;
+		border: 1px solid #355166;
+		border-radius: 4px;
+	}
+
+	input.error {
+		border-color: #b47775;
+		background-color: #291f29;
+	}
+
+	p {
+		margin: 0;
+		color: var(--text-muted);
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	.logs-create-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 12px 20px;
+		border-top: 1px solid #263b4d;
+		background: #122333;
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			min-height: 30px;
+			padding: 5px 10px;
+			font-size: 14px;
+		}
+
+		.button:disabled {
+			opacity: .6;
+			cursor: wait;
+		}
+
+		svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.logs-create-back {
+		color: #9eb8c9;
+	}
+
+	.logs-create-back:hover {
+		color: #d4e8f2;
+	}
+
+	@media (max-width: 479px) {
+		.logs-create-fields {
+			padding: 14px 12px;
+		}
+
+		.logs-create-actions {
+			padding: 10px 12px;
+		}
+	}
+}

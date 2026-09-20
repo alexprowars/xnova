@@ -1,46 +1,30 @@
 <template>
 	<Head :title="$t('pages.hall.head_title')"/>
-	<div>
-		<div class="block-table">
-			<div class="grid grid-cols-12">
-				<div class="col-span-1 c middle">TOP50</div>
-				<div class="col-span-8 c middle">{{ $t('pages.hall.block_heading') }}</div>
-				<div class="col-span-3 c middle">
-					<select v-model="type">
-						<option value="single">{{ $t('pages.hall.type_single') }}</option>
-						<option value="team">{{ $t('pages.hall.type_team') }}</option>
-					</select>
-				</div>
-			</div>
+	<div class="block game-list page-hall">
+		<div class="title game-list-heading">
+			<div class="hall-heading-title"><span class="hall-top">{{ $t('pages.hall.top') }}</span>{{ $t('pages.hall.block_heading') }}</div>
+			<select v-model="type" :aria-label="$t('pages.hall.battle_type')">
+				<option value="single">{{ $t('pages.hall.type_single') }}</option>
+				<option value="team">{{ $t('pages.hall.type_team') }}</option>
+			</select>
 		</div>
-		<div class="block-table text-center">
-			<div v-if="page['items'].length > 0" class="grid grid-cols-12">
-				<div class="col-span-1 c">{{ $t('pages.hall.col_place') }}</div>
-				<div class="col-span-7 c">
-					{{ page['type'] === 'single' ? $t('pages.hall.subtitle_single') : $t('pages.hall.subtitle_team') }}
-				</div>
-				<div class="col-span-1 c">{{ $t('pages.hall.col_outcome') }}</div>
-				<div class="col-span-3 c">{{ $t('pages.hall.col_date') }}</div>
-			</div>
-			<div v-for="(item, i) in page['items']" class="grid grid-cols-12">
-				<div class="col-span-1 th">{{ i + 1 }}</div>
-				<div class="col-span-7 th text-left">
-					<a v-if="item['report_id']" :href="'/logs/' + item['report_id']" target="_blank">{{ item['title'] }}</a>
-					<span v-else>{{ item['title'] }}</span>
-				</div>
-				<div class="col-span-1 th">
-					<template v-if="item['won'] === 0">{{ $t('pages.hall.outcome_draw') }}</template>
-					<template v-else-if="item['won'] === 1">{{ $t('pages.hall.outcome_win') }}</template>
-					<template v-else>{{ $t('pages.hall.outcome_loss') }}</template>
-				</div>
-				<div class="col-span-3 th" :class="{ positive: page['last'] === item['id'] }">
-					{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm:ss') }}
-				</div>
-			</div>
-			<div v-if="page['items'].length === 0" class="grid">
-				<div class="th">{{ $t('pages.hall.empty_list') }}</div>
-			</div>
+		<div v-if="page.items.length" class="table-responsive game-list-scroll">
+			<table class="table game-list-table hall-table">
+				<thead><tr>
+					<th scope="col" class="hall-place">{{ $t('pages.hall.col_place') }}</th>
+					<th scope="col">{{ $t(page.type === 'single' ? 'pages.hall.subtitle_single' : 'pages.hall.subtitle_team') }}</th>
+					<th scope="col">{{ $t('pages.hall.col_outcome') }}</th>
+					<th scope="col" class="hall-date">{{ $t('pages.hall.col_date') }}</th>
+				</tr></thead>
+				<tbody><tr v-for="(item, i) in page.items" :key="item.id" :class="{ 'hall-latest': page.last === item.id }">
+					<td class="hall-place"><span class="hall-rank" :class="{ 'is-first': i === 0, 'is-second': i === 1, 'is-third': i === 2 }">{{ i + 1 }}</span></td>
+					<td class="hall-battle"><a v-if="item.report_id" :href="'/logs/' + item.report_id" target="_blank" rel="noopener">{{ item.title }} <span class="game-list-external" aria-hidden="true">↗</span></a><span v-else>{{ item.title }}</span></td>
+					<td><span class="hall-outcome" :class="{ 'is-draw': item.won === 0, 'is-attack': item.won === 1, 'is-defense': item.won !== 0 && item.won !== 1 }">{{ $t(item.won === 0 ? 'pages.hall.draw' : item.won === 1 ? 'pages.hall.attacker_win' : 'pages.hall.defender_win') }}</span></td>
+					<td class="hall-date"><span>{{ $formatDate(item.date, 'DD MMM YYYY') }}</span><small>{{ $formatDate(item.date, 'HH:mm:ss') }}</small></td>
+				</tr></tbody>
+			</table>
 		</div>
+		<div v-else class="game-list-empty">{{ $t('pages.hall.empty_list') }}</div>
 	</div>
 </template>
 

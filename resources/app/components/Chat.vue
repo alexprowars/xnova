@@ -1,23 +1,24 @@
 <template>
-	<div v-if="!mobile" class="component-chat" :class="{active: active}">
-		<div class="block">
-			<div class="title" @click="toggleActive">
-				{{ $t('menu.chat') }}
-				<span v-if="unread > 0">({{ unread }})</span>
+	<aside v-if="!mobile" class="component-chat" :class="{ active }" :aria-label="$t('menu.chat')">
+		<button type="button" class="mini-chat-toggle" :aria-expanded="active" aria-controls="mini-chat-content" @click="toggleActive">
+			<svg class="mini-chat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 3V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10M7 13h6"/></svg>
+			<span>{{ $t('menu.chat') }}</span>
+			<span v-if="unread > 0" class="mini-chat-unread">{{ unread }}</span>
+			<svg class="mini-chat-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m5 12 5-5 5 5"/></svg>
+		</button>
+		<div v-show="active" id="mini-chat-content" class="mini-chat-content">
+			<div ref="chatRef" class="page-chat-messages" role="log" :aria-label="$t('menu.chat')">
+				<ChatMessage v-for="item in sortedMessages" :key="item.id" :item="item" @player="toPlayer" @private="toPrivate"/>
+				<div v-if="!sortedMessages.length" class="mini-chat-empty">{{ $t('pages.chat.empty_state') }}</div>
 			</div>
-			<div v-show="active" class="content">
-				<div class="th">
-					<div ref="chatRef" class="page-chat-messages">
-						<ChatMessage v-for="(item, i) in sortedMessages" :key="i" :item="item" @player="toPlayer" @private="toPrivate"/>
-					</div>
-				</div>
-				<div class="th flex gap-2">
-					<input ref="textRef" class="page-chat-message" type="text" v-model="message" @keydown.enter.prevent="sendMessage" maxlength="750">
-					<button class="button" @click.prevent="sendMessage">Отправить</button>
-				</div>
-			</div>
+			<form class="mini-chat-compose" @submit.prevent="sendMessage">
+				<input ref="textRef" class="page-chat-message" type="text" v-model="message" :placeholder="$t('pages.chat.message_placeholder')" :aria-label="$t('pages.chat.message_placeholder')" autocomplete="off" maxlength="750">
+				<button type="submit" class="mini-chat-send" :disabled="!message.trim()" :title="$t('pages.chat.button_send')" :aria-label="$t('pages.chat.button_send')">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 3-7 18-4-7-7-4 18-7Z"/><path d="m10 14 6-6"/></svg>
+				</button>
+			</form>
 		</div>
-	</div>
+	</aside>
 </template>
 
 <script setup>
@@ -100,6 +101,10 @@
 	}
 
 	function sendMessage () {
+		if (!message.value.trim()) {
+			return;
+		}
+
 		chatStore.sendMessage(message.value);
 		message.value = '';
 	}

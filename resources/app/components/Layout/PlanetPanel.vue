@@ -1,47 +1,42 @@
 <template>
 	<div v-if="planet" class="resource-panel">
-		<div class="text-center">
-			<PanelResource :type="'metal'" :resource="planet['resources']['metal']"/>
-		</div>
-		<div class="text-center">
-			<PanelResource :type="'crystal'" :resource="planet['resources']['crystal']"/>
-		</div>
-		<div class="text-center">
-			<PanelResource :type="'deuterium'" :resource="planet['resources']['deuterium']"/>
-		</div>
-		<div class="text-center">
-			<PlanetPanelEnergy :resource="planet['resources']['energy']"/>
-		</div>
-		<div class="text-center">
-			<div class="resource-panel-item">
-				<Link href="/officiers" class="sm:inline-block resource-panel-item-icon">
-					<Popper>
-						<template #content>
-							<div class="resource-panel-officiers">
-								<div class="resource-panel-officiers-row">
-									<div v-for="officier in user['officiers']" class="text-center">
-										<span class="officier" :class="[officier['code'] + (officier['date'] ? '_active' : '')]"></span>
-									</div>
-								</div>
-								<div class="resource-panel-officiers-row">
-									<div v-for="officier in user['officiers']" class="text-center">
-										<span v-if="officier['date']">{{ $t('pages.overview.officier_active_until') }}<br><span class="positive">{{ $formatDate(officier['date'], 'DD MMM HH:mm') }}</span></span>
-										<span v-else><span class="negative">{{ $t('pages.overview.officier_noactive') }}</span></span>
+		<PanelResource type="metal" :resource="planet.resources.metal"/>
+		<PanelResource type="crystal" :resource="planet.resources.crystal"/>
+		<PanelResource type="deuterium" :resource="planet.resources.deuterium"/>
+		<PlanetPanelEnergy :resource="planet.resources.energy"/>
+		<div class="resource-panel-item resource-credits">
+			<Link href="/officiers" class="resource-panel-item-icon" :aria-label="$t('credits')">
+				<Popper popper-class="officiers-tooltip">
+					<template #content>
+						<div class="resource-panel-officiers">
+							<div class="resource-panel-officiers-title">{{ $t('menu.officiers') }}</div>
+							<div class="resource-panel-officiers-list">
+								<div v-for="officier in user.officiers" :key="officier.code" class="resource-panel-officier" :class="{ 'is-active': officier.date }">
+									<span class="officier" :class="officier.code + (officier.date ? '_active' : '')" aria-hidden="true"></span>
+									<div class="resource-panel-officier-info">
+										<div class="resource-panel-officier-name">{{ $t('officiers.' + officier.code) }}</div>
+										<div v-if="officier.date" class="resource-panel-officier-status" :title="$t('pages.overview.officier_active_until')">
+											{{ $t('pages.overview.officier_active_until') }} {{ $formatDate(officier.date, 'DD MMM HH:mm') }}
+										</div>
+										<div v-else class="resource-panel-officier-status">{{ $t('pages.overview.officier_noactive') }}</div>
 									</div>
 								</div>
 							</div>
-						</template>
-						<span class="sprite skin_kredits"></span>
-					</Popper>
-				</Link>
-				<div class="neutral">{{ $t('credits') }}</div>
-				{{ $formatNumber(user['credits']) }}
+						</div>
+					</template>
+					<CreditsIcon aria-hidden="true" focusable="false"/>
+				</Popper>
+			</Link>
+			<div class="resource-panel-item-info">
+				<div class="resource-panel-item-label">{{ $t('credits') }}</div>
+				<div class="resource-panel-item-value">{{ $formatNumber(user.credits) }}</div>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	import CreditsIcon from '~/images/icons/resources/credits.svg?component';
 	import useState from '~/composables/useState.js';
 	import PanelResource from './PlanetPanelResource.vue';
 	import PlanetPanelEnergy from './PlanetPanelEnergy.vue';

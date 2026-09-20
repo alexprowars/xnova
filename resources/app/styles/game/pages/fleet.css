@@ -1,18 +1,841 @@
-.page-fleet-fly-item > div {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
+.fleet-page {
+	--color-green-500: #8fd4b3;
+	--color-red-500: #dba29e;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	.block {
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		background: #0e1b29;
+
+		> .title {
+			padding: 10px 12px;
+			border: 0;
+			border-radius: 0;
+			font-size: 14px;
+		}
+
+		> .content {
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+		}
+	}
+
+	.block-table {
+		border: 0;
+	}
+
+	.block-table > div {
+		border-color: #263b4d;
+	}
+
+	.th, .c {
+		padding: 9px 10px;
+		background: transparent;
+		border-color: #263b4d;
+		font-size: 14px;
+		font-weight: 400;
+		overflow-wrap: anywhere;
+	}
+
+	.c {
+		background: #142737;
+		color: #9eb8c9;
+	}
+
+	input:not([type=radio]), select {
+		min-width: 0;
+		max-width: 100%;
+		min-height: 32px;
+		font-size: 14px;
+	}
+
+	input:not([type=radio]) {
+		background-color: #091623;
+		border-color: #355166;
+	}
+
+	input.error {
+		border-color: #b47775;
+	}
+
+	select {
+		background-color: #091623;
+	}
+
+	.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 5px 9px;
+		min-height: 30px;
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	.fleet-button-muted {
+		background: #152838;
+		color: #a9c3d3;
+		border-color: #355166;
+	}
+
+	.fleet-button-danger {
+		background: #35242d;
+		color: #dba29e;
+		border-color: #6c4c53;
+	}
+
+	.fleet-meta, .fleet-secondary-link {
+		color: var(--text-muted);
+		font-size: 12px;
+		font-weight: 400;
+	}
+
+	.fleet-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+	}
+
+	.fleet-badge {
+		display: inline-block;
+		margin-left: 5px;
+		padding: 2px 6px;
+		border-radius: 4px;
+		color: #a7d8e8;
+		background: #203b4d;
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.fleet-badge.negative {
+		color: #dba29e;
+		background: #35242d;
+	}
+
+	.fleet-actions {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 10px 12px;
+	}
+
+	.fleet-empty {
+		padding: 20px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.fleet-field {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+		min-width: 0;
+	}
+
+	.fleet-field > span {
+		color: #a9c3d3;
+		font-size: 12px;
+	}
+
+	.fleet-table-heading {
+		color: #9eb8c9;
+		background: #142737;
+		font-size: 12px;
+	}
+
+	.fleet-table-heading .th {
+		font-size: 12px;
+		color: inherit;
+	}
 }
 
-.page-fleet-fly-item:nth-child(even) > div {
-	background-color: #303F5E;
+.page-fleet {
+	.fleet-flight-list > div, .fleet-flight-list > div > div {
+		border-left: 0;
+		border-right: 0;
+	}
+
+	.page-fleet-fly-item > div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 3px;
+		padding: 10px 7px;
+		min-width: 0;
+		font-size: 12px;
+	}
+
+	.page-fleet-fly-item:hover {
+		background: #142737;
+	}
+
+	.page-fleet-fly-item > div:nth-child(2) > div:first-child {
+		color: #c7e0ec;
+		font-size: 14px;
+	}
+
+	.fleet-flight-stage {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.page-fleet-fly-item .button {
+		width: auto;
+		max-width: 100%;
+		min-height: 26px;
+		padding: 4px 6px;
+	}
+
+	.fleet-selection-context {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 8px 12px;
+		border-bottom: 1px solid #263b4d;
+		color: #a7d8e8;
+		font-size: 12px;
+	}
+
+	.fleet-ship-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 110px 160px;
+		align-items: center;
+		gap: 12px;
+		padding: 8px 12px;
+		border-bottom: 1px solid #263b4d;
+	}
+
+	.fleet-ship-row > :nth-child(2), .fleet-ship-row > :nth-child(3) {
+		text-align: center;
+	}
+
+	.fleet-ship-row.is-selected {
+		background: #152c3c;
+		box-shadow: inset 2px 0 var(--accent-color);
+	}
+
+	.fleet-ship-name {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 0;
+	}
+
+	.fleet-ship-name img {
+		flex-shrink: 0;
+		border: 1px solid #355166;
+		border-radius: 5px;
+	}
+
+	.fleet-ship-name span {
+		overflow-wrap: anywhere;
+	}
+
+	.fleet-available {
+		color: #a7d8e8;
+		font-size: 14px;
+		padding: 4px 0;
+	}
+
+	button.fleet-available {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		justify-self: center;
+		gap: 4px;
+		min-height: 30px;
+		max-width: 100%;
+		padding: 4px 6px;
+		border: 1px solid #355b70;
+		border-radius: 4px;
+		background: #193344;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s;
+
+		svg {
+			width: 12px;
+			height: 12px;
+			flex-shrink: 0;
+		}
+
+		&:hover {
+			background: #254b60;
+			border-color: #79b7cc;
+		}
+
+		&.is-full {
+			background: #203b35;
+			border-color: #426b60;
+			color: #a7ddc6;
+		}
+	}
+
+	.fleet-quantity {
+		display: grid;
+		grid-template-columns: 26px minmax(0, 1fr) 26px;
+		gap: 4px;
+		align-items: center;
+	}
+
+	.fleet-quantity button {
+		height: 28px;
+		border: 1px solid #355166;
+		border-radius: 4px;
+		background: #172c3c;
+		color: #badce6;
+		font-size: 16px;
+	}
+
+	.fleet-quantity button:hover {
+		background: #254557;
+	}
+
+	.fleet-quantity input {
+		width: 100%;
+		padding: 5px 3px;
+		appearance: textfield;
+	}
+
+	.fleet-quantity input::-webkit-inner-spin-button, .fleet-quantity input::-webkit-outer-spin-button {
+		appearance: none;
+		margin: 0;
+	}
+
+	.fleet-selection-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 14px 24px;
+		padding: 12px;
+		border-top: 1px solid #355166;
+		background: #142737;
+	}
+
+	.fleet-selection-summary > div {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	.fleet-selection-summary span {
+		font-size: 12px;
+		color: var(--text-muted);
+	}
+
+	.fleet-selection-summary strong {
+		font-size: 14px;
+		color: #dfc28b;
+		font-weight: 500;
+	}
+
+	.fleet-selection-summary > button {
+		margin-left: auto;
+	}
+
+	@media (max-width: 639px) {
+		.fleet-ship-row {
+			grid-template-columns: minmax(0, 1fr) 72px 128px;
+			gap: 6px;
+			padding: 8px;
+		}
+
+		.fleet-ship-name img {
+			width: 32px;
+			height: 32px;
+		}
+
+		.fleet-ship-name {
+			gap: 7px;
+		}
+	}
+	@media (max-width: 479px) {
+		.fleet-ship-row {
+			grid-template-columns: minmax(0, 1fr) 62px 112px;
+			gap: 5px;
+		}
+
+		.fleet-ship-name {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.fleet-quantity {
+			grid-template-columns: 23px minmax(0, 1fr) 23px;
+			gap: 3px;
+		}
+	}
 }
 
-.page-fleet-fly-item form {
-	width: 100%;
+.page-fleet-checkout {
+	form > .block + .block {
+		margin-top: 10px;
+	}
+
+	.fleet-route-form {
+		display: flex;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		gap: 14px 24px;
+		padding: 14px 12px;
+	}
+
+	.fleet-coordinates-input {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.fleet-coordinates-input input {
+		width: 58px;
+		padding-inline: 4px;
+	}
+
+	.fleet-flight-metrics {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1px;
+		border-top: 1px solid #263b4d;
+		background: #263b4d;
+	}
+
+	.fleet-flight-metrics > div {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		padding: 12px;
+		background: #101f2e;
+	}
+
+	.fleet-flight-metrics span {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.fleet-flight-metrics strong {
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.fleet-section-title {
+		padding: 8px 12px;
+		background: #142737;
+		color: #9eb8c9;
+		font-size: 12px;
+	}
+
+	.fleet-destination-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		padding: 10px 12px;
+	}
+
+	.fleet-destination {
+		min-width: 0;
+		padding: 8px 10px;
+		border: 1px solid #2c4559;
+		border-radius: 5px;
+		background: #112333;
+		text-align: left;
+		overflow-wrap: anywhere;
+	}
+
+	.fleet-destination strong, .fleet-destination span {
+		display: block;
+	}
+
+	.fleet-destination strong {
+		font-size: 14px;
+		font-weight: 400;
+		color: #c7e0ec;
+	}
+
+	.fleet-destination span {
+		margin-top: 3px;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.fleet-destination:hover {
+		border-color: #568ba1;
+		background: #193546;
+	}
+
+	.fleet-destination.is-selected {
+		border-color: #568ba1;
+		background: #193546;
+	}
+
+	.fleet-gate {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		cursor: pointer;
+	}
+
+	.fleet-checkout-columns {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+		gap: 10px;
+		margin-top: 10px;
+	}
+
+	.fleet-checkout-columns > .block {
+		margin: 0;
+	}
+
+	.fleet-missions {
+		display: grid;
+		gap: 6px;
+		padding: 10px;
+	}
+
+	.fleet-mission {
+		display: flex;
+		align-items: baseline;
+		gap: 9px;
+		padding: 9px 10px;
+		border: 1px solid #2c4559;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	.fleet-mission.is-selected {
+		background: #193546;
+		border-color: #568ba1;
+	}
+
+	.fleet-mission small {
+		display: block;
+		margin-top: 5px;
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	.fleet-arrival-note {
+		padding: 10px 12px;
+		border-top: 1px solid #263b4d;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.fleet-cargo {
+		padding: 4px 12px;
+	}
+
+	.fleet-cargo-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(70px, 110px);
+		align-items: center;
+		gap: 8px;
+		padding-block: 8px;
+	}
+
+	.fleet-cargo-row + .fleet-cargo-row {
+		border-top: 1px solid #263b4d;
+	}
+
+	.fleet-cargo-row input {
+		width: 100%;
+	}
+
+	.fleet-max {
+		font-size: 12px;
+		color: #a7d8e8;
+	}
+
+	.fleet-cargo-remaining {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 10px 12px;
+		border-block: 1px solid #263b4d;
+		background: #142737;
+	}
+
+	.fleet-cargo-remaining strong {
+		font-weight: 500;
+	}
+
+	.fleet-hold {
+		padding: 10px 12px;
+		border-top: 1px solid #263b4d;
+	}
+
+	.fleet-hold .fleet-meta {
+		margin-top: 6px;
+	}
+
+	.fleet-submit {
+		justify-content: space-between;
+		padding: 12px 0;
+	}
+
+	.fleet-submit .button {
+		padding-inline: 18px;
+	}
+
+	@media (max-width: 767px) {
+		.fleet-checkout-columns {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.fleet-flight-metrics {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	@media (max-width: 479px) {
+		.fleet-destination-list {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.fleet-route-form {
+			gap: 12px;
+		}
+
+		.fleet-coordinates-input select {
+			max-width: 140px;
+		}
+	}
 }
 
-.page-fleet-fly-item input[type=submit], .page-fleet-fly-item .button {
-	min-width: 100%;
+.page-fleet-shortcut {
+	.fleet-shortcut-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		padding: 12px;
+	}
+
+	.fleet-shortcut-card {
+		min-width: 0;
+	}
+
+	.fleet-shortcut-card a {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		height: 100%;
+		padding: 12px;
+		border: 1px solid #355166;
+		border-radius: 5px;
+		background: #122638;
+		overflow-wrap: anywhere;
+	}
+
+	.fleet-shortcut-card a:hover {
+		background: #1a3548;
+		border-color: #568ba1;
+	}
+
+	.fleet-shortcut-card strong {
+		font-weight: 500;
+	}
+
+	.fleet-shortcut-card span {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.fleet-actions {
+		border-top: 1px solid #263b4d;
+	}
+
+	@media (max-width: 479px) {
+		.fleet-shortcut-list {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+}
+
+.page-fleet-shortcut-form {
+	.fleet-shortcut-fields {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 14px 10px;
+		padding: 16px 12px;
+		max-width: 620px;
+	}
+
+	.fleet-shortcut-name, .fleet-shortcut-type {
+		grid-column: 1 / -1;
+	}
+
+	input, select {
+		width: 100%;
+	}
+
+	.fleet-shortcut-name input {
+		text-align: left;
+	}
+
+	.fleet-shortcut-form > .grid {
+		border-top: 1px solid #263b4d;
+	}
+
+	.fleet-actions {
+		border: 0;
+	}
+
+	form > .grid:last-child {
+		background: #142737;
+	}
+}
+
+.page-fleet-send {
+	.fleet-send-summary {
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		background: #0e1b29;
+	}
+
+	.fleet-send-summary > .grid {
+		border-color: #263b4d;
+	}
+
+	.fleet-send-summary > .grid > .th {
+		text-align: left;
+		padding: 10px 12px;
+		border: 0;
+	}
+
+	.fleet-send-summary > .grid > .th:first-child {
+		color: var(--text-muted);
+	}
+
+	.fleet-send-summary > .grid > .th:last-child {
+		color: #c7e0ec;
+	}
+
+	.fleet-send-summary > .grid:first-child .c {
+		padding: 14px 12px;
+		background: #17332f;
+		border-left: 3px solid #83cfb2;
+		text-align: left;
+	}
+
+	.fleet-send-summary .success {
+		color: #a7ddc6;
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.fleet-send-summary .grid > .c {
+		text-align: left;
+	}
+}
+
+.page-fleet-verband {
+	.table {
+		border: 0;
+		border-collapse: separate;
+		border-spacing: 0;
+	}
+
+	.table td {
+		border: 0;
+		border-bottom: 1px solid #263b4d;
+		padding: 10px;
+		background: transparent;
+		font-size: 14px;
+	}
+
+	.table tr:first-child td {
+		color: #9eb8c9;
+		background: #142737;
+		font-size: 12px;
+	}
+
+	.table tr:last-child td {
+		border-bottom: 0;
+	}
+
+	.fleet-verband-table {
+		min-width: 680px;
+	}
+
+	.fleet-verband-table td {
+		text-align: center;
+	}
+
+	.fleet-verband-table td > div {
+		margin-top: 4px;
+		font-size: 12px;
+	}
+
+	input[type=text] {
+		width: 100%;
+		text-align: left;
+	}
+
+	select[size] {
+		width: 100%;
+		min-height: 180px;
+		padding: 8px;
+		border: 1px solid #355166;
+		border-radius: 4px;
+	}
+
+	select[size] option {
+		padding: 4px;
+	}
+
+	.fleet-association-form, .fleet-association-create .th {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.fleet-association-form input, .fleet-association-create input {
+		width: 320px;
+		max-width: 100%;
+	}
+
+	.fleet-invite-form {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		align-items: stretch;
+	}
+
+	.fleet-invite-form .button {
+		align-self: flex-start;
+	}
+
+	.fleet-participants-table {
+		table-layout: fixed;
+	}
+
+	.fleet-participants-table td {
+		vertical-align: top;
+	}
+
+	.fleet-participants-table td:first-child {
+		width: 45%;
+	}
+
+	@media (max-width: 479px) {
+		.fleet-participants-table td {
+			padding: 7px;
+		}
+
+		select[size] {
+			padding: 3px;
+			font-size: 12px;
+		}
+	}
 }

@@ -1,26 +1,22 @@
 <template>
 	<Head :title="$t('pages.logs.index.page_title')"/>
-	<div class="block">
-		<div class="title">{{ $t('pages.logs.index.title') }}</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid grid-cols-12">
-					<div class="col-span-1 c">{{ $t('pages.logs.index.number') }}</div>
-					<div class="col-span-7 c">{{ $t('pages.logs.index.name') }}</div>
-					<div class="col-span-2 c">{{ $t('pages.logs.index.link') }}</div>
-					<div class="col-span-2 c">{{ $t('pages.logs.index.management') }}</div>
-				</div>
-				<ItemRow v-for="row in page.items" :key="row['id']" :item="row"/>
-				<div v-if="page.items.length === 0" class="grid">
-					<div class="th text-center">{{ $t('pages.logs.index.no_logs') }}</div>
-				</div>
-				<div class="grid">
-					<div class="c">
-						<Link href="/logs/create" class="button">{{ $t('pages.logs.index.add_new') }}</Link>
-					</div>
-				</div>
-			</div>
+	<div class="block game-list page-logs">
+		<div class="title game-list-heading">
+			<span>{{ $t('pages.logs.index.title') }}</span>
+			<Link href="/logs/create" class="button game-list-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>{{ $t('pages.logs.index.add_new') }}</Link>
 		</div>
+		<div v-if="page.items.length" class="table-responsive game-list-scroll">
+			<table class="table game-list-table logs-table">
+				<thead><tr>
+					<th scope="col" class="logs-number">{{ $t('pages.logs.index.number') }}</th>
+					<th scope="col">{{ $t('pages.logs.index.name') }}</th>
+					<th scope="col" class="logs-action-cell">{{ $t('pages.logs.index.link') }}</th>
+					<th scope="col" class="logs-action-cell">{{ $t('pages.logs.index.management') }}</th>
+				</tr></thead>
+				<tbody><ItemRow v-for="row in page.items" :key="row.id" :item="row"/></tbody>
+			</table>
+		</div>
+		<div v-else class="game-list-empty">{{ $t('pages.logs.index.no_logs') }}</div>
 	</div>
 </template>
 

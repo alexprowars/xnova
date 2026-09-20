@@ -1,0 +1,64 @@
+.page-content {
+	.game-panel > .game-heading {
+		margin: 0;
+		border: 0;
+		border-radius: 5px 5px 0 0;
+	}
+
+	.content-body {
+		padding: 18px;
+	}
+
+	.content-body h2, .content-body h3 {
+		margin: 20px 0 8px;
+		color: #cde1ec;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.content-body h2:first-child, .content-body h3:first-child {
+		margin-top: 0;
+	}
+
+	.content-body ul, .content-body ol {
+		margin: 10px 0;
+		padding-left: 24px;
+	}
+
+	.content-body ul {
+		list-style: disc;
+	}
+
+	.content-body ol {
+		list-style: decimal;
+	}
+
+	.content-body li + li {
+		margin-top: 5px;
+	}
+
+	.content-body a {
+		color: #99c8df;
+	}
+
+	.content-body table {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
+		font-size: 14px;
+	}
+
+	.content-body iframe {
+		max-width: 100%;
+	}
+
+	@media (max-width: 479px) {
+		.content-body {
+			padding: 12px;
+		}
+	}
+}
+
+.im-modal-content .page-content h1 {
+	padding-right: 24px;
+}

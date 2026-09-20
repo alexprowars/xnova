@@ -1,0 +1,94 @@
+.page-search {
+	.search-form {
+		display: grid;
+		grid-template-columns: minmax(140px, 1fr) minmax(120px, 2fr) auto;
+		align-items: end;
+		gap: 10px;
+	}
+
+	.search-form > label {
+		margin: 0;
+	}
+
+	.search-form .button {
+		min-height: 37px;
+	}
+
+	.search-form .game-errors {
+		grid-column: 1 / -1;
+	}
+
+	.search-player-name svg {
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		margin-right: 6px;
+		vertical-align: middle;
+		color: #8ebed6;
+	}
+
+	.search-player-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 5px;
+	}
+
+	.search-alliance-tag {
+		color: #8cbed4;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 639px) {
+		.search-form {
+			grid-template-columns: minmax(0, 1fr) auto;
+		}
+
+		.search-form > label:first-child {
+			grid-column: 1 / -1;
+		}
+
+		.search-players, .search-players tbody {
+			display: block;
+		}
+
+		.search-players thead {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			clip-path: inset(50%);
+			overflow: hidden;
+		}
+
+		.search-players tr {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 8px 12px;
+			padding: 10px;
+		}
+
+		.search-players tbody tr + tr {
+			border-top: 1px solid #263b4d;
+		}
+
+		.search-players td, .search-players tbody tr + tr td {
+			padding: 0;
+			border: 0;
+			font-size: 14px;
+		}
+
+		.search-player-name {
+			grid-column: 1 / -1;
+		}
+
+		.search-players td[data-label]::before {
+			display: block;
+			color: #7998ad;
+			font-size: 12px;
+			content: attr(data-label);
+		}
+
+		.search-players td:last-child {
+			align-self: end;
+		}
+	}
+}

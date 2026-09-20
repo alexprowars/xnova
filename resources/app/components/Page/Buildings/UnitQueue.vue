@@ -1,27 +1,27 @@
 <template>
-	<div v-if="queue.length" class="block page-building-unit-queue">
+	<div v-if="items.length" class="block page-building-unit-queue">
 		<div class="title">{{ $t('pages.building.unit_queue') }}</div>
-		<div class="content">
-			<div class="block-table">
-				<div v-for="item in queue" class="flex justify-between px-2 k">
-					<div>
-						{{ $t('tech.' + item.item) }}
-						<span class="positive">{{ item.count }}</span>
+		<div class="unit-queue-list">
+			<div v-for="(item, index) in items" :key="item.item + ':' + item.date" class="build-queue-row unit-queue-row" :class="{ 'is-current': index === 0 }">
+				<div class="build-queue-item">
+					<img class="build-queue-image" :src="'/assets/images/elements/' + item.item + '.webp'" alt="" width="42" height="42">
+					<div class="build-queue-description">
+						<div class="build-queue-name"><strong>{{ $t('tech.' + item.item) }}</strong><span class="unit-queue-count">× {{ $formatNumber(item.remainingCount) }}</span></div>
+						<div v-if="index === 0 && item.nextUnitTime !== null" class="unit-queue-next">{{ $t('pages.building.unit_queue_next') }} <span>{{ $formatTime(item.nextUnitTime) }}</span></div>
 					</div>
-					{{ $formatTime(dayjs(item['date']).diff(now) / 1000) }}
 				</div>
-				<div class="grid">
-					<div class="c text-center">
-						{{ $t('pages.building.unit_queue_left') }} {{ $formatTime(left_time) }}
-					</div>
+				<div class="build-queue-time">
+					<div class="build-queue-time-label">{{ $t('pages.building.unit_queue_batch') }}</div>
+					<div class="build-queue-timer">{{ $formatTime(item.remainingTime) }}</div>
 				</div>
 			</div>
 		</div>
+		<div class="unit-queue-total"><span>{{ $t('pages.building.unit_queue_total') }}</span><strong>{{ $formatTime(leftTime) }}</strong></div>
 	</div>
 </template>
 
 <script setup>
-	import { computed, watch } from 'vue';
+	import { computed } from 'vue';
 	import { useNow } from '@vueuse/core';
 	import dayjs from 'dayjs';
 
@@ -33,25 +33,23 @@
 	});
 
 	const now = useNow({ interval: 1000 });
-	const left_time = computed(() => dayjs(props.queue[props.queue.length - 1]['date']).diff(now.value) / 1000);
+	const items = computed(() => props.queue.flatMap((item) => {
+		const remainingTime = Math.ceil(dayjs(item.date).diff(now.value) / 1000);
 
-	watch(now, () => {
-		update();
-	});
-
-	function update () {
-		if (props.queue.length === 0) {
-			return;
+		if (remainingTime <= 0) {
+			return [];
 		}
 
-		let first = props.queue[0];
+		const remainingCount = item.time > 0
+			? Math.min(item.count, Math.ceil(remainingTime / item.time))
+			: item.count;
 
-		const diff = dayjs(first['date']).diff(now.value) / 1000;
-
-		if (diff <= 0) {
-			props.queue.splice(0, 1);
-		} else {
-			props.queue[0]['count'] = Math.ceil(diff / first['date']);
-		}
-	}
+		return [{
+			...item,
+			remainingTime,
+			remainingCount,
+			nextUnitTime: item.time > 0 ? Math.min(item.time, remainingTime - (remainingCount - 1) * item.time) : null,
+		}];
+	}));
+	const leftTime = computed(() => items.value.at(-1)?.remainingTime ?? 0);
 </script>

@@ -1,138 +1,36 @@
 <template>
-	<div class="page-players">
-		<div class="page-players-main block">
-			<div class="title">{{ $t('pages.players.profile_heading') }}</div>
-			<div class="content">
-				<div class="block-table page-players">
-					<div class="grid grid-cols-6 gap-1.5 divide-x-0!">
-						<div class="col-span-2 text-center flex flex-col gap-1.5">
-							<div><img :src="item['avatar']" :alt="item['name']" width="100%"></div>
-							<div v-if="user">
-								<SendMessagePopup :title="$t('send_message')" :id="item['id']"/>
-								<Link :href="'/friends/new/' + item['id']" :title="$t('pages.players.add_friend_title')">
-									<span class='sprite skin_b'></span>
-								</Link>
-							</div>
-						</div>
-						<div class="col-span-3">
-							<div class="">
-								<div class="grid grid-cols-3 p-2">
-									<div>{{ $t('pages.players.field_login') }}</div>
-									<div class="col-span-2">{{ item['name'] }}</div>
-								</div>
-								<div v-if="item['planet']" class="grid grid-cols-3 p-2">
-									<div>{{ $t('pages.players.field_planet') }}</div>
-									<div class="col-span-2">
-										<Link :href="'/galaxy?galaxy=' + item['planet']['galaxy'] + '&system=' + item['planet']['system']" style="font-weight:normal">
-											{{ item['planet']['name'] }} [{{ item['planet']['galaxy'] }}:{{ item['planet']['system'] }}:{{ item['planet']['planet'] }}]
-										</Link>
-									</div>
-								</div>
-								<div v-if="item['alliance']" class="grid grid-cols-3 p-2">
-									<div>{{ $t('pages.players.field_alliance') }}</div>
-									<div class="col-span-2">
-										<Link :href="'/alliance/info/' + item['alliance']['id']">
-											{{ item['alliance']['name'] }}
-										</Link>
-									</div>
-								</div>
-								<div class="grid grid-cols-3 p-2">
-									<div>{{ $t('pages.players.field_gender') }}</div>
-									<div class="col-span-2">{{ item['sex'] === 2 ? $t('pages.players.gender_female') : $t('pages.players.gender_male') }}</div>
-								</div>
-							</div>
-							<div v-if="item['race'] !== 0" class="p-2">
-								<img :src="'/assets/images/skin/race' + item['race'] + '.gif'" alt="">
-							</div>
-						</div>
-						<div class="col-span-1 text-right pt-2">
-							<img :src="'/assets/images/ranks/m' + item['level']['mine'] + '.png'" :alt="$t('pages.players.rank_industrial_branch')" v-tooltip="$t('pages.players.rank_industrial_branch')">
-							<br>
-							<img :src="'/assets/images/ranks/f' + item['level']['raid'] + '.png'" :alt="$t('pages.players.rank_military_branch')" v-tooltip="$t('pages.players.rank_military_branch')">
-						</div>
-					</div>
-				</div>
+	<div class="game-page page-players">
+		<header class="player-hero">
+			<img class="player-avatar" :src="item.avatar" :alt="item.name">
+			<div class="player-identity"><span class="game-eyebrow">{{ $t('pages.players.profile_heading') }}</span><h1>{{ item.name }}</h1><div class="player-race" v-if="raceIcons[item.race]"><component :is="raceIcons[item.race]" aria-hidden="true"/>{{ $t('races.' + item.race) }}</div>
+				<div v-if="user" class="player-actions"><UiButton :as="SendMessagePopup" :id="item.id"><SendIcon aria-hidden="true"/>{{ $t('send_message') }}</UiButton><UiButton :as="Link" variant="secondary" :href="'/friends/new/' + item.id"><UserAddIcon aria-hidden="true"/>{{ $t('pages.players.add_friend_title') }}</UiButton></div>
 			</div>
-		</div>
-		<div v-if="item['stats']" class="page-players-stats block">
-			<div class="title">{{ $t('pages.players.game_stats_title') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div class="grid grid-cols-3">
-						<div class="c">&nbsp;</div>
-						<div class="c">{{ $t('pages.players.table_points') }}</div>
-						<div class="c">{{ $t('pages.players.table_rank') }}</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.stat_buildings') }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['build_points']) }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['build_rank']) }}</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.stat_research') }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['tech_points']) }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['tech_rank']) }}</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.stat_fleet') }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['fleet_points']) }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['fleet_rank']) }}</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.stat_defense') }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['defs_points']) }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['defs_rank']) }}</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.stat_total') }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['total_points']) }}</div>
-						<div class="th">{{ $formatNumber(item['stats']['total_rank']) }}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="page-players-stats block">
-			<div class="title">{{ $t('pages.players.battle_stats_title') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div class="grid grid-cols-3">
-						<div class="c">&nbsp;</div>
-						<div class="c">{{ $t('pages.players.table_sum') }}</div>
-						<div class="c">{{ $t('pages.players.table_percent') }}</div>
-					</div>
-					<div v-if="item['fights']['wons'] > 0" class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.fight_wins') }}</div>
-						<div class="th"><b>{{ $formatNumber(item['fights']['wons']) }}</b></div>
-						<div class="th">{{ Math.round((100 / (item['fights']['wons'] + item['fights']['loos'])) * item['fights']['wons']) }} %</div>
-					</div>
-					<div v-if="item['fights']['loos'] > 0" class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.fight_losses') }}</div>
-						<div class="th"><b>{{ $formatNumber(item['fights']['loos']) }}</b></div>
-						<div class="th">{{ Math.round((100 / (item['fights']['wons'] + item['fights']['loos'])) * item['fights']['loos']) }} %</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="c">{{ $t('pages.players.fight_total_sorties') }}</div>
-						<div class="th"><b>{{ $formatNumber(item['fights']['total']) }}</b></div>
-						<div class="th">100 %</div>
-					</div>
-				</div>
-			</div>
-			<div v-if="item['about'].length" class="page-players-about block">
-				<div class="content">
-					<div class="block-table">
-						<div class="grid">
-							<div class="b">
-								<TextViewer :text="item['about']"/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		</header>
+		<UiPanel class="game-panel"><dl class="player-details">
+			<div v-if="item.planet"><dt>{{ $t('pages.players.field_planet') }}</dt><dd><Link :href="'/galaxy?galaxy=' + item.planet.galaxy + '&system=' + item.planet.system">{{ item.planet.name }} <span class="game-coordinates">[{{ item.planet.galaxy }}:{{ item.planet.system }}:{{ item.planet.planet }}]</span></Link></dd></div>
+			<div v-if="item.alliance"><dt>{{ $t('pages.players.field_alliance') }}</dt><dd><Link :href="'/alliance/info/' + item.alliance.id">{{ item.alliance.name }}</Link></dd></div>
+			<div><dt>{{ $t('pages.players.field_gender') }}</dt><dd>{{ $t(item.sex === 2 ? 'pages.players.gender_female' : 'pages.players.gender_male') }}</dd></div>
+		</dl><div class="player-ranks"><div><img :src="'/assets/images/ranks/m' + item.level.mine + '.png'" alt=""><span>{{ $t('pages.players.rank_industrial_branch') }}</span></div><div><img :src="'/assets/images/ranks/f' + item.level.raid + '.png'" alt=""><span>{{ $t('pages.players.rank_military_branch') }}</span></div></div></UiPanel>
+		<UiPanel v-if="item.stats" class="game-panel"><header class="game-panel-heading"><h2>{{ $t('pages.players.game_stats_title') }}</h2><Link :href="'/players/' + item.id + '/stats'" class="game-text-link">{{ $t('pages.players.meta_stats_title') }} →</Link></header>
+			<table class="game-table"><thead><tr><th></th><th>{{ $t('pages.players.table_points') }}</th><th>{{ $t('pages.players.table_rank') }}</th></tr></thead><tbody><tr v-for="stat in stats" :key="stat.key" :class="{ 'is-total': stat.key === 'total' }"><th>{{ $t('pages.players.' + stat.label) }}</th><td>{{ $formatNumber(item.stats[stat.key + '_points']) }}</td><td>{{ $formatNumber(item.stats[stat.key + '_rank']) }}</td></tr></tbody></table>
+		</UiPanel>
+		<UiPanel :title="$t('pages.players.battle_stats_title')" class="game-panel"><table class="game-table"><thead><tr><th></th><th>{{ $t('pages.players.table_sum') }}</th><th>{{ $t('pages.players.table_percent') }}</th></tr></thead><tbody>
+			<tr v-if="item.fights.wons > 0" class="player-wins"><th>{{ $t('pages.players.fight_wins') }}</th><td>{{ $formatNumber(item.fights.wons) }}</td><td>{{ Math.round(100 * item.fights.wons / (item.fights.wons + item.fights.loos)) }} %</td></tr>
+			<tr v-if="item.fights.loos > 0" class="player-losses"><th>{{ $t('pages.players.fight_losses') }}</th><td>{{ $formatNumber(item.fights.loos) }}</td><td>{{ Math.round(100 * item.fights.loos / (item.fights.wons + item.fights.loos)) }} %</td></tr>
+			<tr class="is-total"><th>{{ $t('pages.players.fight_total_sorties') }}</th><td>{{ $formatNumber(item.fights.total) }}</td><td>{{ item.fights.total ? '100 %' : '—' }}</td></tr>
+		</tbody></table></UiPanel>
+		<UiPanel :title="$t('pages.players.about')" v-if="item.about" class="game-panel"><div class="game-prose"><TextViewer :text="item.about"/></div></UiPanel>
 	</div>
 </template>
 
 <script setup>
+	import { UiButton, UiPanel } from '~/components/UI';
+	import ConfederationIcon from '~/images/icons/races/confederation.svg?component';
+	import BionicsIcon from '~/images/icons/races/bionics.svg?component';
+	import CylonsIcon from '~/images/icons/races/cylons.svg?component';
+	import AncientsIcon from '~/images/icons/races/ancients.svg?component';
+	import SendIcon from '~/images/icons/send.svg?component';
+	import UserAddIcon from '~/images/icons/user-add.svg?component';
 	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link } from '@inertiajs/vue3'
@@ -144,6 +42,10 @@
 			type: Object
 		}
 	});
+
+
+	const raceIcons = { 1: ConfederationIcon, 2: BionicsIcon, 3: CylonsIcon, 4: AncientsIcon };
+	const stats = [{ key: 'build', label: 'stat_buildings' }, { key: 'tech', label: 'stat_research' }, { key: 'fleet', label: 'stat_fleet' }, { key: 'defs', label: 'stat_defense' }, { key: 'total', label: 'stat_total' }];
 
 	const state = useState();
 	const user = computed(() => state.user);

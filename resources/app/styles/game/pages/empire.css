@@ -1,9 +1,406 @@
-.page-empire .table {
-	min-width: 65%;
-	width: auto;
-}
-
 .page-empire {
-	max-width: 785px;
-	@apply xs:max-xl:max-w-160 xl:max-2xl:max-w-165;
+	--color-green-500: #94ceba;
+	--color-red-500: #e39a93;
+	min-width: 0;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	.empire-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-bottom: 12px;
+
+		h1 {
+			width: auto;
+			margin: 0 0 4px;
+			font-size: 22px;
+			text-align: left;
+		}
+
+		> div > span {
+			color: var(--text-muted);
+			font-size: 12px;
+		}
+	}
+
+	.empire-account {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 16px;
+
+		span {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		strong {
+			color: var(--text-color);
+			font-weight: 500;
+		}
+
+		svg {
+			width: 17px;
+			height: 17px;
+			color: #ddbe82;
+		}
+	}
+
+	.empire-summary {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 8px;
+		margin-bottom: 12px;
+	}
+
+	.empire-summary-item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 0;
+		padding: 12px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: linear-gradient(110deg, #152b3b, #101f2c);
+
+		> svg {
+			width: 25px;
+			height: 25px;
+			flex-shrink: 0;
+		}
+
+		> div {
+			min-width: 0;
+		}
+
+		span {
+			display: block;
+			color: var(--text-muted);
+			font-size: 12px;
+		}
+
+		strong {
+			display: block;
+			font-size: 17px;
+			font-weight: 600;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.metal > svg {
+		color: #b4c6d5;
+	}
+
+	.crystal > svg {
+		color: #8bbedd;
+	}
+
+	.deuterium > svg {
+		color: #8bc8af;
+	}
+
+	.energy > svg {
+		color: #ddbe82;
+	}
+
+	.empire-toolbar {
+		display: flex;
+		align-items: end;
+		flex-wrap: wrap;
+		gap: 10px;
+		padding: 12px;
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+			color: var(--text-muted);
+			font-size: 12px;
+		}
+
+		input, select {
+			width: 100%;
+			min-width: 0;
+			height: 32px;
+			margin: 0;
+			padding-block: 5px;
+			border: 1px solid var(--border-color);
+			border-radius: 4px;
+			background-color: #09131f;
+			color: var(--text-color);
+			font-size: 14px;
+		}
+	}
+
+	.empire-search input {
+		padding-inline: 8px;
+	}
+
+	.empire-search {
+		flex: 1 1 210px;
+		min-width: 0;
+	}
+
+	.empire-object-select {
+		flex: 1 1 230px;
+		min-width: 0;
+	}
+
+	.empire-comparison-heading {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 0 12px 12px;
+
+		img {
+			border-radius: 4px;
+			border: 1px solid #355166;
+		}
+
+		strong {
+			font-weight: 500;
+		}
+
+		span {
+			margin-left: auto;
+			color: var(--text-muted);
+			font-size: 12px;
+		}
+	}
+
+	.empire-table-scroll {
+		max-height: 65vh;
+		overflow: auto;
+		scrollbar-width: thin;
+		scrollbar-color: #355166 #0e1b29;
+		border-block: 1px solid var(--border-color);
+	}
+
+	.empire-table {
+		width: 100%;
+		min-width: 700px;
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 0;
+		font-size: 14px;
+
+		th, td {
+			padding: 7px 12px;
+			border: 0;
+			border-bottom: 1px solid #263b4d;
+			background: #0e1b29;
+			text-align: right;
+			vertical-align: middle;
+			font-weight: 400;
+			white-space: nowrap;
+		}
+
+		thead th {
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			max-width: 160px;
+			background: #142737;
+			color: var(--text-muted);
+			font-size: 12px;
+			white-space: normal;
+		}
+
+		.empire-planet-column {
+			position: sticky;
+			left: 0;
+			z-index: 1;
+			width: 210px;
+			min-width: 210px;
+			max-width: 210px;
+			border-right: 1px solid #30485c;
+			text-align: left;
+			white-space: normal;
+		}
+
+		thead .empire-planet-column {
+			z-index: 3;
+		}
+
+		tbody tr:hover > * {
+			background: #193245;
+		}
+
+		.is-current > * {
+			background: #132d3b;
+		}
+
+		.is-current .empire-planet-column {
+			box-shadow: inset 2px 0 var(--accent-color);
+		}
+
+		.is-current .empire-planet-name {
+			color: #a8dfed;
+		}
+
+		tfoot th, tfoot td {
+			position: sticky;
+			bottom: 0;
+			z-index: 2;
+			background: #173342;
+			font-weight: 600;
+			font-size: 12px;
+			border-bottom: 0;
+		}
+
+		tfoot .empire-planet-column {
+			z-index: 3;
+		}
+	}
+
+	.empire-element-table {
+		min-width: 470px;
+	}
+
+	.empire-planet {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.empire-planet > div {
+		min-width: 0;
+	}
+
+	.empire-planet-image {
+		flex-shrink: 0;
+		cursor: pointer;
+	}
+
+	.empire-planet-image img {
+		width: 32px;
+		height: 32px;
+		border: 1px solid #355166;
+		border-radius: 50%;
+	}
+
+	.empire-planet-name {
+		display: block;
+		text-align: left;
+		line-height: 1.35;
+		overflow-wrap: anywhere;
+		cursor: pointer;
+	}
+
+	.empire-planet-name:hover {
+		color: var(--accent-color);
+	}
+
+	.empire-coordinates {
+		display: block;
+		margin-top: 3px;
+		font-size: 12px;
+		color: #88adbf;
+	}
+
+	.empire-resource-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.empire-resource-label svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	.empire-queued {
+		color: #94ceba;
+	}
+
+	.empire-in-flight {
+		color: #ddbe82;
+	}
+
+	.empire-empty {
+		padding: 28px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.empire-research {
+		padding: 12px;
+	}
+
+	.empire-research-note {
+		margin-bottom: 12px;
+		color: var(--text-muted);
+	}
+
+	.empire-research-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+		gap: 8px;
+	}
+
+	.empire-research-card {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 10px;
+		background: #142737;
+		border-radius: 5px;
+	}
+
+	.empire-research-card img {
+		flex-shrink: 0;
+		border: 1px solid #355166;
+		border-radius: 4px;
+	}
+
+	.empire-research-card strong {
+		display: block;
+		margin-bottom: 3px;
+		font-weight: 500;
+	}
+
+	.empire-research-card span {
+		display: block;
+		font-size: 12px;
+	}
+
+	@media (max-width: 767px) {
+		.empire-summary {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.empire-summary-item {
+			padding: 10px;
+		}
+
+		.empire-table th, .empire-table td {
+			padding: 8px;
+		}
+
+		.empire-table .empire-planet-column {
+			width: 145px;
+			min-width: 145px;
+			max-width: 145px;
+		}
+
+		.empire-planet-image {
+			display: none;
+		}
+
+		.empire-search {
+			flex-basis: 100%;
+		}
+
+		.empire-object-select {
+			order: 1;
+			flex-basis: 100%;
+		}
+
+		.empire-comparison-heading span {
+			flex-basis: 100%;
+		}
+	}
 }

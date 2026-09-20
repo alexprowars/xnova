@@ -1,14 +1,15 @@
 <template>
 	<nav class="main-menu">
-		<a :class="{ active }" class="menu-toggle" @click.prevent="emit('toggle')">
+		<button type="button" :class="{ active }" class="menu-toggle" :aria-label="$t('interface.navigation')" :aria-expanded="active" aria-controls="game-navigation" @click="emit('toggle')">
 			<span>
 				<span class="first"></span>
 				<span class="second"></span>
 				<span class="third"></span>
 			</span>
-		</a>
+		</button>
 
-		<div :class="{ active }" class="menu-sidebar">
+		<div id="game-navigation" :class="{ active }" class="menu-sidebar">
+			<div class="sidebar-caption">{{ $t('interface.navigation') }}</div>
 			<ul>
 				<MainMenuItem v-for="(item, i) in filteredItems" :item="item" :key="i"/>
 			</ul>

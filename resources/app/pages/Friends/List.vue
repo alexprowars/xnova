@@ -1,34 +1,17 @@
 <template>
 	<Head :title="$t('pages.friends.list.title')"/>
-	<div class="block">
-		<div class="title">
-			{{ $t('pages.friends.list.title') }}
-		</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid grid-cols-5">
-					<div class="c">{{ $t('pages.friends.list.name') }}</div>
-					<div class="c">{{ $t('pages.friends.list.alliance') }}</div>
-					<div class="c">{{ $t('pages.friends.list.coordinates') }}</div>
-					<div class="c">{{ $t('pages.friends.list.online') }}</div>
-					<div class="c">&nbsp;</div>
-				</div>
-				<FriendRow v-for="item in page.items" :key="item['id']" :item="item"/>
-				<div v-if="page.items.length === 0" class="grid">
-					<div class="th">{{ $t('pages.friends.list.no_friends') }}</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="mt-2">
-		<Link href="/friends/requests" class="button">{{ $t('pages.friends.list.requests_label') }}</Link>
-		<Link href="/friends/requests/my" class="button">{{ $t('pages.friends.list.my_requests') }}</Link>
+	<div class="page-friends">
+		<UiHeading :title="$t('pages.friends.list.title')" :count="page.items.length"/>
+		<FriendsNavigation active="list"/>
+		<UiPanel clip><UiEmptyState v-if="!page.items.length">{{ $t('pages.friends.list.no_friends') }}</UiEmptyState><div v-else class="friends-table-wrap"><UiTable class="friends-table"><thead><tr><th>{{ $t('pages.friends.list.name') }}</th><th>{{ $t('pages.friends.list.alliance') }}</th><th>{{ $t('pages.friends.list.coordinates') }}</th><th>{{ $t('pages.friends.list.online') }}</th><th><span class="sr-only">{{ $t('pages.friends.actions') }}</span></th></tr></thead><tbody><FriendRow v-for="item in page.items" :key="item.id" :item="item"/></tbody></UiTable></div></UiPanel>
 	</div>
 </template>
 
 <script setup>
+	import { UiEmptyState, UiHeading, UiPanel, UiTable } from '~/components/UI';
+	import FriendsNavigation from '~/components/Page/Friends/Navigation.vue';
 	import FriendRow from '~/components/Page/Friends/FriendRow.vue';
-	import { Head, Link } from '@inertiajs/vue3';
+	import { Head } from '@inertiajs/vue3';
 
 	defineProps({
 		page: Object,

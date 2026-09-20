@@ -1,50 +1,57 @@
 <template>
 	<Head :title="$t('pages.overview.rename.page_title')"/>
 	<div class="page-overview-rename">
-		<div class="block">
-			<div class="title">{{ $t('pages.overview.rename.block_title') }}</div>
-			<div class="content">
-				<div class="block-table middle">
-					<div class="grid grid-cols-3">
-						<div class="th hidden sm:flex middle">{{ planet['coordinates']['galaxy'] }}:{{ planet['coordinates']['system'] }}:{{ planet['coordinates']['planet'] }}</div>
-						<div class="th middle">{{ planet['name'] }}</div>
-						<div class="th middle">
-							<button type="button" class="button" @click.prevent="deletePlanet">{{ $t('pages.overview.rename.abandon_colony') }}</button>
-						</div>
-					</div>
-					<div class="grid grid-cols-3">
-						<div class="th hidden sm:flex middle">{{ $t('pages.overview.rename.change_name_heading') }}</div>
-						<div class="th middle"><input type="text" :placeholder="planet['name']" v-model="name" maxlength="20"></div>
-						<div class="th middle"><button v-if="name" class="button" @click.prevent="changeName">{{ $t('pages.overview.rename.change_name_submit') }}</button></div>
-					</div>
-				</div>
+		<Link href="/overview" class="planet-settings-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg>{{ $t('pages.overview.rename.back') }}</Link>
+		<header class="planet-settings-heading">
+			<img :src="'/assets/images/planeten/' + planet.image + '.jpg'" alt="" width="64" height="64">
+			<div>
+				<h1>{{ $t('pages.overview.rename.block_title') }}</h1>
+				<div class="planet-settings-identity"><strong>{{ planet.name }}</strong><span>[{{ planet.coordinates.galaxy }}:{{ planet.coordinates.system }}:{{ planet.coordinates.planet }}]</span></div>
 			</div>
-		</div>
-		<div v-if="type" class="block page-overview-planet-image">
-			<div class="title">{{ $t('pages.overview.rename.background_title') }}</div>
-			<div class="content p-2">
-				<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
-					<div v-for="i in planetImages[type]">
-						<input type="radio" v-model="image" :value="i" :id="'image_'+i">
-						<label :for="'image_'+i">
-							<img :src="'/assets/images/planeten/' + type + 'planet'+(i < 10 ? '0' : '')+i+'.jpg'" align="absmiddle" width="100%" alt="">
-						</label>
-					</div>
+		</header>
+
+		<section class="planet-settings-panel">
+			<h2>{{ $t('pages.overview.rename.change_name_heading') }}</h2>
+			<form class="planet-name-form" @submit.prevent="changeName">
+				<div class="planet-name-field">
+					<label for="planet-name">{{ $t('pages.overview.rename.new_name') }}</label>
+					<input id="planet-name" name="name" type="text" :placeholder="planet.name" v-model="nameForm.name" minlength="2" maxlength="19" required :class="{ 'is-invalid': nameForm.errors.name }" aria-describedby="planet-name-hint">
+					<span id="planet-name-hint" class="planet-settings-hint">{{ $t('pages.overview.rename.name_hint') }}</span>
 				</div>
-				<div v-if="image > 0" class="grid">
-					<div class="th text-center">
-						<button class="button" @click.prevent="changeImage">{{ $t('pages.overview.rename.change_image_one_credit') }}</button>
-					</div>
-				</div>
-			</div>
-		</div>
+				<button type="submit" class="button" :disabled="!nameForm.name.trim() || nameForm.processing">{{ $t('pages.overview.rename.change_name_submit') }}</button>
+				<div v-if="Object.keys(nameForm.errors).length" class="planet-settings-errors" role="alert"><span v-for="(error, key) in nameForm.errors" :key="key">{{ error }}</span></div>
+			</form>
+		</section>
+
+		<section v-if="type" class="planet-settings-panel">
+			<h2>{{ $t('pages.overview.rename.background_title') }}</h2>
+			<form @submit.prevent="changeImage">
+				<fieldset class="planet-image-grid">
+					<legend class="sr-only">{{ $t('pages.overview.rename.background_title') }}</legend>
+					<label v-for="i in planetImages[type]" :key="imageName(i)" class="planet-image-option" :class="{ 'is-selected': imageForm.image === i }">
+						<input type="radio" name="planet-image" v-model="imageForm.image" :value="i" :aria-label="$t('pages.overview.rename.image_variant', { number: i })" :aria-describedby="imageName(i) === planet.image ? 'planet-image-current' : undefined">
+						<img :src="'/assets/images/planeten/' + imageName(i) + '.jpg'" alt="" width="100" height="100" loading="lazy">
+						<span class="planet-image-caption"><span>{{ $t('pages.overview.rename.image_variant', { number: i }) }}</span><svg v-if="imageForm.image === i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span>
+						<span v-if="imageName(i) === planet.image" id="planet-image-current" class="planet-image-current">{{ $t('pages.overview.rename.current_image') }}</span>
+					</label>
+				</fieldset>
+				<div v-if="Object.keys(imageForm.errors).length" class="planet-settings-errors planet-image-errors" role="alert"><span v-for="(error, key) in imageForm.errors" :key="key">{{ error }}</span></div>
+				<div class="planet-image-actions"><span class="planet-settings-hint">{{ $t('pages.overview.rename.image_hint') }}</span><button type="submit" class="button" :disabled="!imageForm.image || imageName(imageForm.image) === planet.image || imageForm.processing">{{ $t('pages.overview.rename.change_image_one_credit') }}</button></div>
+			</form>
+		</section>
+
+		<section class="planet-abandon">
+			<div><h2>{{ $t('pages.overview.rename.abandon_colony') }}</h2><span class="planet-settings-hint">{{ $t('pages.overview.rename.abandon_hint') }}</span></div>
+			<button type="button" class="button" :disabled="deleteForm.processing" @click="deletePlanet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>{{ $t('pages.overview.rename.abandon_colony') }}</button>
+			<div v-if="Object.keys(deleteForm.errors).length" class="planet-settings-errors" role="alert"><span v-for="(error, key) in deleteForm.errors" :key="key">{{ error }}</span></div>
+		</section>
 	</div>
 </template>
 
 <script setup>
 	import useState from '~/composables/useState.js';
-	import { computed, ref } from 'vue';
-	import { Head, useForm } from '@inertiajs/vue3';
+	import { computed } from 'vue';
+	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -62,8 +69,9 @@
 	const state = useState();
 	const planet = computed(() => state.planet);
 
-	const name = ref('');
-	const image = ref(0);
+	const nameForm = useForm({ name: '' });
+	const imageForm = useForm({ image: 0 });
+	const deleteForm = useForm({});
 
 	const planetImages = {
 		trocken: 20,
@@ -85,8 +93,14 @@
 		return null;
 	});
 
+	function imageName(index) {
+		return type.value + 'planet' + String(index).padStart(2, '0');
+	}
+
 	function changeName() {
-		useForm({ name: name.value }).post('/planet/rename', {
+		if (!nameForm.name.trim() || nameForm.processing) return;
+
+		nameForm.post('/planet/rename', {
 			preserveUrl: true,
 			onSuccess() {
 				useSuccessNotification(t('pages.overview.rename.toast_renamed'));
@@ -95,7 +109,9 @@
 	}
 
 	function changeImage() {
-		useForm({ image: image.value }).post('/planet/image', {
+		if (!imageForm.image || imageName(imageForm.image) === planet.value.image || imageForm.processing) return;
+
+		imageForm.post('/planet/image', {
 			preserveUrl: true,
 			onSuccess() {
 				useSuccessNotification(t('pages.overview.rename.toast_image_changed'));
@@ -113,7 +129,7 @@
 				title: t('pages.overview.rename.modal_confirm_delete'),
 				class: 'dialog-button--danger',
 				handler() {
-					useForm().delete('/planet/delete', {
+					deleteForm.delete('/planet/delete', {
 						preserveUrl: true,
 						preserveScroll: true,
 						onSuccess() {

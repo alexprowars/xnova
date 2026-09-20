@@ -1,6 +1,6 @@
 <template>
 	<Modal>
-		<Head title="Восстановление пароля"/>
+		<Head :title="$t('pages.auth.recovery')"/>
 		<RemindForm/>
 	</Modal>
 </template>

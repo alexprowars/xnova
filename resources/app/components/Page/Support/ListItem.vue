@@ -1,25 +1,10 @@
 <template>
-	<div class="grid grid-cols-12">
-		<div class="col-span-1 c">
-			<Link :href="'/support/' + item['id']">
-				{{ item['id'] }}
-			</Link>
-		</div>
-		<div class="col-span-6 c">
-			<Link :href="'/support/' + item['id']">
-				{{ item['subject'] }}
-			</Link>
-		</div>
-		<div class="col-span-2 c">
-			<span v-if="item['status'] === 0" style="color:red">{{ $t('pages.support.status.0') }}</span>
-			<span v-if="item['status'] === 1" style="color:green">{{ $t('pages.support.status.1') }}</span>
-			<span v-if="item['status'] === 2" style="color:orange">{{ $t('pages.support.status.2') }}</span>
-			<span v-if="item['status'] === 3" style="color:green">{{ $t('pages.support.status.3') }}</span>
-		</div>
-		<div class="col-span-3 c">
-			{{ $formatDate(item['updated_at'], 'DD MMM YYYY HH:mm:ss') }}
-		</div>
-	</div>
+	<tr>
+		<td class="support-ticket-id"><Link :href="'/support/' + item.id">#{{ item.id }}</Link></td>
+		<td><Link :href="'/support/' + item.id" class="support-subject">{{ item.subject }} <span aria-hidden="true">↗</span></Link></td>
+		<td><span class="support-status" :class="'status-' + item.status">{{ $t('pages.support.status.' + item.status) }}</span></td>
+		<td class="support-date"><time v-if="item.updated_at" :datetime="item.updated_at">{{ $formatDate(item.updated_at, 'DD MMM YYYY') }}<span>{{ $formatDate(item.updated_at, 'HH:mm:ss') }}</span></time><span v-else>—</span></td>
+	</tr>
 </template>
 
 <script setup>

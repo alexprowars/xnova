@@ -1,9 +1,269 @@
 .page-building {
+	--color-green-500: #8fd4b3;
+	--color-red-500: #e29a94;
+	--color-yellow-400: #dfbe85;
+
+	.page-building-build-queue > .build-queue-list {
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+	}
+
 	.page-building-build-queue {
-		@apply mb-1;
+		margin-bottom: 8px;
 	}
 
 	.page-building-unit-queue {
-		@apply mt-1;
+		margin-top: 8px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		font-variant-numeric: tabular-nums;
+
+		> .title {
+			margin: 0;
+			padding: 10px 12px;
+			border: 0;
+			border-radius: 0;
+		}
+
+		.unit-queue-row {
+			grid-template-columns: minmax(0, 1fr) auto;
+		}
+
+		.build-queue-time {
+			padding-left: 12px;
+		}
+
+		.build-queue-timer {
+			margin-top: 3px;
+			font-size: 14px;
+		}
 	}
+
+	.unit-queue-count {
+		padding: 2px 6px;
+		border: 1px solid #385d56;
+		border-radius: 4px;
+		background: #203b35;
+		color: #a7ddc6;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.unit-queue-next {
+		margin-top: 3px;
+		color: var(--text-muted);
+		font-size: 12px;
+
+		span {
+			color: #bce0ed;
+		}
+	}
+
+	.unit-queue-total {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 4px 12px;
+		padding: 9px 12px;
+		border-top: 1px solid #2b4354;
+		background: #142737;
+		color: var(--text-muted);
+		font-size: 12px;
+
+		strong {
+			color: #dfc28b;
+			font-size: 14px;
+			font-weight: 500;
+		}
+	}
+
+	.build-queue-row {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: center;
+		gap: 12px;
+		padding: 10px 12px;
+		border-left: 2px solid transparent;
+		background: #0e1b29;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+
+		+ .build-queue-row {
+			border-top: 1px solid #263b4d;
+		}
+
+		&.is-current {
+			border-left-color: var(--accent-color);
+			background: linear-gradient(90deg, #162c3c, #101f2e);
+		}
+
+		&.is-finished {
+			border-left-color: #83cfb2;
+		}
+	}
+
+	.build-queue-item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 0;
+	}
+
+	.build-queue-image {
+		width: 42px;
+		height: 42px;
+		flex-shrink: 0;
+		object-fit: cover;
+		border: 1px solid #355166;
+		border-radius: 5px;
+	}
+
+	.build-queue-description {
+		min-width: 0;
+	}
+
+	.build-queue-name {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 3px 7px;
+		overflow-wrap: anywhere;
+
+		strong {
+			font-weight: 500;
+			color: #e0edf5;
+		}
+	}
+
+	.build-queue-level {
+		padding: 1px 5px;
+		border-radius: 4px;
+		background: #233b4c;
+		color: #bce0ed;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.build-queue-status {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3px 8px;
+		margin-top: 3px;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.build-queue-demolition {
+		color: #d4b084;
+	}
+
+	.build-queue-details {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 6px 16px;
+		min-width: 0;
+	}
+
+	.build-queue-time {
+		text-align: right;
+	}
+
+	.build-queue-timer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 6px;
+		color: #bce0ed;
+		font-size: 16px;
+		font-weight: 500;
+
+		svg {
+			width: 16px;
+			height: 16px;
+			flex-shrink: 0;
+			color: var(--accent-color);
+		}
+	}
+
+	.build-queue-date, .build-queue-time-label {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.build-queue-date {
+		margin-top: 2px;
+	}
+
+	.build-queue-action {
+		padding: 4px 8px;
+		border: 1px solid #355166;
+		border-radius: 4px;
+		background-color: #172c3c;
+		color: #a9c7d8;
+		font-size: 12px;
+		line-height: 1.4;
+		text-align: center;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s;
+
+		&:hover {
+			background-color: #293844;
+			border-color: #947067;
+		}
+
+		&.is-next {
+			color: #a7ddc6;
+			border-color: #426b60;
+
+			&:hover {
+				background-color: #244039;
+				border-color: #83cfb2;
+			}
+		}
+	}
+
+	@media (max-width: 479px) {
+		.page-building-unit-queue {
+			.unit-queue-row {
+				grid-template-columns: minmax(0, 1fr);
+			}
+
+			.build-queue-time {
+				padding-left: 39px;
+			}
+		}
+
+		.build-queue-row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 8px;
+			padding: 8px;
+		}
+
+		.build-queue-details {
+			justify-content: space-between;
+		}
+
+		.build-queue-time {
+			text-align: left;
+		}
+
+		.build-queue-timer {
+			justify-content: flex-start;
+		}
+
+		.build-queue-item {
+			gap: 7px;
+		}
+
+		.build-queue-image {
+			width: 32px;
+			height: 32px;
+		}
+	}
+
 }

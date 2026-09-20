@@ -1,64 +1,26 @@
 <template>
-	<div class="block start">
-		<div class="title">{{ $t('pages.start.main_info') }}</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid">
-					<div class="th middle">
-						<div>
-							{{ $t('pages.start.game_nickname') }}:
-							<input :class="{error: v$.name.$error}" name="name" size="20" maxlength="30" type="text" v-model="form.name">
-						</div>
-					</div>
-				</div>
-				<div class="grid">
-					<div class="c">{{ $t('pages.start.game_avatar') }}</div>
-				</div>
-				<div class="grid">
-					<div class="th">
-						<Tabs>
-							<Tab :name="$t('pages.start.male')">
-								<div class="grid grid-cols-4">
-									<div v-for="i in 8">
-										<input type="radio" :value="'1_'+i" :id="'f1_'+i" v-model="form.avatar">
-										<label :for="'f1_'+i" class="avatar">
-											<img :src="'/assets/images/faces/1/'+i+'s.png'" alt="">
-										</label>
-									</div>
-								</div>
-							</Tab>
-							<Tab :name="$t('pages.start.female')">
-								<div class="grid grid-cols-4">
-									<div v-for="i in 8">
-										<input type="radio" :value="'2_'+i" :id="'f2_'+i" v-model="form.avatar">
-										<label :for="'f2_'+i" class="avatar">
-											<img :src="'/assets/images/faces/2/'+i+'s.png'" alt="">
-										</label>
-									</div>
-								</div>
-							</Tab>
-						</Tabs>
-					</div>
-				</div>
-				<div v-if="form.name && form.avatar" class="grid">
-					<div class="th">
-						<button class="button" @click.prevent="save">{{ $t('pages.start.continue') }}</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<UiPanel class="game-panel start-avatar"><header class="start-heading"><span class="game-eyebrow">01 / 02</span><h1>{{ $t('pages.start.main_info') }}</h1></header><form class="game-form" @submit.prevent="save">
+		<label>{{ $t('pages.start.game_nickname') }}<input :class="{error: v$.name.$error}" name="name" maxlength="30" type="text" v-model="form.name"></label>
+		<div v-if="v$.name.$error" class="game-errors">{{ $t('pages.auth.check_fields') }}</div>
+		<h2 class="start-section-title">{{ $t('pages.start.game_avatar') }}</h2><UiTabs :items="avatarTabs" :label="$t('pages.start.game_avatar')"><template #panel="{ item: { id: sex } }"><div class="start-avatar-grid"><label v-for="i in 8" :key="i" :class="{ 'is-selected': form.avatar === sex + '_' + i }"><input type="radio" :value="sex + '_' + i" v-model="form.avatar" :aria-label="$t(sex === 1 ? 'pages.start.male' : 'pages.start.female') + ' ' + i"><img :src="'/assets/images/faces/' + sex + '/' + i + 's.png'" alt=""><span class="start-choice-mark" aria-hidden="true">✓</span></label></div></template></UiTabs>
+		<div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error }}</div><div class="game-actions"><UiButton type="submit" :disabled="!form.name || !form.avatar || form.processing">{{ $t('pages.start.continue') }} →</UiButton></div>
+	</form></UiPanel>
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
+	import { UiButton, UiPanel, UiTabs } from '~/components/UI';
 	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import { useForm } from '@inertiajs/vue3';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
-	import Tabs from '~/components/Tabs.vue';
-	import Tab from '~/components/Tab.vue';
 
+	const { t } = useI18n();
+	const avatarTabs = computed(() => [
+		{ id: 1, label: t('pages.start.male') },
+		{ id: 2, label: t('pages.start.female') },
+	]);
 	const state = useState();
 	const user = computed(() => state.user);
 
@@ -80,6 +42,8 @@
 	);
 
 	async function save() {
+		if (form.processing) return;
+
 		if (!await v$.value.$validate()) {
 			return;
 		}

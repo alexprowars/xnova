@@ -1,8 +1,8 @@
 <template>
-	<tr>
-		<td class="th">{{ planet }}</td>
+	<tr class="galaxy-row" :class="{ 'is-empty': !item, 'is-own': item?.user?.id === currentUser.id, 'is-destroyed': item?.planet?.destruyed }">
+		<td class="th galaxy-position">{{ planet }}</td>
 		<td class="th img">
-			<Popper v-if="item && !item['planet']['destruyed']">
+			<Popper popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed']">
 				<template #content>
 					<div class="block-table w-80">
 						<div class="grid">
@@ -31,18 +31,18 @@
 				<img :src="'/assets/images/planeten/small/s_' + item['planet']['image'] + '.jpg'" width="34" height="34" alt="">
 			</Popper>
 		</td>
-		<td class="th">
+		<td class="th galaxy-planet-name">
 			<div v-if="item && !item['planet']['destruyed']">
 				<span v-if="item['planet']['active'] <= 10" class="star">(*)</span>
 				<span v-else-if="item['planet']['active'] < 60" class="star">({{ Math.floor(item['planet']['active']) }})</span>
-				<span :class="{ negative: item.user?.id === currentUser['id'] }">{{ item['planet']['name'] }}</span>
+				<span class="galaxy-planet-label">{{ item['planet']['name'] }}</span>
 			</div>
 			<div v-else-if="item && item['planet']['destruyed']">
 				{{ $t('pages.galaxy.planet_destruyed') }}
 			</div>
 		</td>
 		<td class="th img whitespace-nowrap">
-			<Popper v-if="item && item['moon'] && !item['moon']['destruyed']">
+			<Popper popper-class="galaxy-tooltip" v-if="item && item['moon'] && !item['moon']['destruyed']">
 				<template #content>
 					<table width="240">
 						<tbody>
@@ -98,8 +98,8 @@
 			</Popper>
 			<span v-if="item && item['moon'] && item['moon']['destruyed']">~</span>
 		</td>
-		<td class="th" :class="[debris_class]">
-			<Popper v-if="item && (item.debris.metal || item.debris.crystal)">
+		<td class="th galaxy-debris" :class="[debris_class]">
+			<Popper popper-class="galaxy-tooltip" v-if="item && (item.debris.metal || item.debris.crystal)">
 				<template #content>
 					<table width="240">
 						<tbody>
@@ -146,8 +146,8 @@
 				<img src="/assets/images/planeten/debris.jpg" height="22" width="22" alt="">
 			</Popper>
 		</td>
-		<td class="th">
-			<Popper v-if="item && item.user && !item['planet']['destruyed']">
+		<td class="th galaxy-player">
+			<Popper popper-class="galaxy-tooltip" v-if="item && item.user && !item['planet']['destruyed']">
 				<template #content>
 					<div class="block-table w-96">
 						<div class="grid">
@@ -184,7 +184,7 @@
 			</Link>
 		</td>
 		<td class="th">
-			<Popper v-if="item && !item['planet']['destruyed'] && item['alliance']">
+			<Popper popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed'] && item['alliance']">
 				<template #content>
 					<div class="block-table w-80 text-center">
 						<div class="grid">
@@ -217,16 +217,16 @@
 		<td class="th whitespace-nowrap">
 			<div class="actions">
 				<template v-if="item && !item['planet']['destruyed'] && item.user && item.user['id'] !== currentUser['id']">
-					<SendMessagePopup v-tooltip="$t('send_message')" :id="item.user['id']"/>
-					<Link :href="'/friends/new/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_friend')">
-						<span class="sprite skin_b"></span>
+					<SendMessagePopup v-tooltip="$t('send_message')" :aria-label="$t('send_message')" :id="item.user['id']"><GalaxyIcon type="message"/></SendMessagePopup>
+					<Link :href="'/friends/new/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_friend')" :aria-label="$t('pages.galaxy.actions_friend')">
+						<GalaxyIcon type="friend"/>
 					</Link>
 
-					<a v-if="!isVacation && user['missile']" @click.prevent="$emit('sendMissile')" v-tooltip="$t('pages.galaxy.actions_rockets')">
-						<span class="sprite skin_r"></span>
-					</a>
+					<button type="button" v-if="!isVacation && user['missile']" @click="$emit('sendMissile')" v-tooltip="$t('pages.galaxy.actions_rockets')" :aria-label="$t('pages.galaxy.actions_rockets')">
+						<GalaxyIcon type="missile"/>
+					</button>
 
-					<Popper tag="a" v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']">
+					<Popper popper-class="galaxy-tooltip" v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']">
 						<template #content>
 							<div class="text-center flex flex-col gap-2">
 								<div><input type="text" class="w-full min-w-full" v-model.number="spyCount"></div>
@@ -242,19 +242,19 @@
 								</div>
 							</div>
 						</template>
-						<span class="sprite skin_e"></span>
+						<button type="button" class="galaxy-spy-trigger" :aria-label="$t('pages.galaxy.espionage')"><GalaxyIcon type="spy"/></button>
 					</Popper>
 
-					<Link :href="'/players/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_player_info')">
-						<span class="sprite skin_s"></span>
-					</Link>
-					<Link :href="'/fleet/shortcut/create?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type']" v-tooltip="$t('pages.galaxy.actions_bookmarks')">
-						<span class="sprite skin_z"></span>
+					<ModalLink navigate :href="'/players/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_player_info')" :aria-label="$t('pages.galaxy.actions_player_info')">
+						<GalaxyIcon type="player"/>
+					</ModalLink>
+					<Link :href="'/fleet/shortcut/create?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type']" v-tooltip="$t('pages.galaxy.actions_bookmarks')" :aria-label="$t('pages.galaxy.actions_bookmarks')">
+						<GalaxyIcon type="bookmark"/>
 					</Link>
 				</template>
 
-				<Link v-if="!isVacation && !item && currentPlanet['units']['colonizer']" :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&mission=7'" v-tooltip="$t('fleet_mission.7')">
-					<span class="sprite skin_e"></span>
+				<Link v-if="!isVacation && !item && currentPlanet['units']['colonizer']" :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&mission=7'" v-tooltip="$t('fleet_mission.7')" :aria-label="$t('fleet_mission.7')">
+					<GalaxyIcon type="colonize"/>
 				</Link>
 			</div>
 		</td>
@@ -263,11 +263,13 @@
 
 <script setup>
 	import useState from '~/composables/useState.js';
+	import GalaxyIcon from './GalaxyIcon.vue';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { sendMission } from '~/utils/fleet.js';
 	import { computed, ref } from 'vue';
 	import dayjs from 'dayjs';
 	import { Link } from '@inertiajs/vue3';
+	import { ModalLink } from '@inertiaui/modal-vue';
 	import Popper from '~/components/Popper.vue';
 
 	const {

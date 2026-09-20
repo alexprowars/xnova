@@ -1,0 +1,140 @@
+.page-start {
+	max-width: 880px;
+	margin: 0 auto;
+
+	.start-heading {
+		padding: 16px 18px 0;
+	}
+
+	.start-heading h1 {
+		margin-top: 5px;
+		font-size: 20px;
+	}
+
+	.start-section-title {
+		margin: 16px 0 8px;
+		color: #b7d1e0;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.start-avatar-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	.start-avatar-grid > label {
+		position: relative;
+		display: block;
+		padding: 4px;
+		border: 1px solid #304b60;
+		border-radius: 5px;
+		background: #091623;
+		cursor: pointer;
+	}
+
+	.start-avatar-grid img {
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		border-radius: 3px;
+	}
+
+	.start-avatar-grid input, .start-race-card > input {
+		position: absolute;
+		opacity: 0;
+		width: 1px;
+		height: 1px;
+	}
+
+	.start-avatar-grid > label:hover, .start-race-card:hover {
+		border-color: #638ca2;
+	}
+
+	.start-avatar-grid > label.is-selected, .start-race-card.is-selected {
+		border-color: #80cce1;
+		background: #193e50;
+	}
+
+	.start-avatar-grid > label:focus-within, .start-race-card:focus-within {
+		border-color: #b8e4ef;
+	}
+
+	.start-choice-mark {
+		display: none;
+		position: absolute;
+		right: 8px;
+		bottom: 8px;
+		padding: 1px 5px;
+		border-radius: 4px;
+		background: #75bfd4;
+		color: #091623;
+		font-size: 14px;
+	}
+
+	.is-selected .start-choice-mark {
+		display: block;
+	}
+
+	.start-race-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	.start-race-card {
+		position: relative;
+		padding: 14px;
+		border: 1px solid #304b60;
+		border-radius: 5px;
+		background: #0b1a28;
+		cursor: pointer;
+	}
+
+	.start-race-title {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 10px;
+	}
+
+	.start-race-title svg {
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		color: #9dbfd2;
+	}
+
+	.start-race-title h2 {
+		flex: 1;
+		margin: 0;
+		color: #d0e4ee;
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.start-race-title span {
+		color: #88d2e4;
+	}
+
+	.start-race-description {
+		color: #9bb8ca;
+		font-size: 14px;
+		overflow-wrap: anywhere;
+	}
+
+	.start-race-description p {
+		margin: 0;
+	}
+
+	@media (max-width: 639px) {
+		.start-race-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.start-avatar-grid {
+			gap: 6px;
+		}
+	}
+}

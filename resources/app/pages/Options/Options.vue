@@ -1,6 +1,7 @@
 <template>
-	<Head title="Hacтpoйки"/>
-	<div>
+	<Head :title="$t('pages.options.title')"/>
+	<div class="page-options">
+		<header class="options-heading"><h1>{{ $t('pages.options.title') }}</h1><span>{{ user.name }}</span></header>
 		<VacationTab v-if="user.vacation"/>
 		<OptionsTab v-else :data="page"/>
 	</div>

@@ -1,9 +1,9 @@
 <template>
-	<form method="post" class="block-table" @submit.prevent="create">
+	<form method="post" class="fleet-association-create" @submit.prevent="create">
 		<div class="grid">
 			<div class="th">
 				<input :class="{error: v$.name.$error}" type="text" v-model="form.name" size="50">
-				<br>
+
 				<button type="submit" class="button">{{ $t('pages.fleets.verband.create_submit') }}</button>
 			</div>
 		</div>

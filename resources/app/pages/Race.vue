@@ -1,93 +1,37 @@
 <template>
 	<Head :title="$t('pages.race.head_title')"/>
-	<div class="text-center">
-		<div class="block-table raceSelect">
-			<div class="grid grid-cols-2">
-				<div class="k big">{{ $t('pages.race.faction_confederation') }}</div>
-				<div class="k big">{{ $t('pages.race.faction_bionics') }}</div>
-			</div>
-			<div class="grid grid-cols-2">
-				<div class="th text-left">
-					<div class="text-center mt-2">
-						<img src="/assets/images/skin/race1.gif" alt="">
-					</div>
-					<br>
-					<div class="positive">{{ $t('pages.race.race_features') }}</div>
-					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race1')"></span>
-					<br><br>{{ $t('pages.race.unique_ship_label') }}
-					<span style="color: #adff2f">
-						<ModalLink navigate href="info/220">{{ $t('pages.race.ship_race1_name') }}</ModalLink>
-					</span> {{ $t('pages.race.ship_race1_desc') }}</span>
-					<br><br>
+	<div class="page-race">
+		<header class="race-heading"><h1>{{ $t('pages.race.head_title') }}</h1><span v-if="race">{{ $t('pages.race.your_faction') }}: <strong>{{ $t('races.' + race) }}</strong></span></header>
+		<div class="race-grid">
+			<article v-for="faction in factions" :key="faction.id" class="race-card" :class="['race-card-' + faction.id, { 'is-current': race === faction.id }]">
+				<div class="race-card-heading">
+					<component :is="faction.icon" class="race-emblem" aria-hidden="true" focusable="false"/>
+					<div class="race-card-intro"><h2>{{ $t('pages.race.' + faction.name) }}</h2><p class="race-description">{{ $t('pages.race.description_race' + faction.id) }}</p><span v-if="race === faction.id" class="race-current"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>{{ $t('pages.race.your_faction') }}</span></div>
 				</div>
-				<div class="th text-left">
-					<div class="text-center mt-2">
-						<img src="/assets/images/skin/race2.gif" alt="">
-					</div>
-					<br>
-					<div class="positive">{{ $t('pages.race.race_features') }}</div>
-					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race2')"></span>
-					<br><br>{{ $t('pages.race.unique_ship_label') }}
-					<span style="color: #adff2f">
-						<ModalLink navigate href="info/221">{{ $t('pages.race.ship_race2_name') }}</ModalLink>
-					</span> {{ $t('pages.race.ship_race2_desc') }}</span>
-					<br><br>
+				<div class="race-card-content">
+					<h3>{{ $t('pages.race.race_features') }}</h3>
+					<ul class="race-perks"><li v-for="(perk, index) in $t('pages.race.perks_race' + faction.id).split('<br>')" :key="index">{{ perk }}</li></ul>
 				</div>
-			</div>
-			<div class="grid grid-cols-2">
-				<div class="k big">{{ $t('pages.race.faction_cylons') }}</div>
-				<div class="k big">{{ $t('pages.race.faction_ancients') }}</div>
-			</div>
-			<div class="grid grid-cols-2">
-				<div class="th text-left">
-					<div class="text-center mt-2">
-						<img src="/assets/images/skin/race3.gif" alt="">
-					</div>
-					<br>
-					<div class="positive">{{ $t('pages.race.race_features') }}</div>
-					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race3')"></span>
-					<br><br>{{ $t('pages.race.unique_ship_label') }}
-					<span style="color: #adff2f">
-						<ModalLink navigate href="info/222">{{ $t('pages.race.ship_race3_name') }}</ModalLink>
-					</span> {{ $t('pages.race.ship_race3_desc') }}</span>
-					<br><br>
-				</div>
-				<div class="th text-left">
-					<div class="text-center mt-2">
-						<img src="/assets/images/skin/race4.gif" alt="">
-					</div>
-					<br>
-					<div class="positive">{{ $t('pages.race.race_features') }}</div>
-					<span style="color: #84CFEF"><span v-html="$t('pages.race.perks_race4')"></span>
-					<br><br>{{ $t('pages.race.unique_ship_label') }}
-					<span style="color: #adff2f">
-						<ModalLink navigate href="info/223">{{ $t('pages.race.ship_race4_name') }}</ModalLink>
-					</span> {{ $t('pages.race.ship_race4_desc') }}</span>
-					<br><br>
-				</div>
-			</div>
-			<div v-if="page['change_available']">
-				<div class="grid">
-					<div class="k big">
-						<span v-if="page['change']">
-							{{ $t('pages.race.change_free', { count: page['change'] }) }}
-						</span>
-						<span v-else>
-							{{ $t('pages.race.change_paid') }}
-						</span>
-					</div>
-				</div>
-				<div v-if="page['change_available']" class="th">
-					{{ $t('pages.race.change_requirements') }}<br><br>
-					<RaceChange/>
-				</div>
-			</div>
+				<ModalLink navigate :href="'/info/' + faction.ship" class="race-ship">
+					<img :src="'/assets/images/elements/' + faction.ship + '.webp'" alt="" width="44" height="44" loading="lazy">
+					<div><span class="race-ship-label">{{ $t('pages.race.unique_ship_label') }}</span><strong>{{ $t('pages.race.ship_race' + faction.id + '_name') }}</strong><span class="race-ship-description">{{ $t('pages.race.ship_race' + faction.id + '_desc') }}</span></div>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+				</ModalLink>
+			</article>
 		</div>
+		<section v-if="page.change_available" class="race-change-panel">
+			<div class="race-change-heading"><h2>{{ $t('pages.race.change_title') }}</h2><span>{{ page.change ? $t('pages.race.change_free', { count: page.change }) : $t('pages.race.change_paid') }}</span></div>
+			<div class="race-change-content"><p>{{ $t('pages.race.change_requirements') }}</p><RaceChange/></div>
+		</section>
 	</div>
 </template>
 
 <script setup>
 	import useState from '~/composables/useState.js';
+	import ConfederationIcon from '~/images/icons/races/confederation.svg?component';
+	import BionicsIcon from '~/images/icons/races/bionics.svg?component';
+	import CylonsIcon from '~/images/icons/races/cylons.svg?component';
+	import AncientsIcon from '~/images/icons/races/ancients.svg?component';
 	import RaceChange from '~/components/Page/Race/RaceChange.vue';
 	import { computed, nextTick, onMounted } from 'vue';
 	import { Head } from '@inertiajs/vue3';
@@ -104,6 +48,13 @@
 			}
 		}
 	});
+
+	const factions = [
+		{ id: 1, icon: ConfederationIcon, name: 'faction_confederation', ship: 220 },
+		{ id: 2, icon: BionicsIcon, name: 'faction_bionics', ship: 221 },
+		{ id: 3, icon: CylonsIcon, name: 'faction_cylons', ship: 222 },
+		{ id: 4, icon: AncientsIcon, name: 'faction_ancients', ship: 223 },
+	];
 
 	const state = useState();
 	const user = computed(() => state.user);

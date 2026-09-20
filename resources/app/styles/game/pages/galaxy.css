@@ -1,91 +1,372 @@
 .page-galaxy {
+	--color-green-500: #8fd4b3;
+	--color-red-500: #e29a94;
+	--color-yellow-400: #dfbe85;
+
 	.page-galaxy-select {
-		@apply mb-1.5;
+		display: grid;
+		grid-template-columns: auto auto minmax(160px, 1fr) auto;
+		align-items: end;
+		gap: 12px;
+		margin-bottom: 10px;
+		padding: 12px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: linear-gradient(110deg, #142838, #0e1b29);
 
-		button {
-			min-width: 0;
-		}
-
-		button[disabled] {
-			opacity: 0.6;
-			pointer-events: none;
+		label {
+			display: block;
+			margin-bottom: 6px;
+			color: var(--text-muted);
+			font-size: 12px;
 		}
 
 		input[type=number] {
 			width: 60px;
+			height: 32px;
+			font-size: 14px;
+			font-variant-numeric: tabular-nums;
 		}
 
 		select {
-			text-align: center;
-			text-align-last: center;
-			-moz-text-align-last: center;
+			width: 100%;
+			max-width: 100%;
+			height: 32px;
+			margin: 0;
+			padding-block: 4px;
+			border-radius: 5px;
+			background-color: #091522;
+			font-size: 14px;
 		}
 	}
 
+	.galaxy-stepper {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		button {
+			display: grid;
+			place-items: center;
+			width: 28px;
+			height: 32px;
+			border: 1px solid #355166;
+			border-radius: 4px;
+			background-color: #172e40;
+			color: #a9cddd;
+			cursor: pointer;
+			transition: background-color .15s, border-color .15s;
+
+			&:hover:not(:disabled) {
+				background-color: #24495c;
+				border-color: #6399ad;
+			}
+		}
+
+		svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.galaxy-shortcuts-field {
+		min-width: 0;
+	}
+
+	.galaxy-go {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		height: 32px;
+
+		svg {
+			width: 15px;
+			height: 15px;
+		}
+	}
+
+	.galaxy-system-title {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		font-variant-numeric: tabular-nums;
+
+		svg {
+			width: 22px;
+			height: 22px;
+			color: var(--accent-color);
+		}
+	}
+
+	.table-responsive {
+		scrollbar-width: thin;
+		scrollbar-color: #355166 #0e1b29;
+	}
+
 	.galaxy {
+		width: 100%;
+		min-width: 790px;
 		border-spacing: 0;
 		border: 0;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
 
-		.debris_0 {
-			background: rgb(0, 100, 0) none;
-		}
-
-		.debris_50 {
-			background: rgb(100, 100, 0) none;
-		}
-
-		.debris_100 {
-			background: rgb(100, 0, 0) none;
-		}
-
-		tr > .th {
+		th, td {
+			padding: 5px 7px;
+			border: 0;
+			border-bottom: 1px solid #263b4d80;
+			background: #0e1b29;
 			vertical-align: middle;
-			text-align: center;
+		}
+
+		thead th {
+			position: relative;
+			padding: 8px 7px;
+			background: #142737;
+			color: #9cb3c5;
+			font-size: 12px;
+			font-weight: 500;
+			white-space: nowrap;
+		}
+
+		.galaxy-row {
+			height: 43px;
+
+			&:hover > td {
+				background-color: #193245;
+			}
+
+			&.is-own > td {
+				background-color: #132d3b;
+			}
+
+			&.is-own .galaxy-position {
+				box-shadow: inset 2px 0 var(--accent-color);
+				color: var(--accent-color);
+			}
+
+			&.is-own .galaxy-planet-label {
+				color: #a8dfed;
+			}
+		}
+
+		.galaxy-position {
+			width: 35px;
+			color: #8aa4b8;
+			font-size: 12px;
+		}
+
+		.galaxy-planet-name, .galaxy-player {
+			text-align: left;
+		}
+
+		.galaxy-planet-label {
+			font-weight: 500;
+		}
+
+		.star {
+			margin-right: 3px;
+			color: #d4b084;
+			font-size: 12px;
 		}
 
 		.img {
-			max-height: 34px;
-			padding: 0;
+			width: 38px;
+			padding: 3px;
 
 			img {
+				display: block;
+				width: 32px;
+				height: 32px;
 				max-width: none;
+				border: 1px solid #355166;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+		}
+
+		.galaxy-debris {
+			--debris-accent: #92b3c3;
+
+			img {
+				display: block;
+				width: 24px;
+				height: 24px;
+				border: 1px solid var(--debris-accent);
+				border-radius: 4px;
+			}
+
+			&.debris_0 {
+				--debris-accent: #83cfb2;
+			}
+
+			&.debris_50 {
+				--debris-accent: #d4b084;
+			}
+
+			&.debris_100 {
+				--debris-accent: #e39595;
 			}
 		}
 
 		.actions {
 			display: flex;
 			justify-content: center;
-			gap: 4px;
-			flex-wrap: wrap;
+			gap: 3px;
 			align-items: center;
 
-			> a, > div {
+			> a, > button, > div {
 				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 25px;
+				height: 27px;
+				flex-shrink: 0;
+				border: 1px solid transparent;
+				border-radius: 4px;
+				background-color: #192e3e;
+				color: #9fc7d9;
+				cursor: pointer;
+				transition: background-color .15s, border-color .15s;
+
+				&:hover {
+					background-color: #24495c;
+					border-color: #477589;
+				}
+			}
+
+			.galaxy-spy-trigger {
+				display: grid;
+				place-items: center;
+				width: 100%;
+				height: 100%;
+				cursor: pointer;
+			}
+
+			svg {
+				width: 16px;
+				height: 16px;
 			}
 		}
 
-		.noob {
-			color: #a0ffa0;
+		.galaxy-expedition td {
+			background: #122838;
+			padding-block: 9px;
 		}
 
-		.strong {
-			color: #ffa0a0;
+		.galaxy-expedition a {
+			color: var(--accent-color);
 		}
 
-		.vacation {
-			color: skyblue;
+		tfoot td {
+			padding: 8px;
+			color: var(--text-muted);
+			font-size: 12px;
+			background: #102130;
 		}
 
-		.inactive {
-			color: #cccccc;
+		.galaxy-capacity td {
+			background: #0c1926;
+			border-bottom: 0;
+		}
+	}
+
+	.galaxy-legend-toggle {
+		color: var(--accent-color);
+		cursor: pointer;
+		text-decoration: underline dotted;
+		text-underline-offset: 4px;
+	}
+
+	.galaxy-missile {
+		margin-bottom: 10px;
+		border: 1px solid #775f46;
+		border-radius: 6px;
+		overflow: hidden;
+
+		.c, .th {
+			padding: 8px;
+			background: #172839;
+			border-color: var(--border-color);
+		}
+	}
+
+	@media (max-width: 767px) {
+		.page-galaxy-select {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px;
+			padding: 10px;
 		}
 
-		.longinactive {
-			color: #999999;
+		.galaxy-missile .grid-cols-2 {
+			grid-template-columns: minmax(0, 1fr);
 		}
 
-		.blocked {
-			text-decoration: line-through;
+		.galaxy-stepper {
+			input {
+				flex: 1;
+				min-width: 0;
+			}
 		}
+	}
+}
+
+.page-galaxy .galaxy, .galaxy-legend {
+	.noob {
+		color: #a3d3b5;
+	}
+
+	.strong {
+		color: #e0a3a1;
+	}
+
+	.vacation {
+		color: #92cde8;
+	}
+
+	.inactive {
+		color: #b8c0c8;
+	}
+
+	.longinactive {
+		color: #84929f;
+	}
+
+	.blocked {
+		text-decoration: line-through;
+	}
+}
+
+.v-popper__popper.galaxy-tooltip {
+	.v-popper__inner {
+		max-width: calc(100vw - 24px);
+		padding: 8px;
+		border-color: #355166;
+		background: #0d1b29;
+		box-shadow: 0 8px 24px #0006;
+		font-size: 14px;
+	}
+
+	.block-table, table, .galaxy-legend {
+		max-width: 100%;
+	}
+
+	.c, .th {
+		padding: 5px 7px;
+		border-color: #2b4354;
+		background: #142737;
+	}
+
+	.c {
+		color: #b6d3e2;
+	}
+
+	.v-popper__arrow-outer {
+		border-color: #355166;
+	}
+
+	.v-popper__arrow-inner {
+		border-color: #0d1b29;
 	}
 }

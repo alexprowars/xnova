@@ -1,0 +1,328 @@
+.page-race {
+	font-size: 14px;
+
+	.race-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 8px 14px;
+		margin-bottom: 10px;
+		padding: 12px 14px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: linear-gradient(110deg, #172e40, #0e1b29);
+	}
+
+	.race-heading h1 {
+		width: auto;
+		margin: 0;
+		color: #e0edf5;
+		font-size: 16px;
+		font-weight: 600;
+		text-align: left;
+	}
+
+	.race-heading > span {
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.race-heading strong {
+		color: #bdd3e1;
+		font-weight: 500;
+	}
+
+	.race-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	.race-card {
+		--faction-color: #a0c7dc;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		overflow: hidden;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: #0e1b29;
+	}
+
+	.race-card-2 {
+		--faction-color: #9fc9b0;
+	}
+
+	.race-card-3 {
+		--faction-color: #d5c08e;
+	}
+
+	.race-card-4 {
+		--faction-color: #d0a8a5;
+	}
+
+	.race-card.is-current {
+		border-color: #507b73;
+	}
+
+	.race-card-heading {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 12px 14px;
+		background: #142737;
+	}
+
+	.race-emblem {
+		flex-shrink: 0;
+		width: 64px;
+		height: 64px;
+		color: var(--faction-color);
+	}
+
+	.race-card-intro {
+		min-width: 0;
+	}
+
+	.race-description {
+		margin: 5px 0 0;
+		color: #a7bfce;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+
+	.race-card-heading h2 {
+		margin: 0;
+		color: var(--faction-color);
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.race-current {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: 4px;
+		color: #9acdb6;
+		font-size: 12px;
+	}
+
+	.race-current svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	.race-card-content {
+		flex: 1;
+		padding: 12px 14px;
+	}
+
+	.race-card-content h3 {
+		margin: 0 0 6px;
+		color: #8faabb;
+		font-size: 12px;
+		font-weight: 400;
+	}
+
+	.race-perks {
+		display: grid;
+		gap: 6px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.race-perks li {
+		position: relative;
+		padding-left: 12px;
+		color: #c1d7e3;
+		line-height: 1.5;
+	}
+
+	.race-perks li::before {
+		content: '';
+		position: absolute;
+		top: 9px;
+		left: 0;
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: var(--faction-color);
+	}
+
+	.race-ship {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin: 0 14px 14px;
+		padding: 9px;
+		border: 1px solid #355166;
+		border-radius: 5px;
+		background: #122634;
+		color: #bdd3e1;
+		transition: background-color .15s, border-color .15s;
+	}
+
+	.race-ship:hover {
+		background: #1a3546;
+		border-color: #60869b;
+	}
+
+	.race-ship > img {
+		width: 44px;
+		height: 44px;
+		flex-shrink: 0;
+		border-radius: 4px;
+		object-fit: cover;
+	}
+
+	.race-ship > div {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.race-ship-label {
+		display: block;
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.race-ship strong {
+		display: block;
+		color: var(--faction-color);
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.race-ship-description {
+		display: block;
+		color: #a1b8c8;
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	.race-ship > svg {
+		width: 17px;
+		height: 17px;
+		flex-shrink: 0;
+		color: #82adc3;
+	}
+
+	.race-change-panel {
+		margin-top: 10px;
+		overflow: hidden;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: #0e1b29;
+	}
+
+	.race-change-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+		padding: 9px 14px;
+		background: #142737;
+	}
+
+	.race-change-heading h2 {
+		margin: 0;
+		color: #d0e0eb;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.race-change-heading > span {
+		color: #d5bf8c;
+		font-size: 12px;
+	}
+
+	.race-change-content {
+		padding: 12px 14px;
+	}
+
+	.race-change-content p {
+		margin: 0 0 12px;
+		color: #a7bfce;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.6;
+	}
+
+	.race-change-form > label {
+		display: block;
+		margin-bottom: 5px;
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.race-change-controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.race-change-controls select {
+		min-width: 180px;
+		min-height: 32px;
+		max-width: 100%;
+		padding-block: 5px;
+		font-size: 14px;
+		text-align: left;
+	}
+
+	.race-change-controls .button {
+		min-height: 32px;
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+
+	.race-change-controls .button:disabled {
+		opacity: .45;
+		cursor: default;
+	}
+
+	.race-change-errors {
+		display: grid;
+		gap: 4px;
+		margin-top: 8px;
+		color: #dba29e;
+		font-size: 12px;
+	}
+
+	@media (max-width: 639px) {
+		.race-emblem {
+			width: 52px;
+			height: 52px;
+		}
+
+		.race-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.race-heading, .race-card-heading {
+			padding: 10px;
+		}
+
+		.race-card-content, .race-change-content {
+			padding: 10px;
+		}
+
+		.race-ship {
+			margin: 0 10px 10px;
+		}
+
+		.race-change-heading {
+			padding-inline: 10px;
+		}
+
+		.race-change-controls select {
+			flex: 1;
+			min-width: 140px;
+		}
+	}
+}

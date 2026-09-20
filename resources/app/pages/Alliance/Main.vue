@@ -1,104 +1,28 @@
 <template>
 	<Head :title="$t('pages.alliance.index.page_title')"/>
-	<div class="block">
-		<div class="title">
-			{{ $t('pages.alliance.index.title') }}
+	<div class="page-alliance page-alliance-overview">
+		<header class="alliance-hero">
+			<div class="alliance-emblem"><img v-if="page.image" :src="page.image" :alt="page.name"><AllianceIcon v-else aria-hidden="true"/></div>
+			<div class="alliance-identity"><span class="alliance-eyebrow">{{ $t('pages.alliance.index.page_title') }}</span><h1><span class="alliance-tag">[{{ page.tag }}]</span> {{ page.name }}</h1></div>
+		</header>
+		<div class="alliance-metrics">
+			<div><span>{{ $t('pages.alliance.index.members') }}</span><strong>{{ page.members }}</strong></div>
+			<div><span>{{ $t('pages.alliance.index.your_rank') }}</span><strong>{{ page.range }}</strong></div>
+			<div v-if="page.web"><span>{{ $t('pages.alliance.index.homepage') }}</span><a :href="page.web" target="_blank" rel="noopener noreferrer">{{ page.web }}</a></div>
 		</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div v-if="page['image']">
-					<div class="th">
-						<img :src="page['image']" class="max-w-full" alt="">
-					</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.abbreviation') }}</div>
-					<div class="th">{{ page['tag'] }}</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.name') }}</div>
-					<div class="th">{{ page['name'] }}</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.members') }}</div>
-					<div class="th">
-						{{ page['members'] }}
-						<template v-if="page['access']['memberlist']">
-							(<Link href="/alliance/members">{{ $t('pages.alliance.index.members_list') }}</Link>)
-						</template>
-					</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.your_rank') }}</div>
-					<div class="th">
-						{{ page['range'] }}
-						<template v-if="page['access']['admin']">
-							(<Link href="/alliance/admin">{{ $t('pages.alliance.index.alliance_management') }}</Link>)
-						</template>
-					</div>
-				</div>
-				<div v-if="page['diplomacy'] !== false" class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.diplomacy') }}</div>
-					<div class="th">
-						<Link href="/alliance/diplomacy">{{ $t('pages.alliance.index.view') }}</Link>
-						<template v-if="page['diplomacy'] > 0">
-							({{ page['diplomacy'] }} {{ $t('pages.alliance.index.new_requests') }})
-						</template>
-					</div>
-				</div>
-				<div v-if="page['requests'] > 0" class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.requests') }}</div>
-					<div class="th">
-						<Link href="/alliance/admin/requests">{{ page['requests'] }} {{ $t('pages.alliance.index.requests_count') }}</Link>
-					</div>
-				</div>
-				<div v-if="page['access']['chat']" class="grid grid-cols-2">
-					<div class="th">
-						{{ $t('pages.alliance.index.alliance_chat') }}
-						<template v-if="user.alliance?.messages > 0">
-							({{ user.alliance.messages }} {{ $t('pages.alliance.index.new') }})
-						</template>
-					</div>
-					<div class="th"><Link href="/alliance/chat">{{ $t('pages.alliance.index.enter_chat') }}</Link></div>
-				</div>
-				<div v-if="page['web']" class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.index.homepage') }}</div>
-					<div class="th"><a :href="page['web']" target="_blank">{{ page['web'] }}</a></div>
-				</div>
-				<div v-if="page['description']">
-					<div class="b p-1 h-60">
-						<TextViewer :text="page['description']"/>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div v-if="page['text']" class="block">
-		<div class="title">
-			{{ $t('pages.alliance.index.internal_competence') }}
-		</div>
-		<div class="content">
-			<div class="b p-1 min-h-32">
-				<TextViewer :text="page['text']"/>
-			</div>
-		</div>
-	</div>
-	<div v-if="!page['owner']" class="block">
-		<div class="title">
-			{{ $t('pages.alliance.index.leave_alliance') }}
-		</div>
-		<div class="content">
-			<div class="th text-center">
-				<button class="button" @click.prevent="exit">{{ $t('pages.alliance.index.continue') }}</button>
-			</div>
-		</div>
+		<UiTabNavigation :items="navigation" :label="$t('pages.alliance.index.page_title')"/>
+		<section v-if="page.description" class="alliance-panel"><h2>{{ $t('pages.alliance.ui.about') }}</h2><div class="alliance-prose"><TextViewer :text="page.description"/></div></section>
+		<section v-if="page.text" class="alliance-panel"><h2>{{ $t('pages.alliance.index.internal_competence') }}</h2><div class="alliance-prose"><TextViewer :text="page.text"/></div></section>
+		<div v-if="!page.owner" class="alliance-footer"><button type="button" class="button is-danger" @click="exit">{{ $t('pages.alliance.index.leave_alliance') }}</button></div>
 	</div>
 </template>
 
 <script setup>
+	import { UiTabNavigation } from '~/components/UI';
+	import AllianceIcon from '~/images/icons/alliance.svg?component';
 	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
-	import { Head, Link, useForm } from '@inertiajs/vue3';
+	import { Head, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -114,12 +38,19 @@
 		}
 	});
 
-	defineProps({
+	const props = defineProps({
 		page: Object,
 	})
 
 	const state = useState();
 	const user = computed(() => state.user);
+	const navigation = computed(() => [
+		{ id: 'members', href: '/alliance/members', label: t('pages.alliance.index.members'), visible: props.page.access.memberlist },
+		{ id: 'chat', href: '/alliance/chat', label: t('pages.alliance.chat.meta_title'), count: user.value.alliance?.messages > 0 ? user.value.alliance.messages : undefined, visible: props.page.access.chat },
+		{ id: 'diplomacy', href: '/alliance/diplomacy', label: t('pages.alliance.index.diplomacy'), count: props.page.diplomacy > 0 ? props.page.diplomacy : undefined, visible: props.page.diplomacy !== false },
+		{ id: 'requests', href: '/alliance/admin/requests', label: t('pages.alliance.index.requests'), count: props.page.requests, visible: props.page.requests > 0 },
+		{ id: 'admin', href: '/alliance/admin', label: t('pages.alliance.admin.main_heading'), visible: props.page.access.admin },
+	].filter(item => item.visible));
 
 	function exit () {
 		openConfirmModal(

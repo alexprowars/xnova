@@ -1,8 +1,8 @@
 <template>
-	<div class="flex flex-col gap-1 w-72">
+	<div class="galaxy-legend flex flex-col gap-1 w-72">
 		<div class="flex justify-between">
 			<div>{{ $t('pages.galaxy.legend.S') }}</div>
-			<div><span class="sdivong">S</span></div>
+			<div><span class="strong">S</span></div>
 		</div>
 		<div class="flex justify-between">
 			<div>{{ $t('pages.galaxy.legend.N') }}</div>
@@ -33,8 +33,8 @@
 			<div><span class="positive">GO</span></div>
 		</div>
 		<div class="flex justify-between">
-			<div><span class="neudival">{{ $t('pages.galaxy.legend.SGO') }}</span></div>
-			<div><span class="neudival">SGO</span></div>
+			<div><span class="neutral">{{ $t('pages.galaxy.legend.SGO') }}</span></div>
+			<div><span class="neutral">SGO</span></div>
 		</div>
 	</div>
 </template>

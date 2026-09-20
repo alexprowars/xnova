@@ -1,15 +1,22 @@
 :root {
-	--main-color: #37476a;
-	--head-bg-color: #253046;
-	--border-color: #415683;
-	--border-hover-color: #517db5;
-	--menu-bg-color: #2B354E;
-	--menu-bg-a-color: #6B354E;
-	--menu-border-color: #40567f;
-	--text-color: #e0e0e0;
-	--container-width: 1100px;
-	--menu-width: 150px;
-	--planets-width: 160px;
+	--main-color: #111e2d;
+	--head-bg-color: #0c1623;
+	--border-color: #273b50;
+	--border-hover-color: #66c8e5;
+	--menu-bg-color: #101d2b;
+	--menu-bg-a-color: #183747;
+	--menu-border-color: #273b50;
+	--text-color: #dce7f0;
+	--text-muted: #91a6ba;
+	--accent-color: #79d9ef;
+	--ui-heading-background: linear-gradient(110deg, #172e40, #0e1b29);
+	--ui-panel-background: #0e1b29;
+	--ui-panel-heading-background: #142737;
+	--ui-title-color: #e0edf5;
+	--ui-muted-color: #8faabb;
+	--container-width: 1320px;
+	--menu-width: 180px;
+	--planets-width: 180px;
 }
 
 @theme {}

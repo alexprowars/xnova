@@ -1,70 +1,43 @@
 <template>
 	<Head :title="$t('pages.alliance.diplomacy.page_title')"/>
-	<div>
-		<div v-if="page['DMyQuery'].length > 0" class="block">
-			<div class="title">{{ $t('pages.alliance.diplomacy.my_requests') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div v-for="item in page['DMyQuery']" class="grid grid-cols-3">
-						<div class="th">{{ item['name'] }}</div>
-						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
-						<div class="th">
-							<a href="" @click.prevent="reject(item['id'])"><img src="/assets/images/abort.gif" :alt="$t('pages.alliance.diplomacy.delete_request')"></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	<div class="page-alliance page-alliance-diplomacy">
+		<AllianceBack/>
+		<header class="alliance-heading"><h1>{{ $t('pages.alliance.diplomacy.page_title') }}</h1></header>
 
-		<div v-if="page['DQuery'].length > 0" class="block">
-			<div class="title">{{ $t('pages.alliance.diplomacy.requests_to_alliance') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div v-for="item in page['DQuery']" class="grid grid-cols-3">
-						<div class="th">{{ item['name'] }}</div>
-						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
-						<div class="th">
-							<a href="" @click.prevent="accept(item['id'])"><img src="/assets/images/appwiz.gif" :alt="$t('pages.alliance.diplomacy.confirm')"></a>
-							<a href="" @click.prevent="reject(item['id'])"><img src="/assets/images/abort.gif" :alt="$t('pages.alliance.diplomacy.delete_request')"></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<section v-if="page.DMyQuery.length" class="alliance-panel"><h2>{{ $t('pages.alliance.diplomacy.my_requests') }}<span class="alliance-count">{{ page.DMyQuery.length }}</span></h2>
+			<div v-for="item in page.DMyQuery" :key="item.id" class="alliance-relation"><strong>{{ item.name }}</strong><span class="alliance-relation-status" :class="'relation-' + item.type">{{ $t('alliance.diplomacy_status.' + item.type) }}</span><div class="alliance-relation-actions">
+				<button type="button" class="button is-danger icon-button" :disabled="relationForm.processing" @click="reject(item.id)" :title="$t('pages.alliance.diplomacy.delete_request')" :aria-label="$t('pages.alliance.diplomacy.delete_request') + ': ' + item.name"><TrashIcon aria-hidden="true"/></button>
+			</div></div>
+		</section>
 
-		<div class="block">
-			<div class="title">{{ $t('pages.alliance.diplomacy.alliance_relations') }}</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div v-for="item in page['DText']" class="grid grid-cols-3">
-						<div class="th">{{ item['name'] }}</div>
-						<div class="th">{{ $t('alliance.diplomacy_status.' + item['type']) }}</div>
-						<div class="th">
-							<a href="" @click.prevent="reject(item['id'])"><img src="/assets/images/abort.gif" :alt="$t('pages.alliance.diplomacy.delete_request')"></a>
-						</div>
-					</div>
-					<div v-if="page['DText'].length === 0">
-						<div class="th">{{ $t('pages.alliance.diplomacy.none') }}</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<section v-if="page.DQuery.length" class="alliance-panel"><h2>{{ $t('pages.alliance.diplomacy.requests_to_alliance') }}<span class="alliance-count">{{ page.DQuery.length }}</span></h2>
+			<div v-for="item in page.DQuery" :key="item.id" class="alliance-relation"><strong>{{ item.name }}</strong><span class="alliance-relation-status" :class="'relation-' + item.type">{{ $t('alliance.diplomacy_status.' + item.type) }}</span><div class="alliance-relation-actions">
+				<button type="button" class="button is-success" :disabled="relationForm.processing" @click="accept(item.id)">{{ $t('pages.alliance.diplomacy.confirm') }}</button>
+				<button type="button" class="button is-danger icon-button" :disabled="relationForm.processing" @click="reject(item.id)" :title="$t('pages.alliance.diplomacy.delete_request')" :aria-label="$t('pages.alliance.diplomacy.delete_request') + ': ' + item.name"><TrashIcon aria-hidden="true"/></button>
+			</div></div>
+		</section>
 
-		<DiplomacyCreate :items="page['items']"/>
-
-		<div class="mt-2">
-			<Link href="/alliance" class="button">{{ $t('pages.alliance.diplomacy.back') }}</Link>
-		</div>
+		<section  class="alliance-panel"><h2>{{ $t('pages.alliance.diplomacy.alliance_relations') }}<span class="alliance-count">{{ page.DText.length }}</span></h2>
+			<div v-for="item in page.DText" :key="item.id" class="alliance-relation"><strong>{{ item.name }}</strong><span class="alliance-relation-status" :class="'relation-' + item.type">{{ $t('alliance.diplomacy_status.' + item.type) }}</span><div class="alliance-relation-actions">
+				<button type="button" class="button is-danger icon-button" :disabled="relationForm.processing" @click="reject(item.id)" :title="$t('pages.alliance.diplomacy.delete_request')" :aria-label="$t('pages.alliance.diplomacy.delete_request') + ': ' + item.name"><TrashIcon aria-hidden="true"/></button>
+			</div></div>
+			<div v-if="!page.DText.length" class="alliance-empty">{{ $t('pages.alliance.ui.no_relations') }}</div>
+		</section>
+		<div v-for="(error, key) in relationForm.errors" :key="key" class="alliance-errors">{{ error }}</div>
+		<DiplomacyCreate :items="page.items"/>
 	</div>
 </template>
 
 <script setup>
+	import AllianceBack from '~/components/Page/Alliance/Back.vue';
+	import TrashIcon from '~/images/icons/trash.svg?component';
 	import DiplomacyCreate from '~/components/Page/Alliance/DiplomacyCreate.vue';
-	import { Head, Link, useForm } from '@inertiajs/vue3';
+	import { Head, useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
 
 	const { t } = useI18n();
+	const relationForm = useForm({ id: null });
 
 	defineOptions({
 		layout: {
@@ -79,7 +52,8 @@
 	})
 
 	function accept(id) {
-		useForm({ id }).post('/alliance/diplomacy/accept', {
+		relationForm.id = id;
+		relationForm.post('/alliance/diplomacy/accept', {
 			onSuccess() {
 				useSuccessNotification(t('pages.alliance.diplomacy.relation_confirmed'));
 			}
@@ -87,7 +61,8 @@
 	}
 
 	function reject(id) {
-		useForm({ id }).post('/alliance/diplomacy/reject', {
+		relationForm.id = id;
+		relationForm.post('/alliance/diplomacy/reject', {
 			onSuccess() {
 				useSuccessNotification(t('pages.alliance.diplomacy.relation_terminated'));
 			}

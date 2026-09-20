@@ -1,0 +1,460 @@
+.page-options {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	.options-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 8px 16px;
+		padding: 11px 14px;
+		margin-bottom: 10px;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: linear-gradient(110deg, #172e40, #0e1b29);
+	}
+
+	.options-heading h1 {
+		margin: 0;
+		width: auto;
+		text-align: left;
+		color: #e0edf5;
+		font-size: 16px;
+		line-height: 1.4;
+		font-weight: 600;
+	}
+
+	.options-heading > span {
+		color: #9eb8c9;
+		font-size: 12px;
+		overflow-wrap: anywhere;
+	}
+
+	.options-panel {
+		padding: 4px 14px 0;
+	}
+
+	.options-card {
+		padding: 4px 14px 0;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		background: #0e1b29;
+	}
+
+	.options-row {
+		display: grid;
+		grid-template-columns: minmax(170px, .9fr) minmax(0, 1.4fr);
+		align-items: center;
+		gap: 10px 24px;
+		padding: 12px 0;
+	}
+
+	.options-row + .options-row {
+		border-top: 1px solid #263b4d;
+	}
+
+	.options-label {
+		color: #bfd3e0;
+		font-size: 14px;
+		line-height: 1.45;
+	}
+
+	.options-hint {
+		display: block;
+		margin-top: 5px;
+		color: #8faabb;
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+
+	.options-control {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	.options-value {
+		color: #dbe9f1;
+		overflow-wrap: anywhere;
+		min-width: 0;
+	}
+
+	.options-inline {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+		min-width: 0;
+	}
+
+	.options-inline .button {
+		flex-shrink: 0;
+	}
+
+	.options-control-stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		width: 100%;
+		max-width: 400px;
+	}
+
+	.options-control input:not([type=checkbox]):not([type=hidden]), .options-control select {
+		width: 100%;
+		max-width: 400px;
+		min-width: 0;
+		min-height: 32px;
+		padding-block: 5px;
+		font-size: 14px;
+		background-color: #091623;
+		border-color: #355166;
+		border-radius: 4px;
+	}
+
+	.options-control input:not([type=checkbox]):not([type=hidden]) {
+		padding-inline: 9px;
+		text-align: left;
+	}
+
+	.options-control .options-number {
+		max-width: 110px !important;
+	}
+
+	.options-section-title {
+		margin: 0 -14px;
+		padding: 8px 14px;
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: #9eb8c9;
+		background: #142737;
+	}
+
+	.options-section-title:not(:first-child) {
+		margin-top: 2px;
+	}
+
+	.options-panel > .options-section-title:first-child {
+		margin-top: -4px;
+	}
+
+	.options-switch-row {
+		padding-block: 10px;
+	}
+
+	input.options-switch {
+		position: relative;
+		appearance: none;
+		flex-shrink: 0;
+		width: 34px;
+		height: 20px;
+		padding: 0;
+		margin: 0;
+		border: 1px solid #405568;
+		border-radius: 10px;
+		background: #1b2d3c;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s;
+	}
+
+	input.options-switch::after {
+		content: "";
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: #8298aa;
+		transition: transform .15s, background-color .15s;
+	}
+
+	input.options-switch:checked {
+		background: #214a4b;
+		border-color: #4b9388;
+	}
+
+	input.options-switch:checked::after {
+		transform: translateX(14px);
+		background: #a4dfc9;
+	}
+
+	input.options-switch:focus-visible {
+		border-color: #a4dfc9;
+	}
+
+	.options-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-top: 4px;
+		padding: 12px 0;
+		border-top: 1px solid #263b4d;
+	}
+
+	.options-actions .button {
+		min-height: 30px;
+		padding: 5px 12px;
+	}
+
+	.button:disabled {
+		opacity: .5;
+		cursor: default;
+	}
+
+	.options-avatar {
+		display: flex;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: 16px;
+		padding: 14px 0;
+	}
+
+	.options-avatar-current {
+		flex-shrink: 0;
+	}
+
+	.options-avatar-current img {
+		width: 88px;
+		height: 88px;
+		border: 1px solid #355166;
+		border-radius: 5px;
+		object-fit: cover;
+	}
+
+	.options-avatar-delete {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		margin-top: 7px;
+		color: #dba29e;
+		font-size: 12px;
+	}
+
+	.options-avatar-upload {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+		flex: 1 1 220px;
+		min-width: 0;
+		color: #bfd3e0;
+	}
+
+	.options-avatar-upload input[type=file] {
+		width: 100%;
+		max-width: 400px;
+		padding: 6px;
+		border: 1px dashed #405b70;
+		border-radius: 4px;
+		background: #102332;
+		font-size: 12px;
+	}
+
+	.options-avatar-upload input::file-selector-button {
+		padding: 4px 8px;
+		margin-right: 8px;
+		border: 1px solid #355166;
+		border-radius: 3px;
+		background: #1b3548;
+		color: #bedbe8;
+		cursor: pointer;
+	}
+
+	.options-avatar-upload .options-hint {
+		margin: 0;
+	}
+
+	.options-editor {
+		padding: 10px 0;
+	}
+
+	.options-editor textarea {
+		min-height: 200px;
+		font-size: 14px;
+	}
+
+	.options-notice {
+		margin-block: 10px;
+		padding: 12px;
+		border: 1px solid #355166;
+		border-radius: 5px;
+		background: #112535;
+	}
+
+	.options-notice-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.options-notice-heading h2 {
+		margin: 0;
+		color: #d2e3ee;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.options-notice .options-row {
+		padding: 0;
+	}
+
+	.options-notice .options-hint {
+		margin-top: 10px;
+	}
+
+	.options-notice-danger {
+		background: #2a20263d;
+		border-color: #63424a;
+	}
+
+	.options-notice-danger .options-label {
+		color: #dba29e;
+	}
+
+	.options-notice-danger input.options-switch:checked {
+		background: #61363e;
+		border-color: #a76a73;
+	}
+
+	.options-notice-danger input.options-switch:checked::after {
+		background: #e7b1b8;
+	}
+
+	.options-errors {
+		margin-block: 10px;
+		padding: 10px 12px;
+		border: 1px solid #704750;
+		border-radius: 4px;
+		background: #38212b;
+		color: #e0aaa8;
+		font-size: 13px;
+	}
+
+	.options-auth-wrap {
+		margin-inline: -14px;
+		overflow-x: auto;
+	}
+
+	.options-auth-table {
+		width: 100%;
+		min-width: 520px;
+		border-collapse: separate;
+		border-spacing: 0;
+	}
+
+	.options-auth-table th, .options-auth-table td {
+		padding: 9px 12px;
+		border: 0;
+		border-bottom: 1px solid #263b4d;
+		background: transparent;
+		text-align: left;
+		vertical-align: middle;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	.options-auth-table th {
+		color: #9eb8c9;
+		background: #142737;
+		font-size: 12px;
+	}
+
+	.options-auth-table tbody tr:last-child td {
+		border-bottom: 0;
+	}
+
+	.options-auth-table tbody tr:hover td {
+		background: #142b3b;
+	}
+
+	.options-auth-provider {
+		display: block;
+		color: #c5dce9;
+	}
+
+	.options-auth-table .options-hint {
+		margin: 2px 0 0;
+	}
+
+	.options-empty {
+		padding: 26px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.options-vacation-status {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 6px 14px;
+		margin: -4px -14px 0;
+		padding: 12px 14px;
+		background: #182e3c;
+	}
+
+	.options-vacation-status > span {
+		color: #a5bbca;
+		font-size: 12px;
+	}
+
+	.options-vacation-status time {
+		color: #dfc28b;
+	}
+
+	.options-back {
+		display: inline-block;
+		margin-bottom: 10px;
+		color: #a6c6d8;
+		font-size: 12px;
+	}
+
+	@media (max-width: 639px) {
+		.options-panel {
+			padding-inline: 10px;
+		}
+
+		.options-row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 7px;
+			padding-block: 10px;
+		}
+
+		.options-switch-row {
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: 12px;
+		}
+
+		.options-control input:not([type=checkbox]):not([type=hidden]), .options-control select, .options-control-stack {
+			max-width: none;
+		}
+
+		.options-section-title {
+			margin-inline: -10px;
+			padding-inline: 10px;
+		}
+
+		.options-notice {
+			padding: 10px;
+		}
+
+		.options-auth-wrap {
+			margin-inline: -10px;
+		}
+
+		.options-actions {
+			justify-content: center;
+		}
+	}
+}
+
+@layer base {
+	.page-options .options-control input.error {
+		border-color: #b77474 !important;
+	}
+}

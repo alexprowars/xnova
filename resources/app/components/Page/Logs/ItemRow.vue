@@ -1,14 +1,10 @@
 <template>
-	<div class="grid grid-cols-12">
-		<div class="col-span-1 th middle">{{ item['id'] }}</div>
-		<div class="col-span-7 th middle">{{ item['title'] }}</div>
-		<div class="col-span-2 th middle">
-			<a :href="'/logs/' + item['id']" target="_blank">{{ $t('pages.logs.item.open') }}</a>
-		</div>
-		<div class="col-span-2 th middle">
-			<a href="" class="button" @click.prevent="deleteItem">{{ $t('pages.logs.item.delete') }}</a>
-		</div>
-	</div>
+	<tr>
+		<td class="logs-number">{{ item.id }}</td>
+		<th scope="row" class="logs-name">{{ item.title }}</th>
+		<td class="logs-action-cell"><a :href="'/logs/' + item.id" target="_blank" rel="noopener" class="game-list-action logs-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6m0-6L10 14M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg>{{ $t('pages.logs.item.open') }}</a></td>
+		<td class="logs-action-cell"><button type="button" class="game-list-action logs-delete" @click="deleteItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5m4-5v5"/></svg>{{ $t('pages.logs.item.delete') }}</button></td>
+	</tr>
 </template>
 
 <script setup>

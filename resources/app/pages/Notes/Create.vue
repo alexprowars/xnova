@@ -1,50 +1,19 @@
 <template>
 	<Head :title="$t('pages.notes.create.page_title')"/>
-	<div>
-		<div class="block">
-			<div class="title">{{ $t('pages.notes.create.title') }}</div>
-			<div class="content">
-				<form method="post" class="block-table text-center" @submit.prevent="create">
-					<div class="grid grid-cols-2">
-						<div class="th middle">
-							<div>
-								{{ $t('pages.notes.create.priority') }}
-								<select v-model="form.priority">
-									<option value="2">{{ $t('pages.notes.create.priority_important') }}</option>
-									<option value="1">{{ $t('pages.notes.create.priority_normal') }}</option>
-									<option value="0">{{ $t('pages.notes.create.priority_unimportant') }}</option>
-								</select>
-							</div>
-						</div>
-						<div class="th middle">
-							<div>
-								{{ $t('pages.notes.create.subject') }} <input type="text" name="title" size="30" maxlength="30" v-model="form.title" :placeholder="$t('pages.notes.create.subject_placeholder')">
-							</div>
-						</div>
-					</div>
-					<div class="grid">
-						<div class="th">
-							<TextEditor v-model="form.message"/>
-						</div>
-					</div>
-					<div class="grid">
-						<div class="c">
-							<button class="button" @click.prevent="reset">{{ $t('pages.notes.create.reset') }}</button>
-							<button type="submit" class="button">{{ $t('pages.notes.create.save') }}</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-		<div class="mt-2">
-			<Link href="/notes" class="button min-w-0">{{ $t('pages.notes.create.back') }}</Link>
-		</div>
+	<div class="page-notes">
+		<UiBackLink href="/notes">{{ $t('pages.notes.back_to_list') }}</UiBackLink>
+		<UiHeading :title="$t('pages.notes.create.title')"/>
+		<UiPanel clip><form class="ui-form-body" method="post" @submit.prevent="create">
+			<NoteFields :form="form"/>
+			<div class="ui-actions"><UiButton variant="secondary" :disabled="form.processing" @click="reset">{{ $t('pages.notes.create.reset') }}</UiButton><UiButton type="submit" :disabled="form.processing">{{ $t('pages.notes.create.save') }}</UiButton></div>
+		</form></UiPanel>
 	</div>
 </template>
 
 <script setup>
-	import { Head, Link, useForm } from '@inertiajs/vue3';
-	import TextEditor from '~/components/TextEditor.vue';
+	import { UiBackLink, UiButton, UiHeading, UiPanel } from '~/components/UI';
+	import { Head, useForm } from '@inertiajs/vue3';
+	import NoteFields from '~/components/Page/Notes/Fields.vue';
 
 	defineOptions({
 		layout: {
@@ -65,6 +34,8 @@
 	}
 
 	function create() {
+		if (form.processing) return;
+
 		form.post('/notes/create');
 	}
 </script>

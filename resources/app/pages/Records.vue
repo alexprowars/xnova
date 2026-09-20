@@ -1,27 +1,26 @@
 <template>
 	<Head :title="$t('pages.records.page_title')"/>
-	<div class="block">
-		<div class="title">{{ $t('pages.records.heading') }}</div>
-		<div class="content">
-			<div class="block-table">
-				<div class="grid">
-					<div class="th text-center">
-						{{ $t('pages.records.updated_at', { time: $formatDate(page.update, 'DD MMM YYYY HH:mm:ss') }) }}
-					</div>
-				</div>
-				<template v-for="(list, group) in page.items">
-					<div class="grid grid-cols-12">
-						<div class="col-span-5 c">{{ group }}</div>
-						<div class="col-span-5 c text-center">{{ $t('pages.records.col_player') }}</div>
-						<div class="col-span-2 c text-center">{{ $t('pages.records.col_level') }}</div>
-					</div>
-					<div v-for="(info, building) in list" class="grid grid-cols-12">
-						<div class="col-span-5 th text-left">{{ building }}</div>
-						<div class="col-span-5 th text-center">{{ info['winner'] }}</div>
-						<div class="col-span-2 th text-center">{{ info['count'] }}</div>
-					</div>
-				</template>
-			</div>
+	<div class="block game-list page-records">
+		<div class="title game-list-heading">
+			<span>{{ $t('pages.records.heading') }}</span>
+			<span class="game-list-meta">{{ $t('pages.records.updated_at', { time: $formatDate(page.update, 'DD MMM YYYY HH:mm:ss') }) }}</span>
+		</div>
+		<div class="table-responsive game-list-scroll">
+			<table class="table game-list-table records-table">
+				<tbody v-for="(list, group) in page.items" :key="group">
+					<tr class="game-list-section">
+						<th scope="col">{{ group }}</th>
+						<th scope="col">{{ $t('pages.records.col_player') }}</th>
+						<th scope="col" class="game-list-number">{{ $t('pages.records.col_level') }}</th>
+					</tr>
+					<tr v-for="(info, building) in list" :key="building">
+						<th scope="row">{{ building }}</th>
+						<td class="records-winner" :class="{ 'is-empty': info.winner === '-' }">{{ info.winner }}</td>
+						<td class="game-list-number"><span class="records-value" :class="{ 'is-empty': info.count === '-' }">{{ info.count }}</span></td>
+					</tr>
+					<tr v-if="Object.keys(list).length === 0"><td colspan="3" class="game-list-empty">{{ $t('pages.records.empty_list') }}</td></tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </template>

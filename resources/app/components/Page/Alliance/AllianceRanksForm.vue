@@ -1,56 +1,17 @@
 <template>
-	<div class="block">
-		<div class="title">Установить ранги</div>
-		<div class="content">
-			<form ref="ranksRef" @submit.prevent="save" class="block-table text-center">
-				<div class="flex">
-					<div class="basis-1/6 th">Имя ранга</div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r1.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r2.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r3.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r4.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r5.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r6.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r7.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r8.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r9.png" width="16" alt=""></div>
-					<div class="basis-1/12 th"><img src="/assets/images/alliance/r10.gif" width="16" alt=""></div>
-				</div>
-				<div v-for="rank in items" class="flex">
-					<div class="basis-1/12 th">
-						<a href="" @click.prevent="remove(rank['id'])"><img src="/assets/images/abort.gif" alt="Удалить ранг"></a>
-					</div>
-					<div class="basis-1/12 th">{{ rank['name'] }}</div>
-					<div class="basis-1/12 th">
-						<input v-if="owner" type="checkbox" :name="'rights[' + rank['id'] + '][delete]'" v-model="rank['rights']['delete']">
-						<b v-else>{{ (rank['rights']['delete'] || false) ? '+' : '-' }}</b>
-					</div>
-					<div class="basis-1/12 th">
-						<input v-if="owner" type="checkbox" :name="'rights[' + rank['id'] + '][kick]'" v-model="rank['rights']['kick']">
-						<b v-else>{{ (rank['rights']['kick'] || false) ? '+' : '-' }}</b>
-					</div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][request]'" v-model="rank['rights']['request']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][memberlist]'" v-model="rank['rights']['memberlist']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][accept]'" v-model="rank['rights']['accept']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][admin]'" v-model="rank['rights']['admin']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][onlinestatus]'" v-model="rank['rights']['onlinestatus']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][chat]'" v-model="rank['rights']['chat']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][rights]'" v-model="rank['rights']['rights']"></div>
-					<div class="basis-1/12 th"><input type="checkbox" :name="'rights[' + rank['id'] + '][diplomacy]'" v-model="rank['rights']['diplomacy']"></div>
-				</div>
-				<div v-if="items.length > 0" class="grid">
-					<div class="c"><button type="submit" class="button">Сохранить</button></div>
-				</div>
-				<div v-if="items.length === 0" class="grid">
-					<div class="th">нет рангов</div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<form class="alliance-ranks" @submit.prevent="save">
+		<section v-for="rank in items" :key="rank.id" class="alliance-panel alliance-rank-card">
+			<header><h2>{{ rank.name }}</h2><button type="button" class="button is-danger icon-button" :disabled="form.processing" :title="$t('pages.alliance.ui.delete_rank')" :aria-label="$t('pages.alliance.ui.delete_rank') + ': ' + rank.name" @click="remove(rank.id)"><TrashIcon aria-hidden="true"/></button></header>
+			<div class="alliance-permissions"><label v-for="right in rights" :key="right" :class="{ 'is-readonly': !owner && ['delete', 'kick'].includes(right) }"><input type="checkbox" v-model="rank.rights[right]" :disabled="form.processing || (!owner && ['delete', 'kick'].includes(right))"><span>{{ $t('pages.alliance.ui.right_' + right) }}</span></label></div>
+		</section>
+		<div v-if="!items.length" class="alliance-panel alliance-empty">{{ $t('pages.alliance.ui.no_ranks') }}</div>
+		<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
+		<div v-if="items.length" class="alliance-actions"><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button></div>
+	</form>
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import TrashIcon from '~/images/icons/trash.svg?component';
 	import { useForm } from '@inertiajs/vue3';
 
 	const props = defineProps({
@@ -58,9 +19,12 @@
 		items: Array,
 	});
 
-	const ranksRef = ref();
+	const rights = ['delete', 'kick', 'request', 'memberlist', 'accept', 'admin', 'onlinestatus', 'chat', 'rights', 'diplomacy'];
+	const form = useForm({ rigths: {} });
 
 	function save() {
+		if (form.processing) return;
+
 		let data = {
 			rigths: {}
 		};
@@ -71,10 +35,11 @@
 			data.rigths[rank['id']] = Object.fromEntries(Object.entries(rank['rights']).filter(([key, value]) => value === true));
 		}
 
-		useForm(data).post('/alliance/admin/ranks');
+		form.rigths = data.rigths;
+		form.post('/alliance/admin/ranks');
 	}
 
 	function remove(id) {
-		useForm().delete('/alliance/admin/ranks/' + id);
+		form.delete('/alliance/admin/ranks/' + id);
 	}
 </script>

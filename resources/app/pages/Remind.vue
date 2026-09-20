@@ -1,36 +1,16 @@
 <template>
-	<div class="page-remind">
-		<Head title="Восстановление пароля"/>
-		<div class="block">
-			<div class="title">Восстановление пароля</div>
-			<div class="content">
-				<template v-for="error in form.errors">
-					<div v-html="error.message" :class="[error.type]" class="message"></div>
-				</template>
-				<form class="block-table form text-center" method="post" @submit.prevent="send">
-					<div class="grid">
-						<div class="th">
-							Введите ваш Email, который вы указали при регистрации.
-							При нажатии на кнопку "Получить пароль" на ваш e-mail будет выслана ссылка на новый пароль.
-						</div>
-					</div>
-					<div class="grid">
-						<div class="th">
-							Ваш Email: <input :class="{error: v$.email.$error}" type="email" name="email" v-model="form.email">
-						</div>
-					</div>
-					<div class="grid">
-						<div class="th">
-							<button type="submit" class="button">Выслать пароль</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+	<Head :title="$t('pages.auth.recovery')"/>
+	<div class="game-page page-auth page-remind"><UiPanel class="game-panel"><header class="auth-heading"><span class="game-eyebrow">XNova</span><h1>{{ $t('pages.auth.recovery') }}</h1><p>{{ $t('pages.auth.recovery_hint') }}</p></header>
+		<form class="game-form" @submit.prevent="send">
+			<label>{{ $t('pages.registration.email') }}<input type="email" name="email" autocomplete="email" :class="{error: v$.email.$error}" v-model="form.email"></label>
+			<div v-if="v$.email.$error" class="game-errors">{{ $t('pages.auth.valid_email') }}</div><div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error.message || error }}</div>
+			<div class="game-actions"><UiButton type="submit" :disabled="form.processing">{{ $t('pages.auth.send_link') }}</UiButton></div>
+		</form>
+	</UiPanel></div>
 </template>
 
 <script setup>
+	import { UiButton, UiPanel } from '~/components/UI';
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation } from '@vuelidate/validators'
 	import { Head, useForm } from '@inertiajs/vue3';
@@ -53,6 +33,8 @@
 	);
 
 	async function send () {
+		if (form.processing) return;
+
 		if (!await v$.value.$validate()) {
 			return
 		}

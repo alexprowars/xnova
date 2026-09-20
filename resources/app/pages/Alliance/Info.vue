@@ -1,46 +1,23 @@
 <template>
 	<Head :title="$t('pages.alliance.info.head_title', [page['name']])"/>
-	<div class="block">
-		<div class="title">
-			{{ $t('pages.alliance.info.page_heading') }}
+	<div class="page-alliance page-alliance-overview">
+		<AllianceBack/>
+		<header class="alliance-hero">
+			<div class="alliance-emblem"><img v-if="page.image" :src="page.image" :alt="page.name"><AllianceIcon v-else aria-hidden="true"/></div>
+			<div class="alliance-identity"><span class="alliance-eyebrow">{{ $t('pages.alliance.info.page_heading') }}</span><h1><span class="alliance-tag">[{{ page.tag }}]</span> {{ page.name }}</h1></div>
+		</header>
+		<div class="alliance-metrics">
+			<div><span>{{ $t('pages.alliance.info.label_members') }}</span><strong>{{ page.total_members }}</strong></div>
+			<div v-if="page.web"><span>{{ $t('pages.alliance.info.label_website') }}</span><a :href="page.web" target="_blank" rel="noopener noreferrer">{{ page.web }}</a></div>
 		</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div v-if="page['image']">
-					<div class="th"><img :src="page['image']" style="max-width:100%" alt=""></div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.info.label_tag') }}</div>
-					<div class="th">{{ page['tag'] }}</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.info.label_name') }}</div>
-					<div class="th">{{ page['name'] }}</div>
-				</div>
-				<div class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.info.label_members') }}</div>
-					<div class="th">{{ page['total_members'] }}</div>
-				</div>
-				<div v-if="page['description']">
-					<div class="b min-h-20 p-2 text-left">
-						<TextViewer :text="page['description']"/>
-					</div>
-				</div>
-				<div v-if="page['web']" class="grid grid-cols-2">
-					<div class="th">{{ $t('pages.alliance.info.label_website') }}</div>
-					<div class="th"><a :href="page['web']" target="_blank">{{ page['web'] }}</a></div>
-				</div>
-				<div v-if="page['request']">
-					<div class="th">
-						<Link :href="'/alliance/join/' + page['id']" class="button">{{ $t('pages.alliance.info.button_join') }}</Link>
-					</div>
-				</div>
-			</div>
-		</div>
+		<section v-if="page.description" class="alliance-panel"><h2>{{ $t('pages.alliance.ui.about') }}</h2><div class="alliance-prose"><TextViewer :text="page.description"/></div></section>
+		<div v-if="page.request" class="alliance-footer"><Link :href="'/alliance/join/' + page.id" class="button">{{ $t('pages.alliance.info.button_join') }}</Link></div>
 	</div>
 </template>
 
 <script setup>
+	import AllianceBack from '~/components/Page/Alliance/Back.vue';
+	import AllianceIcon from '~/images/icons/alliance.svg?component';
 	import TextViewer from '~/components/TextViewer.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 

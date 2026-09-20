@@ -1,30 +1,14 @@
 <template>
-	<Head title="Симуляция"/>
-	<div class="combar-report text-center">
-		<div v-html="page.report"></div>
-		Ссылка на результат симуляции
-		<div class="my-4 text-center">
-			<input type="text" :value="host + '/sim/report/' + page.uuid" class="w-125 p-4">
-		</div>
-		<div v-if="page.statistics" class="my-4">
-			<div class="mb-2">Результаты потерь после 50 симуляций:</div>
-			<div class="block-table text-center w-max mx-auto">
-				<div class="grid grid-cols-12">
-					<div class="col-span-4 th">№</div>
-					<div class="col-span-4 th">Потери атакующего</div>
-					<div class="col-span-4 th">Потери защитника</div>
-				</div>
-				<div v-for="(s, i) in page.statistics" class="grid grid-cols-12">
-					<div class="col-span-4 th">{{ (i + 1) }}</div>
-					<div class="col-span-4 th">{{ $formatNumber(s['att']) }}</div>
-					<div class="col-span-4 th">{{ $formatNumber(s['def']) }}</div>
-				</div>
-			</div>
-		</div>
+	<Head :title="$t('pages.sim.result')"/>
+	<div class="game-page page-sim-report"><UiHeading :title="$t('pages.sim.result')" class="game-heading"/>
+		<div class="page-battle-report" v-html="page.report"></div>
+		<UiPanel class="game-panel"><div class="game-form"><label>{{ $t('pages.sim.result_link') }}<input type="text" :value="host + '/sim/report/' + page.uuid" readonly @focus="$event.target.select()"></label></div></UiPanel>
+		<UiPanel :title="$t('pages.sim.losses_heading')" v-if="page.statistics" class="game-panel"><table class="game-table"><thead><tr><th>№</th><th>{{ $t('pages.sim.attacker_losses') }}</th><th>{{ $t('pages.sim.defender_losses') }}</th></tr></thead><tbody><tr v-for="(s, i) in page.statistics" :key="i"><td>{{ i + 1 }}</td><td>{{ $formatNumber(s.att) }}</td><td>{{ $formatNumber(s.def) }}</td></tr></tbody></table></UiPanel>
 	</div>
 </template>
 
 <script setup>
+	import { UiHeading, UiPanel } from '~/components/UI';
 	import { Head } from '@inertiajs/vue3';
 	import App from '~/App.vue';
 	import EmptyLayout from '~/layouts/EmptyLayout.vue';
@@ -38,5 +22,5 @@
 		page: Object,
 	})
 
-	const host = computed(() => import.meta.env.VITE_APP_URL || '');
+	const host = computed(() => (import.meta.env.VITE_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '')).replace(/\/$/, ''));
 </script>

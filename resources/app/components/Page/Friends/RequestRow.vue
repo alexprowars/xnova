@@ -1,35 +1,21 @@
 <template>
-	<div class="grid grid-cols-6">
-		<div class="th middle">
-			<Link :href="'/messages/write/' + item['user']['id']">{{ item['user']['name'] }}</Link>
-		</div>
-		<div class="th middle">
-			<Link v-if="item['user']['alliance']['id'] > 0" :href="'/alliance/info/' + item['user']['alliance']['id']">{{ item['user']['alliance']['name'] }}</Link>
-			<template v-else>-</template>
-		</div>
-		<div class="th middle">
-			<Link :href="'/galaxy?galaxy=' + item['user']['galaxy'] + '&system=' + item['user']['system']">
-				{{ item['user']['galaxy'] }}:{{ item['user']['system'] }}:{{ item['user']['planet'] }}
-			</Link>
-		</div>
-		<div class="col-span-2 th middle" v-html="item['message']"></div>
-		<div class="th text-center">
-			<button v-if="isMy" @click.prevent="remove" class="button text-danger">{{ $t('pages.friends.requests.remove_request') }}</button>
-			<template v-else>
-				<button @click.prevent="approve" class="button text-success">{{ $t('pages.friends.requests.approve') }}</button>
-				<button @click.prevent="remove" class="button text-danger">{{ $t('pages.friends.requests.reject') }}</button>
-			</template>
-		</div>
-	</div>
+	<article class="friend-request">
+		<div class="friend-request-heading"><div class="friend-request-identity"><SendMessagePopup :id="item.user.id" class="friend-name" :title="$t('pages.friends.write_message')">{{ item.user.name }}<SendIcon aria-hidden="true"/></SendMessagePopup><Link v-if="item.user.alliance.id > 0" :href="'/alliance/info/' + item.user.alliance.id" class="friend-alliance">{{ item.user.alliance.name }}</Link><Link :href="'/galaxy?galaxy=' + item.user.galaxy + '&system=' + item.user.system" class="friend-coordinates">[{{ item.user.galaxy }}:{{ item.user.system }}:{{ item.user.planet }}]</Link></div><div class="friend-request-actions"><UiButton variant="danger" v-if="isMy" :disabled="form.processing" @click="remove">{{ $t('pages.friends.requests.remove_request') }}</UiButton><template v-else><UiButton variant="success" :disabled="form.processing" @click="approve">{{ $t('pages.friends.requests.approve') }}</UiButton><UiButton variant="danger" :disabled="form.processing" @click="remove">{{ $t('pages.friends.requests.reject') }}</UiButton></template></div></div>
+		<div class="friend-request-message" v-html="item.message || '—'"/>
+	</article>
 </template>
 
 <script setup>
+	import { UiButton } from '~/components/UI';
+	import SendMessagePopup from '~/components/Page/Messages/SendMessagePopup.vue';
+	import SendIcon from '~/images/icons/send.svg?component';
 	import { Link, useForm } from '@inertiajs/vue3';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
 
 	const { t } = useI18n();
+	const form = useForm({});
 
 	const { item } = defineProps({
 		item: Object,
@@ -40,7 +26,9 @@
 	});
 
 	function approve () {
-		useForm().post('/friends/' + item['id'] + '/approve', {
+		if (form.processing) return;
+
+		form.post('/friends/' + item['id'] + '/approve', {
 			preserveUrl: true,
 		});
 	}
@@ -52,7 +40,7 @@
 			[{
 				title: t('pages.friends.requests.remove_request_confirm.yes'),
 				handler() {
-					useForm().delete('/friends/' + item['id'], {
+					form.delete('/friends/' + item['id'], {
 						preserveUrl: true,
 						preserveScroll: true,
 						onSuccess() {

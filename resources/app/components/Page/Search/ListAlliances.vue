@@ -1,30 +1,10 @@
 <template>
-	<table class="table">
-		<tbody>
-		<tr>
-			<td class="c">{{ $t('pages.search.column_abbreviation') }}</td>
-			<td class="c">{{ $t('pages.search.column_name') }}</td>
-			<td class="c">{{ $t('pages.search.column_members') }}</td>
-			<td class="c">{{ $t('pages.search.column_points') }}</td>
-		</tr>
-		<tr v-for="item in items">
-			<td class="th">
-				<Link :href="'/alliance/info/' + item['id']">
-					{{ item['tag'] }}
-				</Link>
-			</td>
-			<td class="th">{{ item['name'] }}</td>
-			<td class="th">{{ item['members'] }}</td>
-			<td class="th">{{ item['total_points'] }}</td>
-		</tr>
-		<tr v-if="items.length === 0">
-			<td class="th" colspan="6">{{ $t('pages.search.no_results') }}</td>
-		</tr>
-		</tbody>
-	</table>
+	<UiEmptyState v-if="!items.length" class="game-empty">{{ $t('pages.search.no_results') }}</UiEmptyState>
+	<div v-else class="game-table-wrap"><table class="game-table search-alliances"><thead><tr><th>{{ $t('pages.search.column_abbreviation') }}</th><th>{{ $t('pages.search.column_name') }}</th><th>{{ $t('pages.search.column_members') }}</th><th>{{ $t('pages.search.column_points') }}</th></tr></thead><tbody><tr v-for="item in items" :key="item.id"><td><Link :href="'/alliance/info/' + item.id" class="search-alliance-tag">[{{ item.tag }}]</Link></td><td><Link :href="'/alliance/info/' + item.id">{{ item.name }}</Link></td><td>{{ item.members }}</td><td>{{ item.total_points }}</td></tr></tbody></table></div>
 </template>
 
 <script setup>
+	import { UiEmptyState } from '~/components/UI';
 	import { Link } from '@inertiajs/vue3';
 
 	defineProps({

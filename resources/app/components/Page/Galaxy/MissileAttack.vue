@@ -1,5 +1,5 @@
 <template>
-	<form class="block-table text-center mb-1.5" action="" method="post" @submit.prevent="send">
+	<form class="block-table galaxy-missile text-center mb-1.5" action="" method="post" @submit.prevent="send">
 		<div class="grid">
 			<div class="c">
 				{{ $t('pages.missile_attack.title', [target.galaxy, target.system, target.planet]) }}

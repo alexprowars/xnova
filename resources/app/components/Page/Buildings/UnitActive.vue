@@ -2,15 +2,15 @@
 	<div class="buldings-active">
 		<div class="buldings-active-wrapper">
 			<div class="buldings-active-image">
-				<ModalLink navigate :href="'info/' + item['id']">
+				<ModalLink navigate :href="'/info/' + item['id']">
 					<img :src="'/assets/images/elements/' + item['id'] + '.webp'" :alt="item['name']">
 				</ModalLink>
 			</div>
 			<div class="buldings-active-content">
 				<div class="buldings-active-title">
-					<Link :href="'/info/' + item['id']">
+					<ModalLink navigate :href="'/info/' + item['id']" aria-haspopup="dialog">
 						{{ item['name'] }}
-					</Link>
+					</ModalLink>
 
 					<span :class="{ positive: level > 0, negative: level === 0 }">{{ $formatNumber(level) }}</span>
 				</div>
@@ -24,14 +24,14 @@
 				<template v-if="item['effects']">
 					<template v-for="(value, resource) in item['effects']">
 						<div v-if="value !== 0" class="buildings-effects-row">
-							<span :class="'sprite skin_s_'+resource" class="icon" :title="$t('resources.'+resource)"></span>
+							<component :is="resourceIcons[resource]" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
 							<span :class="{ positive: value > 0, negative: value < 0 }">{{ Math.abs(value) }}</span>
 						</div>
 					</template>
 				</template>
 
 				<div v-if="available" class="buldings-active-price">
-					<span>Required resources</span>
+					<span>{{ $t('pages.building.required_resources') }}</span>
 					<BuildRowPrice :price="item['price']"/>
 				</div>
 
@@ -41,7 +41,7 @@
 					</div>
 					<div v-else-if="max > 0" class="buildmax">
 						<a @click.prevent="setMax">
-							max: <span class="positive">{{ $formatNumber(max) }}</span>
+							{{ $t('pages.building.maximum') }}: <span class="positive">{{ $formatNumber(max) }}</span>
 						</a>
 						<input type="number" min="0" :max="max" :name="'element[' + item['id'] + ']'" :alt="item['name']" v-model="count" style="width: 80px" maxlength="5" placeholder="0">
 					</div>
@@ -70,13 +70,23 @@
 </template>
 
 <script setup>
+	import MetalIcon from '~/images/icons/resources/metal.svg?component';
+	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
+	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
+	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed, ref } from 'vue';
 	import CloseIcon from '~/images/icons/close.svg?component';
-	import { Link } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { ModalLink } from '@inertiaui/modal-vue';
+
+	const resourceIcons = {
+		metal: MetalIcon,
+		crystal: CrystalIcon,
+		deuterium: DeuteriumIcon,
+		energy: EnergyIcon,
+	};
 
 	const props = defineProps({
 		item: {

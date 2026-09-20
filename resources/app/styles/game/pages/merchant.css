@@ -1,0 +1,272 @@
+.page-merchant {
+	container: merchant / inline-size;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	> .content {
+		padding: 14px;
+	}
+
+	.merchant-intro {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 20px;
+	}
+
+	.merchant-symbol {
+		display: grid;
+		place-items: center;
+		flex-shrink: 0;
+		width: 44px;
+		height: 44px;
+		border: 1px solid #355166;
+		border-radius: 7px;
+		background: #183343;
+		color: var(--accent-color);
+
+		svg {
+			width: 25px;
+			height: 25px;
+		}
+	}
+
+	.merchant-description {
+		line-height: 1.5;
+	}
+
+	.merchant-fee {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 5px;
+		color: #d9bb83;
+		font-size: 12px;
+
+		svg {
+			width: 15px;
+			height: 15px;
+			flex-shrink: 0;
+		}
+	}
+
+	.merchant-selection {
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+
+		legend {
+			margin-bottom: 8px;
+			color: var(--text-muted);
+			font-size: 14px;
+		}
+	}
+
+	.merchant-options {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	.merchant-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 9px;
+		min-height: 64px;
+		padding: 10px;
+		border: 1px solid #30485c;
+		border-radius: 6px;
+		background: #122534;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s;
+
+		input {
+			width: 13px;
+			height: 13px;
+			flex-shrink: 0;
+			margin: 0;
+		}
+
+		svg {
+			width: 26px;
+			height: 26px;
+			flex-shrink: 0;
+		}
+
+		&:hover {
+			background-color: #1b3545;
+			border-color: #528299;
+		}
+
+		&.is-selected {
+			background-color: #1a3c4c;
+			border-color: #70b5c8;
+		}
+	}
+
+	.metal > svg {
+		color: #b4c6d5;
+	}
+
+	.crystal > svg {
+		color: #8bbedd;
+	}
+
+	.deuterium > svg {
+		color: #8bc8af;
+	}
+
+	.merchant-rate-note {
+		margin-top: 8px;
+		color: var(--text-muted);
+		font-size: 12px;
+		text-align: right;
+	}
+
+	.merchant-exchange {
+		margin-top: 16px;
+		padding-top: 14px;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.merchant-exchange-heading {
+		margin-bottom: 10px;
+		font-weight: 500;
+	}
+
+	.merchant-table {
+		overflow: hidden;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+	}
+
+	.merchant-table-heading, .merchant-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 100px minmax(160px, 1fr);
+		align-items: center;
+		gap: 14px;
+		padding: 10px 12px;
+	}
+
+	.merchant-table-heading {
+		padding-block: 7px;
+		background: #142737;
+		color: var(--text-muted);
+		font-size: 12px;
+		text-align: center;
+	}
+
+	.merchant-row {
+		border-top: 1px solid #263b4d;
+		background: #0e1b29;
+
+		&.is-source {
+			background: #132d3b;
+		}
+	}
+
+	.merchant-resource {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		min-width: 0;
+
+		svg {
+			width: 22px;
+			height: 22px;
+			flex-shrink: 0;
+		}
+
+		small {
+			display: block;
+			margin-top: 2px;
+			font-size: 12px;
+			color: var(--text-muted);
+		}
+	}
+
+	.merchant-rate {
+		color: #a8c2d3;
+		text-align: center;
+		overflow-wrap: anywhere;
+	}
+
+	.merchant-quantity {
+		min-width: 0;
+		text-align: center;
+
+		input {
+			width: 100%;
+			min-width: 0;
+			height: 34px;
+			font-size: 14px;
+		}
+
+		output {
+			font-size: 16px;
+			font-weight: 600;
+			color: #aedbe7;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	.merchant-actions {
+		display: flex;
+		justify-content: center;
+		margin-top: 12px;
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			min-height: 34px;
+			font-size: 14px;
+		}
+
+		svg {
+			width: 17px;
+			height: 17px;
+		}
+	}
+}
+
+@container merchant (max-width: 540px) {
+	.page-merchant .merchant-option {
+		position: relative;
+		flex-direction: column;
+		gap: 6px;
+		padding: 12px 4px 8px;
+
+		input {
+			position: absolute;
+			top: 7px;
+			left: 7px;
+		}
+	}
+
+	.page-merchant .merchant-options {
+		gap: 6px;
+	}
+
+	.page-merchant .merchant-table-heading, .page-merchant .merchant-row {
+		grid-template-columns: minmax(0, 1fr) 40px minmax(100px, 1fr);
+		gap: 6px;
+		padding-inline: 8px;
+	}
+
+	.page-merchant .merchant-resource {
+		gap: 5px;
+
+		svg {
+			width: 17px;
+			height: 17px;
+		}
+	}
+
+	.page-merchant .merchant-quantity input {
+		padding-inline: 4px;
+	}
+}

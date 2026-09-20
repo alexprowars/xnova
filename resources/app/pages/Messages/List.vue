@@ -1,49 +1,32 @@
 <template>
 	<Head :title="$t('pages.messages.index.page_title')"/>
-	<form class="block" method="post" @submit.prevent>
-		<div class="title">
-			{{ $t('pages.messages.index.title') }}
-			<select name="category" v-model="category">
-				<option v-for="type in Object.keys($tm('message_types'))" :value="type">{{ $t('message_types.' + type) }}</option>
-			</select>
-			{{ $t('pages.messages.index.per') }}
-			<select name="limit" v-model="limit">
-				<option v-for="i in limitItems" :value="i">{{ i }}</option>
-			</select>
-			{{ $t('pages.messages.index.per_page') }}
-			<div v-if="canDelete && deleteItems.length > 0" class="inline-block">
-				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
+	<section class="page-messages">
+		<header class="messages-heading">
+			<h1><MessageIcon name="mail"/>{{ $t('pages.messages.index.title') }}<span class="messages-total">{{ page.pagination.total }}</span></h1>
+			<div class="messages-filters">
+				<label><span>{{ $t('pages.messages.index.category') }}</span><select name="category" v-model="category">
+					<option v-for="type in Object.keys($tm('message_types'))" :key="type" :value="type">{{ $t('message_types.' + type) }}</option>
+				</select></label>
+				<label><span>{{ $t('pages.messages.index.per_page') }}</span><select name="limit" v-model="limit">
+					<option v-for="i in limitItems" :key="i" :value="i">{{ i }}</option>
+				</select></label>
 			</div>
+		</header>
+		<div v-if="messages.length && canDelete" class="messages-selection">
+			<label><input type="checkbox" v-model="checkAll" :indeterminate="deleteItems.length > 0 && !checkAll">{{ $t('pages.messages.index.select_all') }}</label>
+			<span v-if="deleteItems.length" class="messages-selected">{{ $t('pages.messages.index.selected', { count: deleteItems.length }) }}</span>
+			<button type="button" class="button messages-delete" :disabled="!deleteItems.length" @click="deleteMessages"><MessageIcon name="trash"/>{{ $t('pages.messages.index.delete_selected') }}</button>
 		</div>
-		<div class="content">
-			<div class="block-table">
-				<div v-if="messages.length" class="grid grid-cols-12 text-center">
-					<div class="col-span-1 th">
-						<input v-if="canDelete" type="checkbox" class="checkAll" v-model="checkAll">
-					</div>
-					<div class="col-span-3 th">{{ $t('pages.messages.index.date') }}</div>
-					<div class="col-span-6 th">{{ $t('pages.messages.index.from') }}</div>
-					<div class="col-span-2 th"></div>
-				</div>
-
-				<MessagesRow v-for="item in messages" :key="item['id']" :item="item" :can-delete="canDelete" v-model:delete="deleteItems"/>
-
-				<div v-if="page.pagination['total'] === 0" class="grid text-center">
-					<div class="th">{{ $t('pages.messages.index.no_messages') }}</div>
-				</div>
-			</div>
-
-			<div v-if="page.pagination['total'] > page.pagination['limit']" class="float-start">
-				<Pagination :options="page.pagination"/>
-			</div>
-			<div v-if="canDelete && deleteItems.length > 0" class="float-end" style="padding: 5px">
-				<button type="button" class="button" @click.prevent="deleteMessages">{{ $t('pages.messages.index.delete_selected') }}</button>
-			</div>
+		<div class="messages-list">
+			<MessagesRow v-for="item in messages" :key="item.id" :item="item" :can-delete="canDelete" v-model:delete="deleteItems"/>
 		</div>
-	</form>
+		<div v-if="!messages.length" class="messages-empty"><MessageIcon name="mail"/><span>{{ $t('pages.messages.index.no_messages') }}</span></div>
+		<div v-if="page.pagination.total > page.pagination.limit" class="messages-pagination"><Pagination :options="page.pagination"/></div>
+	</section>
 </template>
 
 <script setup>
+	import MessageIcon from '~/components/Page/Messages/MessageIcon.vue';
 	import MessagesRow from '~/components/Page/Messages/Row.vue';
 	import { computed, ref, watch } from 'vue';
 	import { Head, router, useForm, usePage } from '@inertiajs/vue3';
@@ -65,25 +48,18 @@
 	const limit = ref(props.page.limit);
 	const canDelete = computed(() => props.page.category !== 101);
 
-	const checkAll = ref(false);
 	const limitItems = ref([5, 10, 25, 50, 100, 200]);
 
-	watch(checkAll, (value) => {
-		deleteItems.value = [];
-
-		if (value && canDelete.value) {
-			messages.value.forEach((item) => {
-				deleteItems.value.push(item['id']);
-			});
-		}
+	const messages = computed(() => props.page.items || []);
+	const deleteItems = ref([]);
+	const checkAll = computed({
+		get: () => messages.value.length > 0 && messages.value.every(item => deleteItems.value.includes(item.id)),
+		set: value => { deleteItems.value = value && canDelete.value ? messages.value.map(item => item.id) : []; },
 	});
 
-	const messages = computed(() => props.page.items || []);
-
-	const deleteItems = ref([]);
+	watch(messages, () => { deleteItems.value = []; });
 
 	watch([category, limit], () => {
-		checkAll.value = false;
 		deleteItems.value = [];
 		router.get(usePage().url, { category: category.value, limit: limit.value });
 	});

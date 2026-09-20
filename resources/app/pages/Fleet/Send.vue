@@ -1,5 +1,5 @@
 <template>
-	<div class="block-table text-center">
+	<div class="fleet-page page-fleet-send"><div class="block-table text-center fleet-send-summary">
 		<div class="grid">
 			<div class="c"><span class="success">{{ $t('pages.fleets.send.sended') }}</span></div>
 		</div>
@@ -43,13 +43,14 @@
 			<div class="th">{{ $t('pages.fleets.send.arrival_home') }}</div>
 			<div class="th">{{ $formatDate(page['end_date'], 'DD MMM HH:mm:ss') }}</div>
 		</div>
-		<div v-if="['units'].length" class="grid">
+		<div v-if="Object.keys(page.units).length" class="grid">
 			<div class="c">{{ $t('pages.fleets.send.ships') }}</div>
 		</div>
 		<div v-for="(count, unit) in page['units']" class="grid grid-cols-2">
 			<div class="th">{{ $t('tech.' + unit) }}</div>
 			<div class="th">{{ $formatNumber(count) }}</div>
 		</div>
+	</div>
 	</div>
 </template>
 

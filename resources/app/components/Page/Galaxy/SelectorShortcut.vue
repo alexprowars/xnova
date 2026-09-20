@@ -1,6 +1,6 @@
 <template>
-	<div class="block-table w-full mx-auto max-w-50 c">
-		<select v-model="value" style="width:100%">
+	<div class="galaxy-shortcuts">
+		<select id="galaxy-shortcut" v-model="value">
 			<option :value="null">{{ $t('pages.galaxy.selector.select') }}</option>
 			<option v-for="item in items" :value="item">
 				{{ item.name }} [{{ item.galaxy }}:{{ item.system }}:{{ item.planet }}]

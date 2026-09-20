@@ -1,34 +1,41 @@
 <template>
 	<Head :title="$t('pages.index.meta_title')"/>
 	<div class="page-index">
+		<div class="landing-header">
+			<Link href="/" class="game-brand" aria-label="XNova"><span class="game-brand-mark" aria-hidden="true">X</span><span>NOVA</span></Link>
+			<span class="eyebrow">{{ $t('interface.sector') }}</span>
+		</div>
+		<div class="right">
+			<div class="middle">
+				<div class="text">
+					<span class="eyebrow">{{ $t('interface.sector') }}</span>
+					<h1>{{ $t('interface.headline') }}</h1>
+
+					<p>{{ $t('interface.intro') }}</p>
+					<div class="landing-features"><span>{{ $t('menu.buildings') }}</span><span>{{ $t('menu.fleet') }}</span><span>{{ $t('menu.alliance') }}</span></div>
+
+					<button type="button" id="reg_button" @click="showRegistration">{{ $t('interface.start') }} <span aria-hidden="true">↗</span></button>
+				</div>
+			</div>
+		</div>
 		<div class="left">
 			<div class="middle">
 				<div class="loginform">
-					<div class="login">{{ $t('pages.index.login_heading') }}</div>
+					<span class="eyebrow">{{ $t('pages.index.meta_title') }}</span>
+					<h2 class="login">{{ $t('interface.welcome') }}</h2>
+					<p class="login-hint">{{ $t('interface.login_hint') }}</p>
 
 					<div class="login-inputs">
 						<AuthForm/>
 					</div>
 					<div class="lost-pass">
-						<a @click.prevent="showRemindPassword" :title="$t('pages.index.remind_password_title')">{{ $t('pages.index.forgot_password') }}</a>
+						<button type="button" @click="showRemindPassword" :title="$t('pages.index.remind_password_title')">{{ $t('pages.index.forgot_password') }}</button>
 					</div>
 					<div class="sm">
-						{{ $t('pages.index.social_login_label') }}<br><br>
+						{{ $t('pages.index.social_login_label') }}
 
 						<a href="" @click.prevent="socialLogin('vkid')">Vkontakte</a>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="right">
-			<div class="middle">
-				<div class="text">
-					<h1>{{ $t('pages.index.intro_heading') }}</h1>
-
-					<p>{{ $t('pages.index.intro_paragraph_1') }}</p>
-					<p>{{ $t('pages.index.intro_paragraph_2') }}</p>
-
-					<div id="reg_button" @click.prevent="showRegistration"><a>{{ $t('pages.index.registration_cta') }}</a></div>
 				</div>
 			</div>
 		</div>

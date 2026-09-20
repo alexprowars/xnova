@@ -1,34 +1,31 @@
 <template>
 	<Head :title="$t('pages.fleets.shortcut.edit.meta_title')"/>
-	<div class="block">
+	<div class="fleet-page page-fleet-shortcut-form"><div class="block">
 		<div class="title">{{ page['name'] }} [{{ page['galaxy'] }}:{{ page['system'] }}:{{ page['planet'] }}]</div>
 		<div class="content">
-			<form method="post" class="block-table" @submit.prevent="update">
-				<div class="grid">
-					<div class="th">
-						<input type="text" name="title" v-model="form.name" size="32" maxlength="32" :title="$t('pages.fleets.shortcut.form.title_name')">
-						<input type="text" name="galaxy" v-model.number="form.galaxy" size="3" maxlength="2" :title="$t('pages.fleets.shortcut.form.title_galaxy')">
-						<input type="text" name="system" v-model.number="form.system" size="3" maxlength="3" :title="$t('pages.fleets.shortcut.form.title_system')">
-						<input type="text" name="planet" v-model.number="form.planet" size="3" maxlength="2" :title="$t('pages.fleets.shortcut.form.title_planet')">
-						<select name="planet_type" v-model.number="form.planet_type">
-							<option v-for="index in Object.keys($tm('planet_type'))" :value="index">{{ $t('planet_type.' + index) }}</option>
-						</select>
-					</div>
+			<form method="post" class="fleet-shortcut-form" @submit.prevent="update">
+				<div class="fleet-shortcut-fields">
+					<label class="fleet-field fleet-shortcut-name"><span>{{ $t('pages.fleets.shortcut.form.title_name') }}</span><input type="text" name="title" v-model="form.name" maxlength="32"></label>
+					<label class="fleet-field fleet-shortcut-galaxy"><span>{{ $t('pages.fleets.shortcut.form.title_galaxy') }}</span><input type="text" name="galaxy" v-model.number="form.galaxy" maxlength="2" inputmode="numeric"></label>
+					<label class="fleet-field fleet-shortcut-system"><span>{{ $t('pages.fleets.shortcut.form.title_system') }}</span><input type="text" name="system" v-model.number="form.system" maxlength="3" inputmode="numeric"></label>
+					<label class="fleet-field fleet-shortcut-planet"><span>{{ $t('pages.fleets.shortcut.form.title_planet') }}</span><input type="text" name="planet" v-model.number="form.planet" maxlength="2" inputmode="numeric"></label>
+					<label class="fleet-field fleet-shortcut-type"><span>{{ $t('pages.fleets.checkout.target_type') }}</span><select name="planet_type" v-model.number="form.planet_type"><option v-for="index in Object.keys($tm('planet_type'))" :key="index" :value="index">{{ $t('planet_type.' + index) }}</option></select></label>
 				</div>
 				<div class="grid">
-					<div class="th">
+					<div class="fleet-actions">
 						<button type="reset" class="button">{{ $t('pages.fleets.shortcut.form.clear') }}</button>
 						<button type="submit" class="button">{{ $t('pages.fleets.shortcut.edit.update') }}</button>
-						<button type="button" class="button" @click.prevent="remove">{{ $t('pages.fleets.shortcut.edit.delete') }}</button>
+						<button type="button" class="button fleet-button-danger" @click.prevent="remove">{{ $t('pages.fleets.shortcut.edit.delete') }}</button>
 					</div>
 				</div>
 				<div class="grid">
-					<div class="c">
+					<div class="fleet-actions">
 						<Link href="/fleet/shortcut">{{ $t('pages.fleets.shortcut.form.back') }}</Link>
 					</div>
 				</div>
 			</form>
 		</div>
+	</div>
 	</div>
 </template>
 

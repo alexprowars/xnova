@@ -1,45 +1,16 @@
 <template>
-	<Head title="Восстановление пароля"/>
-	<div class="flex justify-center">
-		<div class="block w-full max-w-3xl">
-			<div class="title">Изменение пароля</div>
-			<div class="content">
-				<form class="block-table text-center" method="post" action="" @submit.prevent="send">
-					<div v-if="form.errors" class="grid">
-						<template v-for="error in form.errors">
-							<div v-html="error" class="th error message"></div>
-						</template>
-					</div>
-					<div class="grid grid-cols-4">
-						<div class="th">Email</div>
-						<div class="th col-span-3">
-							{{ email }}
-						</div>
-					</div>
-					<div class="grid grid-cols-4">
-						<div class="th middle">Новый пароль</div>
-						<div class="th col-span-3">
-							<input :class="{error: v$.password.$error}" id="auth_password" name="password" type="password" autocomplete="new-password" class="input-text" v-model="form.password">
-						</div>
-					</div>
-					<div class="grid grid-cols-4">
-						<div class="th middle">Подтверждение пароля</div>
-						<div class="th col-span-3">
-							<input :class="{error: v$.password_confirmation.$error}" id="auth_password2" name="password_confirmation" type="password" autocomplete="new-password" class="input-text" v-model="form.password_confirmation">
-						</div>
-					</div>
-					<div class="grid">
-						<div class="th">
-							<button type="submit" class="button">Изменить</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+	<Head :title="$t('pages.auth.recovery')"/>
+	<div class="game-page page-auth"><UiPanel class="game-panel"><header class="auth-heading"><span class="game-eyebrow">XNova</span><h1>{{ $t('pages.auth.new_password') }}</h1><p>{{ email }}</p></header><form class="game-form" @submit.prevent="send">
+		<input type="hidden" name="email" autocomplete="username" :value="email">
+		<label>{{ $t('pages.auth.new_password') }}<input name="password" type="password" autocomplete="new-password" :class="{error: v$.password.$error}" v-model="form.password"></label>
+		<label>{{ $t('pages.registration.password_confirm') }}<input name="password_confirmation" type="password" autocomplete="new-password" :class="{error: v$.password_confirmation.$error}" v-model="form.password_confirmation"></label>
+		<div v-if="v$.$error" class="game-errors">{{ $t('pages.auth.password_match') }}</div><div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error }}</div>
+		<div class="game-actions"><UiButton type="submit" :disabled="form.processing">{{ $t('pages.auth.change_password') }}</UiButton></div>
+	</form></UiPanel></div>
 </template>
 
 <script setup>
+	import { UiButton, UiPanel } from '~/components/UI';
 	import { required, sameAs } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import { computed } from 'vue';
@@ -79,6 +50,8 @@
 	);
 
 	async function send () {
+		if (form.processing) return;
+
 		if (!await v$.value.$validate()) {
 			return;
 		}

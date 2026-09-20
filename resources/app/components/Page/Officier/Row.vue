@@ -1,43 +1,26 @@
 <template>
-	<div class="officiers-item">
-		<div class="officiers-item-title">
-			{{ item['name'] }}
-			<span v-if="date" class="positive">({{ $t('pages.overview.officier_active_until') }}: {{ $formatDate(date, 'DD MMM YYYY HH:mm:ss') }})</span>
-			<span v-else class="negative">({{ $t('pages.overview.officier_noactive') }})</span>
+	<article class="officiers-item" :class="{ 'is-active': date, 'is-vacation': user.vacation }">
+		<div class="officiers-item-header">
+			<h2>{{ item.name }}</h2>
+			<span v-if="date" class="officiers-status is-active"><span class="officiers-status-dot" aria-hidden="true"></span>{{ $t('pages.overview.officier_active_until') }}: {{ $formatDate(date, 'DD MMM YYYY HH:mm:ss') }}</span>
+			<span v-else class="officiers-status">{{ $t('pages.overview.officier_noactive') }}</span>
 		</div>
-		<div class="flex flex-wrap sm:flex-nowrap gap-y-2 sm:gap-x-2">
-			<div class="basis-1/2 sm:basis-1/6 grow order-1 sm:order-0 officiers-item-image">
-				<img :src="'/assets/images/officiers/' + item['code'] + '.jpg'" align="top" alt="">
+		<div class="officiers-item-body">
+			<div class="officiers-item-image"><img :src="'/assets/images/officiers/' + item.code + '.jpg'" :alt="item.name" width="112" height="112" loading="lazy"></div>
+			<div class="officiers-item-description">
+				<div class="officiers-biography" v-html="item.description"></div>
+				<ul class="officiers-powers">
+					<li v-for="power in item.power" :key="power"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>{{ power }}</span></li>
+				</ul>
 			</div>
-			<div class="basis-full sm:basis-4/6 grow text-left officiers-item-description">
-				<div v-html="item['description']"></div>
-				<div class="flex my-4 gap-2">
-					<div>
-						<img :src="'/assets/images/officiers/' + item['code'] + '.gif'" :alt="item['name']">
-					</div>
-					<div class="flex flex-col justify-center gap-1">
-						<div v-for="power in item['power']" class="text-sky-300">{{ power }}</div>
-					</div>
-				</div>
-			</div>
-			<div v-if="!user.vacation" class="basis-1/2 sm:basis-1/6 order-2 text-center officiers-item-action flex items-center justify-center">
-				<div class="flex flex-col gap-2">
-					<div>
-						<button class="button" @click.prevent="submit(7, 20)">{{ $t('pages.officiers.cost_week') }}</button>
-						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">20</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
-					</div>
-					<div>
-						<button class="button" @click.prevent="submit(14, 40)">{{ $t('pages.officiers.cost_weeks') }}</button>
-						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">40</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
-					</div>
-					<div>
-						<button class="button" @click.prevent="submit(30, 80)">{{ $t('pages.officiers.cost_month') }}</button>
-						<br>{{ $t('pages.officiers.cost') }}:&nbsp;<span class="positive">80</span>&nbsp;{{ $t('pages.officiers.cost_credits') }}
-					</div>
-				</div>
+			<div v-if="!user.vacation" class="officiers-item-action">
+				<button v-for="contract in contracts" :key="contract.duration" type="button" class="button officiers-contract" @click="submit(contract.duration, contract.price)">
+					<span>{{ $t('pages.officiers.' + contract.label) }}</span>
+					<span class="officiers-contract-price">{{ contract.price }} <span>{{ $t('pages.officiers.cost_credits') }}</span></span>
+				</button>
 			</div>
 		</div>
-	</div>
+	</article>
 </template>
 
 <script setup>
@@ -49,6 +32,12 @@
 	const props = defineProps({
 		item: Object,
 	});
+
+	const contracts = [
+		{ duration: 7, price: 20, label: 'cost_week' },
+		{ duration: 14, price: 40, label: 'cost_weeks' },
+		{ duration: 30, price: 80, label: 'cost_month' },
+	];
 
 	const state = useState();
 	const user = computed(() => state.user);

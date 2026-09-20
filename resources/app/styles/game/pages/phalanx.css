@@ -1,0 +1,59 @@
+.page-phalanx {
+	.phalanx-flight {
+		display: grid;
+		grid-template-columns: 100px minmax(0, 1fr);
+		gap: 12px;
+		padding: 12px 14px;
+		color: #97c7ad;
+	}
+
+	.phalanx-flight + .phalanx-flight {
+		border-top: 1px solid #263b4d;
+	}
+
+	.phalanx-flight.is-returning {
+		color: #8db4cf;
+	}
+
+	.phalanx-flight.is-espionage {
+		color: #d2b583;
+	}
+
+	.phalanx-time {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	.phalanx-time strong {
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.phalanx-time time {
+		opacity: .8;
+		font-size: 12px;
+	}
+
+	.phalanx-route {
+		overflow-wrap: anywhere;
+	}
+
+	.phalanx-coordinates {
+		color: #c5dce9;
+	}
+
+	@media (max-width: 479px) {
+		.phalanx-flight {
+			grid-template-columns: minmax(0, 1fr);
+			padding: 10px;
+			gap: 6px;
+		}
+
+		.phalanx-time {
+			flex-direction: row;
+			align-items: baseline;
+			gap: 10px;
+		}
+	}
+}

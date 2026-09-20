@@ -1,6 +1,6 @@
 <template>
 	<Head :title="$t('pages.start.title')"/>
-	<div class="page-start">
+	<div class="game-page page-start">
 		<SelectAvatar v-if="!user.sex || !user.avatar"/>
 		<SelectRace v-else-if="!user.race"/>
 	</div>

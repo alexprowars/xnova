@@ -1,36 +1,20 @@
 <template>
-	<div class="block">
-		<div class="title">Добавить альянс в список</div>
-		<div class="content">
-			<form class="block-table text-center" @submit.prevent="save">
-				<div class="grid grid-cols-2">
-					<div class="th">
-						<select v-model="form.alliance">
-							<option :value="0">список альянсов</option>
-							<option v-for="item in items" :value="item['id']">{{ item['name'] }} [{{ item['tag'] }}]</option>
-						</select>
-					</div>
-					<div class="th">
-						<select v-model="form.status">
-							<option :value="1">Перемирие</option>
-							<option :value="2">Мир</option>
-							<option :value="3">Война</option>
-						</select>
-					</div>
-				</div>
-				<div>
-					<div class="c middle">
-						<button type="submit" class="button">Добавить</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<section class="alliance-panel"><h2>{{ $t('pages.alliance.ui.add_relation') }}</h2>
+		<form class="alliance-form" @submit.prevent="save">
+			<div class="alliance-fields"><label>{{ $t('pages.alliance.ui.alliance') }}<select v-model="form.alliance"><option :value="null" disabled>{{ $t('pages.alliance.ui.choose_alliance') }}</option><option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }} [{{ item.tag }}]</option></select></label><label>{{ $t('pages.alliance.ui.relation') }}<select v-model="form.status"><option v-for="status in [1, 2, 3]" :key="status" :value="status">{{ $t('alliance.diplomacy_status.' + status) }}</option></select></label></div>
+			<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
+			<div class="alliance-actions"><button type="submit" class="button" :disabled="!form.alliance || form.processing">{{ $t('pages.alliance.ui.add') }}</button></div>
+		</form>
+	</section>
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
+
 	import { useForm } from '@inertiajs/vue3';
 	import { useSuccessNotification } from '~/composables/useToast.js';
+
+	const { t } = useI18n();
 
 	defineProps({
 		items: Array,
@@ -42,9 +26,11 @@
 	});
 
 	function save() {
+		if (form.processing) return;
+
 		form.post('/alliance/diplomacy/create', {
 			onSuccess() {
-				useSuccessNotification('Отношение между вашими альянсами успешно добавлено');
+				useSuccessNotification(t('pages.alliance.ui.relation_created'));
 
 				form.reset();
 			}

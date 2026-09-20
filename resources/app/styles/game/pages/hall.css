@@ -1,0 +1,200 @@
+.page-hall {
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	overflow: hidden;
+	background: #0e1b29;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	> .game-list-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+		margin: 0;
+		padding: 10px 12px;
+		border: 0;
+		border-radius: 0;
+	}
+
+	.game-list-scroll {
+		overflow-x: auto;
+	}
+
+	.game-list-table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 0;
+		font-size: 14px;
+
+		th, td {
+			padding: 9px 12px;
+			border: 0;
+			border-bottom: 1px solid #263b4d;
+			background: #0e1b29;
+			color: var(--text-color);
+			text-align: left;
+			vertical-align: middle;
+			font-weight: 400;
+			line-height: 1.45;
+		}
+
+		thead th, .game-list-section th {
+			padding-block: 8px;
+			background: #142737;
+			color: #9eb8c9;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		tbody tr:not(.game-list-section):hover > * {
+			background: #162e40;
+		}
+
+		tbody:last-child tr:last-child > * {
+			border-bottom: 0;
+		}
+
+		.game-list-empty {
+			padding: 18px 12px;
+			text-align: center;
+			color: var(--text-muted);
+		}
+	}
+
+	.game-list-empty {
+		padding: 26px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.hall-heading-title {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+	}
+
+	.hall-top {
+		padding: 2px 6px;
+		border: 1px solid #74613e;
+		border-radius: 4px;
+		background: #d8b57a0a;
+		color: #dfc28b;
+		font-size: 12px;
+	}
+
+	.hall-table {
+		min-width: 600px;
+	}
+
+	.hall-table .hall-place {
+		width: 62px;
+		text-align: center;
+	}
+
+	.hall-battle {
+		overflow-wrap: anywhere;
+	}
+
+	.hall-table .hall-date {
+		width: 140px;
+		white-space: nowrap;
+	}
+
+	.hall-date > span {
+		display: block;
+	}
+
+	.hall-date small {
+		display: block;
+		margin-top: 2px;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.hall-table .hall-latest .hall-date > span {
+		color: #94ceba;
+	}
+
+	.hall-table .hall-latest > td:first-child {
+		box-shadow: inset 2px 0 #81baa7;
+	}
+
+	.hall-rank {
+		display: inline-grid;
+		place-items: center;
+		min-width: 27px;
+		height: 27px;
+		padding-inline: 4px;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		color: var(--text-muted);
+		font-size: 12px;
+
+		&.is-first {
+			background: #463b244d;
+			border-color: #75613d;
+			color: #e5c98e;
+		}
+
+		&.is-second {
+			background: #a8bfd214;
+			border-color: #506575;
+			color: #c2d3df;
+		}
+
+		&.is-third {
+			background: #b7805714;
+			border-color: #75543e;
+			color: #d4a47e;
+		}
+	}
+
+	.hall-outcome {
+		display: inline-block;
+		padding: 3px 7px;
+		border-radius: 4px;
+		font-size: 12px;
+		white-space: nowrap;
+
+		&.is-attack {
+			background: #26453980;
+			color: #94ceba;
+		}
+
+		&.is-defense {
+			background: #2a3c5380;
+			color: #a4c9e1;
+		}
+
+		&.is-draw {
+			background: #4a402580;
+			color: #ddbe82;
+		}
+	}
+
+	.game-list-heading select {
+		max-width: 100%;
+		min-height: 30px;
+		padding-block: 4px;
+		font-size: 14px;
+		font-weight: 400;
+	}
+
+	.game-list-external {
+		color: #83b9ce;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 479px) {
+		> .game-list-heading {
+			padding: 9px 10px;
+		}
+
+		.game-list-table th, .game-list-table td {
+			padding: 8px;
+		}
+	}
+}

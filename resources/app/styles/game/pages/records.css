@@ -1,0 +1,146 @@
+.page-records {
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	overflow: hidden;
+	background: #0e1b29;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	> .game-list-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+		margin: 0;
+		padding: 10px 12px;
+		border: 0;
+		border-radius: 0;
+	}
+
+	.game-list-scroll {
+		overflow-x: auto;
+	}
+
+	.game-list-table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 0;
+		font-size: 14px;
+
+		th, td {
+			padding: 9px 12px;
+			border: 0;
+			border-bottom: 1px solid #263b4d;
+			background: #0e1b29;
+			color: var(--text-color);
+			text-align: left;
+			vertical-align: middle;
+			font-weight: 400;
+			line-height: 1.45;
+		}
+
+		thead th, .game-list-section th {
+			padding-block: 8px;
+			background: #142737;
+			color: #9eb8c9;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		tbody tr:not(.game-list-section):hover > * {
+			background: #162e40;
+		}
+
+		tbody:last-child tr:last-child > * {
+			border-bottom: 0;
+		}
+
+		.game-list-empty {
+			padding: 18px 12px;
+			text-align: center;
+			color: var(--text-muted);
+		}
+	}
+
+	.game-list-empty {
+		padding: 26px 12px;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	.records-table {
+		min-width: 480px;
+		table-layout: fixed;
+
+		th:first-child {
+			width: 42%;
+		}
+
+		.game-list-number {
+			width: 22%;
+		}
+
+		th, td {
+			overflow-wrap: anywhere;
+		}
+
+		.records-winner {
+			color: #9fc9dc;
+		}
+
+		.is-empty {
+			color: var(--text-muted);
+		}
+	}
+
+	.records-value {
+		display: inline-block;
+		min-width: 32px;
+		max-width: 100%;
+		padding: 2px 6px;
+		border-radius: 4px;
+		background: #d8b57a0d;
+		color: #dfc28b;
+		font-weight: 500;
+		white-space: nowrap;
+
+		&.is-empty {
+			background: transparent;
+		}
+	}
+
+	.game-list-meta {
+		color: var(--text-muted);
+		font-size: 12px;
+		font-weight: 400;
+	}
+
+	.game-list-table .game-list-number {
+		text-align: right;
+	}
+
+	.game-list-table .game-list-section th:first-child {
+		color: #badce6;
+		font-size: 14px;
+	}
+
+	@media (max-width: 479px) {
+		> .game-list-heading {
+			padding: 9px 10px;
+		}
+
+		.game-list-table th, .game-list-table td {
+			padding: 8px;
+		}
+
+		.records-table th:first-child {
+			width: 40%;
+		}
+
+		.records-table .game-list-number {
+			width: 25%;
+		}
+	}
+}

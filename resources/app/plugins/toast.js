@@ -11,7 +11,11 @@ export default {
 			pauseOnHover: false,
 			pauseOnFocusLoss: false,
 			dangerouslyHTMLString: true,
-			theme: 'auto',
+			theme: 'dark',
+			transition: {
+				enter: 'game-toast-enter',
+				exit: 'game-toast-exit',
+			},
 		});
 
 		router.on('flash', (event) => {

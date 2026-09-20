@@ -1,0 +1,233 @@
+.page-friends {
+	--ui-empty-padding: 28px 14px;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	.friends-table-wrap {
+		overflow-x: auto;
+	}
+
+	.friends-table {
+		min-width: 580px;
+	}
+
+	.friend-name {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		color: #c5dce9;
+		overflow-wrap: anywhere;
+	}
+
+	.friend-name svg {
+		width: 14px;
+		height: 14px;
+		flex-shrink: 0;
+		color: #719eb5;
+	}
+
+	.friend-coordinates {
+		color: #9fbfd2;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.friends-muted {
+		color: #7693a5;
+	}
+
+	.friend-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		color: #c99b98;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+
+	.friend-status::before {
+		content: '';
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	.friend-status.online-1 {
+		color: #94caaa;
+	}
+
+	.friend-status.online-2 {
+		color: #d4be8c;
+	}
+
+	.friend-remove {
+		width: 48px;
+	}
+
+	.friend-remove .button {
+		width: 28px;
+		min-height: 28px;
+		padding: 5px;
+	}
+
+	.friend-request {
+		padding: 12px;
+	}
+
+	.friend-request + .friend-request {
+		border-top: 1px solid #263b4d;
+	}
+
+	.friend-request-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.friend-request-identity {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 5px 12px;
+		min-width: 0;
+	}
+
+	.friend-alliance {
+		color: #9cb0ce;
+		font-size: 12px;
+	}
+
+	.friend-request-actions {
+		display: flex;
+		gap: 6px;
+		margin-left: auto;
+	}
+
+	.friend-request-message {
+		margin-top: 10px;
+		padding: 9px 10px;
+		border-radius: 4px;
+		background: #0a1622;
+		color: #a9c1d0;
+		font-size: 14px;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+
+	.friend-recipient {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+		padding: 12px 14px;
+		background: #142737;
+	}
+
+	.friend-recipient > span {
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.friend-recipient > a {
+		color: #d0e4ef;
+		overflow-wrap: anywhere;
+	}
+
+	.friends-editor-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 10px;
+		margin-bottom: 6px;
+		color: #8faabb;
+		font-size: 12px;
+	}
+
+	.friends-form textarea {
+		display: block;
+		width: 100%;
+		min-height: 140px;
+		padding: 9px;
+		border-radius: 5px;
+		background: #091623;
+		color: #c5d9e5;
+		font-size: 14px;
+		line-height: 1.5;
+		text-align: left;
+		resize: vertical;
+	}
+
+	@media (max-width: 639px) {
+		.friend-recipient, .friend-request {
+			padding: 10px;
+		}
+
+		.friends-table, .friends-table tbody {
+			display: block;
+			min-width: 0;
+		}
+
+		.friends-table thead {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+		}
+
+		.friends-table tbody tr {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			align-items: center;
+			gap: 5px 12px;
+			padding: 10px;
+		}
+
+		.friends-table tbody tr + tr {
+			border-top: 1px solid #263b4d;
+		}
+
+		.friends-table td, .friends-table tbody tr + tr td {
+			padding: 0;
+			border: 0;
+		}
+
+		.friends-table td:nth-child(1) {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.friends-table td:nth-child(2) {
+			grid-column: 1;
+			grid-row: 2;
+			font-size: 12px;
+		}
+
+		.friends-table td:nth-child(3) {
+			grid-column: 1;
+			grid-row: 3;
+		}
+
+		.friends-table td:nth-child(4) {
+			grid-column: 2;
+			grid-row: 3;
+			text-align: right;
+		}
+
+		.friends-table td:nth-child(5) {
+			grid-column: 2;
+			grid-row: 1;
+			width: auto;
+			text-align: right;
+		}
+	}
+}
+
+@layer base {
+	.page-friends .friends-form textarea.error {
+		border-color: #bd7e79 !important;
+	}
+}

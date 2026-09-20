@@ -1,5 +1,5 @@
 <template>
-	<Head title="Галактика"/>
+	<Head :title="$t('menu.galaxy')"/>
 	<div class="page-galaxy">
 		<GalaxySelector
 			:shortcuts="page['shortcuts']"
@@ -12,25 +12,28 @@
 
 		<MissileAttack v-if="missile" :target="missile" @close="missile = null"/>
 
-		<div class="block">
-			<div class="title">
+		<div class="block galaxy-system">
+			<div class="title galaxy-system-title">
+				<GalaxyIcon type="system"/>
 				{{ $t('pages.galaxy.title', [page['galaxy'], page['system']]) }}
 			</div>
 			<div class="content">
 				<div class="table-responsive">
 					<table class="table galaxy text-center">
-						<tbody>
+						<thead>
 							<tr>
-								<td class="c" width="35">№</td>
-								<td class="c" width="34">&nbsp;</td>
-								<td class="c">{{ $t('pages.galaxy.column_planet') }}</td>
-								<td class="c" width="34">&nbsp;</td>
-								<td class="c" width="30">{{ $t('pages.galaxy.column_debris') }}</td>
-								<td class="c" width="180">{{ $t('pages.galaxy.column_player') }}</td>
-								<td class="c" width="30">&nbsp;</td>
-								<td class="c" width="100">{{ $t('pages.galaxy.column_alliance') }}</td>
-								<td class="c" width="135">{{ $t('pages.galaxy.column_actions') }}</td>
+								<th scope="col" class="c" width="35">№</th>
+								<th scope="col" class="c" width="34"><span class="sr-only">{{ $t('pages.galaxy.column_planet') }}</span></th>
+								<th scope="col" class="c">{{ $t('pages.galaxy.column_planet') }}</th>
+								<th scope="col" class="c" width="34"><span class="sr-only">{{ $t('planet_type.3') }}</span></th>
+								<th scope="col" class="c" width="30">{{ $t('pages.galaxy.column_debris') }}</th>
+								<th scope="col" class="c" width="180">{{ $t('pages.galaxy.column_player') }}</th>
+								<th scope="col" class="c" width="30"><span class="sr-only">{{ $t('pages.overview.fraction') }}</span></th>
+								<th scope="col" class="c" width="100">{{ $t('pages.galaxy.column_alliance') }}</th>
+								<th scope="col" class="c" width="135">{{ $t('pages.galaxy.column_actions') }}</th>
 							</tr>
+						</thead>
+						<tbody>
 
 							<GalaxyRow v-for="(item, index) in rows"
 								:key="page['galaxy'] + ':' + page['system'] + ':' + index"
@@ -42,7 +45,7 @@
 								@sendMissile="missile = item.position"
 							/>
 
-							<tr v-if="user['technology']['expedition_tech']">
+							<tr v-if="user['technology']['expedition_tech']" class="galaxy-expedition">
 								<td class="th" width="30">16</td>
 								<td class="c big" colspan="8">
 									<Link :href="'/fleet?galaxy=' + page['galaxy'] + '&system=' + page['system'] + '&planet=16&mission=15'">
@@ -50,20 +53,22 @@
 									</Link>
 								</td>
 							</tr>
-							<tr>
+						</tbody>
+						<tfoot>
+							<tr class="galaxy-summary">
 								<td class="c" colspan="6">
 									{{ $t('pages.galaxy.no_planets', page.items.length) }}
 								</td>
 								<td class="c" colspan="3">
-									<Popper>
+									<Popper popper-class="galaxy-tooltip">
 										<template #content>
 											<GalaxyLegend/>
 										</template>
-										<span>{{ $t('pages.galaxy.legend_text') }}</span>
+										<button type="button" class="galaxy-legend-toggle">{{ $t('pages.galaxy.legend_text') }}</button>
 									</Popper>
 								</td>
 							</tr>
-							<tr>
+							<tr class="galaxy-capacity">
 								<td class="c" colspan="3">{{ $t('pages.galaxy.rockets', planet['units']['interplanetary_misil']) }}</td>
 								<td class="c" colspan="3">{{ page['user']['fleets'] }} / {{ $t('pages.galaxy.fleets', user['fleets_max']) }}</td>
 								<td class="c" colspan="3">
@@ -71,7 +76,7 @@
 									<div>{{ $t('pages.galaxy.spy_probes', planet['units']['spy_sonde']) }}</div>
 								</td>
 							</tr>
-						</tbody>
+						</tfoot>
 					</table>
 				</div>
 			</div>
@@ -82,6 +87,7 @@
 <script setup>
 	import useState from '~/composables/useState.js';
 	import GalaxyRow from '~/components/Page/Galaxy/Row.vue';
+	import GalaxyIcon from '~/components/Page/Galaxy/GalaxyIcon.vue';
 	import GalaxySelector from '~/components/Page/Galaxy/Selector.vue';
 	import GalaxyLegend from '~/components/Page/Galaxy/Legend.vue';
 	import MissileAttack from '~/components/Page/Galaxy/MissileAttack.vue';

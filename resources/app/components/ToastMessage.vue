@@ -1,5 +1,5 @@
 <template>
-	<div class="Toastify__toast-text text-center">
+	<div class="Toastify__toast-text">
 		<div v-if="contentProps.title" class="Toastify__toast-text-title">
 			{{ contentProps.title }}
 		</div>

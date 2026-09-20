@@ -1,52 +1,17 @@
 <template>
 	<Head :title="$t('pages.blocked.meta_title')"/>
-	<div class="block">
-		<div class="title">{{ $t('pages.blocked.heading') }}</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div v-if="page.items.length === 0" class="grid">
-					<div class="b">{{ $t('pages.blocked.empty_state') }}</div>
-				</div>
-				<template v-else>
-					<div class="grid grid-cols-6">
-						<div class="th">{{ $t('pages.blocked.col_player') }}</div>
-						<div class="th">{{ $t('pages.blocked.col_block_start') }}</div>
-						<div class="th">{{ $t('pages.blocked.col_block_end') }}</div>
-						<div class="th col-span-2">{{ $t('pages.blocked.col_reason') }}</div>
-						<div class="th">{{ $t('pages.blocked.col_moderator') }}</div>
-					</div>
-					<div v-for="item in page.items" class="grid grid-cols-6">
-						<div class="b">
-							<Link :href="'/players/' + item['user']['id']">
-								{{ item['user']['name'] }}
-							</Link>
-						</div>
-						<div class="b">
-							<div>{{ $formatDate(item['date'], 'DD MMM YYYY') }}</div>
-							<div>{{ $formatDate(item['date'], 'HH:mm') }}</div>
-						</div>
-						<div class="b">
-							<div>{{ $formatDate(item['date_end'], 'DD MMM YYYY') }}</div>
-							<div>{{ $formatDate(item['date_end'], 'HH:mm:ss') }}</div>
-						</div>
-						<div class="b col-span-2">{{ item['reason'] }}</div>
-						<div class="b">
-							<Link :href="'/players/' + item['moderator']['id']">
-								{{ item['moderator']['name'] }}
-							</Link>
-						</div>
-					</div>
-					<div class="grid">
-						<div class="b">{{ $t('pages.blocked.footer_total', { count: page.items.length }) }}</div>
-					</div>
-				</template>
-			</div>
-		</div>
-	</div>
+	<div class="game-page page-blocked"><UiHeading :title="$t('pages.blocked.heading')" :count="page.items.length" class="game-heading"/><UiPanel class="game-panel">
+		<UiEmptyState v-if="!page.items.length" class="game-empty">{{ $t('pages.blocked.empty_state') }}</UiEmptyState>
+		<div v-else class="game-table-wrap"><table class="game-table blocked-table"><thead><tr><th>{{ $t('pages.blocked.col_player') }}</th><th>{{ $t('pages.blocked.col_block_start') }}</th><th>{{ $t('pages.blocked.col_block_end') }}</th><th>{{ $t('pages.blocked.col_reason') }}</th><th>{{ $t('pages.blocked.col_moderator') }}</th></tr></thead><tbody><tr v-for="(item, index) in page.items" :key="index">
+			<td :data-label="$t('pages.blocked.col_player')"><ModalLink navigate :href="'/players/' + item.user.id">{{ item.user.name }}</ModalLink></td><td :data-label="$t('pages.blocked.col_block_start')"><time>{{ $formatDate(item.date, 'DD MMM YYYY') }}<span>{{ $formatDate(item.date, 'HH:mm') }}</span></time></td><td :data-label="$t('pages.blocked.col_block_end')"><time>{{ $formatDate(item.date_end, 'DD MMM YYYY') }}<span>{{ $formatDate(item.date_end, 'HH:mm:ss') }}</span></time></td><td class="blocked-reason" :data-label="$t('pages.blocked.col_reason')">{{ item.reason }}</td><td :data-label="$t('pages.blocked.col_moderator')"><ModalLink navigate :href="'/players/' + item.moderator.id">{{ item.moderator.name }}</ModalLink></td>
+		</tr></tbody></table></div><div v-if="page.items.length" class="game-panel-footer">{{ $t('pages.blocked.footer_total', { count: page.items.length }) }}</div>
+	</UiPanel></div>
 </template>
 
 <script setup>
-	import { Head, Link } from '@inertiajs/vue3';
+	import { UiEmptyState, UiHeading, UiPanel } from '~/components/UI';
+	import { ModalLink } from '@inertiaui/modal-vue';
+	import { Head } from '@inertiajs/vue3';
 
 	defineOptions({
 		layout: {

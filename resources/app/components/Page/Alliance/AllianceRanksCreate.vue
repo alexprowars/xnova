@@ -1,18 +1,12 @@
 <template>
-	<div class="block">
-		<div class="title">Создать новый ранг</div>
-		<div class="content">
-			<form class="block-table text-center" @submit.prevent="save">
-				<div class="grid grid-cols-2">
-					<div class="th">Имя ранга</div>
-					<div class="th"><input type="text" v-model="form.name" :class="{error: v$.name.$error}" size="20" maxlength="30"></div>
-				</div>
-				<div>
-					<div class="c"><button type="submit" class="button">Создать</button></div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<section class="alliance-panel"><h2>{{ $t('pages.alliance.ui.create_rank') }}</h2>
+		<form class="alliance-form" @submit.prevent="save">
+			<label for="alliance-rank-name">{{ $t('pages.alliance.ui.rank_name') }}</label>
+			<div class="alliance-search-field"><input id="alliance-rank-name" type="text" v-model="form.name" :class="{error: v$.name.$error}" maxlength="30"><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.create.submit') }}</button></div>
+			<div v-if="v$.name.$error" class="alliance-errors">{{ $t('pages.alliance.ui.required') }}</div>
+			<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
+		</form>
+	</section>
 </template>
 
 <script setup>
@@ -37,6 +31,8 @@
 	);
 
 	async function save() {
+		if (form.processing) return;
+
 		if (!await v$.value.$validate()) {
 			return
 		}

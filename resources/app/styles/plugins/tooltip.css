@@ -1,8 +1,3 @@
-.Toastify__close-button {
-	min-width: auto;
-	margin: 0;
-}
-
 .v-popper__popper.v-popper--theme-tooltip {
 	.v-popper__inner {
 		transition: background 250ms ease-in-out;
@@ -14,5 +9,22 @@
 
 	.v-popper__arrow-outer {
 		border-color: #415683;
+	}
+}
+
+.v-popper__popper.v-popper--theme-tooltip.officiers-tooltip {
+	.v-popper__inner {
+		padding: 0;
+		background: #0d1b29;
+		border-color: var(--border-color);
+		box-shadow: 0 8px 24px #0006;
+	}
+
+	.v-popper__arrow-outer {
+		border-color: var(--border-color);
+	}
+
+	.v-popper__arrow-inner {
+		border-color: #0d1b29;
 	}
 }

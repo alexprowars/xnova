@@ -1,32 +1,14 @@
 <template>
-	<div v-if="visible" class="block">
-		<div class="title">
-			{{ $t('pages.resources.resources_buy') }}
-		</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid">
-					<div class="th middle flex flex-col gap-2">
-						<i18n-t keypath="pages.resources.resources_buy_info" tag="div" scope="global">
-							<template v-slot:metal>
-								<Colored :value="item['metal'] || 0"/>
-							</template><template v-slot:crystal>
-								<Colored :value="item['crystal'] || 0"/>
-							</template><template v-slot:deuterium>
-								<Colored :value="item['deuterium'] || 0"/>
-							</template>
-						</i18n-t>
-						<span v-if="!item['time']">
-							<a @click.prevent="buyResources" class="button">{{ $t('pages.resources.resources_buy_button') }}</a>
-						</span>
-						<span v-else>
-							{{ $t('pages.resources.resources_buy_timeout') }}
-							<br>
-							{{ $formatTime(item['time']) }}
-						</span>
-					</div>
-				</div>
-			</div>
+	<div v-if="visible" class="block resources-buy">
+		<div class="title">{{ $t('pages.resources.resources_buy') }}</div>
+		<div class="content resources-buy-content">
+			<i18n-t keypath="pages.resources.resources_buy_info" tag="div" scope="global" class="resources-buy-description">
+				<template #metal><Colored :value="item.metal || 0"/></template>
+				<template #crystal><Colored :value="item.crystal || 0"/></template>
+				<template #deuterium><Colored :value="item.deuterium || 0"/></template>
+			</i18n-t>
+			<button v-if="!item.time" type="button" @click="buyResources" class="button">{{ $t('pages.resources.resources_buy_button') }}</button>
+			<div v-else class="resources-buy-timeout"><span>{{ $t('pages.resources.resources_buy_timeout') }}</span><strong>{{ $formatTime(item.time) }}</strong></div>
 		</div>
 	</div>
 </template>

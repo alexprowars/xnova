@@ -139,6 +139,8 @@ return [
 		502 => 'Anti-ballistic missile',
 		503 => 'Interplanetary missile',
 
+		600 => 'Officers',
+
 		700 => 'Fraction',
 
 		701 => 'Confederation',

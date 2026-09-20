@@ -85,7 +85,8 @@ class ResearchController extends Controller
 				} elseif ($element->getId() == 123) {
 					$row['effects'] = '+' . $entity->getLevel() . '% лабораторий';
 				} elseif ($element->getId() == 113) {
-					$row['effects'] = '<span class="sprite skin_s_energy" title="Энергия"></span><span class="positive">' . ($entity->getLevel() * 2) . '%</span>';
+					$row['effects_resource'] = 'energy';
+					$row['effects'] = '<span class="positive">' . ($entity->getLevel() * 2) . '%</span>';
 				}
 
 				$row['time'] = $entity->getTime();

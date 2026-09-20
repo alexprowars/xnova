@@ -6,14 +6,14 @@
 				<div v-if="Object.keys(rapidfire['to']).length" class="grid">
 					<div class="th">
 						<div v-for="(fCnt, fId) in rapidfire['to']">
-							{{ $t('pages.info.combat.hits_fleet') }} <span style="color: #00ff00">{{ fCnt }}</span> {{ $t('pages.info.combat.hits_units') }} {{ $t('tech.'+ fId) }}
+							{{ $t('pages.info.combat.hits_fleet') }} <span class="positive">{{ fCnt }}</span> {{ $t('pages.info.combat.hits_units') }} {{ $t('tech.'+ fId) }}
 						</div>
 					</div>
 				</div>
 				<div v-if="Object.keys(rapidfire['from']).length" class="grid">
 					<div class="th">
 						<div v-for="(fCnt, fId) in rapidfire['from']">
-							{{ $t('tech.'+ fId) }} {{ $t('pages.info.combat.hits_fleet').toLowerCase() }} <span style="color: #ff0000">{{ fCnt }}</span> {{ $t('pages.info.combat.hits_units') }}
+							{{ $t('tech.'+ fId) }} {{ $t('pages.info.combat.hits_fleet').toLowerCase() }} <span class="negative">{{ fCnt }}</span> {{ $t('pages.info.combat.hits_units') }}
 						</div>
 					</div>
 				</div>

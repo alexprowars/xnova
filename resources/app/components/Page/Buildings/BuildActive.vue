@@ -2,15 +2,15 @@
 	<div class="buldings-active">
 		<div class="buldings-active-wrapper">
 			<div class="buldings-active-image">
-				<ModalLink navigate :href="'info/' + item['id']">
+				<ModalLink navigate :href="'/info/' + item['id']">
 					<img :src="'/assets/images/elements/' + item['id'] + '.webp'" :alt="item['name']">
 				</ModalLink>
 			</div>
 			<div class="buldings-active-content">
 				<div class="buldings-active-title">
-					<Link :href="'/info/' + item['id']">
+					<ModalLink navigate :href="'/info/' + item['id']" aria-haspopup="dialog">
 						{{ item['name'] }}
-					</Link>
+					</ModalLink>
 
 					<span v-if="level" class="positive" v-tooltip="$t('pages.building.current_level')">
 						{{ $formatNumber(level) }}
@@ -23,20 +23,20 @@
 						</svg>
 						{{ $formatTime(item['time']) }}
 					</div>
-					<div v-if="item['exp'] > 0" class="flex items-center justify-center gap-1" title="Опыт">
+					<div v-if="item['exp'] > 0" class="flex items-center justify-center gap-1" :title="$t('pages.building.experience')">
 						<svg class="icon">
 							<use xlink:href="/assets/images/symbols.svg#icon-exp"></use>
 						</svg>
-						{{ $formatNumber(item['exp']) }} exp
+						{{ $t('pages.building.experience') }}: {{ $formatNumber(item['exp']) }}
 					</div>
 				</div>
 
 				<div v-if="item['effects']" class="buldings-active-production">
-					<span>Production</span>
+					<span>{{ $t('pages.building.production') }}</span>
 					<div class="flex gap-2">
 						<template v-for="(value, resource) in item['effects']">
 							<div v-if="value !== 0" class="flex items-center gap-1">
-								<span :class="'sprite skin_s_'+resource" :title="$t('resources.' + resource)"></span>
+								<component :is="resourceIcons[resource]" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
 								<span :class="{ positive: value > 0, negative: value < 0 }">{{ value > 0 ? '+' : '' }}{{ $formatNumber(value) }}</span>
 							</div>
 						</template>
@@ -44,7 +44,7 @@
 				</div>
 
 				<div v-if="available" class="buldings-active-price">
-					<span>Required resources for level {{ level + 1 }}</span>
+					<span>{{ $t('pages.building.required_resources_level', { level: level + 1 }) }}</span>
 					<BuildRowPrice :price="item['price']"/>
 				</div>
 
@@ -52,9 +52,10 @@
 					<div v-if="emptyFieldsCount <= 0" class="negative">
 						{{ $t('pages.building.status_no_more_fields') }}
 					</div>
-					<a v-else-if="user['queue_max'] > 1 && queueByType('build').length > 0" @click.prevent="buildAction">
+					<button v-else-if="user['queue_max'] > 1 && queueByType('build').length > 0" type="button" class="button building-queue-button" @click.prevent="buildAction">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
 						{{ $t('pages.building.status_add_to_list') }}
-					</a>
+					</button>
 					<div v-else-if="!hasResources" class="negative text-center">
 						{{ $t('pages.building.status_no_resources') }}
 					</div>
@@ -86,14 +87,24 @@
 </template>
 
 <script setup>
+	import MetalIcon from '~/images/icons/resources/metal.svg?component';
+	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
+	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
+	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed } from 'vue';
 	import CloseIcon from '~/images/icons/close.svg?component';
 	import { useI18n } from 'vue-i18n';
-	import { Link } from '@inertiajs/vue3';
 	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
+
+	const resourceIcons = {
+		metal: MetalIcon,
+		crystal: CrystalIcon,
+		deuterium: DeuteriumIcon,
+		energy: EnergyIcon,
+	};
 
 	const props = defineProps({
 		item: {

@@ -1,0 +1,132 @@
+.page-players {
+	.player-hero {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 16px;
+		margin-bottom: 10px;
+		border: 1px solid #314b60;
+		border-radius: 6px;
+		background: radial-gradient(ellipse at top right, #22455780, transparent 70%), #102333;
+	}
+
+	.player-avatar {
+		width: 104px;
+		height: 120px;
+		flex-shrink: 0;
+		object-fit: cover;
+		border: 1px solid #456176;
+		border-radius: 5px;
+	}
+
+	.player-identity {
+		min-width: 0;
+	}
+
+	.player-identity h1 {
+		margin: 5px 0;
+		font-size: 20px;
+	}
+
+	.player-race {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 5px;
+		color: #a6c7d9;
+		font-size: 12px;
+	}
+
+	.player-race svg {
+		width: 26px;
+		height: 26px;
+	}
+
+	.player-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-top: 10px;
+	}
+
+	.player-details {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 10px 16px;
+		padding: 12px 14px;
+	}
+
+	.player-details dt {
+		margin-bottom: 4px;
+		color: #87a4b8;
+		font-size: 12px;
+	}
+
+	.player-details dd {
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.player-ranks {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 18px;
+		padding: 10px 14px;
+		border-top: 1px solid #263b4d;
+	}
+
+	.player-ranks > div {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: #91adbf;
+		font-size: 12px;
+	}
+
+	.player-ranks img {
+		width: 28px;
+		height: 28px;
+		object-fit: contain;
+	}
+
+	.game-table td, .game-table thead th:not(:first-child) {
+		text-align: right;
+	}
+
+	.player-wins td {
+		color: #94caaa;
+	}
+
+	.player-losses td {
+		color: #c99b98;
+	}
+
+	@media (max-width: 479px) {
+		.player-hero {
+			gap: 10px;
+			padding: 10px;
+			align-items: flex-start;
+		}
+
+		.player-avatar {
+			width: 72px;
+			height: 86px;
+		}
+
+		.player-identity h1 {
+			font-size: 18px;
+		}
+
+		.player-actions {
+			gap: 5px;
+		}
+
+		.player-details {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+}
+
+.im-modal-content .page-players .player-identity {
+	padding-right: 20px;
+}

@@ -1,24 +1,25 @@
 <template>
-	<tr>
+	<tr class="resources-building-row">
 		<td class="th text-left" nowrap>
-			<ModalLink navigate :href="'info/' + item['id']" :title="$t('tech.' + item['id'])">
+			<ModalLink navigate :href="'/info/' + item['id']" :title="$t('tech.' + item['id'])" class="resources-building-name">
+				<img :src="'/assets/images/elements/' + item.id + '.webp'" alt="" width="28" height="28">
 				{{ $t('tech.' + item['id']) }}
 			</ModalLink>
 		</td>
 		<td class="th text-center">
-			<Colored :value="item['level']"/>
+			<span class="resources-level">{{ $formatNumber(item.level) }}</span>
 		</td>
 		<td class="th text-center">
 			{{ item['bonus'] }}%
 		</td>
-		<td class="th text-center" v-for="res in resources">
+		<td class="th text-center" v-for="res in resources" :key="res">
 			<Colored :value="item['resources'][res]"/>
 		</td>
 		<td class="th text-center">
 			<Colored :value="item['resources']['energy']"/>
 		</td>
 		<td class="th text-center">
-			<select v-if="!isVacation" v-model="item['factor']">
+			<select v-if="!isVacation" v-model="item['factor']" :aria-label="$t('tech.' + item.id) + ': ' + $t('pages.resources.efficiency')">
 				<option v-for="j in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" :value="j">{{ j * 10 }}%</option>
 			</select>
 			<span v-else>{{ item['factor'] * 10 }}%</span>

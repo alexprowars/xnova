@@ -1,56 +1,26 @@
 <template>
 	<Head :title="$t('pages.alliance.search.page_heading')"/>
-	<div>
-		<div class="block">
-			<div class="title">
-				{{ $t('pages.alliance.search.page_heading') }}
+	<div class="page-alliance ">
+		<AllianceBack/>
+		<header class="alliance-heading"><h1>{{ $t('pages.alliance.search.page_heading') }}</h1></header>
+		<section class="alliance-panel"><form class="alliance-form" @submit.prevent="search">
+			<label for="alliance-query">{{ $t('pages.alliance.ui.search_label') }}</label>
+			<div class="alliance-search-field"><input id="alliance-query" type="search" name="query" :class="{error: v$.query.$error}" v-model="form.query"><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.search.submit_action') }}</button></div>
+			<div v-if="v$.query.$error" class="alliance-errors">{{ $t('pages.alliance.ui.required') }}</div>
+			<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
+		</form></section>
+		<section v-if="page.items.length" class="alliance-panel"><h2>{{ $t('pages.alliance.search.results_section_heading') }}<span class="alliance-count">{{ page.items.length }}</span></h2>
+			<div v-for="item in page.items" :key="item.id" class="alliance-list-row">
+				<Link :href="'/alliance/info/' + item.id"><span class="alliance-tag">[{{ item.tag }}]</span> {{ item.name }}</Link>
+				<span class="alliance-muted">{{ $t('pages.alliance.info.label_members') }}: {{ item.members }}</span>
+				<Link :href="'/alliance/join/' + item.id" class="button is-secondary">{{ $t('pages.alliance.info.button_join') }}</Link>
 			</div>
-			<div class="content">
-				<form class="block-table text-center" method="post" @submit.prevent="search">
-					<div>
-						<div class="th">
-							<input type="text" name="query" :class="{error: v$.query.$error}" v-model="form.query">
-						</div>
-					</div>
-					<div>
-						<div class="c">
-							<button type="submit" class="button">{{ $t('pages.alliance.search.submit_action') }}</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-
-		<div v-if="page.items.length" class="block">
-			<div class="title">
-				{{ $t('pages.alliance.search.results_section_heading') }}
-			</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div v-for="r in page.items" class="grid grid-cols-3">
-						<div class="th">
-							<Link :href="'/alliance/join/' + r['id']">
-								[{{ r['tag'] }}]
-							</Link>
-						</div>
-						<div class="th">
-							{{ r['name'] }}
-						</div>
-						<div class="th">
-							{{ r['members'] }}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="mt-2">
-			<Link href="/alliance" class="button">{{ $t('pages.alliance.search.back_link') }}</Link>
-		</div>
+		</section>
 	</div>
 </template>
 
 <script setup>
+	import AllianceBack from '~/components/Page/Alliance/Back.vue';
 	import { useVuelidate } from '@vuelidate/core';
 	import { required } from '@vuelidate/validators';
 	import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -84,6 +54,8 @@
 	);
 
 	async function search() {
+		if (form.processing) return;
+
 		if (!await v$.value.$validate()) {
 			return
 		}

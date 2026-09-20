@@ -1,54 +1,20 @@
 <template>
-	<div class="block page-stat-alliances">
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="grid grid-cols-12">
-					<div class="c col-span-2 sm:col-span-1">{{ $t('pages.stats.alliances_table_rank') }}</div>
-					<div class="c sm:col-span-1 hidden sm:block">{{ $t('pages.stats.alliances_table_delta') }}</div>
-					<div class="c col-span-4 sm:col-span-5">{{ $t('pages.stats.alliances_table_name') }}</div>
-					<div class="c col-span-2 sm:col-span-1">{{ $t('pages.stats.alliances_table_members') }}</div>
-					<div class="c sm:col-span-2 hidden sm:block">{{ $t('pages.stats.alliances_table_points') }}</div>
-					<div class="c sm:col-span-2 hidden sm:block">{{ $t('pages.stats.alliances_table_points_per_member') }}</div>
-					<div class="c col-span-4 sm:hidden">{{ $t('pages.stats.alliances_table_points_mobile') }}</div>
-				</div>
-				<div v-for="item in items" class="page-stat-alliances-row grid grid-cols-12">
-					<div class="col-span-2 sm:col-span-1 th">
-						{{ item['place'] }}
-						<div class="sm:hidden">
-							<div v-if="item['diff'] === 0" :style="{color: '#87CEEB'}">*</div>
-							<span v-else-if="item['diff'] < 0" class="negative">{{ item['diff'] }}</span>
-							<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
-						</div>
-					</div>
-					<div class="sm:col-span-1 th hidden sm:block">
-						<div v-if="item['diff'] === 0" :style="{color: '#87CEEB'}">*</div>
-						<span v-else-if="item['diff'] < 0" class="negative">{{ item['diff'] }}</span>
-						<span v-else-if="item['diff'] > 0" class="positive">+{{ item['diff'] }}</span>
-					</div>
-					<div class="col-span-4 sm:col-span-5 th middle">
-						<Link :class="{neutral: item['name_marked']}" :href="'/alliance/info/' + item['id']">{{ item['name'] }}</Link>
-					</div>
-					<div class=" col-span-2 sm:col-span-1 th middle">
-						{{ item['members'] }}
-					</div>
-					<div class="sm:col-span-2 th hidden sm:block">
-						<Link :href="'/alliance/stat/' + item['id']">{{ $formatNumber(item['points']) }}</Link>
-					</div>
-					<div class="sm:col-span-2 th hidden sm:block">
-						{{ $formatNumber(Math.floor(item['points'] / item['members'])) }}
-					</div>
-					<div class="col-span-4 th sm:hidden">
-						<Link :href="'/alliance/stat/' + item['id']">{{ $formatNumber(item['points']) }}</Link>
-						<br>
-						{{ $formatNumber(Math.floor(item['points'] / item['members'])) }}
-					</div>
-				</div>
-			</div>
-		</div>
+	<div class="stats-table-wrap page-stat-alliances">
+		<table class="stats-table stats-alliances-table">
+			<thead><tr><th scope="col" class="stats-place">{{ $t('pages.stats.alliances_table_rank') }}</th><th scope="col">{{ $t('pages.stats.alliances_table_name') }}</th><th scope="col" class="stats-members">{{ $t('pages.stats.alliances_table_members') }}</th><th scope="col" class="stats-points">{{ $t('pages.stats.alliances_table_points') }}<span class="stats-mobile-average">{{ $t('pages.stats.per_player') }}</span></th><th scope="col" class="stats-average">{{ $t('pages.stats.alliances_table_points_per_member') }}</th></tr></thead>
+			<tbody><tr v-for="item in items" :key="item.id" :class="{ 'is-marked': item.name_marked }">
+				<td class="stats-place"><Rank :place="item.place" :diff="item.diff"/></td>
+				<th scope="row"><Link :class="{ 'stats-highlight': item.name_marked }" :href="'/alliance/info/' + item.id">{{ item.name }}</Link></th>
+				<td class="stats-members">{{ item.members }}</td>
+				<td class="stats-points"><Link :href="'/alliance/stat/' + item.id">{{ $formatNumber(item.points) }}</Link><span class="stats-mobile-average">{{ $formatNumber(item.members ? Math.floor(item.points / item.members) : 0) }}</span></td>
+				<td class="stats-average">{{ $formatNumber(item.members ? Math.floor(item.points / item.members) : 0) }}</td>
+			</tr><tr v-if="!items.length"><td colspan="5" class="stats-empty">{{ $t('pages.stats.empty') }}</td></tr></tbody>
+		</table>
 	</div>
 </template>
 
 <script setup>
+	import Rank from './Rank.vue';
 	import { Link } from '@inertiajs/vue3';
 
 	defineProps({

@@ -1,28 +1,27 @@
 <template>
-	<form method="post" @submit.prevent="changeRace">
-		<select v-model="form.race">
-			<option value="">выбрать...</option>
-			<option value="1">Конфедерация</option>
-			<option value="2">Бионики</option>
-			<option value="3">Сайлоны</option>
-			<option value="4">Древние</option>
-		</select>
-		<br><br>
-		<button v-if="form.race" type="submit" class="button">Сменить фракцию</button>
+	<form class="race-change-form" method="post" @submit.prevent="changeRace">
+		<label for="new-race">{{ $t('pages.race.new_faction') }}</label>
+		<div class="race-change-controls">
+			<select id="new-race" v-model="form.race" required>
+				<option value="" disabled>{{ $t('pages.race.choose_faction') }}</option>
+				<option v-for="id in 4" :key="id" :value="id" :disabled="id === state.user.race">{{ $t('races.' + id) }}</option>
+			</select>
+			<button type="submit" class="button" :disabled="!form.race || form.processing">{{ $t('pages.race.change_title') }}</button>
+		</div>
+		<div v-if="Object.keys(form.errors).length" class="race-change-errors" role="alert"><span v-for="(error, key) in form.errors" :key="key">{{ error }}</span></div>
 	</form>
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import useState from '~/composables/useState.js';
 	import { useForm } from '@inertiajs/vue3';
 
-	const form = useForm({
-		race: '',
-	});
+	const state = useState();
+	const form = useForm({ race: '' });
 
-	const race = ref('');
+	function changeRace() {
+		if (!form.race || form.processing) return;
 
-	async function changeRace() {
 		form.post('/race/change', {
 			preserveUrl: true,
 		});

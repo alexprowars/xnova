@@ -1,7 +1,7 @@
 <template>
 	<div class="block">
 		<div class="title">{{ $t('pages.info.production.title') }}</div>
-		<div class="content block-table border-t! text-center">
+		<div class="content block-table text-center">
 			<template v-if="item === 42">
 				<div class="grid grid-cols-2">
 					<div class="c">{{ $t('pages.info.production.level') }}</div>

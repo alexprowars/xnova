@@ -1,28 +1,28 @@
 <template>
-	<div class="grid grid-cols-2 text-center">
-		<div class="c middle">
-			{{ $t('tech.' + item['item']) }} {{ item['level'] }}{{ item['mode'] === 1 ? $t('pages.building.queue_destruction') : '' }}
-		</div>
-		<div class="k" v-if="index === 0">
-			<div v-if="time > 0" class="z">
-				{{ $formatTime(time, ':', true) }}
-				<br>
-				<a @click.prevent="cancel">
-					{{ $t('pages.building.queue_cancel') }}
-				</a>
+	<div class="build-queue-row" :class="{ 'is-current': index === 0, 'is-finished': index === 0 && time <= 0 }">
+		<div class="build-queue-item">
+			<img class="build-queue-image" :src="'/assets/images/elements/' + item.item + '.webp'" alt="" width="42" height="42">
+			<div class="build-queue-description">
+				<div class="build-queue-name"><strong>{{ $t('tech.' + item.item) }}</strong><span class="build-queue-level">{{ $t('pages.building.queue_level', { level: item.level }) }}</span></div>
+				<div class="build-queue-status">
+					<span v-if="index === 0">{{ time > 0 ? $t('pages.building.queue_in_progress') : $t('pages.building.queue_finished') }}</span>
+					<span v-else>{{ $t('pages.building.queue_pending') }} · {{ index + 1 }}</span>
+					<span v-if="item.mode === 1" class="build-queue-demolition">{{ $t('pages.building.queue_dismantling') }}</span>
+				</div>
 			</div>
-			<div v-else class="z">
-				{{ $t('pages.building.queue_finished') }}
-				<br>
-				<Link href="/buildings">
-					{{ $t('pages.building.queue_next') }}
-				</Link>
-			</div>
-			<div class="positive">{{ $formatDate(item['date'], 'DD MMM HH:mm:ss') }}</div>
 		</div>
-		<div class="k" v-else>
-			<a @click.prevent="remove">{{ $t('pages.building.queue_remove') }}</a>
-			<div class="positive">{{ $formatDate(item['date'], 'DD MMM HH:mm:ss') }}</div>
+		<div class="build-queue-details">
+			<div class="build-queue-time">
+				<div v-if="index === 0 && time > 0" class="build-queue-timer">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+					{{ $formatTime(time, ':', true) }}
+				</div>
+				<span v-else class="build-queue-time-label">{{ $t('pages.building.queue_completion') }}</span>
+				<div class="build-queue-date" :title="$t('pages.building.queue_completion')">{{ $formatDate(item.date, 'DD MMM HH:mm:ss') }}</div>
+			</div>
+			<button v-if="index === 0 && time > 0" type="button" class="build-queue-action" @click="cancel">{{ $t('pages.building.queue_cancel') }}</button>
+			<Link v-else-if="index === 0" href="/buildings" class="build-queue-action is-next">{{ $t('pages.building.queue_next') }}</Link>
+			<button v-else type="button" class="build-queue-action" @click="remove">{{ $t('pages.building.queue_remove') }}</button>
 		</div>
 	</div>
 </template>

@@ -1,41 +1,30 @@
 <template>
-	<div class="block">
-		<div class="title">Редактировать текст</div>
-		<div class="content">
-			<form class="block-table text-center" @submit.prevent="save">
-				<div class="grid grid-cols-3">
-					<div class="th"><Link href="/alliance/admin?type=1">Внешний текст</Link></div>
-					<div class="th"><Link href="/alliance/admin?type=2">Внутренний текст</Link></div>
-					<div class="th"><Link href="/alliance/admin?type=3">Текст заявки</Link></div>
-				</div>
-				<div class="grid">
-					<div v-if="data['text_type'] === 3" class="c">Текст заявок альянса</div>
-					<div v-else-if="data['text_type'] === 2" class="c">Внутренний текст альянса</div>
-					<div v-else class="c">Текст альянса</div>
-				</div>
-				<div class="grid">
-					<div class="th">
-						<TextEditor v-model="form.text"/>
-					</div>
-				</div>
-				<div class="grid">
-					<div class="th">
-						<button type="reset" class="button">Очистить</button>
-						<button type="submit" class="button">Сохранить</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<section class="alliance-panel">
+		<h2>{{ $t('pages.alliance.ui.edit_text') }}</h2>
+		<UiTabNavigation :items="tabs" :active="data.text_type" :label="$t('pages.alliance.ui.edit_text')" embedded/>
+		<form class="alliance-form" @submit.prevent="save">
+			<TextEditor v-model="form.text"/>
+			<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
+			<div class="alliance-actions"><button type="button" class="button is-secondary" :disabled="form.processing" @click="form.text = ''">{{ $t('pages.alliance.ui.clear') }}</button><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button></div>
+		</form>
+	</section>
 </template>
 
 <script setup>
-	import { Link, useForm } from '@inertiajs/vue3';
+	import { computed } from 'vue';
+	import { useI18n } from 'vue-i18n';
+	import { UiTabNavigation } from '~/components/UI';
+	import { useForm } from '@inertiajs/vue3';
 	import TextEditor from '~/components/TextEditor.vue';
 
 	const props = defineProps({
 		data: Object,
 	});
+
+	const { t } = useI18n();
+	const tabs = computed(() => [1, 2, 3].map(id => ({
+		id, href: '/alliance/admin?type=' + id, label: t('pages.alliance.ui.text_type_' + id),
+	})));
 
 	const form = useForm({
 		type: props.data['text_type'],
@@ -43,6 +32,8 @@
 	});
 
 	function save() {
+		if (form.processing) return;
+
 		form.post('/alliance/admin/text', {
 			preserveScroll: true,
 		});

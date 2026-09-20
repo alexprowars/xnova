@@ -1,38 +1,262 @@
-.officiers-list {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+.page-officiers {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+	container: officiers / inline-size;
 
-	.powers {
-		border-spacing: 0 !important;
-		border-collapse: collapse;
-		margin-top: 10px;
-		margin-bottom: 5px;
+	.officiers-credits {
+		margin-bottom: 12px;
+	}
 
-		td {
-			padding: 0 5px 2px 5px;
-			color: #84CFEF;
+	.block > .officiers-credits-content {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 14px;
+		background: linear-gradient(110deg, #142b39, #101e2c);
+
+		.button {
+			flex-shrink: 0;
 		}
 	}
 
-	.officiers-item {
-		padding-bottom: 5px;
-		background: var(--main-color);
-		border: 1px solid var(--border-color);
-		color: #d7d7d7;
-		@apply p-2;
+	.officiers-credits-icon {
+		display: grid;
+		place-items: center;
+		flex-shrink: 0;
+		width: 48px;
+		height: 48px;
+		border: 1px solid #716347;
+		border-radius: 8px;
+		background: #d8b57a0a;
+		color: #ddbe82;
+
+		svg {
+			width: 28px;
+			height: 28px;
+		}
 	}
 
-	&:last-child {
-		border-bottom: 0;
+	.officiers-credits-description {
+		flex: 1;
+		min-width: 0;
+
+		strong {
+			color: #e5c98e;
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		p {
+			font-size: 14px;
+			font-weight: 400;
+			margin: 5px 0 0;
+			color: var(--text-muted);
+			line-height: 1.5;
+		}
+
+		.officiers-credits-hint {
+			font-size: 12px;
+			color: #aec8d7;
+		}
+	}
+
+	.officiers-list {
+		display: grid;
+		gap: 10px;
+	}
+
+	.officiers-item {
+		min-width: 0;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		background: #0e1b29;
+
+		&.is-active {
+			border-color: #3f675e;
+		}
+	}
+
+	.officiers-item-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 5px 12px;
+		padding: 9px 12px;
+		border-bottom: 1px solid var(--border-color);
+		background: #142737;
+
+		h2 {
+			margin: 0;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 1.4;
+		}
+	}
+
+	.officiers-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: #d4a09d;
+		font-size: 12px;
+
+		&.is-active {
+			color: #94ceba;
+		}
+	}
+
+	.officiers-status-dot {
+		width: 5px;
+		height: 5px;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	.officiers-item-body {
+		display: grid;
+		grid-template-columns: 112px minmax(0, 1fr) 175px;
+		align-items: start;
+		gap: 14px;
+		padding: 12px;
 	}
 
 	.officiers-item-image img {
-		width: 100%;
+		display: block;
+		width: 112px;
+		height: 112px;
+		object-fit: cover;
+		border: 1px solid #355166;
+		border-radius: 5px;
 	}
 
-	.officiers-item-title {
-		background: #253046;
-		@apply -m-2 mb-2 p-2 text-sm leading-none;
+	.officiers-item-description {
+		min-width: 0;
+	}
+
+	.is-vacation .officiers-item-description {
+		grid-column: 2 / -1;
+	}
+
+	.officiers-biography {
+		color: #a8bbcb;
+		line-height: 1.6;
+		overflow-wrap: anywhere;
+	}
+
+	.officiers-powers {
+		display: grid;
+		gap: 4px;
+		margin: 10px 0 0;
+		padding: 0;
+		list-style: none;
+		color: #b1d8e2;
+
+		li {
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+		}
+
+		svg {
+			width: 14px;
+			height: 14px;
+			flex-shrink: 0;
+			align-self: flex-start;
+			margin-top: 3px;
+			color: #81baa7;
+		}
+	}
+
+	.officiers-item-action {
+		display: grid;
+		gap: 7px;
+		align-self: center;
+		padding-left: 12px;
+		border-left: 1px solid var(--border-color);
+	}
+
+	.officiers-contract {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		min-height: 34px;
+		padding: 6px 8px;
+		font-size: 12px;
+		text-align: left;
+	}
+
+	.officiers-contract-price {
+		flex-shrink: 0;
+		color: #e5c98e;
+		font-size: 14px;
+		font-weight: 600;
+
+		span {
+			font-size: 12px;
+			font-weight: 400;
+		}
+	}
+}
+
+@container officiers (max-width: 760px) {
+	.page-officiers .officiers-item-body {
+		grid-template-columns: 96px minmax(0, 1fr);
+	}
+
+	.page-officiers .officiers-item-image img {
+		width: 96px;
+		height: 96px;
+	}
+
+	.page-officiers .officiers-item-action {
+		grid-column: 1 / -1;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		padding: 10px 0 0;
+		border-left: 0;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.page-officiers .officiers-credits-content {
+		flex-wrap: wrap;
+	}
+
+	.page-officiers .officiers-credits-description {
+		flex-basis: calc(100% - 62px);
+	}
+
+	.page-officiers .officiers-credits-content > .button {
+		margin-left: 62px;
+	}
+}
+
+@container officiers (max-width: 480px) {
+	.page-officiers .officiers-item-body {
+		display: flow-root;
+	}
+
+	.page-officiers .officiers-item-image {
+		float: inline-start;
+		margin: 0 10px 6px 0;
+	}
+
+	.page-officiers .officiers-item-action {
+		clear: both;
+		margin-top: 10px;
+	}
+
+	.page-officiers .officiers-item-image img {
+		width: 64px;
+		height: 64px;
+	}
+
+	.page-officiers .officiers-contract {
+		flex-direction: column;
+		gap: 3px;
+		padding: 6px 3px;
+		text-align: center;
 	}
 }

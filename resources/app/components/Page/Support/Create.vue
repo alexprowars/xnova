@@ -1,32 +1,20 @@
 <template>
-	<div class="block page-support-new">
-		<div class="title text-center">
-			{{ $t('pages.support.create.title') }}
-		</div>
-		<div class="content">
-			<div class="block-table">
-				<div class="grid">
-					<div class="th">
-						<input type="text" v-model="form.subject" class="width-full" :class="{error: v$.subject.$error}" :placeholder="$t('pages.support.create.subject_placeholder')">
-					</div>
-				</div>
-				<div class="grid">
-					<div class="th">
-						<TextEditor v-model="form.message" :class="{error: v$.message.$error}"/>
-					</div>
-				</div>
-				<div class="grid">
-					<div class="c text-center">
-						<button class="button" @click.prevent="request">{{ $t('pages.support.create.send') }}</button>
-						<button class="button" @click.prevent="emit('close')">{{ $t('pages.support.create.close') }}</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<UiPanel clip :title="$t('pages.support.create.title')" class="support-create">
+		<form class="ui-form-body" method="post" @submit.prevent="request">
+			<label class="support-field"><span>{{ $t('pages.support.create.subject_placeholder') }}</span><input type="text" v-model="form.subject" :class="{error: v$.subject.$error || form.errors.subject}" :placeholder="$t('pages.support.create.subject_placeholder')"></label>
+			<div v-if="v$.subject.$error" class="ui-errors" role="alert">{{ $t('pages.support.form.subject_required') }}</div>
+			<div class="support-field-label">{{ $t('pages.support.form.message') }}</div>
+			<TextEditor name="message" v-model="form.message" :class="{error: v$.message.$error || form.errors.message}"/>
+			<div v-if="v$.message.$error" class="ui-errors" role="alert">{{ $t('pages.support.form.message_required') }}</div>
+			<div v-if="Object.keys(form.errors).length" class="ui-errors" role="alert"><span v-for="(error, field) in form.errors" :key="field">{{ error }}</span></div>
+			<div class="ui-actions"><UiButton variant="secondary" :disabled="form.processing" @click="emit('close')">{{ $t('pages.support.create.close') }}</UiButton><UiButton type="submit" :disabled="form.processing"><SendIcon aria-hidden="true"/>{{ $t('pages.support.create.send') }}</UiButton></div>
+		</form>
+	</UiPanel>
 </template>
 
 <script setup>
+	import { UiButton, UiPanel } from '~/components/UI';
+	import SendIcon from '~/images/icons/send.svg?component';
 	import { required } from '@vuelidate/validators';
 	import { useVuelidate } from '@vuelidate/core';
 	import TextEditor from '~/components/TextEditor.vue';
@@ -58,8 +46,8 @@
 	);
 
 	async function request() {
-		if (!await v$.value.$validate()) {
-			return
+		if (form.processing || !await v$.value.$validate()) {
+			return;
 		}
 
 		form.post('/support/create', {

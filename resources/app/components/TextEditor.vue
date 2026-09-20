@@ -2,7 +2,7 @@
 	<div class="editor-component">
 		<div class="editor-component-toolbar">
 			<span class="gensmall">
-				<select name="btnSize" @change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
+				<select name="btnSize" aria-label="Размер текста" @change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
 					<option value="9">Маленький</option>
 					<option value="11" selected>Нормальный</option>
 					<option value="20">Большой</option>
@@ -10,59 +10,59 @@
 				</select>
 			</span>
 			<button type="button" class="buttons" title="Жирный" @click="addTag('[b]|[/b]')">
-				<span class="sprite bb_text_bold"></span>
+				<BoldIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Курсив" @click="addTag('[i]|[/i]')">
-				<span class="sprite bb_text_italic"></span>
+				<ItalicIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Подчёркнутый" @click="addTag('[u]|[/u]')">
-				<span class="sprite bb_text_underline"></span>
+				<UnderlineIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Зачёркнутый" @click="addTag('[s]|[/s]')">
-				<span class="sprite bb_text_strikethrough"></span>
+				<StrikeIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="По центру" @click="addTag('[center]|[/center]')">
-				<span class="sprite bb_text_align_center"></span>
+				<AlignCenterIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="По левому краю" @click="addTag('[left]|[/left]')">
-				<span class="sprite bb_text_align_left"></span>
+				<AlignLeftIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="По правому краю" @click="addTag('[right]|[/right]')">
-				<span class="sprite bb_text_align_right"></span>
+				<AlignRightIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="По ширине" @click="addTag('[justify]|[/justify]')">
-				<span class="sprite bb_text_align_justify"></span>
+				<AlignJustifyIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Спойлер" @click="addTag('[spoiler=]|[/spoiler]')">
-				<span class="sprite bb_eye"></span>
+				<SpoilerIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="YOUTUBE" @click="addTag('[youtube]|[/youtube]', 2)">
-				<span class="sprite bb_film_add"></span>
+				<VideoIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
-				<span class="sprite bb_world_link"></span>
+				<LinkIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
-				<span class="sprite bb_picture_add"></span>
+				<ImageIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Вставить большую картинку" @click="addTag('[img_big]|[/img_big]', 4)">
-				<span class="sprite bb_image_add"></span>
+				<ImageLargeIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Нумерованый список" @click="addTag('[numlist]|[/numlist]', 5)">
-				<span class="sprite bb_text_list_numbers"></span>
+				<NumberedListIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Список" @click="addTag('[list]|[/list]', 5)">
-				<span class="sprite bb_text_list_bullets"></span>
+				<ListIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons" title="Цитата" @click="addTag('[quote]|[/quote]', 0)">
-				<span class="sprite bb_text_signature"></span>
+				<QuoteIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Цитата" @click="addTag('[quote author=]|[/quote]', 0)">
-				<span class="sprite bb_user_comment"></span>
+			<button type="button" class="buttons" title="Цитата с автором" @click="addTag('[quote author=]|[/quote]', 0)">
+				<QuoteAuthorIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<Popper :triggers="['click']" :popper-triggers="['click']">
 				<button type="button" class="buttons" title="Смайлы">
-					<span class="sprite bb_emoticon_grin"></span>
+					<SmileIcon aria-hidden="true" focusable="false"/>
 				</button>
 				<template #content>
 					<div class="smiles">
@@ -70,37 +70,32 @@
 					</div>
 				</template>
 			</Popper>
-			<button type="button" class="buttons" title="Цвет текста" @click="showColors = !showColors">
-				<span class="sprite bb_color_swatch"></span>
+			<button type="button" class="buttons" title="Цвет текста" :aria-pressed="showColors" @click="showColors = !showColors">
+				<ColorIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Цвет фона" @click="showBgColors = !showBgColors">
-				<span class="sprite bb_palette"></span>
+			<button type="button" class="buttons" title="Цвет фона" :aria-pressed="showBgColors" @click="showBgColors = !showBgColors">
+				<BackgroundIcon aria-hidden="true" focusable="false"/>
 			</button>
 
-			<span v-if="value.length > 0" class="buttons" title="Предварительный просмотр" @click="showPreview = !showPreview">
-				<span class="sprite bb_tick"></span>
-			</span>
+			<button v-if="value.length > 0" type="button" class="buttons" title="Предварительный просмотр" :aria-pressed="showPreview" @click="showPreview = !showPreview">
+				<PreviewIcon aria-hidden="true" focusable="false"/>
+			</button>
 		</div>
 
 		<div v-show="showColors" class="colorpicker">
-			<span v-for="color in colors" @click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color">&nbsp;</span>
-	    </div>
+			<button v-for="color in colors" :key="color" type="button" @click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color" :title="'#' + color" :aria-label="'Цвет текста #' + color"></button>
+		</div>
 
 		<div v-show="showBgColors" class="colorpicker">
-			<span v-for="color in colors" @click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color">&nbsp;</span>
-	    </div>
+			<button v-for="color in colors" :key="color" type="button" @click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color" :title="'#' + color" :aria-label="'Цвет фона #' + color"></button>
+		</div>
 
 
-		
 		<textarea ref="textRef" :name="name" rows="10" v-model="value"></textarea>
 
-		<div v-if="showPreview" class="editor-component-preview table">
-			<div class="grid">
-				<div class="c">Предварительный просмотр</div>
-			</div>
-			<div class="grid">
-				<div class="b" v-html="parser.parse(value)"></div>
-			</div>
+		<div v-if="showPreview" class="editor-component-preview">
+			<div class="editor-preview-title">Предварительный просмотр</div>
+			<div class="editor-preview-body" v-html="parser.parse(value)"></div>
 		</div>
 	</div>
 </template>
@@ -109,6 +104,27 @@
 	import parser from '~/utils/parser.js';
 	import { computed, ref } from 'vue';
 	import Popper from './Popper.vue';
+	import BoldIcon from '~/images/icons/editor/bold.svg?component';
+	import ItalicIcon from '~/images/icons/editor/italic.svg?component';
+	import UnderlineIcon from '~/images/icons/editor/underline.svg?component';
+	import StrikeIcon from '~/images/icons/editor/strike.svg?component';
+	import AlignCenterIcon from '~/images/icons/editor/align-center.svg?component';
+	import AlignLeftIcon from '~/images/icons/editor/align-left.svg?component';
+	import AlignRightIcon from '~/images/icons/editor/align-right.svg?component';
+	import AlignJustifyIcon from '~/images/icons/editor/align-justify.svg?component';
+	import SpoilerIcon from '~/images/icons/editor/spoiler.svg?component';
+	import VideoIcon from '~/images/icons/editor/video.svg?component';
+	import LinkIcon from '~/images/icons/editor/link.svg?component';
+	import ImageIcon from '~/images/icons/editor/image.svg?component';
+	import ImageLargeIcon from '~/images/icons/editor/image-large.svg?component';
+	import NumberedListIcon from '~/images/icons/editor/numbered-list.svg?component';
+	import ListIcon from '~/images/icons/editor/list.svg?component';
+	import QuoteIcon from '~/images/icons/editor/quote.svg?component';
+	import QuoteAuthorIcon from '~/images/icons/editor/quote-author.svg?component';
+	import SmileIcon from '~/images/icons/editor/smile.svg?component';
+	import ColorIcon from '~/images/icons/editor/color.svg?component';
+	import BackgroundIcon from '~/images/icons/editor/background.svg?component';
+	import PreviewIcon from '~/images/icons/editor/preview.svg?component';
 
 	defineProps({
 		name: String,

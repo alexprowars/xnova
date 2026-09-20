@@ -1,26 +1,18 @@
 <template>
-	<div class="block">
-		<div class="title">Отправить сообщение в чат альянса</div>
-		<div class="content">
-			<form class="block-table text-center" method="post" @submit.prevent="emit('send')">
-				<div class="grid">
-					<div class="th">
-						<TextEditor v-model="value"/>
-					</div>
-				</div>
-				<div class="grid">
-					<div class="c">
-						<button class="button" @click.prevent="reset">Очистить</button>
-						<button type="submit" class="button">Отправить</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+	<section class="alliance-panel alliance-chat-compose"><h2>{{ $t('pages.alliance.ui.write_chat') }}</h2>
+		<form class="alliance-form" @submit.prevent="emit('send')">
+			<TextEditor v-model="value"/>
+			<div v-for="(error, key) in errors" :key="key" class="alliance-errors">{{ error }}</div>
+			<div class="alliance-actions"><button type="button" class="button is-secondary" :disabled="processing" @click="reset">{{ $t('pages.alliance.ui.clear') }}</button><button type="submit" class="button" :disabled="processing"><SendIcon aria-hidden="true"/>{{ $t('pages.alliance.join.submit_request') }}</button></div>
+		</form>
+	</section>
 </template>
 
 <script setup>
+	import SendIcon from '~/images/icons/send.svg?component';
 	import TextEditor from '~/components/TextEditor.vue';
+
+	defineProps({ processing: Boolean, errors: Object });
 
 	const value = defineModel();
 	const emit = defineEmits(['send']);

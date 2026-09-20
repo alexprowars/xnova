@@ -1,181 +1,85 @@
 <template>
-	<Head title="Империя"/>
-	<div class="page-empire table-responsive">
-		<table class="table">
-			<tbody>
-			<tr valign="left">
-				<td class="c" :colspan="rows">{{ $t('pages.empire.title') }}</td>
-			</tr>
-			<tr>
-				<td class="th">&nbsp;</td>
-				<td class="th text-center" v-for="planet in page['planets']" width="75">
-					<a href="" @click.prevent="toPlanet(planet['id'])">
-						<img :src="'/assets/images/planeten/small/s_'+planet['image']+'.jpg'" height="75" width="75" alt="">
-					</a>
-				</td>
-				<td class="th text-center" width="100">{{ $t('pages.empire.total') }}</td>
-			</tr>
-			<tr>
-				<td class="th">{{ $t('pages.empire.planet_name') }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<a href="" @click.prevent="toPlanet(planet['id'])">{{ planet['name'] }}</a>
-				</td>
-				<td class="th">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="th">{{ $t('pages.empire.planet_coordinates') }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					[<Link :href="'/galaxy?galaxy=' + planet['position']['galaxy'] + '&system=' + planet['position']['system']">{{ planet['position']['galaxy'] }}:{{ planet['position']['system'] }}:{{ planet['position']['planet'] }}</Link>]
-				</td>
-				<td class="th">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="th">{{ $t('pages.empire.planet_fields') }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					{{ planet['fields'] }} / {{ planet['fields_max'] }}
-				</td>
-				<td class="th text-center">{{ total.fields }} / {{ total.fields_max }}</td>
-			</tr>
-			<tr>
-				<td class="th">{{ $t('credits') }}</td>
-				<td class="th" :colspan="rows - 2">&nbsp;</td>
-				<td class="th text-center">
-					<span class="neutral">{{ $formatNumber(user['credits']) }}</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.resources') }}</td>
-			</tr>
-			<tr v-for="res in Object.keys($tm('resources')).filter((r) => r !== 'energy')">
-				<td class="th">{{ $t('resources.' + res) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span :class="[planet['resources'][res]['value'] < planet['resources'][res]['storage'] ? 'positive' : 'negative']">{{ $formatNumber(planet['resources'][res]['value']) }}</span>
-				</td>
-				<td class="th text-center">{{ $formatNumber(total['resources'][res]) }}</td>
-			</tr>
-			<tr>
-				<td class="th">{{ $t('resources.energy') }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span :class="[planet['resources']['energy']['value'] >= 0 ? 'positive' : 'negative']">{{ $formatNumber(planet['resources']['energy']['value']) }}</span>
-				</td>
-				<td class="th text-center">{{ $formatNumber(total['resources']['energy']) }}</td>
-			</tr>
+	<Head :title="$t('menu.empire')"/>
+	<div class="page-empire">
+		<div class="empire-heading">
+			<div><h1>{{ $t('pages.empire.title') }}</h1><span>{{ $t('pages.empire.colony_count', { count: page.planets.length }) }}</span></div>
+			<div class="empire-account"><span>{{ $t('pages.empire.planet_fields') }} <strong>{{ $formatNumber(total.fields) }} / {{ $formatNumber(total.fields_max) }}</strong></span><span><CreditsIcon aria-hidden="true" focusable="false"/>{{ $t('credits') }}: {{ $formatNumber(user.credits) }}</span></div>
+		</div>
 
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.production_per_hour') }}</td>
-			</tr>
-			<tr v-for="res in Object.keys($tm('resources')).filter((r) => r !== 'energy')">
-				<td class="th">{{ $t('resources.'+res) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">{{ $formatNumber(planet['resources'][res]['production']) }}</td>
-				<td class="th text-center">{{ $formatNumber(total['production'][res]) }}</td>
-			</tr>
+		<div class="empire-summary" :aria-label="$t('pages.empire.empire_total')">
+			<div v-for="res in resourceTypes" :key="res" class="empire-summary-item" :class="res">
+				<component :is="resourceIcons[res]" aria-hidden="true" focusable="false"/>
+				<div><span>{{ $t('resources.' + res) }}</span><strong :class="{ negative: res === 'energy' && total.resources[res] < 0 }">{{ $formatNumber(total.resources[res]) }}</strong></div>
+			</div>
+		</div>
 
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.production_level') }}</td>
-			</tr>
-			<tr v-for="(item, i) in [1, 2, 3, 4, 12, 212]">
-				<td class="th">{{ $t('tech.'+item) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span :class="[planet['factor'][item] >= 100 ? 'positive' : 'negative']">{{ $formatNumber(planet['factor'][item]) }}</span>%
-				</td>
-				<td class="th text-center" v-if="i === 0" rowspan="6">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.list_buildings') }}</td>
-			</tr>
-			<tr v-for="id in Object.keys($tm('tech')).filter((r) => r < 100)">
-				<td class="th">{{ $t('tech.' + id) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span v-if="planet['elements'][id]?.['value'] > 0 || planet['elements'][id]?.['build'] > 0">
-						{{ $formatNumber(planet['elements'][id]['value']) }}
-					</span>
-					<span v-else>-</span>
-					<span v-if="planet['elements'][id]?.['build'] > 0" class="positive">-> {{ $formatNumber(planet['elements'][id]['build']) }}</span>
-				</td>
-				<td class="th text-center">
-					<span>
-						{{ $formatNumber(total['elements'][id]['value']) }}
-					</span>
-					<span v-if="total['elements'][id]['build'] > 0" class="positive">
-						-> {{ $formatNumber(total['elements'][id]['build']) }}
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.list_fleets') }}</td>
-			</tr>
-			<tr v-for="id in Object.keys($tm('tech')).filter((r) => r > 200 && r < 300)">
-				<td class="th">{{ $t('tech.' + id) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span v-if="planet['elements'][id]?.['value'] > 0 || planet['elements'][id]?.['build'] > 0 || planet['elements'][id]?.['fly'] > 0">
-						{{ $formatNumber(planet['elements'][id]?.['value']) }}
-					</span>
-					<span v-else>-</span>
-					<span v-if="planet['elements'][id]?.['build'] > 0" class="positive">
-						+ {{ $formatNumber(planet['elements'][id]['build']) }}
-					</span>
-					<span v-if="planet['elements'][id]?.['fly'] > 0" class="neutral">
-						+ {{ $formatNumber(planet['elements'][id]['fly']) }}
-					</span>
-				</td>
-				<td class="th text-center">
-					<span>
-						{{ $formatNumber(total['elements'][id]?.['value']) }}
-					</span>
-					<span v-if="total['elements'][id]?.['build'] > 0" class="positive">
-						+ {{ $formatNumber(total['elements'][id]['build']) }}
-					</span>
-					<span v-if="total['elements'][id]?.['fly'] > 0" class="neutral">
-						+ {{ $formatNumber(total['elements'][id]['fly']) }}
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.list_defense') }}</td>
-			</tr>
-			<tr v-for="id in Object.keys($tm('tech')).filter((r) => r > 400 && r < 600)">
-				<td class="th">{{ $t('tech.' + id) }}</td>
-				<td class="th text-center" v-for="planet in page['planets']">
-					<span v-if="planet['elements'][id]?.['value'] > 0 || planet['elements'][id]?.['build'] > 0">
-						{{ $formatNumber(planet['elements'][id]['value']) }}
-					</span>
-					<span v-else>-</span>
-					<span v-if="planet['elements'][id]?.['build'] > 0" class="positive">
-						+ {{ $formatNumber(planet['elements'][id]['build']) }}
-					</span>
-				</td>
-				<td class="th text-center">
-					<span>
-						{{ $formatNumber(total['elements'][id]?.['value']) }}
-					</span>
-					<span v-if="total['elements'][id]?.['build'] > 0" class="positive">
-						+ {{ $formatNumber(total['elements'][id]['build']) }}
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="c" :colspan="rows" align="left">{{ $t('pages.empire.list_techs') }}</td>
-			</tr>
-			<tr v-for="item in page['tech']">
-				<td class="th" :colspan="rows - 1">{{ $t('tech.' + item['id']) }}</td>
-				<td class="th text-center">
-					<span class="neutral">{{ item['value'] }}</span>
-					<span v-if="item['build'] > 0" class="positive">
-						-> {{ item['build'] }}
-					</span>
-				</td>
-			</tr>
-			</tbody>
-		</table>
+		<UiTabs v-model="activeSection" :items="tabs" :label="$t('pages.empire.section')" unmount-on-hide>
+			<template #panel>
+				<template v-if="activeSection !== 'tech'">
+					<div class="empire-toolbar">
+						<div class="empire-search"><label for="empire-search">{{ $t('pages.empire.search') }}</label><input id="empire-search" type="search" v-model="search" :placeholder="$t('pages.empire.search_placeholder')"></div>
+						<div v-if="isElementSection" class="empire-object-select"><label for="empire-object">{{ $t('pages.empire.compare_object') }}</label><select id="empire-object" v-model="selectedElements[activeSection]"><option v-for="id in elementIds" :key="id" :value="id">{{ $t('tech.' + id) }}</option></select></div>
+					</div>
+
+					<div v-if="isElementSection" class="empire-comparison-heading"><img :src="'/assets/images/elements/' + selectedElement + '.webp'" alt="" width="30" height="30"><strong>{{ $t('tech.' + selectedElement) }}</strong><span>{{ $t('pages.empire.compare_hint') }}</span></div>
+
+					<div v-if="filteredPlanets.length" ref="tableScroll" class="table-responsive empire-table-scroll" tabindex="0" :aria-label="$t('pages.empire.comparison')">
+						<table class="table empire-table" :class="{ 'empire-element-table': isElementSection }">
+							<thead><tr>
+								<th scope="col" class="empire-planet-column">{{ $t('pages.empire.planet_name') }}</th>
+								<template v-if="activeSection === 'resources'"><th scope="col">{{ $t('pages.empire.planet_fields') }}</th><th v-for="res in resourceTypes" :key="res" scope="col"><span class="empire-resource-label" :class="res"><component :is="resourceIcons[res]" aria-hidden="true" focusable="false"/>{{ $t('resources.' + res) }}</span></th></template>
+								<template v-else-if="activeSection === 'production'"><th v-for="res in materials" :key="res" scope="col"><span class="empire-resource-label" :class="res"><component :is="resourceIcons[res]" aria-hidden="true" focusable="false"/>{{ $t('resources.' + res) }}</span></th></template>
+								<template v-else-if="activeSection === 'factors'"><th v-for="id in productionIds" :key="id" scope="col">{{ $t('tech.' + id) }}</th></template>
+								<template v-else><th scope="col">{{ $t(activeSection === 'buildings' ? 'pages.empire.level' : 'pages.empire.available') }}</th><th scope="col">{{ $t(activeSection === 'buildings' ? 'pages.empire.queued_level' : 'pages.empire.queued') }}</th><th v-if="activeSection === 'fleet'" scope="col">{{ $t('pages.empire.in_flight') }}</th></template>
+							</tr></thead>
+							<tbody><tr v-for="planet in filteredPlanets" :key="planet.id" :class="{ 'is-current': planet.id === state.planet?.id }">
+								<th scope="row" class="empire-planet-column"><div class="empire-planet"><button type="button" class="empire-planet-image" @click="toPlanet(planet.id)" :aria-label="planet.name"><img :src="'/assets/images/planeten/small/s_' + planet.image + '.jpg'" alt="" width="32" height="32" loading="lazy"></button><div><button type="button" class="empire-planet-name" @click="toPlanet(planet.id)">{{ planet.name }}</button><Link class="empire-coordinates" :href="'/galaxy?galaxy=' + planet.position.galaxy + '&system=' + planet.position.system">[{{ planet.position.galaxy }}:{{ planet.position.system }}:{{ planet.position.planet }}]</Link></div></div></th>
+								<template v-if="activeSection === 'resources'"><td :class="{ negative: planet.fields >= planet.fields_max }">{{ planet.fields }} / {{ planet.fields_max }}</td><td v-for="res in resourceTypes" :key="res" :class="resourceClass(planet, res)">{{ $formatNumber(planet.resources[res].value) }}</td></template>
+								<template v-else-if="activeSection === 'production'"><td v-for="res in materials" :key="res" :class="{ negative: planet.resources[res].production < 0 }">{{ $formatNumber(planet.resources[res].production) }}</td></template>
+								<template v-else-if="activeSection === 'factors'"><td v-for="id in productionIds" :key="id" :class="planet.factor[id] >= 100 ? 'positive' : 'negative'">{{ $formatNumber(planet.factor[id]) }}%</td></template>
+								<template v-else><td>{{ $formatNumber(planet.elements[selectedElement]?.value || 0) }}</td><td class="empire-queued">{{ planet.elements[selectedElement]?.build > 0 ? $formatNumber(planet.elements[selectedElement].build) : '—' }}</td><td v-if="activeSection === 'fleet'" class="empire-in-flight">{{ planet.elements[selectedElement]?.fly > 0 ? $formatNumber(planet.elements[selectedElement].fly) : '—' }}</td></template>
+							</tr></tbody>
+							<tfoot v-if="activeSection !== 'factors'"><tr>
+								<th scope="row" class="empire-planet-column">{{ $t(activeSection === 'buildings' ? 'pages.empire.empire_max' : 'pages.empire.empire_total') }}</th>
+								<template v-if="activeSection === 'resources'"><td>{{ $formatNumber(total.fields) }} / {{ $formatNumber(total.fields_max) }}</td><td v-for="res in resourceTypes" :key="res">{{ $formatNumber(total.resources[res]) }}</td></template>
+								<template v-else-if="activeSection === 'production'"><td v-for="res in materials" :key="res">{{ $formatNumber(total.production[res]) }}</td></template>
+								<template v-else><td>{{ $formatNumber(total.elements[selectedElement]?.value || 0) }}</td><td class="empire-queued">{{ total.elements[selectedElement]?.build > 0 ? $formatNumber(total.elements[selectedElement].build) : '—' }}</td><td v-if="activeSection === 'fleet'" class="empire-in-flight">{{ total.elements[selectedElement]?.fly > 0 ? $formatNumber(total.elements[selectedElement].fly) : '—' }}</td></template>
+							</tr></tfoot>
+						</table>
+					</div>
+					<div v-else class="empire-empty">{{ $t('pages.empire.no_planets') }}</div>
+
+				</template>
+
+				<div v-else class="empire-research">
+					<div class="empire-research-note">{{ $t('pages.empire.research_scope') }}</div>
+					<div v-if="page.tech.length" class="empire-research-grid"><div v-for="item in page.tech" :key="item.id" class="empire-research-card"><img :src="'/assets/images/elements/' + item.id + '.webp'" alt="" width="38" height="38" loading="lazy"><div><strong>{{ $t('tech.' + item.id) }}</strong><span>{{ $t('pages.empire.level') }} {{ item.value }}</span><span v-if="item.build > 0" class="empire-queued">{{ $t('pages.empire.queued_level') }}: {{ item.build }}</span></div></div></div>
+					<div v-else class="empire-empty">{{ $t('pages.empire.no_research') }}</div>
+				</div>
+			</template>
+		</UiTabs>
 	</div>
 </template>
 
 <script setup>
+	import { UiTabs } from '~/components/UI';
 	import useState from '~/composables/useState.js';
-	import { computed } from 'vue';
+	import { computed, ref, watch } from 'vue';
+	import MetalIcon from '~/images/icons/resources/metal.svg?component';
+	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
+	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
+	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
+	import CreditsIcon from '~/images/icons/resources/credits.svg?component';
 	import { Head, Link, router } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';
 	import { changePlanet as changePlanetFn } from '~/utils/helpers.js';
+
+	const resourceIcons = {
+		metal: MetalIcon,
+		crystal: CrystalIcon,
+		deuterium: DeuteriumIcon,
+		energy: EnergyIcon,
+	};
 
 	defineOptions({
 		layout: {
@@ -189,13 +93,55 @@
 		page: Object,
 	});
 
-	const { tm } = useI18n();
+	const { t, tm } = useI18n();
 	const state = useState();
 	const user = computed(() => state.user);
 
-	const rows = computed(() => {
-		return props.page['planets'].length + 2;
+	const materials = ['metal', 'crystal', 'deuterium'];
+	const resourceTypes = [...materials, 'energy'];
+	const productionIds = [1, 2, 3, 4, 12, 212];
+	const sections = [
+		{ id: 'resources', label: 'resources' },
+		{ id: 'production', label: 'production_per_hour' },
+		{ id: 'factors', label: 'efficiency' },
+		{ id: 'buildings', label: 'list_buildings' },
+		{ id: 'fleet', label: 'list_fleets' },
+		{ id: 'defense', label: 'list_defense' },
+		{ id: 'tech', label: 'list_techs' },
+	];
+	const tabs = computed(() => sections.map(section => ({ id: section.id, label: t('pages.empire.' + section.label) })));
+	const activeSection = ref('resources');
+	const selectedElements = ref({ buildings: '1', fleet: '202', defense: '401' });
+	const search = ref('');
+	const tableScroll = ref(null);
+	const isElementSection = computed(() => ['buildings', 'fleet', 'defense'].includes(activeSection.value));
+	const selectedElement = computed(() => selectedElements.value[activeSection.value]);
+	const elementIds = computed(() => Object.keys(tm('tech')).filter(id => {
+		if (activeSection.value === 'buildings') return id < 100;
+		if (activeSection.value === 'fleet') return id > 200 && id < 300;
+		if (activeSection.value === 'defense') return id > 400 && id < 600;
+		return false;
+	}));
+	const filteredPlanets = computed(() => {
+		const query = search.value.trim().toLocaleLowerCase().replace(/[\[\]\s]/g, '');
+
+		return props.page.planets.filter(planet => {
+			const coordinates = [planet.position.galaxy, planet.position.system, planet.position.planet].join(':');
+			return (planet.name.toLocaleLowerCase().replace(/\s/g, '') + ' ' + coordinates).includes(query);
+		});
 	});
+
+	watch([search, activeSection], () => {
+		if (tableScroll.value) {
+			tableScroll.value.scrollTop = 0;
+			tableScroll.value.scrollLeft = 0;
+		}
+	}, { flush: 'post' });
+
+	function resourceClass(planet, resource) {
+		const value = planet.resources[resource];
+		return (resource === 'energy' ? value.value >= 0 : value.value < value.storage) ? 'positive' : 'negative';
+	}
 
 	const total = computed(() => {
 		let result = {

@@ -1,10 +1,10 @@
 <template>
 	<Head :title="$t('pages.fleets.verband.meta_title')"/>
-	<div class="page-fleet-verband">
+	<div class="fleet-page page-fleet-verband">
 		<div class="block">
 			<div class="title">{{ $t('pages.fleets.verband.block_title_fleets_joint') }}</div>
-			<div class="content">
-				<table class="table">
+			<div class="content table-responsive">
+				<table class="table fleet-verband-table">
 					<tbody>
 					<tr>
 						<td class="th">{{ $t('pages.fleets.verband.col_mission') }}</td>
@@ -37,7 +37,7 @@
 					</div>
 					<div class="grid">
 						<div class="th">
-							<table class="table">
+							<table class="table fleet-participants-table">
 								<tbody>
 								<tr>
 									<td class="c">{{ $t('pages.fleets.verband.th_invited_participants') }}</td>
@@ -45,7 +45,7 @@
 								</tr>
 								<tr>
 									<td class="th" width="50%" valign="top">
-										<select size="10" style="width:75%;">
+										<select size="10" :aria-label="$t('pages.fleets.verband.th_invited_participants')">
 											<option v-for="user in page['users']">{{ user }}</option>
 											<option v-if="page['users'].length === 0">{{ $t('pages.fleets.verband.option_no_participants') }}</option>
 										</select>

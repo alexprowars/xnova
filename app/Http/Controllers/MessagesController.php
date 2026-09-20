@@ -172,10 +172,12 @@ class MessagesController extends Controller
 			}
 		}
 
-		$component = $request->hasHeader(Modal::HEADER_MODAL) ? 'Messages/WriteModal' : 'Messages/Write';
+		if ($request->hasHeader(Modal::HEADER_MODAL)) {
+			return Inertia::modal('Messages/WriteModal', $result)
+				->baseRoute('message.write', [$user->id]);
+		}
 
-		return Inertia::modal($component, $result)
-			->baseRoute('message.write', [$user->id]);
+		return Inertia::render('Messages/Write', $result);
 	}
 
 	public function send(int $userId, Request $request): void

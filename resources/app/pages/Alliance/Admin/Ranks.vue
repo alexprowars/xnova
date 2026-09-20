@@ -1,23 +1,21 @@
 <template>
 	<Head :title="$t('pages.alliance.admin.ranks_head_title')"/>
-	<div>
-		<AllianceRanksForm :owner="user['id'] === page['alliance']['user_id']" :items="page['items']"/>
+	<div class="page-alliance page-alliance-admin">
+		<AllianceBack href="/alliance/admin"/>
+		<header class="alliance-heading"><h1>{{ $t('pages.alliance.admin.ranks_head_title') }}</h1></header>
+		<AllianceRanksForm :owner="user.id === page.alliance.user_id" :items="page.items"/>
 		<AllianceRanksCreate/>
 		<AllianceRanksInfo/>
-		<div class="mt-2">
-			<Link href="/alliance/admin" class="button">
-				{{ $t('pages.alliance.admin.nav_back_admin_hub') }}
-			</Link>
-		</div>
 	</div>
 </template>
 
 <script setup>
+	import AllianceBack from '~/components/Page/Alliance/Back.vue';
 	import useState from '~/composables/useState.js';
 	import AllianceRanksForm from '~/components/Page/Alliance/AllianceRanksForm.vue';
 	import AllianceRanksInfo from '~/components/Page/Alliance/AllianceRanksInfo.vue';
 	import AllianceRanksCreate from '~/components/Page/Alliance/AllianceRanksCreate.vue';
-	import { Head, Link } from '@inertiajs/vue3';
+	import { Head } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
 	defineOptions({

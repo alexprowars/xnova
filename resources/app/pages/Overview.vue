@@ -1,232 +1,128 @@
 <template>
 	<Head :title="$t('menu.overview')"/>
 	<div class="page-overview">
-		<DailyBonus v-if="page.dailyBonus" :amount="page.dailyBonus"/>
-
-		<div class="block">
-			<div class="title">
-				<div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
-					<div>
-						{{ $t('planet_type.' + planet['type']) }} "{{ planet['name'] }}"
-						<Link :href="'/galaxy?galaxy=' + planet['coordinates']['galaxy'] + '&system=' + planet['coordinates']['system']">
-							[{{ planet['coordinates']['galaxy'] }}:{{ planet['coordinates']['system'] }}:{{ planet['coordinates']['planet'] }}]
-						</Link>
-						<Link v-if="!user.vacation" href="/overview/rename" :title="$t('pages.overview.planet_rename_hint')">
-							({{ $t('pages.overview.planet_rename_action') }})
-						</Link>
-					</div>
-					<div>
-						<div class="float-sm-end"><clock/></div>
-						<div class="clearfix sm:hidden"></div>
-					</div>
+		<div class="overview-heading">
+			<div>
+				<span class="eyebrow">{{ $t('interface.command') }}</span>
+				<div class="overview-title-line">
+					<h1>{{ planet.name }}</h1>
+					<Link v-if="!user.vacation" href="/overview/rename" class="overview-rename" :title="$t('pages.overview.planet_rename_hint')" :aria-label="$t('pages.overview.planet_rename_hint')">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15z"/></svg>
+					</Link>
 				</div>
 			</div>
+			<Link :href="'/galaxy?galaxy=' + planet.coordinates.galaxy + '&system=' + planet.coordinates.system" class="overview-coordinates">[{{ planet.coordinates.galaxy }}:{{ planet.coordinates.system }}:{{ planet.coordinates.planet }}] <span aria-hidden="true">↗</span></Link>
+		</div>
+		<DailyBonus v-if="page.dailyBonus" :amount="page.dailyBonus"/>
+
+		<div class="block overview-panel">
 			<div class="content">
-				<div v-if="productionNotify" class="text-center mb-2">
-					<span class="negative">
-						<i18n-t keypath="pages.overview.resources_notify" scope="global">
-							<template #link>
-								<Link href="/resources">{{ $t('menu.resources') }}</Link>
-							</template>
-						</i18n-t>
-					</span>
+				<div v-if="productionNotify" class="overview-notice is-warning">
+					<i18n-t keypath="pages.overview.resources_notify" scope="global">
+						<template #link><Link href="/resources">{{ $t('menu.resources') }}</Link></template>
+					</i18n-t>
 				</div>
+				<div v-if="user.protection" class="overview-notice" v-html="$t('pages.overview.newbie_mode_notify')"></div>
+				<div v-if="page.fleets.length" class="mb-2"><Fleets :items="page.fleets"/></div>
 
-				<div v-if="user['protection']" class="mb-2">
-					<div class="text-center" v-html="$t('pages.overview.newbie_mode_notify')"></div>
-				</div>
-
-				<div v-if="page.fleets.length" class="mb-1.5">
-					<Fleets :items="page.fleets"/>
-				</div>
-
-				<div class="overview grid sm:grid-cols-3 gap-1.5">
-					<div>
-						<div class="planet-image mb-2">
-							<Link href="/overview/rename">
-								<img :src="'/assets/images/planeten/' + planet['image'] + '.jpg'" alt="">
+				<div class="overview-dashboard">
+					<div class="overview-world">
+						<div class="overview-world-image">
+							<Link href="/overview/rename" :title="$t('pages.overview.planet_rename_hint')">
+								<img :src="'/assets/images/planeten/' + planet.image + '.jpg'" :alt="planet.name">
 							</Link>
-							<div v-if="planet['moon']" class="moon-image">
-								<a href="" @click.prevent="changePlanet(planet['moon']['id'])" :title="planet['moon']['name']">
-									<img :src="'/assets/images/planeten/' + planet['moon']['image'] + '.jpg'" height="50" width="50" alt="">
-								</a>
-							</div>
+							<button v-if="planet.moon" type="button" class="overview-moon" @click="changePlanet(planet.moon.id)" :title="planet.moon.name" :aria-label="planet.moon.name">
+								<img :src="'/assets/images/planeten/' + planet.moon.image + '.jpg'" :alt="planet.moon.name" width="40" height="40">
+							</button>
 						</div>
-						<div style="border: 1px solid rgb(153, 153, 255); width: 100%; margin: 0 auto;">
-							<div id="CaseBarre" :style="'background-color: #'+(userFiledsPercent > 80 ? 'C00000' : (userFiledsPercent > 60 ? 'C0C000' : '00C000'))+'; width: '+userFiledsPercent+'%;  margin: 0 auto; text-align:center;'">
-								<span style="color: #000000"><b>{{ userFiledsPercent }}%</b></span>
+						<div class="overview-world-details">
+							<div class="planet-development">
+								<div><span>{{ $t('interface.fields') }}</span><strong>{{ userFiledsPercent }}%</strong></div>
+								<progress :value="userFiledsPercent" max="100" :aria-label="$t('interface.fields')" :class="{ 'is-warning': userFiledsPercent > 60, 'is-full': userFiledsPercent > 80 }"/>
 							</div>
-						</div>
-						<div class="page-overview-officiers">
-							<Link v-for="item in user['officiers']" href="/officiers" class="page-overview-officiers-item">
-								<Popper>
-									<template #content>
-										<div>
-											{{ $t('officiers.' + item['code']) }}
-											<br>
-											<span v-if="item['date']">
-												{{ $t('pages.overview.officier_active_until') }} <span class="positive">{{ $formatDate(item['date'], 'DD MMM HH:mm') }}</span>
-											</span>
-											<span v-else class="negative">{{ $t('pages.overview.officier_noactive') }}</span>
-										</div>
-									</template>
-									<span class="officier" :class="[item['code'] + (item['date'] ? '_active' : '')]"></span>
-								</Popper>
-							</Link>
-						</div>
-					</div>
-					<div>
-						<div class="separator sm:hidden"></div>
-						<div class="block-table text-center">
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.diameter') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ $formatNumber(planet['diameter']) }} {{ $t('km') }}
-								</div>
-							</div>
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.used') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									<a :title="$t('pages.overview.used_fields')">{{ planet['field_used'] }}</a> / <a :title="$t('pages.overview.used_fields_max')">{{ planet['field_max'] }}</a> {{ $t('pages.overview.fields') }}
-								</div>
-							</div>
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.temp') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ $t('pages.overview.temp_from') }} {{ planet['temp_min'] }}&deg;C {{ $t('pages.overview.temp_until') }} {{ planet['temp_max'] }}&deg;C
-								</div>
-							</div>
-							<div class="grid">
-								<div class="c">
-									{{ $t('pages.overview.debris') }}
-									<a v-if="hasDebrisMission" @click.prevent="sendRecycle">
-										({{ $t('pages.overview.recycle') }})
-									</a>
-								</div>
-							</div>
-							<div class="grid">
-								<div class="th doubleth middle">
-									<div>
-										<img src="/assets/images/skin/s_metal.png" class="inline" alt="" align="absmiddle" v-tooltip="$t('resources.metal')">
-										{{ $formatNumber(planet['debris']['metal']) }}
-										/
-										<img src="/assets/images/skin/s_crystal.png" class="inline" alt="" align="absmiddle" v-tooltip="$t('resources.crystal')">
-										{{ $formatNumber(planet['debris']['crystal']) }}
-									</div>
-								</div>
-							</div>
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.battles') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th middle">
-									<img src="/assets/images/wins.gif" class="inline" alt="" align="absmiddle" v-tooltip="$t('pages.overview.battles_wins')">&nbsp;
-									{{ user['raids']['win'] }}
-									&nbsp;&nbsp;
-									<img src="/assets/images/losses.gif" class="inline" alt="" align="absmiddle" v-tooltip="$t('pages.overview.battles_defeats')">&nbsp;
-									{{ user['raids']['lost'] }}
-								</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ $t('pages.overview.fraction') }}: <Link href="/race">{{ $t('races.' + user['race']) }}</Link>
-								</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									<Link href="/referrals">
-										{{ host }}/?{{ user['id'] }}
-									</Link>
-									[{{ user['links'] }}]
-								</div>
+							<div class="overview-section-label">{{ $t('menu.officiers') }}</div>
+							<div class="page-overview-officiers">
+								<Link v-for="item in user.officiers" :key="item.code" href="/officiers" class="page-overview-officiers-item" :class="{ 'is-active': item.date }" :aria-label="$t('officiers.' + item.code)">
+									<Popper>
+										<template #content>
+											<div>{{ $t('officiers.' + item.code) }}</div>
+											<div v-if="item.date">{{ $t('pages.overview.officier_active_until') }} <span class="positive">{{ $formatDate(item.date, 'DD MMM HH:mm') }}</span></div>
+											<div v-else>{{ $t('pages.overview.officier_noactive') }}</div>
+										</template>
+										<span class="officier" :class="item.code + (item.date ? '_active' : '')" aria-hidden="true"></span>
+									</Popper>
+								</Link>
 							</div>
 						</div>
 					</div>
-					<div>
-						<div class="separator sm:hidden"></div>
-						<div class="block-table text-center">
-							<div class="grid grid-cols-12">
-								<div class="col-span-6 sm:col-span-5 c">{{ $t('pages.overview.player') }}:</div>
-								<div class="col-span-6 sm:col-span-7 c" style="word-break: break-all;">
-									<ModalLink navigate :href="'/players/' + user['id']">{{ user['name'] }}</ModalLink>
-								</div>
+
+					<div class="overview-facts">
+						<dl class="overview-details">
+							<div><dt>{{ $t('pages.overview.diameter') }}</dt><dd>{{ $formatNumber(planet.diameter) }} {{ $t('km') }}</dd></div>
+							<div>
+								<dt>{{ $t('pages.overview.used') }}</dt>
+								<dd><span :title="$t('pages.overview.used_fields')">{{ planet.field_used }}</span> / <span :title="$t('pages.overview.used_fields_max')">{{ planet.field_max }}</span> {{ $t('pages.overview.fields') }}</dd>
 							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.stats_build') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<span class="positive">{{ $formatNumber(user['points']['build']) }}</span>
-								</div>
+							<div><dt>{{ $t('pages.overview.temp') }}</dt><dd>{{ $t('pages.overview.temp_from') }} {{ planet.temp_min }}°C {{ $t('pages.overview.temp_until') }} {{ planet.temp_max }}°C</dd></div>
+						</dl>
+
+						<div class="overview-fact-group">
+							<div class="overview-section-header">
+								<span class="overview-section-label">{{ $t('pages.overview.debris') }}</span>
+								<button v-if="hasDebrisMission" type="button" class="overview-text-action" @click="sendRecycle">{{ $t('pages.overview.recycle') }} <span aria-hidden="true">↗</span></button>
 							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.stats_fleet') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<span class="positive">{{ $formatNumber(user['points']['fleet']) }}</span>
-								</div>
+							<div class="overview-debris">
+								<span v-tooltip="$t('resources.metal')"><MetalIcon aria-hidden="true" focusable="false"/><span class="sr-only">{{ $t('resources.metal') }}:</span>{{ $formatNumber(planet.debris.metal) }}</span>
+								<span v-tooltip="$t('resources.crystal')"><CrystalIcon aria-hidden="true" focusable="false" class="crystal"/><span class="sr-only">{{ $t('resources.crystal') }}:</span>{{ $formatNumber(planet.debris.crystal) }}</span>
 							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.stats_defs') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<span class="positive">{{ $formatNumber(user['points']['defs']) }}</span>
-								</div>
+						</div>
+
+						<div class="overview-fact-group">
+							<div class="overview-section-label">{{ $t('pages.overview.battles') }}</div>
+							<div class="overview-battles">
+								<div><span>{{ $t('pages.overview.battles_wins') }}</span><strong>{{ $formatNumber(user.raids.win) }}</strong></div>
+								<div><span>{{ $t('pages.overview.battles_defeats') }}</span><strong>{{ $formatNumber(user.raids.lost) }}</strong></div>
 							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.stats_tech') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<span class="positive">{{ $formatNumber(user['points']['tech']) }}</span>
-								</div>
-							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.stats_total') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<span class="positive">{{ $formatNumber(user['points']['total']) }}</span>
-								</div>
-							</div>
-							<div class="grid grid-cols-12 divide-x">
-								<div class="col-span-6 sm:col-span-5 th">{{ $t('pages.overview.place') }}:</div>
-								<div class="col-span-6 sm:col-span-7 th">
-									<Link :href="'/stats/players?page=' + Math.max(1, Math.ceil(user['points']['place'] / 100))">{{ user['points']['place'] }}</Link>
+						</div>
+
+						<div class="overview-referrals">
+							<span class="overview-section-label">{{ $t('pages.referrals.head_title') }}</span>
+							<div><Link href="/referrals">{{ host }}/?{{ user.id }}</Link><span class="overview-referrals-count" :title="$t('pages.referrals.recruited_players_title')">{{ user.links }}</span></div>
+						</div>
+					</div>
+
+					<div class="overview-commander">
+						<div class="overview-player">
+							<span class="overview-section-label">{{ $t('pages.overview.player') }}</span>
+							<ModalLink navigate :href="'/players/' + user.id" class="overview-player-name">{{ user.name }}</ModalLink>
+							<div class="overview-player-race">{{ $t('pages.overview.fraction') }}: <Link href="/race">{{ $t('races.' + user.race) }}</Link></div>
+						</div>
+						<div class="overview-score">
+							<div><span class="overview-section-label">{{ $t('pages.overview.stats_total') }}</span><strong>{{ $formatNumber(user.points.total) }}</strong></div>
+							<div class="overview-rank">
+								<span class="overview-section-label">{{ $t('pages.overview.place') }}</span>
+								<div>
+									<Link :href="'/stats/players?page=' + Math.max(1, Math.ceil(user.points.place / 100))">{{ user.points.place }}</Link>
 									<span :title="$t('pages.overview.place_diff')">
-										<span v-if="user['points']['diff'] >= 1" class="positive">+{{ user['points']['diff'] }}</span>
-										<span v-else-if="user['points']['diff'] < 0" class="negative">{{ user['points']['diff'] }}</span>
+										<span v-if="user.points.diff >= 1" class="positive">+{{ user.points.diff }}</span>
+										<span v-else-if="user.points.diff < 0" class="negative">{{ user.points.diff }}</span>
 									</span>
 								</div>
 							</div>
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.mine_level') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ user['lvl']['mine']['l'] }} {{ $t('pages.overview.from') }} 100
-								</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ $formatNumber(user['lvl']['mine']['p']) }} / {{ $formatNumber(user['lvl']['mine']['u']) }} exp
-								</div>
-							</div>
-							<div class="grid">
-								<div class="c">{{ $t('pages.overview.raid_level') }}</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ user['lvl']['raid']['l'] }} {{ $t('pages.overview.from') }} 100
-								</div>
-							</div>
-							<div class="grid">
-								<div class="th">
-									{{ $formatNumber(user['lvl']['raid']['p']) }} / {{ $formatNumber(user['lvl']['raid']['u']) }} exp
-								</div>
+						</div>
+						<dl class="overview-points">
+							<div v-for="stat in pointStats" :key="stat.code"><dt>{{ $t('pages.overview.' + stat.label) }}</dt><dd>{{ $formatNumber(user.points[stat.code]) }}</dd></div>
+						</dl>
+						<div class="overview-levels">
+							<div v-for="level in ['mine', 'raid']" :key="level" class="overview-level" :class="'overview-level-' + level">
+								<div class="overview-section-header"><span>{{ $t('pages.overview.' + level + '_level') }}</span><strong>{{ user.lvl[level].l }} <span>{{ $t('pages.overview.from') }} 100</span></strong></div>
+								<progress :value="user.lvl[level].p" :max="Math.max(user.lvl[level].u, 1)" :aria-label="$t('pages.overview.' + level + '_level')"/>
+								<div class="overview-level-exp">{{ $formatNumber(user.lvl[level].p) }} / {{ $formatNumber(user.lvl[level].u) }} exp</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div v-if="queue.length > 0" class="block-table mt-1.5 border">
+				<div v-if="queue.length > 0" class="overview-queue">
 					<QueueRow v-for="(list, i) in queue" :key="i" :item="list"/>
 				</div>
 			</div>
@@ -239,9 +135,10 @@
 <script setup>
 	import useState from '~/composables/useState.js';
 	import Fleets from '~/components/Page/Overview/Feets.vue';
-	import Clock from '~/components/Page/Overview/Clock.vue';
 	import QueueRow from '~/components/Page/Overview/QueueRow.vue';
 	import DailyBonus from '~/components/Page/Overview/DailyBonus.vue';
+	import MetalIcon from '~/images/icons/resources/metal.svg?component';
+	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
 	import { sendMission } from '~/utils/fleet';
 	import { computed } from 'vue';
 	import ChatList from '~/components/Page/Overview/ChatList.vue';
@@ -253,6 +150,13 @@
 	defineProps({
 		page: Object,
 	});
+
+	const pointStats = [
+		{ code: 'build', label: 'stats_build' },
+		{ code: 'fleet', label: 'stats_fleet' },
+		{ code: 'defs', label: 'stats_defs' },
+		{ code: 'tech', label: 'stats_tech' },
+	];
 
 	const state = useState();
 	const user = computed(() => state.user);

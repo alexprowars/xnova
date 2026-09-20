@@ -1,84 +1,32 @@
 <template>
-	<Head :title="page['name']"/>
-	<div class="tech_view" ref="elementRef"></div>
+	<Head :title="page.name"/>
+	<div class="page-tech-detail">
+		<Link href="/tech" class="tech-back-link"><span aria-hidden="true">←</span> {{ $t('pages.techtree.all_technologies') }}</Link>
+		<header class="tech-detail-heading">
+			<img :src="'/assets/images/elements/' + page.id + '.webp'" alt="" width="72" height="72">
+			<div class="tech-detail-identity">
+				<h1>{{ page.name }}</h1>
+				<div class="tech-detail-meta"><span>{{ $t('pages.techtree.current_level') }} <b>{{ page.level }}</b></span><span class="tech-availability" :class="page.available ? 'is-ready' : 'is-missing'">{{ $t(page.available ? 'pages.techtree.fulfilled' : 'pages.techtree.missing') }}</span></div>
+			</div>
+			<ModalLink navigate :href="'/info/' + page.id" class="button" aria-haspopup="dialog">{{ $t('pages.techtree.description') }}</ModalLink>
+		</header>
+		<section class="tech-dependencies">
+			<header class="tech-dependencies-heading"><h2>{{ $t('pages.techtree.requirement_tree') }}</h2><span>{{ $t('pages.techtree.level_hint') }}</span></header>
+			<ul v-if="requirements.length" class="tech-dependency-list">
+				<DependencyNode v-for="requirement in requirements" :key="page.id + ':' + requirement.id" :requirement="requirement" :items="page.items"/>
+			</ul>
+			<div v-else class="tech-detail-empty" :title="$t('pages.techtree.no_requirements')">—</div>
+		</section>
+	</div>
 </template>
 
 <script setup>
-	import { ECOTree } from '~/utils/techtree'
-	import { onMounted, useTemplateRef } from 'vue';
-	import { Head } from '@inertiajs/vue3';
+	import { computed } from 'vue';
+	import { Head, Link } from '@inertiajs/vue3';
+	import { ModalLink } from '@inertiaui/modal-vue';
+	import DependencyNode from '~/components/Page/Tech/DependencyNode.vue';
 
-	defineOptions({
-		layout: {
-			view: {
-				resources: false,
-			}
-		}
-	});
-
-	const props = defineProps({
-		page: Object,
-	});
-
-	let counter = 0;
-	let objectTree;
-	const elementRef = useTemplateRef('elementRef');
-
-	onMounted(() => {
-		objectTree = new ECOTree('objectTree', elementRef.value);
-		createTree(1, -1, props.page['id'], props.page['level'], props.page['available']);
-
-		window.objectTree = objectTree;
-	});
-
-	function createTree (tid, prntid, element, level, access, fwrd) {
-		let item = props.page['items'].find((el) => el.id === element);
-
-		let active = 'lime';
-
-		if (!access) {
-			active = 'red';
-		}
-
-		if (element !== -1) {
-			objectTree.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">' + item.name + '</span></div><img id="tch_img_' + tid + '" name="' + item['name'] + '" src="'+'/assets/images/elements/' + item.id + '.webp" class="tch_icon_' + active + '"><div class="tch_tx_lvl">' + level + '</div>', null, null, active, active, active);
-		} else {
-			objectTree.add(tid, prntid, '<div class="tch_tx_nmcont"><span class="tch_tx_name">' + fwrd + '</span></div><img id="tch_img_' + tid + '" src="skins/sn_space_blue/images/pixel.png" class="tch_icon_' + active + '"><div class="tch_tx_lvl">' + level + '</div>', null, null, active, active, active);
-		}
-
-		counter++;
-		objectTree.UpdateTree();
-
-		if (!access) {
-			document.querySelector('#tch_img_' + prntid)?.classList.add('tch_icon_red');
-		}
-
-		if (element !== -1 && item['requirments'].length) {
-			for (let req of item['requirments']) {
-				let actclr = 'positive';
-
-				if (req['current'] < req['level']) {
-					actclr = 'negative';
-				}
-
-				let lvtmp = '';
-
-				if (req['queue'] !== -1) {
-					lvtmp = '<span class="' + actclr + '">' + req['current'] + '</span><span style="color:gold"> + ' + req['queue'] + '</span>/<span class="positive">' + req['level'] + '</span>';
-				} else {
-					lvtmp = '<span class="' + actclr + '">' + req['current'] + '</span>/<span class="positive">' + req['level'] + '</span>';
-				}
-
-				let fwrld = '';
-
-				if (req['id'] === -1) {
-					fwrld = req['name'];
-				}
-
-				createTree(counter + 1, tid, req['id'], lvtmp, req['current'] >= req['level'], fwrld);
-			}
-		}
-
-		objectTree.UpdateTree();
-	}
+	defineOptions({ layout: { view: { resources: false } } });
+	const props = defineProps({ page: Object });
+	const requirements = computed(() => props.page.items.find((item) => item.id === props.page.id)?.requirments || []);
 </script>

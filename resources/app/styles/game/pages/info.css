@@ -1,9 +1,206 @@
 .page-info {
+	min-width: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	font-variant-numeric: tabular-nums;
+
+	> .block {
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		overflow: hidden;
+		background: #0e1b29;
+	}
+
+	> .block + .block {
+		margin-top: 10px;
+	}
+
+	> .block > .title {
+		padding: 9px 12px;
+		border: 0;
+		border-radius: 0;
+		background: #142737;
+		color: #d2e3ee;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	> .block > .content {
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		overflow-x: auto;
+	}
+
+	.info-description-heading {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+	}
+
+	.info-tree-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		color: #9fc6d9;
+		font-size: 12px;
+		font-weight: 400;
+	}
+
+	.info-tree-link:hover {
+		color: #eff8fc;
+	}
+
+	> .block > .info-description-body {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		padding: 12px;
+	}
+
+	.info-description-image {
+		flex-shrink: 0;
+	}
+
+	.info-description-image img {
+		width: 120px;
+		height: 120px;
+		object-fit: cover;
+		border: 1px solid #355166;
+		border-radius: 5px;
+	}
+
+	.info-description-image .info-race-image {
+		width: 40px;
+		height: 40px;
+		object-fit: contain;
+		border: 0;
+	}
+
+	.info-description-text {
+		min-width: 0;
+		color: #b8cedc;
+		overflow-wrap: anywhere;
+	}
+
+	.info-description-text p {
+		margin: 0;
+		font-size: inherit;
+		font-weight: 400;
+		line-height: inherit;
+	}
+
+	.info-description-text p + p {
+		margin-top: 8px;
+	}
+
+	.info-description-text p:last-child {
+		margin-bottom: 0;
+	}
+
+	.block-table {
+		border: 0;
+	}
+
+	.block-table > .grid {
+		border: 0;
+		border-bottom: 1px solid #263b4d;
+	}
+
+	.block-table > .grid:last-child {
+		border-bottom: 0;
+	}
+
+	.block-table > .grid > .th, .block-table > .grid > .c {
+		padding: 6px 10px;
+		border: 0;
+		background: transparent;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.block-table > .grid > .c {
+		background: #102332;
+		color: #9eb8c9;
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.block-table > .grid:hover > .th {
+		background: #142b3b;
+	}
+
+	.block-table:has(> .grid-cols-5) > .grid {
+		min-width: 460px;
+	}
+
+	.block-table .grid-cols-2 > .th:first-child {
+		text-align: left;
+		color: #9eb8c9;
+	}
+
+	.block-table .grid-cols-2 > .th:last-child {
+		color: #d2e3ee;
+	}
+
+	.neutral {
+		font-weight: 600;
+	}
+
+	.building-price {
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
 	.building-price .building-price-item {
 		display: inline-block;
 	}
+
+	@media (max-width: 479px) {
+		> .block > .info-description-body {
+			gap: 10px;
+			flex-direction: column;
+		}
+
+		.info-description-image img {
+			width: 88px;
+			height: 88px;
+		}
+
+		.info-description-image .info-race-image {
+			width: 40px;
+			height: 40px;
+		}
+
+		.block-table > .grid > .th, .block-table > .grid > .c {
+			padding: 6px 8px;
+			overflow-wrap: anywhere;
+		}
+	}
 }
 
-.dialog-content .page-info {
+.dialog-content .page-info, .im-modal-content .page-info {
 	max-width: 600px;
+}
+
+.dialog-content .page-info .info-description-heading, .im-modal-content .page-info .info-description-heading {
+	padding-right: 36px;
+}
+
+@layer base {
+	.page-info .positive {
+		color: #8fcab0 !important;
+	}
+
+	.page-info .negative {
+		color: #dba29e !important;
+	}
+
+	.page-info .neutral {
+		color: #dfc28b !important;
+	}
 }

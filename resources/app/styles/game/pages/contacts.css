@@ -1,0 +1,41 @@
+.page-contacts {
+	.contacts-intro {
+		font-size: 14px;
+		font-weight: 400;
+		margin: 12px 0 16px;
+		color: #91adbf;
+	}
+
+	.contact-card > header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
+		padding: 12px 14px;
+	}
+
+	.contact-card h2 {
+		margin: 0 0 4px;
+		color: #d1e3ed;
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.contact-role {
+		display: inline-block;
+		padding: 2px 7px;
+		border-radius: 3px;
+		background: #1b3547;
+		color: #8ebed6;
+		font-size: 12px;
+	}
+
+	.contact-card .button {
+		overflow-wrap: anywhere;
+	}
+
+	.contact-card .game-prose {
+		padding-top: 0;
+	}
+}

@@ -2,22 +2,46 @@
 
 @import "./styles/variables.css";
 @import "./styles/game/base.css";
+@import "./styles/ui.css";
 
 @import "./styles/game/pages/buildings.css";
 @import "./styles/game/pages/chat.css";
 @import "./styles/game/pages/techtree.css";
 @import "./styles/game/pages/overview.css";
+@import "./styles/game/pages/race.css";
+@import "./styles/game/pages/referrals.css";
+@import "./styles/game/pages/resources.css";
+@import "./styles/game/pages/merchant.css";
 @import "./styles/game/pages/galaxy.css";
 @import "./styles/game/pages/empire.css";
 @import "./styles/game/pages/sim.css";
+@import "./styles/game/pages/players.css";
+@import "./styles/game/pages/search.css";
+@import "./styles/game/pages/contacts.css";
+@import "./styles/game/pages/blocked.css";
+@import "./styles/game/pages/phalanx.css";
+@import "./styles/game/pages/credits.css";
+@import "./styles/game/pages/auth.css";
+@import "./styles/game/pages/start.css";
+@import "./styles/game/pages/content.css";
+@import "./styles/game/pages/errors.css";
 @import "./styles/game/pages/fleet.css";
 @import "./styles/game/pages/officiers.css";
 @import "./styles/game/pages/index.css";
 @import "./styles/game/pages/stat.css";
+@import "./styles/game/pages/records.css";
+@import "./styles/game/pages/hall.css";
+@import "./styles/game/pages/logs.css";
 @import "./styles/game/pages/info.css";
+@import "./styles/game/pages/options.css";
+@import "./styles/game/pages/quests.css";
+@import "./styles/game/pages/messages.css";
+@import "./styles/game/pages/support.css";
+@import "./styles/game/pages/notes.css";
+@import "./styles/game/pages/friends.css";
+@import "./styles/game/pages/alliance.css";
 
 @import "./styles/game/components/loader.css";
-@import "./styles/game/components/tabs.css";
 @import "./styles/game/components/editor.css";
 @import "./styles/game/components/chat.css";
 @import "./styles/game/components/mobile-menu.css";
@@ -26,13 +50,13 @@
 @import "./styles/game/components/building.css";
 
 @import "./styles/game/report.css";
-@import "./styles/game/sprite.css";
 @import "./styles/game/animation.css";
 
 @import "./styles/plugins/tooltip.css";
 @import "./styles/plugins/modal.css";
 @import 'floating-vue/dist/style.css';
 @import 'vue3-toastify/dist/index.css';
+@import './styles/plugins/toast.css';
 @source '../../node_modules/@inertiaui/modal-vue/src';
 
 @theme {

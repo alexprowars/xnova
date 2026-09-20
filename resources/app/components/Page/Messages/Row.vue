@@ -1,38 +1,27 @@
 <template>
-	<div class="grid grid-cols-12 text-center">
-		<div class="col-span-1 th middle">
-			<input v-if="canDelete" name="delete[]" type="checkbox" :value="item['id']" v-model="deleteModel" :title="$t('pages.messages.row.delete_title')">
-		</div>
-		<div class="col-span-3 th middle">{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm:ss') }}</div>
-		<div class="col-span-6 th middle">
-			<ModalLink v-if="item['from'] > 0" navigate :href="'/players/' + item['from']" :title="$t('pages.messages.row.from_title')" v-html="item['subject']"></ModalLink>
-			<span v-else v-html="item['subject']"></span>
-		</div>
-		<div class="col-span-2 th middle">
-			<span v-if="item['type'] === 1">
-				<Link :href="'/messages/write/' + item['from']" :title="$t('pages.messages.row.reply_title')">
-					<span class="sprite skin_m"></span>
-				</Link>
-				<Link :href="'/messages/write/' + item['from'] + '?quote=' + item['id']" :title="$t('pages.messages.row.quote_title')">
-					<span class="sprite skin_z"></span>
-				</Link>
-				<a @click.prevent="abuseAction" :title="$t('pages.messages.row.abuse_title')">
-					<span class="sprite skin_s"></span>
-				</a>
-			</span>
-		</div>
-	</div>
-	<div class="grid">
-		<div :style="'background-color:' + $t('message_types_backgrounds.' + item['type'])" class="b">
-			<div v-if="user['options']?.['bb_parser']">
-				<TextViewer :text="item['message']"/>
+	<article class="message-card" :class="['message-type-' + item.type, { 'is-selected': deleteModel.includes(item.id) }]">
+		<header class="message-header">
+			<input v-if="canDelete" name="delete[]" type="checkbox" :value="item.id" v-model="deleteModel" :aria-label="$t('pages.messages.row.select')" :title="$t('pages.messages.row.select')">
+			<div class="message-identity">
+				<ModalLink v-if="item.from > 0" navigate :href="'/players/' + item.from" class="message-subject" :title="$t('pages.messages.row.from_title')" v-html="item.subject"/>
+				<span v-else class="message-subject" v-html="item.subject"/>
+				<div class="message-meta"><span class="message-category">{{ $t('message_types.' + item.type) }}</span><time :datetime="item.date">{{ $formatDate(item.date, 'DD MMM YYYY HH:mm:ss') }}</time></div>
 			</div>
-			<div v-else v-html="sanitizeHtml(item['message'])"></div>
+			<div v-if="item.type === 1" class="message-actions">
+				<Link :href="'/messages/write/' + item.from" class="message-action" :aria-label="$t('pages.messages.row.reply_title')" :title="$t('pages.messages.row.reply_title')"><MessageIcon name="reply"/></Link>
+				<Link :href="'/messages/write/' + item.from + '?quote=' + item.id" class="message-action" :aria-label="$t('pages.messages.row.quote_title')" :title="$t('pages.messages.row.quote_title')"><MessageIcon name="quote"/></Link>
+				<button type="button" class="message-action message-report" @click="abuseAction" :aria-label="$t('pages.messages.row.abuse_title')" :title="$t('pages.messages.row.abuse_title')"><MessageIcon name="flag"/></button>
+			</div>
+		</header>
+		<div class="message-body">
+			<TextViewer v-if="user.options?.bb_parser" :text="item.message"/>
+			<div v-else v-html="sanitizeHtml(item.message)"/>
 		</div>
-	</div>
+	</article>
 </template>
 
 <script setup>
+	import MessageIcon from '~/components/Page/Messages/MessageIcon.vue';
 	import useState from '~/composables/useState.js';
 	import { Link, useForm } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';

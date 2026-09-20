@@ -1,35 +1,12 @@
 <template>
 	<Head :title="$t('pages.contacts.page_title')"/>
-	<div class="block">
-		<div class="title">{{ $t('pages.contacts.section_heading') }}</div>
-		<div class="content">
-			<div class="block-table text-center">
-				<div class="th">
-					<span style="color: orange">{{ $t('pages.contacts.intro_hint') }}</span>
-				</div>
-				<div class="grid grid-cols-3">
-					<div class="c">{{ $t('pages.contacts.table_header_name') }}</div>
-					<div class="c">{{ $t('pages.contacts.table_header_role') }}</div>
-					<div class="c">{{ $t('pages.contacts.table_header_email') }}</div>
-				</div>
-				<template v-for="item in page.items">
-					<div class="grid grid-cols-3">
-						<div class="th">{{ item['name'] }}</div>
-						<div class="th">{{ item['role'] }}</div>
-						<div class="th">
-							<a :href="'mailto:'+item['email']">{{ item['email'] }}</a>
-						</div>
-					</div>
-					<div class="c" v-if="item['about'].length > 0">
-						<TextViewer :text="item['about']"/>
-					</div>
-				</template>
-			</div>
-		</div>
+	<div class="game-page page-contacts"><UiHeading :title="$t('pages.contacts.page_title')" class="game-heading"/><p class="contacts-intro">{{ $t('pages.contacts.intro_hint') }}</p>
+		<UiPanel v-for="item in page.items" :key="item.email" class="game-panel contact-card"><header><div><h2>{{ item.name }}</h2><span class="contact-role">{{ item.role }}</span></div><UiButton as="a" variant="secondary" :href="'mailto:' + item.email">{{ item.email }}</UiButton></header><div v-if="item.about" class="game-prose"><TextViewer :text="item.about"/></div></UiPanel>
 	</div>
 </template>
 
 <script setup>
+	import { UiButton, UiHeading, UiPanel } from '~/components/UI';
 	import { Head } from '@inertiajs/vue3';
 	import TextViewer from '~/components/TextViewer.vue';
 

@@ -1,40 +1,22 @@
 <template>
-	<div class="friends page-friends-request">
-		<div class="block">
-			<div class="title">
-				{{ isMy ? $t('pages.friends.list.my_requests') : $t('pages.friends.requests.other_requests') }}
-			</div>
-			<div class="content">
-				<div class="block-table text-center">
-					<div class="grid grid-cols-6">
-						<div class="c">{{ $t('pages.friends.list.name') }}</div>
-						<div class="c">{{ $t('pages.friends.list.alliance') }}</div>
-						<div class="c">{{ $t('pages.friends.list.coordinates') }}</div>
-						<div class="col-span-2 c">{{ $t('pages.friends.list.text') }}</div>
-						<div class="c">&nbsp;</div>
-					</div>
-					<RequestRow v-for="item in page.items" :key="item['id']" :item="item" :is-my="isMy"/>
-					<div v-if="page.items.length === 0" class="grid">
-						<div class="th">{{ $t('pages.friends.requests.no_requests') }}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="mt-2">
-			<Link href="/friends" class="button">{{ $t('pages.friends.requests.back') }}</Link>
-		</div>
+	<Head :title="isMy ? $t('pages.friends.tab_outgoing') : $t('pages.friends.tab_incoming')"/>
+	<div class="page-friends">
+		<UiHeading :title="isMy ? $t('pages.friends.tab_outgoing') : $t('pages.friends.tab_incoming')" :count="page.items.length"/>
+		<FriendsNavigation :active="isMy ? 'outgoing' : 'incoming'"/>
+		<UiPanel clip><UiEmptyState v-if="!page.items.length">{{ $t('pages.friends.requests.no_requests') }}</UiEmptyState><div v-else class="friends-requests"><RequestRow v-for="item in page.items" :key="item.id" :item="item" :is-my="isMy"/></div></UiPanel>
 	</div>
 </template>
 
 <script setup>
+	import { UiEmptyState, UiHeading, UiPanel } from '~/components/UI';
+	import FriendsNavigation from '~/components/Page/Friends/Navigation.vue';
 	import RequestRow from '~/components/Page/Friends/RequestRow.vue';
 	import { computed } from 'vue';
-	import { Link, usePage } from '@inertiajs/vue3';
+	import { Head } from '@inertiajs/vue3';
 
-	const inertia = usePage();
-	const isMy = computed(() => inertia.url.indexOf('/my') !== -1);
-
-	defineProps({
+	const props = defineProps({
 		page: Object,
 	});
+
+	const isMy = computed(() => props.page.isMy);
 </script>

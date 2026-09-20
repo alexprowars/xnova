@@ -20,7 +20,7 @@ class MissionRecyclingMessage extends AbstractMessage
 		return __('fleet_engine.sys_recy_gotten', [
 			'metal' => Format::number($this->data['metal']),
 			'crystal' => Format::number($this->data['crystal']),
-			'target' => Coordinates::fromArray($this->data)->getLink(),
+			'target' => Coordinates::fromArray($this->data['target'])->getLink(),
 		]);
 	}
 }

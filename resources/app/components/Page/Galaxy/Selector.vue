@@ -1,56 +1,33 @@
 <template>
 	<form ref="form" class="page-galaxy-select" @submit.prevent="change">
-		<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-			<div class="col-span-2 sm:col-span-1 sm:order-2">
-				<GalaxySelectorShortcut :items="shortcuts" :galaxy="galaxy" :system="system" v-model="shortcut"/>
-			</div>
-			<div class="sm:order-1 text-center">
-				<div class="block-table inline-block">
-					<div class="flex">
-						<div class="w-full c">
-							{{ $t('pages.galaxy.selector.galaxy') }}
-						</div>
-					</div>
-					<div class="flex">
-						<div class="th middle">
-							<button class="button" :disabled="galaxy === 1" @click.prevent="changeByDirection('galaxyLeft')">&lt;-</button>
-						</div>
-						<div class="th middle">
-							<input name="galaxy" v-model.number="inputGalaxy" maxlength="3" tabindex="1" min="1" type="number">
-						</div>
-						<div class="th middle">
-							<button class="button" :disabled="galaxy >= galaxyMax" @click.prevent="changeByDirection('galaxyRight')">-&gt;</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="sm:order-3 text-center">
-				<div class="block-table inline-block">
-					<div class="flex">
-						<div class="w-full c">
-							{{ $t('pages.galaxy.selector.system') }}
-						</div>
-					</div>
-					<div class="flex">
-						<div class="th middle">
-							<button class="button" :disabled="system === 1" @click.prevent="changeByDirection('systemLeft')">&lt;-</button>
-						</div>
-						<div class="th middle">
-							<input name="system" v-model.number="inputSystem" maxlength="3" tabindex="2" min="1" type="number">
-						</div>
-						<div class="th middle">
-							<button class="button" :disabled="system >= systemMax" @click.prevent="changeByDirection('systemRight')">-&gt;</button>
-						</div>
-					</div>
-				</div>
+		<div class="galaxy-coordinate-field">
+			<label for="galaxy-coordinate">{{ $t('pages.galaxy.selector.galaxy') }}</label>
+			<div class="galaxy-stepper">
+				<button type="button" :disabled="galaxy === 1" :aria-label="$t('pages.galaxy.selector.previous_galaxy')" @click="changeByDirection('galaxyLeft')"><GalaxyIcon type="left"/></button>
+				<input id="galaxy-coordinate" name="galaxy" v-model.number="inputGalaxy" min="1" :max="galaxyMax" type="number" required>
+				<button type="button" :disabled="galaxy >= galaxyMax" :aria-label="$t('pages.galaxy.selector.next_galaxy')" @click="changeByDirection('galaxyRight')"><GalaxyIcon type="right"/></button>
 			</div>
 		</div>
+		<div class="galaxy-coordinate-field">
+			<label for="system-coordinate">{{ $t('pages.galaxy.selector.system') }}</label>
+			<div class="galaxy-stepper">
+				<button type="button" :disabled="system === 1" :aria-label="$t('pages.galaxy.selector.previous_system')" @click="changeByDirection('systemLeft')"><GalaxyIcon type="left"/></button>
+				<input id="system-coordinate" name="system" v-model.number="inputSystem" min="1" :max="systemMax" type="number" required>
+				<button type="button" :disabled="system >= systemMax" :aria-label="$t('pages.galaxy.selector.next_system')" @click="changeByDirection('systemRight')"><GalaxyIcon type="right"/></button>
+			</div>
+		</div>
+		<div class="galaxy-shortcuts-field">
+			<label for="galaxy-shortcut">{{ $t('pages.galaxy.selector.shortcuts') }}</label>
+			<GalaxySelectorShortcut :items="shortcuts" :galaxy="galaxy" :system="system" v-model="shortcut"/>
+		</div>
+		<button type="submit" class="button galaxy-go">{{ $t('pages.galaxy.selector.go') }}<GalaxyIcon type="right"/></button>
 	</form>
 </template>
 
 <script setup>
-	import GalaxySelectorShortcut from './SelectorShortcut.vue'
-	import { computed, ref, watch } from 'vue';
+	import GalaxySelectorShortcut from './SelectorShortcut.vue';
+	import GalaxyIcon from './GalaxyIcon.vue';
+	import { ref, watch } from 'vue';
 
 	const props = defineProps({
 		galaxy: {
@@ -77,13 +54,17 @@
 
 	const emit = defineEmits(['change']);
 
-	const inputGalaxy = computed(() => props.galaxy);
-	const inputSystem = computed(() => props.system);
+	const inputGalaxy = ref(props.galaxy);
+	const inputSystem = ref(props.system);
 	const shortcut = ref(null);
 
 	resetShortcut();
 
-	watch(() => [props.galaxy, props.system], () => resetShortcut());
+	watch(() => [props.galaxy, props.system], () => {
+		inputGalaxy.value = props.galaxy;
+		inputSystem.value = props.system;
+		resetShortcut();
+	});
 	watch(shortcut, (value) => shortcutChange(value));
 
 	function shortcutChange(val) {

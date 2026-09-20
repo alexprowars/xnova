@@ -1,18 +1,9 @@
 <template>
-	<div class="block page-stat-players">
-		<div class="content">
-			<div class="block-table text-center middle">
-				<div class="grid grid-cols-12">
-					<div class="c sm:col-span-1 col-span-2 middle">{{ $t('pages.stats.players_table_rank') }}</div>
-					<div class="c sm:col-span-1 hidden sm:block middle">{{ $t('pages.stats.players_table_delta') }}</div>
-					<div class="c sm:col-span-4 col-span-5 middle">{{ $t('pages.stats.players_table_player') }}</div>
-					<div class="c sm:col-span-1 col-span-2 middle">&nbsp;</div>
-					<div class="c sm:col-span-3 hidden sm:block middle">{{ $t('pages.stats.players_table_alliance') }}</div>
-					<div class="c sm:col-span-2 col-span-3 middle">{{ $t('pages.stats.players_table_points') }}</div>
-				</div>
-				<PlayersRow v-for="item in items" :key="item['id']" :item="item"/>
-			</div>
-		</div>
+	<div class="stats-table-wrap page-stat-players">
+		<table class="stats-table stats-players-table">
+			<thead><tr><th scope="col" class="stats-place">{{ $t('pages.stats.players_table_rank') }}</th><th scope="col">{{ $t('pages.stats.players_table_player') }}</th><th scope="col" class="stats-player-actions"><span class="sr-only">{{ $t('send_message') }}</span></th><th scope="col" class="stats-alliance-column">{{ $t('pages.stats.players_table_alliance') }}</th><th scope="col" class="stats-points">{{ $t('pages.stats.players_table_points') }}</th></tr></thead>
+			<tbody><PlayersRow v-for="item in items" :key="item.id" :item="item"/><tr v-if="!items.length"><td colspan="5" class="stats-empty">{{ $t('pages.stats.empty') }}</td></tr></tbody>
+		</table>
 	</div>
 </template>
 
@@ -20,7 +11,6 @@
 	import PlayersRow from './PlayersRow.vue';
 
 	defineProps({
-		items: Array,
-		default: () => []
+		items: { type: Array, default: () => [] }
 	});
 </script>

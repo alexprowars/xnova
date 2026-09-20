@@ -226,7 +226,7 @@ WelcomeState.prototype.draw = function (game, dt, ctx)
 
 	ctx.font = "30px Arial";
 	ctx.fillStyle = '#ffffff';
-	ctx.textBaseline = "center";
+	ctx.textBaseline = "middle";
 	ctx.textAlign = "center";
 	ctx.fillText("Space Invaders", game.width / 2, game.height / 2 - 40);
 	ctx.font = "16px Arial";
@@ -262,7 +262,7 @@ GameOverState.prototype.draw = function (game, dt, ctx)
 
 	ctx.font = "30px Arial";
 	ctx.fillStyle = '#ffffff';
-	ctx.textBaseline = "center";
+	ctx.textBaseline = "middle";
 	ctx.textAlign = "center";
 	ctx.fillText("Игра окончена!", game.width / 2, game.height / 2 - 40);
 	ctx.font = "16px Arial";
