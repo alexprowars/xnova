@@ -7,11 +7,14 @@ use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Facades\Galaxy;
 use App\Models\Fleet;
 use App\Models\User;
+use Tests\Support\RequiresBattleEngine;
 use Tests\TestCase;
 
-uses(TestCase::class);
+uses(TestCase::class, RequiresBattleEngine::class);
 
 test('battle combat', function () {
+	$this->requireBattleEngine();
+
 	$battle = new Battle();
 
 	/** @var User $user */
