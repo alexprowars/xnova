@@ -24,7 +24,7 @@
 				</div>
 
 				<div v-if="item['effects']" class="buildings-effects-row">
-					<EnergyIcon v-if="item.effects_resource === 'energy'" class="building-resource-icon resource-energy" v-tooltip="$t('resources.energy')" role="img" :aria-label="$t('resources.energy')" focusable="false"/>
+					<ResourceIcon code="energy" v-if="item.effects_resource === 'energy'" class="building-resource-icon resource-energy" v-tooltip="$t('resources.energy')" role="img" :aria-label="$t('resources.energy')" focusable="false"/>
 					<span v-html="item['effects']" class="buildings-effects-row"></span>
 				</div>
 
@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from '../Buildings/BuildRowPrice.vue';
 	import { computed } from 'vue';

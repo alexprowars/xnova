@@ -17,8 +17,14 @@
 	import TabPanelContent from './TabPanelContent.js';
 
 	const props = defineProps({
-		items: { type: Array, required: true },
-		label: { type: String, required: true },
+		items: {
+			type: Array,
+			required: true,
+		},
+		label: {
+			type: String,
+			required: true,
+		},
 		unmountOnHide: Boolean,
 	});
 

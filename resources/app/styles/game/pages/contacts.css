@@ -3,7 +3,7 @@
 		font-size: 14px;
 		font-weight: 400;
 		margin: 12px 0 16px;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 	}
 
 	.contact-card > header {
@@ -17,7 +17,7 @@
 
 	.contact-card h2 {
 		margin: 0 0 4px;
-		color: #d1e3ed;
+		color: var(--text-color);
 		font-size: 16px;
 		font-weight: 500;
 	}
@@ -26,13 +26,9 @@
 		display: inline-block;
 		padding: 2px 7px;
 		border-radius: 3px;
-		background: #1b3547;
-		color: #8ebed6;
+		background: var(--ui-active-background);
+		color: var(--ui-icon-color);
 		font-size: 12px;
-	}
-
-	.contact-card .button {
-		overflow-wrap: anywhere;
 	}
 
 	.contact-card .game-prose {

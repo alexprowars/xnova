@@ -1,13 +1,24 @@
 <template>
 	<div v-if="items.length" class="block page-building-unit-queue">
 		<div class="title">{{ $t('pages.building.unit_queue') }}</div>
-		<div class="unit-queue-list">
-			<div v-for="(item, index) in items" :key="item.item + ':' + item.date" class="build-queue-row unit-queue-row" :class="{ 'is-current': index === 0 }">
+		<div>
+			<div
+				v-for="(item, index) in items"
+				:key="item.item + ':' + item.date"
+				class="build-queue-row unit-queue-row"
+				:class="{ 'is-current': index === 0 }"
+			>
 				<div class="build-queue-item">
 					<img class="build-queue-image" :src="'/assets/images/elements/' + item.item + '.webp'" alt="" width="42" height="42">
 					<div class="build-queue-description">
-						<div class="build-queue-name"><strong>{{ $t('tech.' + item.item) }}</strong><span class="unit-queue-count">× {{ $formatNumber(item.remainingCount) }}</span></div>
-						<div v-if="index === 0 && item.nextUnitTime !== null" class="unit-queue-next">{{ $t('pages.building.unit_queue_next') }} <span>{{ $formatTime(item.nextUnitTime) }}</span></div>
+						<div class="build-queue-name">
+							<strong>{{ $t('tech.' + item.item) }}</strong>
+							<span class="unit-queue-count">× {{ $formatNumber(item.remainingCount) }}</span>
+						</div>
+						<div v-if="index === 0 && item.nextUnitTime !== null" class="unit-queue-next">
+							{{ $t('pages.building.unit_queue_next') }}
+							<span>{{ $formatTime(item.nextUnitTime) }}</span>
+						</div>
 					</div>
 				</div>
 				<div class="build-queue-time">
@@ -16,7 +27,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="unit-queue-total"><span>{{ $t('pages.building.unit_queue_total') }}</span><strong>{{ $formatTime(leftTime) }}</strong></div>
+		<div class="unit-queue-total">
+			<span>{{ $t('pages.building.unit_queue_total') }}</span>
+			<strong>{{ $formatTime(leftTime) }}</strong>
+		</div>
 	</div>
 </template>
 

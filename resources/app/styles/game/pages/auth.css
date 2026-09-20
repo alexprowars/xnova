@@ -16,7 +16,7 @@
 		font-size: 14px;
 		font-weight: 400;
 		margin: 0;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 		overflow-wrap: anywhere;
 	}
 
@@ -34,7 +34,7 @@
 		display: flex;
 		align-items: flex-start;
 		gap: 8px;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -43,11 +43,11 @@
 	}
 
 	.auth-agreements a {
-		color: #abd2e4;
+		color: var(--ui-link-color);
 	}
 
 	.auth-agreements .has-error {
-		color: #dba29e;
+		color: var(--ui-danger-color);
 	}
 
 	.game-actions .button {
@@ -58,22 +58,22 @@
 	.auth-notice {
 		margin-bottom: 12px;
 		padding: 10px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		background: #132d3d;
-		color: #abc8d7;
+		background: var(--ui-hover-background);
+		color: var(--ui-link-color);
 	}
 
 	.auth-notice.error {
-		color: #dba29e;
-		border-color: #704a50;
-		background: #39262e;
+		color: var(--ui-danger-color);
+		border-color: var(--ui-danger-border-color);
+		background: var(--ui-danger-background);
 	}
 
 	.auth-notice.success {
-		color: #a6ceba;
-		border-color: #426a5a;
-		background: #1f3b32;
+		color: var(--ui-success-hover-color);
+		border-color: var(--ui-success-border-color);
+		background: var(--ui-success-background);
 	}
 
 	@media (max-width: 479px) {

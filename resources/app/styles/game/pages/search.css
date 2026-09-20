@@ -24,7 +24,7 @@
 		height: 24px;
 		margin-right: 6px;
 		vertical-align: middle;
-		color: #8ebed6;
+		color: var(--ui-icon-color);
 	}
 
 	.search-player-actions {
@@ -34,7 +34,7 @@
 	}
 
 	.search-alliance-tag {
-		color: #8cbed4;
+		color: var(--ui-icon-color);
 		white-space: nowrap;
 	}
 
@@ -67,7 +67,7 @@
 		}
 
 		.search-players tbody tr + tr {
-			border-top: 1px solid #263b4d;
+			border-top: 1px solid var(--ui-border-muted-color);
 		}
 
 		.search-players td, .search-players tbody tr + tr td {
@@ -82,7 +82,7 @@
 
 		.search-players td[data-label]::before {
 			display: block;
-			color: #7998ad;
+			color: var(--ui-subtle-color);
 			font-size: 12px;
 			content: attr(data-label);
 		}

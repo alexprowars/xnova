@@ -12,7 +12,7 @@
 
 		<MissileAttack v-if="missile" :target="missile" @close="missile = null"/>
 
-		<div class="block galaxy-system">
+		<div class="block">
 			<div class="title galaxy-system-title">
 				<GalaxyIcon type="system"/>
 				{{ $t('pages.galaxy.title', [page['galaxy'], page['system']]) }}
@@ -55,7 +55,7 @@
 							</tr>
 						</tbody>
 						<tfoot>
-							<tr class="galaxy-summary">
+							<tr>
 								<td class="c" colspan="6">
 									{{ $t('pages.galaxy.no_planets', page.items.length) }}
 								</td>

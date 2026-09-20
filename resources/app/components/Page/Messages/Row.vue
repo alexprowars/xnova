@@ -1,16 +1,56 @@
 <template>
 	<article class="message-card" :class="['message-type-' + item.type, { 'is-selected': deleteModel.includes(item.id) }]">
 		<header class="message-header">
-			<input v-if="canDelete" name="delete[]" type="checkbox" :value="item.id" v-model="deleteModel" :aria-label="$t('pages.messages.row.select')" :title="$t('pages.messages.row.select')">
+			<input
+				v-if="canDelete"
+				name="delete[]"
+				type="checkbox"
+				:value="item.id"
+				v-model="deleteModel"
+				:aria-label="$t('pages.messages.row.select')"
+				:title="$t('pages.messages.row.select')"
+			>
 			<div class="message-identity">
-				<ModalLink v-if="item.from > 0" navigate :href="'/players/' + item.from" class="message-subject" :title="$t('pages.messages.row.from_title')" v-html="item.subject"/>
+				<ModalLink
+					v-if="item.from > 0"
+					navigate
+					:href="'/players/' + item.from"
+					class="message-subject"
+					:title="$t('pages.messages.row.from_title')"
+					v-html="item.subject"
+				/>
 				<span v-else class="message-subject" v-html="item.subject"/>
-				<div class="message-meta"><span class="message-category">{{ $t('message_types.' + item.type) }}</span><time :datetime="item.date">{{ $formatDate(item.date, 'DD MMM YYYY HH:mm:ss') }}</time></div>
+				<div class="message-meta">
+					<span class="message-category">{{ $t('message_types.' + item.type) }}</span>
+					<time :datetime="item.date">{{ $formatDate(item.date, 'DD MMM YYYY HH:mm:ss') }}</time>
+				</div>
 			</div>
 			<div v-if="item.type === 1" class="message-actions">
-				<Link :href="'/messages/write/' + item.from" class="message-action" :aria-label="$t('pages.messages.row.reply_title')" :title="$t('pages.messages.row.reply_title')"><MessageIcon name="reply"/></Link>
-				<Link :href="'/messages/write/' + item.from + '?quote=' + item.id" class="message-action" :aria-label="$t('pages.messages.row.quote_title')" :title="$t('pages.messages.row.quote_title')"><MessageIcon name="quote"/></Link>
-				<button type="button" class="message-action message-report" @click="abuseAction" :aria-label="$t('pages.messages.row.abuse_title')" :title="$t('pages.messages.row.abuse_title')"><MessageIcon name="flag"/></button>
+				<Link
+					:href="'/messages/write/' + item.from"
+					class="message-action"
+					:aria-label="$t('pages.messages.row.reply_title')"
+					:title="$t('pages.messages.row.reply_title')"
+				>
+					<MessageIcon name="reply"/>
+				</Link>
+				<Link
+					:href="'/messages/write/' + item.from + '?quote=' + item.id"
+					class="message-action"
+					:aria-label="$t('pages.messages.row.quote_title')"
+					:title="$t('pages.messages.row.quote_title')"
+				>
+					<MessageIcon name="quote"/>
+				</Link>
+				<button
+					type="button"
+					class="message-action message-report"
+					@click="abuseAction"
+					:aria-label="$t('pages.messages.row.abuse_title')"
+					:title="$t('pages.messages.row.abuse_title')"
+				>
+					<MessageIcon name="flag"/>
+				</button>
 			</div>
 		</header>
 		<div class="message-body">

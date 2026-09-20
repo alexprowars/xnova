@@ -33,10 +33,10 @@
 			color: var(--text-muted);
 			transition: background .2s, color .2s, border-color .2s;
 
-			&.active, &.active-link {
+			&.active {
 				color: var(--accent-color);
-				background: linear-gradient(90deg, #1b3f50, #122431);
-				border-color: #2d5365;
+				background: linear-gradient(90deg, var(--ui-button-background), var(--ui-surface-background));
+				border-color: var(--ui-border-color);
 				box-shadow: inset 3px 0 var(--accent-color);
 			}
 
@@ -92,7 +92,7 @@
 			left: 0;
 			padding: 64px 14px 20px;
 			z-index: 190;
-			background: #0c1623;
+			background: var(--head-bg-color);
 			border-right: 1px solid var(--border-color);
 			overflow-y: auto;
 			transform: translateX(-100%);

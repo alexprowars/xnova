@@ -2,7 +2,7 @@
 	@apply flex flex-col;
 
 	.buldings-header {
-		background-color: #718392;
+		background-color: var(--ui-subtle-color);
 		min-height: 180px;
 		width: 100%;
 		position: relative;
@@ -18,7 +18,7 @@
 			content: "";
 			position: absolute;
 			inset: 0;
-			background: linear-gradient(90deg, #07111b1a, #07111b33 40%, #07111bc7);
+			background: linear-gradient(90deg, color-mix(in srgb, var(--ui-image-overlay-color) 10.2%, transparent), color-mix(in srgb, var(--ui-image-overlay-color) 20%, transparent) 40%, color-mix(in srgb, var(--ui-image-overlay-color) 78.04%, transparent));
 			pointer-events: none;
 		}
 
@@ -28,19 +28,19 @@
 			min-height: 180px;
 
 			.title {
-				background: linear-gradient(90deg, #10223200, #102232d9);
-				color: #e0edf5;
+				background: linear-gradient(90deg, color-mix(in srgb, var(--ui-image-caption-color) 0%, transparent), color-mix(in srgb, var(--ui-image-caption-color) 85.1%, transparent));
+				color: var(--ui-title-color);
 				font-weight: 600;
-				text-shadow: 0 1px 6px #0008;
+				text-shadow: 0 1px 6px color-mix(in srgb, var(--ui-black-color) 53.33%, transparent);
 				font-size: 18px;
 				padding: 10px 30px 10px 30px;
 			}
 
 			> div {
-				background: #0b1a29b8;
-				border-left: 2px solid #426476;
+				background: color-mix(in srgb, var(--ui-panel-background) 72.16%, transparent);
+				border-left: 2px solid var(--ui-border-active-color);
 				border-radius: 5px 0 0 5px;
-				color: #b8cbd8;
+				color: var(--ui-text-color);
 				font-variant-numeric: tabular-nums;
 			}
 
@@ -54,20 +54,20 @@
 	.buldings-list {
 		border-radius: 6px;
 		@apply grid grid-cols-6 max-sm:grid-cols-3 max-md:grid-cols-4 max-lg:grid-cols-5 gap-2 justify-items-center p-2.5;
-		background: linear-gradient(180deg, #101f2e, #0c1723);
+		background: linear-gradient(180deg, var(--main-color), var(--head-bg-color));
 		border: 1px solid var(--border-color);
 	}
 
 	.buldings-list-item {
 		border-radius: 5px;
 		overflow: hidden;
-		background: #091522;
-		border-color: #304658;
+		background: var(--ui-input-background);
+		border-color: var(--border-color);
 		transition: border-color .15s, box-shadow .15s;
 
 		&:hover {
-			border-color: #689bac;
-			box-shadow: 0 0 0 1px #79d9ef26;
+			border-color: var(--ui-border-hover-color);
+			box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 14.9%, transparent);
 		}
 
 		@apply relative border-2 cursor-pointer w-full h-full aspect-square;
@@ -80,20 +80,20 @@
 		.name {
 			@apply absolute z-1 bottom-0 w-full text-center;
 			padding: 7px 4px 5px;
-			background: linear-gradient(180deg, #07121b40, #07121bf5 45%);
-			color: #e0eaf2;
+			background: linear-gradient(180deg, color-mix(in srgb, var(--ui-image-overlay-color) 25.1%, transparent), color-mix(in srgb, var(--ui-image-overlay-color) 96.08%, transparent) 45%);
+			color: var(--text-color);
 			font-size: 13px;
 			font-weight: 500;
 			line-height: 1.3;
-			text-shadow: 0 1px 3px #000;
+			text-shadow: 0 1px 3px var(--ui-black-color);
 			overflow-wrap: anywhere;
 		}
 
 		.level {
 			@apply absolute z-1 top-0 right-0 w-12.5 h-6 text-sm font-semibold pr-1 flex items-center justify-end;
-			color: #e0d4b2;
+			color: var(--ui-warning-hover-color);
 			font-variant-numeric: tabular-nums;
-			background: linear-gradient(90deg, #09152200, #091522e6 45%);
+			background: linear-gradient(90deg, color-mix(in srgb, var(--ui-image-overlay-color) 0%, transparent), color-mix(in srgb, var(--ui-image-overlay-color) 90.2%, transparent) 45%);
 		}
 
 		.upgrade {
@@ -112,30 +112,30 @@
 
 			&:not(.active) {
 				cursor: pointer;
-				background-color: #173e42;
-				border-color: #3b6b6a;
-				color: #a4dfc9;
+				background-color: var(--ui-active-background);
+				border-color: var(--ui-border-active-color);
+				color: var(--ui-success-hover-color);
 
 				&:hover {
-					background-color: #24575a;
-					border-color: #74b9ac;
+					background-color: var(--ui-button-hover-background);
+					border-color: var(--ui-success-border-hover-color);
 				}
 			}
 
 			&.active {
-				background-color: #4d3e28;
-				border-color: #856c43;
-				color: #efd096;
+				background-color: var(--ui-warning-hover-background);
+				border-color: var(--ui-warning-border-color);
+				color: var(--ui-warning-hover-color);
 			}
 		}
 
 		&.disabled {
-			border-color: #69464c;
+			border-color: var(--ui-danger-border-color);
 		}
 
 		&.active {
 			border-color: var(--accent-color);
-			box-shadow: 0 0 0 1px #79d9ef33;
+			box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 20%, transparent);
 		}
 
 		&.disabled:after {
@@ -145,7 +145,7 @@
 			height: 100%;
 			top: 0;
 			left: 0;
-			background: #08121c66;
+			background: color-mix(in srgb, var(--ui-image-overlay-color) 40%, transparent);
 			pointer-events: none;
 		}
 	}
@@ -154,7 +154,7 @@
 		width: 100%;
 		height: 100%;
 		overflow: hidden;
-		background: linear-gradient(110deg, #142838, #0e1b29);
+		background: linear-gradient(110deg, var(--ui-panel-heading-background), var(--ui-panel-background));
 		color: var(--text-color);
 		position: absolute;
 		z-index: 1;
@@ -169,7 +169,7 @@
 		.buldings-active-image {
 			img {
 				@apply h-full aspect-square max-sm:h-30;
-				border: 1px solid #355166;
+				border: 1px solid var(--ui-border-color);
 				border-radius: 5px;
 			}
 		}
@@ -183,7 +183,7 @@
 			font-weight: 600;
 			line-height: 1.4;
 			padding-right: 28px;
-			border-bottom: 1px solid #2b4354;
+			border-bottom: 1px solid var(--border-color);
 			background: transparent;
 		}
 
@@ -200,7 +200,7 @@
 		.icon {
 			width: 14px;
 			height: 14px;
-			fill: #9dbdce;
+			fill: var(--ui-label-color);
 		}
 
 		.building-active-upgrade {
@@ -208,13 +208,6 @@
 		}
 
 		.building-queue-button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 5px;
-			min-height: 30px;
-			padding: 5px 9px;
-
 			svg {
 				width: 15px;
 				height: 15px;
@@ -244,30 +237,22 @@
 
 				.item {
 					@apply bg-contain relative cursor-help w-14 h-14;
-					border: 1px solid #69464c;
+					border: 1px solid var(--ui-danger-border-color);
 					border-radius: 4px;
 					overflow: hidden;
 				}
 
 				.item-title {
 					@apply absolute w-full bottom-0 text-xs text-center;
-					color: #e6b1ac;
-					background-color: #0a1520e6;
+					color: var(--ui-danger-color);
+					background-color: color-mix(in srgb, var(--ui-input-background) 90.2%, transparent);
 				}
 			}
 		}
 
-		.building-price {
-			@apply flex items-center gap-2;
-
-			.building-price-item {
-				@apply flex items-center gap-1;
-			}
-		}
-
 		.buldings-active-close {
-			color: #99b4c5;
-			background: #1b3042;
+			color: var(--ui-muted-color);
+			background: var(--ui-active-background);
 			border-radius: 4px;
 			transition: background-color .15s, color .15s;
 			position: absolute;
@@ -287,8 +272,8 @@
 		}
 
 		.buldings-active-close:hover {
-			background: #2a465b;
-			color: #e2f0f7;
+			background: var(--ui-progress-background);
+			color: var(--text-color);
 		}
 	}
 
@@ -332,7 +317,7 @@
 		.buldings-active-wrapper {
 			overflow-y: auto;
 			scrollbar-width: thin;
-			scrollbar-color: #355166 transparent;
+			scrollbar-color: var(--ui-border-color) transparent;
 		}
 
 		.buldings-active-content {
@@ -348,13 +333,21 @@
 	}
 }
 
+.building-price {
+	@apply flex items-center gap-2;
+
+	.building-price-item {
+		@apply flex items-center gap-1;
+	}
+}
+
 .building-resource-icon {
 	width: 22px;
 	height: 22px;
 	flex-shrink: 0;
-	color: #a8bbce;
+	color: var(--resource-metal-color);
 
-	&.resource-crystal { color: #7cd7ee; }
-	&.resource-deuterium { color: #83cfb2; }
-	&.resource-energy { color: #e5cc81; }
+	&.resource-crystal { color: var(--resource-crystal-color); }
+	&.resource-deuterium { color: var(--resource-deuterium-color); }
+	&.resource-energy { color: var(--resource-energy-color); }
 }

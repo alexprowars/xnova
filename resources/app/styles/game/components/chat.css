@@ -1,12 +1,13 @@
 .component-chat {
 	position: fixed;
+	z-index: 20;
 	width: min(320px, calc(100vw - 24px));
 	bottom: 32px;
 	right: 16px;
 	border: 1px solid var(--border-color);
 	border-radius: 8px;
-	background: #0e1b29;
-	box-shadow: 0 8px 28px #0005;
+	background: var(--ui-panel-background);
+	box-shadow: 0 8px 28px color-mix(in srgb, var(--ui-black-color) 33.33%, transparent);
 	overflow: hidden;
 
 	.mini-chat-toggle {
@@ -15,7 +16,7 @@
 		gap: 8px;
 		width: 100%;
 		padding: 9px 12px;
-		background: #162737;
+		background: var(--ui-panel-heading-background);
 		color: var(--text-color);
 		font-size: 12px;
 		font-weight: 600;
@@ -23,7 +24,7 @@
 		cursor: pointer;
 
 		&:hover {
-			background: #1b3042;
+			background: var(--ui-active-background);
 		}
 
 		&:focus-visible {
@@ -51,8 +52,8 @@
 		min-width: 18px;
 		padding: 1px 5px;
 		border-radius: 4px;
-		background: #284758;
-		color: #bce8f1;
+		background: var(--ui-progress-background);
+		color: var(--ui-text-color);
 		font-size: 12px;
 		text-align: center;
 		font-variant-numeric: tabular-nums;
@@ -69,7 +70,7 @@
 		font-size: 12px;
 		line-height: 1.55;
 		scrollbar-width: thin;
-		scrollbar-color: #324b60 transparent;
+		scrollbar-color: var(--ui-border-color) transparent;
 
 	}
 
@@ -85,44 +86,23 @@
 		display: flex;
 		gap: 6px;
 		padding: 8px;
-		border-top: 1px solid #263b4d80;
+		border-top: 1px solid color-mix(in srgb, var(--ui-border-muted-color) 50.2%, transparent);
 	}
 
 	input.page-chat-message {
 		flex: 1;
-		min-width: 0;
 		width: 100%;
-		height: 32px;
-		padding: 6px 9px;
 		font-size: 12px;
-		text-align: left;
-		background: #091522;
-
-		&::placeholder {
-			color: #7e97aa;
-		}
 	}
 
 	.mini-chat-send {
-		display: grid;
-		place-items: center;
 		width: 32px;
 		height: 32px;
 		flex-shrink: 0;
-		border: 1px solid #396074;
-		border-radius: 5px;
-		background: #1b3a4b;
-		color: #a9e1ee;
-		cursor: pointer;
 
 		svg {
 			width: 17px;
 			height: 17px;
-		}
-
-		&:hover:not(:disabled) {
-			background: #285469;
-			border-color: #72a8bb;
 		}
 	}
 }

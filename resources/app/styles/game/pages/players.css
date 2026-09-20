@@ -5,9 +5,9 @@
 		gap: 16px;
 		padding: 16px;
 		margin-bottom: 10px;
-		border: 1px solid #314b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 6px;
-		background: radial-gradient(ellipse at top right, #22455780, transparent 70%), #102333;
+		background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--ui-selected-background) 50.2%, transparent), transparent 70%), var(--ui-surface-background);
 	}
 
 	.player-avatar {
@@ -15,7 +15,7 @@
 		height: 120px;
 		flex-shrink: 0;
 		object-fit: cover;
-		border: 1px solid #456176;
+		border: 1px solid var(--ui-border-active-color);
 		border-radius: 5px;
 	}
 
@@ -33,7 +33,7 @@
 		align-items: center;
 		gap: 6px;
 		margin-top: 5px;
-		color: #a6c7d9;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
@@ -58,7 +58,7 @@
 
 	.player-details dt {
 		margin-bottom: 4px;
-		color: #87a4b8;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -72,14 +72,14 @@
 		flex-wrap: wrap;
 		gap: 8px 18px;
 		padding: 10px 14px;
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.player-ranks > div {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -94,11 +94,11 @@
 	}
 
 	.player-wins td {
-		color: #94caaa;
+		color: var(--ui-success-color);
 	}
 
 	.player-losses td {
-		color: #c99b98;
+		color: var(--ui-danger-color);
 	}
 
 	@media (max-width: 479px) {

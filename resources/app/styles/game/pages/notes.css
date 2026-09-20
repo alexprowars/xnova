@@ -10,7 +10,7 @@
 		gap: 6px 12px;
 		margin-bottom: 8px;
 		padding-inline: 2px;
-		color: #a9c1d0;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -29,9 +29,6 @@
 		width: 15px;
 		height: 15px;
 		margin: 0;
-		flex-shrink: 0;
-		accent-color: #77b1ca;
-		cursor: pointer;
 	}
 
 	.note-row {
@@ -42,15 +39,15 @@
 	}
 
 	.note-row + .note-row {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.note-row:hover {
-		background: #142b3b;
+		background: var(--ui-hover-background);
 	}
 
 	.note-row.is-selected {
-		background: #183445;
+		background: var(--ui-active-background);
 	}
 
 	.note-link {
@@ -65,20 +62,20 @@
 
 	.note-title {
 		min-width: 0;
-		color: #bdd3e1;
+		color: var(--ui-text-color);
 		overflow-wrap: anywhere;
 	}
 
 	.priority-important {
-		color: #dfa7a2;
+		color: var(--ui-danger-color);
 	}
 
 	.priority-normal {
-		color: #d9c18d;
+		color: var(--ui-warning-color);
 	}
 
 	.priority-unimportant {
-		color: #96c7ac;
+		color: var(--ui-success-color);
 	}
 
 	.note-priority {
@@ -86,12 +83,12 @@
 	}
 
 	.note-link time {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.note-open {
-		color: #719cb3;
+		color: var(--ui-subtle-color);
 		font-size: 18px;
 	}
 
@@ -105,20 +102,12 @@
 	.notes-fields label {
 		display: grid;
 		gap: 5px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.notes-fields input, .notes-fields select {
 		width: 100%;
-		min-width: 0;
-		min-height: 32px;
-		padding-block: 5px;
-		border-radius: 4px;
-		background-color: #091623;
-		color: #d5e5ef;
-		font-size: 14px;
-		text-align: left;
 	}
 
 	.notes-fields input {
@@ -127,13 +116,13 @@
 
 	.notes-field-label {
 		margin-bottom: 6px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.notes-preview-body {
 		padding: 12px 14px;
-		color: #c5d9e5;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		line-height: 1.6;
 		overflow-wrap: anywhere;
@@ -155,21 +144,21 @@
 		margin: 0 0 8px;
 		padding-left: 8px;
 		border: 0;
-		border-left: 2px solid #52768b;
-		background: #142737;
+		border-left: 2px solid var(--ui-divider-accent-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.quotetitle {
-		border-color: #355166;
-		background: #1b3040;
-		color: #97b8ca;
+		border-color: var(--ui-border-color);
+		background: var(--ui-active-background);
+		color: var(--ui-icon-color);
 		font-size: 12px;
 	}
 
 	.quotecontent {
-		border-color: #355166;
-		background: #0a1622;
-		color: #a8c0d0;
+		border-color: var(--ui-border-color);
+		background: var(--ui-input-background);
+		color: var(--ui-label-color);
 	}
 
 	.quotewrapper > .quotetitle, .quotewrapper > .quotecontent {
@@ -216,11 +205,5 @@
 			grid-column: 1;
 			grid-row: 2;
 		}
-	}
-}
-
-@layer base {
-	.page-notes .notes-fields input.error, .page-notes .editor-component.error > textarea {
-		border-color: #bd7e79 !important;
 	}
 }

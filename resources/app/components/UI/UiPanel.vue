@@ -9,7 +9,10 @@
 
 <script setup>
 	defineProps({
-		as: { type: String, default: 'section' },
+		as: {
+			type: String,
+			default: 'section',
+		},
 		title: String,
 		clip: Boolean,
 	});

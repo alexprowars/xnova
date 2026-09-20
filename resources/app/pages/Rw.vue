@@ -1,6 +1,9 @@
 <template>
 	<Head :title="$t('pages.sim.battle_report')"/>
-	<div class="game-page page-battle-report"><UiHeading :title="$t('pages.sim.battle_report')" class="game-heading"/><div v-if="page" v-html="page.raport"></div></div>
+	<div class="game-page page-battle-report">
+		<UiHeading :title="$t('pages.sim.battle_report')" class="game-heading"/>
+		<div v-if="page" v-html="page.raport"></div>
+	</div>
 </template>
 
 <script setup>

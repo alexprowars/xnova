@@ -1066,8 +1066,8 @@
 			},
 			"return_popup": {
 				"title": "Return fleet?",
-				"yes": "No",
-				"no": "Yes",
+				"yes": "Yes",
+				"no": "No",
 				"success": "Fleet returning!"
 			},
 			"shortcut": {

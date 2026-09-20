@@ -1,6 +1,32 @@
 <template>
 	<article class="friend-request">
-		<div class="friend-request-heading"><div class="friend-request-identity"><SendMessagePopup :id="item.user.id" class="friend-name" :title="$t('pages.friends.write_message')">{{ item.user.name }}<SendIcon aria-hidden="true"/></SendMessagePopup><Link v-if="item.user.alliance.id > 0" :href="'/alliance/info/' + item.user.alliance.id" class="friend-alliance">{{ item.user.alliance.name }}</Link><Link :href="'/galaxy?galaxy=' + item.user.galaxy + '&system=' + item.user.system" class="friend-coordinates">[{{ item.user.galaxy }}:{{ item.user.system }}:{{ item.user.planet }}]</Link></div><div class="friend-request-actions"><UiButton variant="danger" v-if="isMy" :disabled="form.processing" @click="remove">{{ $t('pages.friends.requests.remove_request') }}</UiButton><template v-else><UiButton variant="success" :disabled="form.processing" @click="approve">{{ $t('pages.friends.requests.approve') }}</UiButton><UiButton variant="danger" :disabled="form.processing" @click="remove">{{ $t('pages.friends.requests.reject') }}</UiButton></template></div></div>
+		<div class="friend-request-heading">
+			<div class="friend-request-identity">
+				<SendMessagePopup :id="item.user.id" class="friend-name" :title="$t('pages.friends.write_message')">
+					{{ item.user.name }}
+					<SendIcon aria-hidden="true"/>
+				</SendMessagePopup>
+				<Link v-if="item.user.alliance.id > 0" :href="'/alliance/info/' + item.user.alliance.id" class="friend-alliance">
+					{{ item.user.alliance.name }}
+				</Link>
+				<Link :href="'/galaxy?galaxy=' + item.user.galaxy + '&system=' + item.user.system" class="friend-coordinates">
+					[{{ item.user.galaxy }}:{{ item.user.system }}:{{ item.user.planet }}]
+				</Link>
+			</div>
+			<div class="friend-request-actions">
+				<UiButton variant="danger" v-if="isMy" :disabled="form.processing" @click="remove">
+					{{ $t('pages.friends.requests.remove_request') }}
+				</UiButton>
+				<template v-else>
+					<UiButton variant="success" :disabled="form.processing" @click="approve">
+						{{ $t('pages.friends.requests.approve') }}
+					</UiButton>
+					<UiButton variant="danger" :disabled="form.processing" @click="remove">
+						{{ $t('pages.friends.requests.reject') }}
+					</UiButton>
+				</template>
+			</div>
+		</div>
 		<div class="friend-request-message" v-html="item.message || '—'"/>
 	</article>
 </template>

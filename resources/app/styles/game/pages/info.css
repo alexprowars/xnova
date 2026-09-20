@@ -4,35 +4,6 @@
 	line-height: 1.5;
 	font-variant-numeric: tabular-nums;
 
-	> .block {
-		border: 1px solid var(--border-color);
-		border-radius: 6px;
-		overflow: hidden;
-		background: #0e1b29;
-	}
-
-	> .block + .block {
-		margin-top: 10px;
-	}
-
-	> .block > .title {
-		padding: 9px 12px;
-		border: 0;
-		border-radius: 0;
-		background: #142737;
-		color: #d2e3ee;
-		font-size: 14px;
-		font-weight: 500;
-	}
-
-	> .block > .content {
-		padding: 0;
-		border: 0;
-		border-radius: 0;
-		background: transparent;
-		overflow-x: auto;
-	}
-
 	.info-description-heading {
 		display: flex;
 		justify-content: space-between;
@@ -45,20 +16,19 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 5px;
-		color: #9fc6d9;
+		color: var(--ui-link-color);
 		font-size: 12px;
 		font-weight: 400;
 	}
 
 	.info-tree-link:hover {
-		color: #eff8fc;
+		color: var(--text-color);
 	}
 
-	> .block > .info-description-body {
+	.info-description-body {
 		display: flex;
 		align-items: flex-start;
 		gap: 14px;
-		padding: 12px;
 	}
 
 	.info-description-image {
@@ -69,7 +39,7 @@
 		width: 120px;
 		height: 120px;
 		object-fit: cover;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 	}
 
@@ -81,9 +51,9 @@
 	}
 
 	.info-description-text {
-		min-width: 0;
-		color: #b8cedc;
+		color: var(--ui-text-color);
 		overflow-wrap: anywhere;
+		font-size: 13px;
 	}
 
 	.info-description-text p {
@@ -101,13 +71,9 @@
 		margin-bottom: 0;
 	}
 
-	.block-table {
-		border: 0;
-	}
-
 	.block-table > .grid {
 		border: 0;
-		border-bottom: 1px solid #263b4d;
+		border-bottom: 1px solid var(--ui-border-muted-color);
 	}
 
 	.block-table > .grid:last-child {
@@ -123,14 +89,14 @@
 	}
 
 	.block-table > .grid > .c {
-		background: #102332;
-		color: #9eb8c9;
+		background: var(--ui-surface-background);
+		color: var(--ui-label-color);
 		font-size: 12px;
 		font-weight: 500;
 	}
 
 	.block-table > .grid:hover > .th {
-		background: #142b3b;
+		background: var(--ui-hover-background);
 	}
 
 	.block-table:has(> .grid-cols-5) > .grid {
@@ -139,11 +105,11 @@
 
 	.block-table .grid-cols-2 > .th:first-child {
 		text-align: left;
-		color: #9eb8c9;
+		color: var(--ui-label-color);
 	}
 
 	.block-table .grid-cols-2 > .th:last-child {
-		color: #d2e3ee;
+		color: var(--text-color);
 	}
 
 	.neutral {
@@ -153,15 +119,10 @@
 	.building-price {
 		justify-content: center;
 		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.building-price .building-price-item {
-		display: inline-block;
 	}
 
 	@media (max-width: 479px) {
-		> .block > .info-description-body {
+		.info-description-body {
 			gap: 10px;
 			flex-direction: column;
 		}
@@ -189,18 +150,4 @@
 
 .dialog-content .page-info .info-description-heading, .im-modal-content .page-info .info-description-heading {
 	padding-right: 36px;
-}
-
-@layer base {
-	.page-info .positive {
-		color: #8fcab0 !important;
-	}
-
-	.page-info .negative {
-		color: #dba29e !important;
-	}
-
-	.page-info .neutral {
-		color: #dfc28b !important;
-	}
 }

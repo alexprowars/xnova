@@ -1,8 +1,4 @@
 .page-hall {
-	border: 1px solid var(--border-color);
-	border-radius: 6px;
-	overflow: hidden;
-	background: #0e1b29;
 	font-size: 14px;
 	font-variant-numeric: tabular-nums;
 
@@ -12,10 +8,6 @@
 		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: 8px 12px;
-		margin: 0;
-		padding: 10px 12px;
-		border: 0;
-		border-radius: 0;
 	}
 
 	.game-list-scroll {
@@ -32,8 +24,8 @@
 		th, td {
 			padding: 9px 12px;
 			border: 0;
-			border-bottom: 1px solid #263b4d;
-			background: #0e1b29;
+			border-bottom: 1px solid var(--ui-border-muted-color);
+			background: var(--ui-panel-background);
 			color: var(--text-color);
 			text-align: left;
 			vertical-align: middle;
@@ -43,14 +35,14 @@
 
 		thead th, .game-list-section th {
 			padding-block: 8px;
-			background: #142737;
-			color: #9eb8c9;
+			background: var(--ui-panel-heading-background);
+			color: var(--ui-label-color);
 			font-size: 12px;
 			font-weight: 500;
 		}
 
 		tbody tr:not(.game-list-section):hover > * {
-			background: #162e40;
+			background: var(--ui-hover-background);
 		}
 
 		tbody:last-child tr:last-child > * {
@@ -78,10 +70,10 @@
 
 	.hall-top {
 		padding: 2px 6px;
-		border: 1px solid #74613e;
+		border: 1px solid var(--ui-warning-border-color);
 		border-radius: 4px;
-		background: #d8b57a0a;
-		color: #dfc28b;
+		background: color-mix(in srgb, var(--ui-warning-color) 3.92%, transparent);
+		color: var(--ui-warning-color);
 		font-size: 12px;
 	}
 
@@ -115,11 +107,11 @@
 	}
 
 	.hall-table .hall-latest .hall-date > span {
-		color: #94ceba;
+		color: var(--ui-success-color);
 	}
 
 	.hall-table .hall-latest > td:first-child {
-		box-shadow: inset 2px 0 #81baa7;
+		box-shadow: inset 2px 0 var(--ui-success-strong-color);
 	}
 
 	.hall-rank {
@@ -134,21 +126,21 @@
 		font-size: 12px;
 
 		&.is-first {
-			background: #463b244d;
-			border-color: #75613d;
-			color: #e5c98e;
+			background: color-mix(in srgb, var(--rank-gold-background) 30.2%, transparent);
+			border-color: var(--rank-gold-border-color);
+			color: var(--rank-gold-color);
 		}
 
 		&.is-second {
-			background: #a8bfd214;
-			border-color: #506575;
-			color: #c2d3df;
+			background: color-mix(in srgb, var(--rank-silver-background) 7.84%, transparent);
+			border-color: var(--rank-silver-border-color);
+			color: var(--rank-silver-color);
 		}
 
 		&.is-third {
-			background: #b7805714;
-			border-color: #75543e;
-			color: #d4a47e;
+			background: color-mix(in srgb, var(--rank-bronze-background) 7.84%, transparent);
+			border-color: var(--rank-bronze-border-color);
+			color: var(--rank-bronze-color);
 		}
 	}
 
@@ -160,39 +152,27 @@
 		white-space: nowrap;
 
 		&.is-attack {
-			background: #26453980;
-			color: #94ceba;
+			background: color-mix(in srgb, var(--ui-success-background) 50.2%, transparent);
+			color: var(--ui-success-color);
 		}
 
 		&.is-defense {
-			background: #2a3c5380;
-			color: #a4c9e1;
+			background: color-mix(in srgb, var(--ui-progress-background) 50.2%, transparent);
+			color: var(--ui-link-color);
 		}
 
 		&.is-draw {
-			background: #4a402580;
-			color: #ddbe82;
+			background: color-mix(in srgb, var(--ui-warning-hover-background) 50.2%, transparent);
+			color: var(--ui-warning-color);
 		}
 	}
 
-	.game-list-heading select {
-		max-width: 100%;
-		min-height: 30px;
-		padding-block: 4px;
-		font-size: 14px;
-		font-weight: 400;
-	}
-
 	.game-list-external {
-		color: #83b9ce;
+		color: var(--ui-icon-color);
 		white-space: nowrap;
 	}
 
 	@media (max-width: 479px) {
-		> .game-list-heading {
-			padding: 9px 10px;
-		}
-
 		.game-list-table th, .game-list-table td {
 			padding: 8px;
 		}

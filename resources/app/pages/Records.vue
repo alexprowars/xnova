@@ -1,6 +1,6 @@
 <template>
 	<Head :title="$t('pages.records.page_title')"/>
-	<div class="block game-list page-records">
+	<div class="block page-records">
 		<div class="title game-list-heading">
 			<span>{{ $t('pages.records.heading') }}</span>
 			<span class="game-list-meta">{{ $t('pages.records.updated_at', { time: $formatDate(page.update, 'DD MMM YYYY HH:mm:ss') }) }}</span>

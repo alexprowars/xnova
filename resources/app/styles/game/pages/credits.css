@@ -4,25 +4,25 @@
 		align-items: center;
 		gap: 16px;
 		padding: 18px;
-		background: radial-gradient(ellipse at top left, #65503633, transparent 70%), #101f2c;
+		background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--ui-warning-hover-background) 20%, transparent), transparent 70%), var(--main-color);
 	}
 
 	.credits-intro > svg {
 		flex-shrink: 0;
 		width: 48px;
 		height: 48px;
-		color: #d3bb8d;
+		color: var(--ui-warning-color);
 	}
 
 	.credits-intro p {
 		font-size: 14px;
 		font-weight: 400;
 		margin: 0 0 8px;
-		color: #9db7c8;
+		color: var(--ui-label-color);
 	}
 
 	.credits-intro strong {
-		color: #d3bb8d;
+		color: var(--ui-warning-color);
 		font-size: 18px;
 		font-weight: 500;
 	}

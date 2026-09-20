@@ -1,6 +1,6 @@
 <template>
 	<Head title="Оборона"/>
-	<div class="page-building page-building-unit">
+	<div class="page-building">
 		<div class="buldings">
 			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/defense-bg.webp\')' }">
 				<div class="buldings-header-main">

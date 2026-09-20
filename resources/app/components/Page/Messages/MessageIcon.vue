@@ -3,7 +3,9 @@
 </template>
 
 <script setup>
-	defineProps({ name: String });
+	defineProps({
+		name: String,
+	});
 	const paths = {
 		mail: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm-1 1 9 7 9-7',
 		reply: 'm9 5-6 6 6 6M3 11h10a7 7 0 0 1 7 7v1',

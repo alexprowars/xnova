@@ -1,11 +1,11 @@
 <template>
 	<div class="page-info">
-		<div class="page-info-description block">
+		<div class="block">
 			<div class="title info-description-heading">
 				<span>{{ item['name'] }}</span>
 				<Link v-if="item.id < 600" :href="'/tech/' + item.id" class="info-tree-link">{{ $t('pages.techtree.requirement_tree') }} <span aria-hidden="true">↗</span></Link>
 			</div>
-			<div class="content info-description-body">
+			<div class="content info-description-body is-padded">
 				<div class="info-description-image">
 					<img v-if="item['id'] < 600" :src="'/assets/images/elements/' + item['id'] + '.webp'" class="info" height="150" width="150" alt="">
 					<img v-else-if="item['id'] < 700" :src="'/assets/images/officiers/' + item['id'] + '.jpg'" class="info" height="120" width="120" alt="">

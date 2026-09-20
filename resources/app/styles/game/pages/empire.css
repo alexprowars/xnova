@@ -1,6 +1,4 @@
 .page-empire {
-	--color-green-500: #94ceba;
-	--color-red-500: #e39a93;
 	min-width: 0;
 	font-size: 14px;
 	font-variant-numeric: tabular-nums;
@@ -45,7 +43,7 @@
 		svg {
 			width: 17px;
 			height: 17px;
-			color: #ddbe82;
+			color: var(--ui-warning-color);
 		}
 	}
 
@@ -64,7 +62,7 @@
 		padding: 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #152b3b, #101f2c);
+		background: linear-gradient(110deg, var(--ui-hover-background), var(--main-color));
 
 		> svg {
 			width: 25px;
@@ -91,19 +89,19 @@
 	}
 
 	.metal > svg {
-		color: #b4c6d5;
+		color: var(--resource-metal-color);
 	}
 
 	.crystal > svg {
-		color: #8bbedd;
+		color: var(--resource-crystal-color);
 	}
 
 	.deuterium > svg {
-		color: #8bc8af;
+		color: var(--resource-deuterium-color);
 	}
 
 	.energy > svg {
-		color: #ddbe82;
+		color: var(--resource-energy-color);
 	}
 
 	.empire-toolbar {
@@ -122,15 +120,6 @@
 
 		input, select {
 			width: 100%;
-			min-width: 0;
-			height: 32px;
-			margin: 0;
-			padding-block: 5px;
-			border: 1px solid var(--border-color);
-			border-radius: 4px;
-			background-color: #09131f;
-			color: var(--text-color);
-			font-size: 14px;
 		}
 	}
 
@@ -157,7 +146,7 @@
 
 		img {
 			border-radius: 4px;
-			border: 1px solid #355166;
+			border: 1px solid var(--ui-border-color);
 		}
 
 		strong {
@@ -175,7 +164,7 @@
 		max-height: 65vh;
 		overflow: auto;
 		scrollbar-width: thin;
-		scrollbar-color: #355166 #0e1b29;
+		scrollbar-color: var(--ui-border-color) var(--ui-panel-background);
 		border-block: 1px solid var(--border-color);
 	}
 
@@ -190,8 +179,8 @@
 		th, td {
 			padding: 7px 12px;
 			border: 0;
-			border-bottom: 1px solid #263b4d;
-			background: #0e1b29;
+			border-bottom: 1px solid var(--ui-border-muted-color);
+			background: var(--ui-panel-background);
 			text-align: right;
 			vertical-align: middle;
 			font-weight: 400;
@@ -203,7 +192,7 @@
 			top: 0;
 			z-index: 2;
 			max-width: 160px;
-			background: #142737;
+			background: var(--ui-panel-heading-background);
 			color: var(--text-muted);
 			font-size: 12px;
 			white-space: normal;
@@ -216,7 +205,7 @@
 			width: 210px;
 			min-width: 210px;
 			max-width: 210px;
-			border-right: 1px solid #30485c;
+			border-right: 1px solid var(--ui-border-color);
 			text-align: left;
 			white-space: normal;
 		}
@@ -226,11 +215,11 @@
 		}
 
 		tbody tr:hover > * {
-			background: #193245;
+			background: var(--ui-active-background);
 		}
 
 		.is-current > * {
-			background: #132d3b;
+			background: var(--ui-hover-background);
 		}
 
 		.is-current .empire-planet-column {
@@ -238,14 +227,14 @@
 		}
 
 		.is-current .empire-planet-name {
-			color: #a8dfed;
+			color: var(--ui-text-color);
 		}
 
 		tfoot th, tfoot td {
 			position: sticky;
 			bottom: 0;
 			z-index: 2;
-			background: #173342;
+			background: var(--ui-active-background);
 			font-weight: 600;
 			font-size: 12px;
 			border-bottom: 0;
@@ -278,7 +267,7 @@
 	.empire-planet-image img {
 		width: 32px;
 		height: 32px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 50%;
 	}
 
@@ -298,7 +287,7 @@
 		display: block;
 		margin-top: 3px;
 		font-size: 12px;
-		color: #88adbf;
+		color: var(--ui-muted-color);
 	}
 
 	.empire-resource-label {
@@ -313,11 +302,11 @@
 	}
 
 	.empire-queued {
-		color: #94ceba;
+		color: var(--ui-success-color);
 	}
 
 	.empire-in-flight {
-		color: #ddbe82;
+		color: var(--ui-warning-color);
 	}
 
 	.empire-empty {
@@ -346,13 +335,13 @@
 		align-items: center;
 		gap: 10px;
 		padding: 10px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 		border-radius: 5px;
 	}
 
 	.empire-research-card img {
 		flex-shrink: 0;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
 	}
 

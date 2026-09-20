@@ -3,20 +3,10 @@
 	min-width: 0;
 
 	> textarea {
-		display: block;
 		width: 100%;
-		max-width: 100%;
 		min-height: 150px;
-		margin: 0;
 		padding: 10px;
-		border: 1px solid #355166;
 		border-radius: 0 0 5px 5px;
-		background: #091623;
-		color: #c9dce8;
-		font-size: 14px;
-		line-height: 1.5;
-		text-align: left;
-		resize: vertical;
 	}
 
 	.colorpicker {
@@ -25,8 +15,8 @@
 		gap: 3px;
 		margin: 0;
 		padding: 8px;
-		border-inline: 1px solid #355166;
-		background: #0e1e2c;
+		border-inline: 1px solid var(--ui-border-color);
+		background: var(--main-color);
 	}
 
 	.colorpicker button {
@@ -36,14 +26,14 @@
 		min-width: 0;
 		margin: 0;
 		padding: 0;
-		border: 1px solid #ffffff26;
+		border: 1px solid color-mix(in srgb, var(--ui-white-color) 14.9%, transparent);
 		border-radius: 2px;
 		cursor: pointer;
 	}
 
 	.colorpicker button:hover, .colorpicker button:focus-visible {
-		border-color: #e0edf5;
-		box-shadow: 0 0 0 1px #e0edf5;
+		border-color: var(--ui-title-color);
+		box-shadow: 0 0 0 1px var(--ui-title-color);
 	}
 }
 
@@ -54,53 +44,19 @@
 	flex-wrap: wrap;
 	gap: 4px;
 	padding: 7px;
-	border: 1px solid #355166;
+	border: 1px solid var(--ui-border-color);
 	border-bottom: 0;
 	border-radius: 5px 5px 0 0;
-	background: #122536;
+	background: var(--ui-panel-heading-background);
 
 	&.inline {
 		display: inline-flex;
 	}
 
-	.buttons {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 28px;
-		height: 28px;
-		min-width: 28px;
-		margin: 0;
-		padding: 5px;
-		border: 1px solid #355166;
-		border-radius: 4px;
-		background: #192f3f;
-		color: #a9c8da;
-		cursor: pointer;
-		transition: background-color .15s, border-color .15s, color .15s;
-	}
-
-	.buttons:hover {
-		background: #24495c;
-		border-color: #568ba1;
-		color: #e0edf5;
-	}
-
 	.buttons[aria-pressed=true] {
-		background: #21485a;
-		border-color: #6da5b8;
-		color: #b8e1ec;
-	}
-
-	.buttons:focus-visible {
-		border-color: #a4d9e7;
-	}
-
-	.buttons svg {
-		display: block;
-		width: 17px;
-		height: 17px;
-		flex-shrink: 0;
+		background: var(--ui-selected-background);
+		border-color: var(--ui-border-hover-color);
+		color: var(--ui-text-color);
 	}
 
 	.v-popper {
@@ -119,27 +75,22 @@
 		max-width: 140px;
 		padding-block: 3px;
 		font-size: 12px;
-		font-weight: 400;
-		color: #bdd3e1;
-		background-color: #0c1c29;
-		border-color: #355166;
-		border-radius: 4px;
 	}
 }
 
 .editor-component-preview {
 	margin-top: 10px;
-	border: 1px solid #355166;
+	border: 1px solid var(--ui-border-color);
 	border-radius: 5px;
 	overflow: hidden;
-	background: #0e1b29;
-	color: #c9dce8;
+	background: var(--ui-panel-background);
+	color: var(--ui-text-color);
 	font-size: 14px;
 
 	.editor-preview-title {
 		padding: 8px 10px;
-		background: #142737;
-		color: #9eb8c9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -152,9 +103,9 @@
 .quotetitle {
 	margin: 3px 0 0 0;
 	padding: 2px 4px;
-	border: solid 1px #C8CBD9;
-	color: #7D8AA0;
-	background-color: #EAECF2;
+	border: solid 1px var(--quote-border-color);
+	color: var(--quote-muted-color);
+	background-color: var(--quote-heading-background);
 	font-size: 0.85em;
 	font-weight: bold;
 
@@ -164,25 +115,25 @@
 		margin: 0;
 		padding: 0;
 		background: none;
-		color: #000000;
+		color: var(--ui-black-color);
 	}
 }
 
 .quotecontent {
 	margin: 0 0 3px 0;
 	padding: 5px;
-	border: 1px solid #C8CBD9;
+	border: 1px solid var(--quote-border-color);
 	border-top-width: 0;
 	font-weight: normal;
-	background-color: #EFF2F6;
-	color: #444;
+	background-color: var(--quote-background);
+	color: var(--quote-text-color);
 
 	a {
-		color: #7D8AA0;
+		color: var(--quote-muted-color);
 	}
 
 	a:hover {
-		color: #9c0;
+		color: var(--ui-success-strong-color);
 		text-decoration: none;
 	}
 }
@@ -190,13 +141,9 @@
 .quotewrapper {
 	clear: both;
 	margin: 0 0 0 0;
-	background: #eaecf2 url("~/images/quote_header.gif") top left no-repeat;
+	background: var(--quote-heading-background) url("~/images/quote_header.gif") top left no-repeat;
 	padding-left: 17px;
-	border: solid 1px #c8cbd9;
-	border-bottom-color: #aeb3c5;
-	border-right-color: #aeb3c5;
-}
-
-.editor-component.error textarea {
-	border-color: #ff453a;
+	border: solid 1px var(--quote-border-color);
+	border-bottom-color: var(--quote-border-shadow-color);
+	border-right-color: var(--quote-border-shadow-color);
 }

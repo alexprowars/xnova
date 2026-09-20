@@ -7,7 +7,9 @@
 	import { useI18n } from 'vue-i18n';
 	import { UiTabNavigation } from '~/components/UI';
 
-	defineProps({ active: String });
+	defineProps({
+		active: String,
+	});
 	const { t } = useI18n();
 	const tabs = computed(() => [
 		{ id: 'list', href: '/friends', label: t('pages.friends.tab_friends') },

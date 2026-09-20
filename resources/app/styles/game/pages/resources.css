@@ -1,19 +1,9 @@
 .page-resources {
-	--color-green-500: #94ceba;
-	--color-red-500: #e39a93;
 	font-variant-numeric: tabular-nums;
-
-	.block {
-		margin-bottom: 12px;
-	}
-
-	.block > .content {
-		padding: 0;
-	}
 
 	.table-responsive {
 		scrollbar-width: thin;
-		scrollbar-color: #355166 #0e1b29;
+		scrollbar-color: var(--ui-border-color) var(--ui-panel-background);
 	}
 
 	.resources-table {
@@ -26,8 +16,8 @@
 		th, td {
 			padding: 7px 9px;
 			border: 0;
-			border-bottom: 1px solid #263b4d;
-			background: #0e1b29;
+			border-bottom: 1px solid var(--ui-border-muted-color);
+			background: var(--ui-panel-background);
 			text-align: center;
 			vertical-align: middle;
 			white-space: nowrap;
@@ -39,7 +29,7 @@
 		}
 
 		thead th {
-			background: #142737;
+			background: var(--ui-panel-heading-background);
 			color: var(--text-muted);
 			font-size: 12px;
 		}
@@ -54,36 +44,33 @@
 		}
 
 		.resources-building-row:hover td {
-			background-color: #152b3b;
+			background-color: var(--ui-hover-background);
 		}
 
 		.resources-capacity td {
-			background: #122432;
+			background: var(--ui-surface-background);
 			font-size: 12px;
 		}
 
 		.resources-total td {
-			background: #173342;
+			background: var(--ui-active-background);
 			border-bottom: 0;
 			font-weight: 600;
 		}
 
 		select {
 			width: 74px;
-			min-width: 0;
 			height: 28px;
 			padding-block: 3px;
-			margin: 0;
-			border-radius: 4px;
 			font-size: 12px;
-			background-color: #091522;
+			min-height: 28px;
 		}
 	}
 
 	.resources-production {
 		font-size: 14px;
 
-		.title, .button, .resources-level,
+		.button, .resources-level,
 		.resources-table th, .resources-table td, .resources-table select {
 			font-size: inherit;
 		}
@@ -98,19 +85,19 @@
 			width: 18px;
 			height: 18px;
 			flex-shrink: 0;
-			color: #b4c6d5;
+			color: var(--resource-metal-color);
 		}
 
 		&.crystal svg {
-			color: #8bbedd;
+			color: var(--resource-crystal-color);
 		}
 
 		&.deuterium svg {
-			color: #8bc8af;
+			color: var(--resource-deuterium-color);
 		}
 
 		&.energy svg {
-			color: #ddbe82;
+			color: var(--resource-energy-color);
 		}
 	}
 
@@ -127,7 +114,7 @@
 		img {
 			width: 28px;
 			height: 28px;
-			border: 1px solid #355166;
+			border: 1px solid var(--ui-border-color);
 			border-radius: 4px;
 			object-fit: cover;
 		}
@@ -138,8 +125,8 @@
 		min-width: 25px;
 		padding: 1px 5px;
 		border-radius: 3px;
-		background: #203748;
-		color: #c0d7e4;
+		background: var(--ui-active-background);
+		color: var(--ui-text-color);
 		font-size: 12px;
 	}
 
@@ -148,21 +135,21 @@
 		justify-content: flex-end;
 		padding: 8px 10px;
 		border-top: 1px solid var(--border-color);
-		background: #102130;
+		background: var(--ui-surface-background);
 	}
 
 	.resources-status {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		gap: 10px;
-		margin-bottom: 12px;
+		margin-block: var(--ui-block-gap);
 	}
 
 	.resources-efficiency, .resources-technology {
 		padding: 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: #112332;
+		background: var(--ui-surface-background);
 		font-size: 14px;
 	}
 
@@ -200,7 +187,7 @@
 		height: 5px;
 		border-radius: 5px;
 		overflow: hidden;
-		background: #263c4d;
+		background: var(--ui-button-secondary-hover-background);
 
 		> span {
 			display: block;
@@ -218,18 +205,17 @@
 		}
 	}
 
-	.block > .resources-storage-grid {
+	.resources-storage-grid {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 10px;
-		padding: 10px;
 	}
 
 	.resources-storage-card {
 		min-width: 0;
 		padding: 10px;
 		border-radius: 5px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 		font-size: 14px;
 	}
 
@@ -246,20 +232,11 @@
 		}
 	}
 
-	.block > .resources-management-actions {
+	.resources-management-actions {
 		display: flex;
 		justify-content: center;
 		flex-wrap: wrap;
 		gap: 8px;
-		padding: 10px;
-
-		.button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 7px;
-			min-height: 32px;
-		}
 
 		svg {
 			width: 16px;
@@ -268,24 +245,11 @@
 		}
 	}
 
-	.resources-shutdown {
-		background-color: #322b30;
-		background-image: none;
-		border-color: #655058;
-		color: #e2b2aa;
-
-		&:hover {
-			background-color: #47333a;
-			border-color: #91666b;
-		}
-	}
-
-	.block > .resources-buy-content {
+	.resources-buy-content {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		padding: 12px;
 		font-size: 14px;
 
 		.button {
@@ -314,11 +278,11 @@
 	}
 
 	@media (max-width: 767px) {
-		.resources-status, .block > .resources-storage-grid {
+		.resources-status, .resources-storage-grid {
 			grid-template-columns: minmax(0, 1fr);
 		}
 
-		.block > .resources-buy-content {
+		.resources-buy-content {
 			align-items: flex-start;
 			flex-direction: column;
 		}

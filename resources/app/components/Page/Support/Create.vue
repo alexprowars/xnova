@@ -1,13 +1,31 @@
 <template>
 	<UiPanel clip :title="$t('pages.support.create.title')" class="support-create">
 		<form class="ui-form-body" method="post" @submit.prevent="request">
-			<label class="support-field"><span>{{ $t('pages.support.create.subject_placeholder') }}</span><input type="text" v-model="form.subject" :class="{error: v$.subject.$error || form.errors.subject}" :placeholder="$t('pages.support.create.subject_placeholder')"></label>
+			<label class="support-field">
+				<span>{{ $t('pages.support.create.subject_placeholder') }}</span>
+				<input
+					type="text"
+					v-model="form.subject"
+					:class="{error: v$.subject.$error || form.errors.subject}"
+					:placeholder="$t('pages.support.create.subject_placeholder')"
+				>
+			</label>
 			<div v-if="v$.subject.$error" class="ui-errors" role="alert">{{ $t('pages.support.form.subject_required') }}</div>
 			<div class="support-field-label">{{ $t('pages.support.form.message') }}</div>
 			<TextEditor name="message" v-model="form.message" :class="{error: v$.message.$error || form.errors.message}"/>
 			<div v-if="v$.message.$error" class="ui-errors" role="alert">{{ $t('pages.support.form.message_required') }}</div>
-			<div v-if="Object.keys(form.errors).length" class="ui-errors" role="alert"><span v-for="(error, field) in form.errors" :key="field">{{ error }}</span></div>
-			<div class="ui-actions"><UiButton variant="secondary" :disabled="form.processing" @click="emit('close')">{{ $t('pages.support.create.close') }}</UiButton><UiButton type="submit" :disabled="form.processing"><SendIcon aria-hidden="true"/>{{ $t('pages.support.create.send') }}</UiButton></div>
+			<div v-if="Object.keys(form.errors).length" class="ui-errors" role="alert">
+				<span v-for="(error, field) in form.errors" :key="field">{{ error }}</span>
+			</div>
+			<div class="ui-actions">
+				<UiButton variant="secondary" :disabled="form.processing" @click="emit('close')">
+					{{ $t('pages.support.create.close') }}
+				</UiButton>
+				<UiButton type="submit" :disabled="form.processing">
+					<SendIcon aria-hidden="true"/>
+					{{ $t('pages.support.create.send') }}
+				</UiButton>
+			</div>
 		</form>
 	</UiPanel>
 </template>

@@ -41,7 +41,6 @@
 @import "./styles/game/pages/friends.css";
 @import "./styles/game/pages/alliance.css";
 
-@import "./styles/game/components/loader.css";
 @import "./styles/game/components/editor.css";
 @import "./styles/game/components/chat.css";
 @import "./styles/game/components/mobile-menu.css";

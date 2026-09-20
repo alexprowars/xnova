@@ -1,5 +1,5 @@
 <template>
-	<div class="options-password">
+	<div>
 		<div v-if="Object.keys(form.errors).length" class="options-errors" role="alert">
 			<div v-for="(error, key) in form.errors" :key="key">{{ error }}</div>
 		</div>

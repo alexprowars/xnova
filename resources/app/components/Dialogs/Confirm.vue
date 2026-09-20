@@ -1,5 +1,5 @@
 <template>
-	<div class="confirm-box">
+	<div>
 		<div class="dialog-message">
 			<div v-if="title" class="dialog-title" v-html="title"></div>
 			<div v-if="content" class="dialog-text" :class="{ 'dialog-text--heading': !title }" v-html="content"></div>
@@ -9,8 +9,8 @@
 				v-for="(button, index) in buttons"
 				:key="index"
 				type="button"
-				class="btn"
-				:class="[button.class, { 'dialog-button--primary': typeof button.handler === 'function' }]"
+				class="button"
+				:class="[button.class, { 'is-secondary': typeof button.handler !== 'function' }]"
 				@click.stop="handle(button.handler)"
 				v-html="button.title"
 			></button>

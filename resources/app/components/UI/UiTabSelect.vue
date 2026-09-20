@@ -11,8 +11,14 @@
 	import { RadioGroupItem, RadioGroupRoot } from 'reka-ui';
 
 	defineProps({
-		items: { type: Array, required: true },
-		label: { type: String, required: true },
+		items: {
+			type: Array,
+			required: true,
+		},
+		label: {
+			type: String,
+			required: true,
+		},
 	});
 
 	const selected = defineModel({ type: [String, Number], required: true });

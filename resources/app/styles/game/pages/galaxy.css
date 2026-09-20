@@ -1,7 +1,4 @@
 .page-galaxy {
-	--color-green-500: #8fd4b3;
-	--color-red-500: #e29a94;
-	--color-yellow-400: #dfbe85;
 
 	.page-galaxy-select {
 		display: grid;
@@ -12,7 +9,7 @@
 		padding: 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #142838, #0e1b29);
+		background: linear-gradient(110deg, var(--ui-panel-heading-background), var(--ui-panel-background));
 
 		label {
 			display: block;
@@ -23,20 +20,11 @@
 
 		input[type=number] {
 			width: 60px;
-			height: 32px;
-			font-size: 14px;
 			font-variant-numeric: tabular-nums;
 		}
 
 		select {
 			width: 100%;
-			max-width: 100%;
-			height: 32px;
-			margin: 0;
-			padding-block: 4px;
-			border-radius: 5px;
-			background-color: #091522;
-			font-size: 14px;
 		}
 	}
 
@@ -46,21 +34,8 @@
 		gap: 4px;
 
 		button {
-			display: grid;
-			place-items: center;
 			width: 28px;
 			height: 32px;
-			border: 1px solid #355166;
-			border-radius: 4px;
-			background-color: #172e40;
-			color: #a9cddd;
-			cursor: pointer;
-			transition: background-color .15s, border-color .15s;
-
-			&:hover:not(:disabled) {
-				background-color: #24495c;
-				border-color: #6399ad;
-			}
 		}
 
 		svg {
@@ -74,10 +49,6 @@
 	}
 
 	.galaxy-go {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
 		height: 32px;
 
 		svg {
@@ -101,7 +72,7 @@
 
 	.table-responsive {
 		scrollbar-width: thin;
-		scrollbar-color: #355166 #0e1b29;
+		scrollbar-color: var(--ui-border-color) var(--ui-panel-background);
 	}
 
 	.galaxy {
@@ -115,16 +86,16 @@
 		th, td {
 			padding: 5px 7px;
 			border: 0;
-			border-bottom: 1px solid #263b4d80;
-			background: #0e1b29;
+			border-bottom: 1px solid color-mix(in srgb, var(--ui-border-muted-color) 50.2%, transparent);
+			background: var(--ui-panel-background);
 			vertical-align: middle;
 		}
 
 		thead th {
 			position: relative;
 			padding: 8px 7px;
-			background: #142737;
-			color: #9cb3c5;
+			background: var(--ui-panel-heading-background);
+			color: var(--ui-muted-color);
 			font-size: 12px;
 			font-weight: 500;
 			white-space: nowrap;
@@ -134,11 +105,11 @@
 			height: 43px;
 
 			&:hover > td {
-				background-color: #193245;
+				background-color: var(--ui-active-background);
 			}
 
 			&.is-own > td {
-				background-color: #132d3b;
+				background-color: var(--ui-hover-background);
 			}
 
 			&.is-own .galaxy-position {
@@ -147,13 +118,13 @@
 			}
 
 			&.is-own .galaxy-planet-label {
-				color: #a8dfed;
+				color: var(--ui-text-color);
 			}
 		}
 
 		.galaxy-position {
 			width: 35px;
-			color: #8aa4b8;
+			color: var(--ui-muted-color);
 			font-size: 12px;
 		}
 
@@ -167,7 +138,7 @@
 
 		.star {
 			margin-right: 3px;
-			color: #d4b084;
+			color: var(--ui-warning-color);
 			font-size: 12px;
 		}
 
@@ -180,14 +151,14 @@
 				width: 32px;
 				height: 32px;
 				max-width: none;
-				border: 1px solid #355166;
+				border: 1px solid var(--ui-border-color);
 				border-radius: 50%;
 				object-fit: cover;
 			}
 		}
 
 		.galaxy-debris {
-			--debris-accent: #92b3c3;
+			--debris-accent: var(--ui-muted-color);
 
 			img {
 				display: block;
@@ -198,15 +169,15 @@
 			}
 
 			&.debris_0 {
-				--debris-accent: #83cfb2;
+				--debris-accent: var(--ui-success-color);
 			}
 
 			&.debris_50 {
-				--debris-accent: #d4b084;
+				--debris-accent: var(--ui-warning-color);
 			}
 
 			&.debris_100 {
-				--debris-accent: #e39595;
+				--debris-accent: var(--ui-danger-color);
 			}
 		}
 
@@ -225,14 +196,14 @@
 				flex-shrink: 0;
 				border: 1px solid transparent;
 				border-radius: 4px;
-				background-color: #192e3e;
-				color: #9fc7d9;
+				background-color: var(--ui-hover-background);
+				color: var(--ui-link-color);
 				cursor: pointer;
 				transition: background-color .15s, border-color .15s;
 
 				&:hover {
-					background-color: #24495c;
-					border-color: #477589;
+					background-color: var(--ui-button-hover-background);
+					border-color: var(--ui-divider-accent-color);
 				}
 			}
 
@@ -251,7 +222,7 @@
 		}
 
 		.galaxy-expedition td {
-			background: #122838;
+			background: var(--ui-panel-heading-background);
 			padding-block: 9px;
 		}
 
@@ -263,11 +234,11 @@
 			padding: 8px;
 			color: var(--text-muted);
 			font-size: 12px;
-			background: #102130;
+			background: var(--ui-surface-background);
 		}
 
 		.galaxy-capacity td {
-			background: #0c1926;
+			background: var(--ui-panel-background);
 			border-bottom: 0;
 		}
 	}
@@ -281,13 +252,13 @@
 
 	.galaxy-missile {
 		margin-bottom: 10px;
-		border: 1px solid #775f46;
+		border: 1px solid var(--ui-warning-border-color);
 		border-radius: 6px;
 		overflow: hidden;
 
 		.c, .th {
 			padding: 8px;
-			background: #172839;
+			background: var(--ui-button-secondary-background);
 			border-color: var(--border-color);
 		}
 	}
@@ -306,7 +277,6 @@
 		.galaxy-stepper {
 			input {
 				flex: 1;
-				min-width: 0;
 			}
 		}
 	}
@@ -314,23 +284,23 @@
 
 .page-galaxy .galaxy, .galaxy-legend {
 	.noob {
-		color: #a3d3b5;
+		color: var(--ui-success-hover-color);
 	}
 
 	.strong {
-		color: #e0a3a1;
+		color: var(--ui-danger-color);
 	}
 
 	.vacation {
-		color: #92cde8;
+		color: var(--ui-info-color);
 	}
 
 	.inactive {
-		color: #b8c0c8;
+		color: var(--ui-muted-color);
 	}
 
 	.longinactive {
-		color: #84929f;
+		color: var(--ui-subtle-color);
 	}
 
 	.blocked {
@@ -342,9 +312,9 @@
 	.v-popper__inner {
 		max-width: calc(100vw - 24px);
 		padding: 8px;
-		border-color: #355166;
-		background: #0d1b29;
-		box-shadow: 0 8px 24px #0006;
+		border-color: var(--ui-border-color);
+		background: var(--ui-panel-background);
+		box-shadow: 0 8px 24px var(--ui-shadow-color);
 		font-size: 14px;
 	}
 
@@ -354,19 +324,19 @@
 
 	.c, .th {
 		padding: 5px 7px;
-		border-color: #2b4354;
-		background: #142737;
+		border-color: var(--border-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.c {
-		color: #b6d3e2;
+		color: var(--ui-text-color);
 	}
 
 	.v-popper__arrow-outer {
-		border-color: #355166;
+		border-color: var(--ui-border-color);
 	}
 
 	.v-popper__arrow-inner {
-		border-color: #0d1b29;
+		border-color: var(--ui-panel-background);
 	}
 }

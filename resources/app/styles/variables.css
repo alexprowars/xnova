@@ -1,22 +1,170 @@
 :root {
+	/* Surfaces */
+	--page-background: #070d16;
 	--main-color: #111e2d;
 	--head-bg-color: #0c1623;
-	--border-color: #273b50;
-	--border-hover-color: #66c8e5;
-	--menu-bg-color: #101d2b;
-	--menu-bg-a-color: #183747;
-	--menu-border-color: #273b50;
+	--ui-panel-background: #0e1b29;
+	--ui-panel-heading-background: #142737;
+	--ui-surface-background: #102332;
+	--ui-input-background: #091623;
+	--ui-hover-background: #142b3b;
+	--ui-active-background: #193546;
+	--ui-selected-background: #214252;
+	--ui-heading-start-color: #172e40;
+
+	/* Text and accents */
 	--text-color: #dce7f0;
 	--text-muted: #91a6ba;
 	--accent-color: #79d9ef;
-	--ui-heading-background: linear-gradient(110deg, #172e40, #0e1b29);
-	--ui-panel-background: #0e1b29;
-	--ui-panel-heading-background: #142737;
+	--ui-accent-hover-color: #b0ebf7;
 	--ui-title-color: #e0edf5;
+	--ui-text-color: #bdd3e1;
+	--ui-label-color: #a8c0d0;
 	--ui-muted-color: #8faabb;
+	--ui-subtle-color: #7898ad;
+	--ui-link-color: #a6c6d8;
+	--ui-icon-color: #85bacf;
+	--ui-on-accent-color: #091623;
+	--ui-white-color: #ffffff;
+	--ui-black-color: #000000;
+
+	/* Blocks */
+	--ui-block-heading-background: var(--ui-active-background);
+	--ui-block-radius: 6px;
+	--ui-block-gap: 10px;
+	--ui-block-heading-padding: 10px 12px;
+	--ui-block-content-padding: 12px;
+
+	/* Borders and controls */
+	--ui-control-height: 32px;
+	--ui-control-padding-block: 5px;
+	--ui-control-padding-inline: 9px;
+	--ui-control-radius: 4px;
+	--ui-control-font-size: 14px;
+	--ui-button-font-size: 12px;
+	--border-color: #273b50;
+	--border-hover-color: #66c8e5;
+	--ui-border-color: #355166;
+	--ui-border-muted-color: #263b4d;
+	--ui-border-hover-color: #568ba1;
+	--ui-border-active-color: #416d81;
+	--ui-divider-accent-color: #52768b;
+	--ui-button-background: #1b3c4e;
+	--ui-button-hover-background: #285469;
+	--ui-button-secondary-background: #162936;
+	--ui-button-secondary-hover-background: #223c4e;
+	--ui-button-secondary-border-hover-color: #628399;
+	--ui-progress-background: #294253;
+	--ui-select-arrow-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23dce7f0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2 4 4 4 4-4'/%3E%3C/svg%3E");
+
+	/* Status colors */
+	--ui-info-color: #8bc7df;
+	--ui-success-color: #4ade80;
+	--ui-warning-color: #ddbe82;
+	--ui-danger-color: #ff7474;
+	--ui-success-strong-color: #22c55e;
+	--ui-warning-strong-color: #e7bd6c;
+	--ui-danger-strong-color: #ff2424;
+	--ui-success-hover-color: #86efac;
+	--ui-warning-hover-color: #efd096;
+	--ui-danger-hover-color: #ff9a9a;
+	--ui-success-background: #1f3b32;
+	--ui-success-hover-background: #2b5243;
+	--ui-success-muted-background: #16302e;
+	--ui-warning-background: #302e27;
+	--ui-warning-hover-background: #4d3e28;
+	--ui-danger-background: #39262e;
+	--ui-danger-hover-background: #51313b;
+	--ui-danger-muted-background: #241c27;
+	--ui-success-border-color: #426a5a;
+	--ui-success-border-hover-color: #699a81;
+	--ui-warning-border-color: #75613d;
+	--ui-danger-border-color: #704a50;
+	--ui-danger-border-hover-color: #986269;
+	--ui-danger-border-muted-color: #58414c;
+	--ui-danger-border-strong-color: #bd7e79;
+
+	/* Resources */
+	--resource-metal-color: #a8bbce;
+	--resource-crystal-color: #7cd7ee;
+	--resource-deuterium-color: var(--ui-success-strong-color);
+	--resource-energy-color: #e5cc81;
+	--resource-credits-color: #d4b084;
+
+	/* Fleet missions */
+	--fleet-default-color: #8cb9d1;
+	--fleet-own-color: #9bdcb4;
+	--fleet-espionage-color: #e3b17d;
+	--fleet-harvest-color: #d9cb85;
+	--fleet-colony-color: #a0bfe8;
+	--fleet-federation-color: #89c5a4;
+	--fleet-missile-color: #95d5da;
+	--fleet-hostile-color: #e6a09b;
+	--fleet-return-color: #8cb99d;
+
+	/* Message categories */
+	--message-default-color: #a7bdcf;
+	--message-user-color: #8dcac2;
+	--message-spy-color: #a5b5e0;
+	--message-alliance-color: #b9a7dc;
+	--message-battle-color: #dca5a0;
+	--message-fleet-color: #90bbdb;
+	--message-expedition-color: #d4bf8b;
+	--message-queue-color: #9fc39b;
+
+	/* Factions */
+	--faction-1-color: #a0c7dc;
+	--faction-2-color: #9fc9b0;
+	--faction-3-color: #d5c08e;
+	--faction-4-color: #d0a8a5;
+
+	/* Rankings and charts */
+	--rank-gold-color: #e5c98e;
+	--rank-gold-background: #463b24;
+	--rank-gold-border-color: var(--ui-warning-border-color);
+	--rank-silver-color: #c2d3df;
+	--rank-silver-background: #a8bfd2;
+	--rank-silver-border-color: #506575;
+	--rank-bronze-color: #d4a47e;
+	--rank-bronze-background: #b78057;
+	--rank-bronze-border-color: #75543e;
+	--chart-build-color: #ca9e7a;
+	--chart-tech-color: #b4a1d6;
+	--chart-defs-color: #d6c080;
+	--chart-fleet-color: #83bda8;
+	--chart-total-color: #79c5de;
+
+	/* Illustration overlays */
+	--ui-image-overlay-color: #07111b;
+	--ui-image-caption-color: #102232;
+	--ui-page-glow-color: #16324b;
+
+	/* Quoted content */
+	--quote-heading-background: #eaecf2;
+	--quote-background: #eff2f6;
+	--quote-text-color: #444444;
+	--quote-border-color: #c8cbd9;
+	--quote-border-shadow-color: #aeb3c5;
+	--quote-muted-color: #7d8aa0;
+
+	--menu-bg-color: var(--main-color);
+	--menu-bg-a-color: var(--ui-active-background);
+	--menu-border-color: var(--border-color);
+	--ui-heading-background: linear-gradient(110deg, var(--ui-heading-start-color), var(--ui-panel-background));
+	--ui-overlay-color: color-mix(in srgb, var(--ui-black-color) 50%, transparent);
+	--ui-image-scrim-color: color-mix(in srgb, var(--ui-black-color) 80%, transparent);
+	--ui-shadow-color: color-mix(in srgb, var(--ui-black-color) 40%, transparent);
+	--chart-grid-color: var(--ui-border-muted-color);
+
 	--container-width: 1320px;
 	--menu-width: 180px;
 	--planets-width: 180px;
 }
 
-@theme {}
+@theme inline {
+	--color-green-500: var(--ui-success-color);
+	--color-red-500: var(--ui-danger-color);
+	--color-yellow-400: var(--ui-warning-color);
+	--color-yellow-200: var(--ui-warning-hover-color);
+	--color-amber-500: var(--ui-warning-color);
+}

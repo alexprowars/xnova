@@ -24,7 +24,7 @@
 							</div>
 						</div>
 					</template>
-					<CreditsIcon aria-hidden="true" focusable="false"/>
+					<ResourceIcon code="credits" aria-hidden="true" focusable="false"/>
 				</Popper>
 			</Link>
 			<div class="resource-panel-item-info">
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-	import CreditsIcon from '~/images/icons/resources/credits.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import PanelResource from './PlanetPanelResource.vue';
 	import PlanetPanelEnergy from './PlanetPanelEnergy.vue';

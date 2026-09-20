@@ -1,10 +1,36 @@
 <template>
 	<tr>
-		<td><SendMessagePopup :id="item.user.id" class="friend-name" :title="$t('pages.friends.write_message')">{{ item.user.name }}<SendIcon aria-hidden="true"/></SendMessagePopup></td>
-		<td><Link v-if="item.user.alliance.id > 0" :href="'/alliance/info/' + item.user.alliance.id">{{ item.user.alliance.name }}</Link><span v-else class="friends-muted">—</span></td>
-		<td><Link :href="'/galaxy?galaxy=' + item.user.galaxy + '&system=' + item.user.system" class="friend-coordinates">[{{ item.user.galaxy }}:{{ item.user.system }}:{{ item.user.planet }}]</Link></td>
-		<td><span class="friend-status" :class="'online-' + item.online">{{ $t(item.online === 1 ? 'pages.friends.list.in_game' : item.online === 2 ? 'pages.friends.list.15_min' : 'pages.friends.list.not_in_game') }}</span></td>
-		<td class="friend-remove"><UiButton variant="danger" :disabled="form.processing" @click="remove" :title="$t('pages.friends.list.remove')" :aria-label="$t('pages.friends.list.remove')"><TrashIcon aria-hidden="true"/></UiButton></td>
+		<td>
+			<SendMessagePopup :id="item.user.id" class="friend-name" :title="$t('pages.friends.write_message')">
+				{{ item.user.name }}
+				<SendIcon aria-hidden="true"/>
+			</SendMessagePopup>
+		</td>
+		<td>
+			<Link v-if="item.user.alliance.id > 0" :href="'/alliance/info/' + item.user.alliance.id">{{ item.user.alliance.name }}</Link>
+			<span v-else class="friends-muted">—</span>
+		</td>
+		<td>
+			<Link :href="'/galaxy?galaxy=' + item.user.galaxy + '&system=' + item.user.system" class="friend-coordinates">
+				[{{ item.user.galaxy }}:{{ item.user.system }}:{{ item.user.planet }}]
+			</Link>
+		</td>
+		<td>
+			<span class="friend-status" :class="'online-' + item.online">
+				{{ $t(item.online === 1 ? 'pages.friends.list.in_game' : item.online === 2 ? 'pages.friends.list.15_min' : 'pages.friends.list.not_in_game') }}
+			</span>
+		</td>
+		<td class="friend-remove">
+			<UiButton
+				variant="danger"
+				:disabled="form.processing"
+				@click="remove"
+				:title="$t('pages.friends.list.remove')"
+				:aria-label="$t('pages.friends.list.remove')"
+			>
+				<TrashIcon aria-hidden="true"/>
+			</UiButton>
+		</td>
 	</tr>
 </template>
 

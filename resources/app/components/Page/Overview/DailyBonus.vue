@@ -1,9 +1,9 @@
 <template>
-	<div class="block page-overview-bonus">
+	<div class="block">
 		<div class="title text-center">
 			{{ $t('pages.overview.daily_bonus.title') }}
 		</div>
-		<div class="content text-center">
+		<div class="content text-center is-padded">
 			<div v-html="$t('pages.overview.daily_bonus.row_1', [$formatNumber(amount)])"></div>
 			<div>{{ $t('pages.overview.daily_bonus.row_2') }}</div>
 			<button @click.prevent="getBonus" class="button mt-2">

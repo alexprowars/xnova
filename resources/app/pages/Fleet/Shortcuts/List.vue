@@ -6,7 +6,7 @@
 				{{ $t('pages.fleets.shortcut.index.title') }}
 			</div>
 			<div class="content">
-				<div class="fleet-shortcut-content">
+				<div>
 					<div class="fleet-shortcut-list">
 						<div v-for="item in page.items" :key="item.id" class="fleet-shortcut-card">
 							<Link :href="'/fleet/shortcut/' + item['id']">

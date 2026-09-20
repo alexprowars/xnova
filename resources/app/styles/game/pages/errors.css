@@ -4,21 +4,21 @@
 		align-items: flex-start;
 		gap: 12px;
 		padding: 16px;
-		border: 1px solid #63454e;
+		border: 1px solid var(--ui-danger-border-muted-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #32222d, #131e2b);
+		background: linear-gradient(110deg, var(--ui-danger-background), var(--main-color));
 	}
 
 	.error-notice > svg {
 		width: 26px;
 		height: 26px;
 		flex-shrink: 0;
-		color: #d3a29b;
+		color: var(--ui-danger-color);
 	}
 
 	.error-notice .game-prose {
 		padding: 0;
-		color: #d2b5b7;
+		color: var(--ui-danger-color);
 	}
 
 	.error-heading {
@@ -34,7 +34,7 @@
 	.error-code {
 		display: block;
 		margin-bottom: 8px;
-		color: #83b5ce;
+		color: var(--ui-icon-color);
 		font-size: 48px;
 		font-weight: 600;
 		letter-spacing: 3px;
@@ -42,7 +42,7 @@
 
 	.error-game {
 		padding: 14px;
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 		text-align: center;
 	}
 

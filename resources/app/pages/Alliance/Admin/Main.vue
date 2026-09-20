@@ -2,7 +2,9 @@
 	<Head :title="$t('pages.alliance.admin.main_heading')"/>
 	<div class="page-alliance page-alliance-admin">
 		<AllianceBack/>
-		<header class="alliance-heading"><h1>{{ $t('pages.alliance.admin.main_heading') }}</h1></header>
+		<header class="alliance-heading">
+			<h1>{{ $t('pages.alliance.admin.main_heading') }}</h1>
+		</header>
 		<nav class="alliance-admin-links">
 			<Link href="/alliance/admin/ranks">{{ $t('pages.alliance.admin.index_link_ranks') }}<span aria-hidden="true">→</span></Link>
 			<Link v-if="page.access.kick" href="/alliance/admin/members">{{ $t('pages.alliance.admin.index_link_members') }}<span aria-hidden="true">→</span></Link>
@@ -12,8 +14,14 @@
 		<AllianceTextForm :key="page.text_type" :data="page"/>
 		<AllianceUpdateForm :data="page"/>
 		<div v-if="page.access.delete || page.owner === user.id" class="alliance-danger-zone">
-			<div v-if="page.access.delete"><span>{{ $t('pages.alliance.admin.index_dissolve_caption') }}</span><button type="button" class="button is-danger" @click="remove">{{ $t('pages.alliance.ui.dissolve') }}</button></div>
-			<div v-if="page.owner === user.id"><span>{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</span><Link href="/alliance/admin/give" class="button is-secondary">{{ $t('pages.alliance.admin.give_page_title') }}</Link></div>
+			<div v-if="page.access.delete">
+				<span>{{ $t('pages.alliance.admin.index_dissolve_caption') }}</span>
+				<button type="button" class="button is-danger" @click="remove">{{ $t('pages.alliance.ui.dissolve') }}</button>
+			</div>
+			<div v-if="page.owner === user.id">
+				<span>{{ $t('pages.alliance.admin.index_leave_transfer_caption') }}</span>
+				<Link href="/alliance/admin/give" class="button is-secondary">{{ $t('pages.alliance.admin.give_page_title') }}</Link>
+			</div>
 		</div>
 	</div>
 </template>

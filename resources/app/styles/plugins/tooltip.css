@@ -1,23 +1,23 @@
 .v-popper__popper.v-popper--theme-tooltip {
 	.v-popper__inner {
 		transition: background 250ms ease-in-out;
-		background: #252f39;
-		border: 1px solid #415683;
-		box-shadow: 0 0 30px 5px rgba(40, 40, 40, 0.75);
+		background: var(--ui-button-secondary-background);
+		border: 1px solid var(--ui-border-active-color);
+		box-shadow: 0 0 30px 5px color-mix(in srgb, var(--ui-black-color) 75%, transparent);
 		@apply rounded-md p-1;
 	}
 
 	.v-popper__arrow-outer {
-		border-color: #415683;
+		border-color: var(--ui-border-active-color);
 	}
 }
 
 .v-popper__popper.v-popper--theme-tooltip.officiers-tooltip {
 	.v-popper__inner {
 		padding: 0;
-		background: #0d1b29;
+		background: var(--ui-panel-background);
 		border-color: var(--border-color);
-		box-shadow: 0 8px 24px #0006;
+		box-shadow: 0 8px 24px var(--ui-shadow-color);
 	}
 
 	.v-popper__arrow-outer {
@@ -25,6 +25,6 @@
 	}
 
 	.v-popper__arrow-inner {
-		border-color: #0d1b29;
+		border-color: var(--ui-panel-background);
 	}
 }

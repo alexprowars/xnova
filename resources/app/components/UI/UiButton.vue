@@ -6,9 +6,19 @@
 
 <script setup>
 	defineProps({
-		as: { type: [String, Object, Function], default: 'button' },
-		type: { type: String, default: 'button' },
-		variant: { type: String, default: 'primary', validator: value => ['primary', 'secondary', 'danger', 'success'].includes(value) },
+		as: {
+			type: [String, Object, Function],
+			default: 'button',
+		},
+		type: {
+			type: String,
+			default: 'button',
+		},
+		variant: {
+			type: String,
+			default: 'primary',
+			validator: value => ['primary', 'secondary', 'danger', 'success'].includes(value),
+		},
 		icon: Boolean,
 	});
 </script>

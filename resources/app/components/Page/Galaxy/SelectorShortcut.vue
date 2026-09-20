@@ -1,5 +1,5 @@
 <template>
-	<div class="galaxy-shortcuts">
+	<div>
 		<select id="galaxy-shortcut" v-model="value">
 			<option :value="null">{{ $t('pages.galaxy.selector.select') }}</option>
 			<option v-for="item in items" :value="item">

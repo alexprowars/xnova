@@ -6,5 +6,10 @@
 	import { Link } from '@inertiajs/vue3';
 	import ArrowLeftIcon from '~/images/icons/arrow-left.svg?component';
 
-	defineProps({ href: { type: String, default: '/alliance' } });
+	defineProps({
+		href: {
+			type: String,
+			default: '/alliance',
+		},
+	});
 </script>

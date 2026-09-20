@@ -10,6 +10,9 @@
 	import ArrowLeftIcon from '~/images/icons/arrow-left.svg?component';
 
 	defineProps({
-		href: { type: String, required: true },
+		href: {
+			type: String,
+			required: true,
+		},
 	});
 </script>

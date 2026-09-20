@@ -5,7 +5,12 @@
 		<form class="alliance-form" @submit.prevent="save">
 			<TextEditor v-model="form.text"/>
 			<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
-			<div class="alliance-actions"><button type="button" class="button is-secondary" :disabled="form.processing" @click="form.text = ''">{{ $t('pages.alliance.ui.clear') }}</button><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button></div>
+			<div class="alliance-actions">
+				<button type="button" class="button is-secondary" :disabled="form.processing" @click="form.text = ''">
+					{{ $t('pages.alliance.ui.clear') }}
+				</button>
+				<button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button>
+			</div>
 		</form>
 	</section>
 </template>

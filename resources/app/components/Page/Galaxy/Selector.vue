@@ -1,19 +1,19 @@
 <template>
 	<form ref="form" class="page-galaxy-select" @submit.prevent="change">
-		<div class="galaxy-coordinate-field">
+		<div>
 			<label for="galaxy-coordinate">{{ $t('pages.galaxy.selector.galaxy') }}</label>
 			<div class="galaxy-stepper">
-				<button type="button" :disabled="galaxy === 1" :aria-label="$t('pages.galaxy.selector.previous_galaxy')" @click="changeByDirection('galaxyLeft')"><GalaxyIcon type="left"/></button>
+				<button type="button" class="button is-secondary icon-button" :disabled="galaxy === 1" :aria-label="$t('pages.galaxy.selector.previous_galaxy')" @click="changeByDirection('galaxyLeft')"><GalaxyIcon type="left"/></button>
 				<input id="galaxy-coordinate" name="galaxy" v-model.number="inputGalaxy" min="1" :max="galaxyMax" type="number" required>
-				<button type="button" :disabled="galaxy >= galaxyMax" :aria-label="$t('pages.galaxy.selector.next_galaxy')" @click="changeByDirection('galaxyRight')"><GalaxyIcon type="right"/></button>
+				<button type="button" class="button is-secondary icon-button" :disabled="galaxy >= galaxyMax" :aria-label="$t('pages.galaxy.selector.next_galaxy')" @click="changeByDirection('galaxyRight')"><GalaxyIcon type="right"/></button>
 			</div>
 		</div>
-		<div class="galaxy-coordinate-field">
+		<div>
 			<label for="system-coordinate">{{ $t('pages.galaxy.selector.system') }}</label>
 			<div class="galaxy-stepper">
-				<button type="button" :disabled="system === 1" :aria-label="$t('pages.galaxy.selector.previous_system')" @click="changeByDirection('systemLeft')"><GalaxyIcon type="left"/></button>
+				<button type="button" class="button is-secondary icon-button" :disabled="system === 1" :aria-label="$t('pages.galaxy.selector.previous_system')" @click="changeByDirection('systemLeft')"><GalaxyIcon type="left"/></button>
 				<input id="system-coordinate" name="system" v-model.number="inputSystem" min="1" :max="systemMax" type="number" required>
-				<button type="button" :disabled="system >= systemMax" :aria-label="$t('pages.galaxy.selector.next_system')" @click="changeByDirection('systemRight')"><GalaxyIcon type="right"/></button>
+				<button type="button" class="button is-secondary icon-button" :disabled="system >= systemMax" :aria-label="$t('pages.galaxy.selector.next_system')" @click="changeByDirection('systemRight')"><GalaxyIcon type="right"/></button>
 			</div>
 		</div>
 		<div class="galaxy-shortcuts-field">

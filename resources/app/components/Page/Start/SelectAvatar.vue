@@ -1,10 +1,35 @@
 <template>
-	<UiPanel class="game-panel start-avatar"><header class="start-heading"><span class="game-eyebrow">01 / 02</span><h1>{{ $t('pages.start.main_info') }}</h1></header><form class="game-form" @submit.prevent="save">
-		<label>{{ $t('pages.start.game_nickname') }}<input :class="{error: v$.name.$error}" name="name" maxlength="30" type="text" v-model="form.name"></label>
-		<div v-if="v$.name.$error" class="game-errors">{{ $t('pages.auth.check_fields') }}</div>
-		<h2 class="start-section-title">{{ $t('pages.start.game_avatar') }}</h2><UiTabs :items="avatarTabs" :label="$t('pages.start.game_avatar')"><template #panel="{ item: { id: sex } }"><div class="start-avatar-grid"><label v-for="i in 8" :key="i" :class="{ 'is-selected': form.avatar === sex + '_' + i }"><input type="radio" :value="sex + '_' + i" v-model="form.avatar" :aria-label="$t(sex === 1 ? 'pages.start.male' : 'pages.start.female') + ' ' + i"><img :src="'/assets/images/faces/' + sex + '/' + i + 's.png'" alt=""><span class="start-choice-mark" aria-hidden="true">✓</span></label></div></template></UiTabs>
-		<div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error }}</div><div class="game-actions"><UiButton type="submit" :disabled="!form.name || !form.avatar || form.processing">{{ $t('pages.start.continue') }} →</UiButton></div>
-	</form></UiPanel>
+	<UiPanel class="game-panel">
+		<header class="start-heading">
+			<span class="game-eyebrow">01 / 02</span>
+			<h1>{{ $t('pages.start.main_info') }}</h1>
+		</header>
+		<form class="game-form" @submit.prevent="save">
+			<label>
+				{{ $t('pages.start.game_nickname') }}
+				<input :class="{error: v$.name.$error}" name="name" maxlength="30" type="text" v-model="form.name">
+			</label>
+			<div v-if="v$.name.$error" class="game-errors">
+				{{ $t('pages.auth.check_fields') }}
+			</div>
+			<h2 class="start-section-title">{{ $t('pages.start.game_avatar') }}</h2>
+			<UiTabs :items="avatarTabs" :label="$t('pages.start.game_avatar')">
+				<template #panel="{ item: { id: sex } }">
+					<div class="start-avatar-grid">
+						<label v-for="i in 8" :key="i" :class="{ 'is-selected': form.avatar === sex + '_' + i }">
+							<input type="radio" :value="sex + '_' + i" v-model="form.avatar" :aria-label="$t(sex === 1 ? 'pages.start.male' : 'pages.start.female') + ' ' + i">
+							<img :src="'/assets/images/faces/' + sex + '/' + i + 's.png'" alt="">
+							<span class="start-choice-mark" aria-hidden="true">✓</span>
+						</label>
+					</div>
+				</template>
+			</UiTabs>
+			<div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error }}</div>
+			<div class="game-actions">
+				<UiButton type="submit" :disabled="!form.name || !form.avatar || form.processing">{{ $t('pages.start.continue') }} →</UiButton>
+			</div>
+		</form>
+	</UiPanel>
 </template>
 
 <script setup>

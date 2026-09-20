@@ -39,7 +39,7 @@
 
 	&:hover {
 		color: var(--accent-color);
-		background-color: #1b3043;
+		background-color: var(--ui-active-background);
 	}
 
 	svg {
@@ -53,10 +53,6 @@
 	color: var(--accent-color);
 	font-family: ui-monospace, monospace;
 	font-size: 14px;
-}
-
-.page-overview .block .content {
-	padding: 10px;
 }
 
 .overview-panel {
@@ -77,17 +73,17 @@
 	.overview-notice {
 		padding: 7px 10px;
 		margin-bottom: 12px;
-		border-left: 2px solid #528c83;
+		border-left: 2px solid var(--ui-success-border-hover-color);
 		border-radius: 0 4px 4px 0;
-		background: #16302e66;
+		background: color-mix(in srgb, var(--ui-success-muted-background) 40%, transparent);
 		color: var(--text-muted);
 		font-size: 14px;
 		line-height: 1.6;
 
 		&.is-warning {
-			border-color: #dfb977;
-			background: #dfb9770d;
-			color: #dfb977;
+			border-color: var(--ui-warning-color);
+			background: color-mix(in srgb, var(--ui-warning-color) 5.1%, transparent);
+			color: var(--ui-warning-color);
 		}
 	}
 
@@ -98,7 +94,7 @@
 			display: block;
 			overflow: hidden;
 			border-radius: 6px;
-			background: #050c15;
+			background: var(--page-background);
 		}
 
 		> a > img {
@@ -114,9 +110,9 @@
 		right: 8px;
 		bottom: 8px;
 		padding: 3px;
-		border: 1px solid #7ca4b5;
+		border: 1px solid var(--ui-border-hover-color);
 		border-radius: 50%;
-		background: #07101ecc;
+		background: color-mix(in srgb, var(--ui-input-background) 80%, transparent);
 		cursor: pointer;
 
 		img {
@@ -148,7 +144,7 @@
 			justify-content: space-between;
 			gap: 8px;
 			padding: 8px 0;
-			border-bottom: 1px solid #263b4d80;
+			border-bottom: 1px solid color-mix(in srgb, var(--ui-border-muted-color) 50.2%, transparent);
 		}
 
 		dt {
@@ -165,7 +161,7 @@
 
 	.overview-fact-group {
 		padding: 10px 0;
-		border-bottom: 1px solid #263b4d80;
+		border-bottom: 1px solid color-mix(in srgb, var(--ui-border-muted-color) 50.2%, transparent);
 	}
 
 	.overview-text-action {
@@ -190,10 +186,10 @@
 			width: 18px;
 			height: 18px;
 			flex-shrink: 0;
-			color: #a8bbce;
+			color: var(--resource-metal-color);
 
 			&.crystal {
-				color: #7cd7ee;
+				color: var(--resource-crystal-color);
 			}
 		}
 	}
@@ -218,11 +214,11 @@
 
 		strong {
 			font-weight: 500;
-			color: #a8d8c7;
+			color: var(--ui-success-hover-color);
 		}
 
 		> div:last-child strong {
-			color: #d6a6a6;
+			color: var(--ui-danger-color);
 		}
 	}
 
@@ -247,7 +243,7 @@
 	.overview-referrals-count {
 		padding: 1px 5px;
 		border-radius: 3px;
-		background: #233548;
+		background: var(--ui-button-secondary-hover-background);
 		color: var(--text-muted);
 		font-size: 14px;
 	}
@@ -286,7 +282,7 @@
 			font-size: 24px;
 			font-weight: 500;
 			line-height: 1.3;
-			color: #b7dfeb;
+			color: var(--ui-text-color);
 		}
 	}
 
@@ -312,7 +308,7 @@
 		> div {
 			padding: 6px 8px;
 			border-radius: 4px;
-			background: #182b3c;
+			background: var(--ui-hover-background);
 		}
 
 		dt {
@@ -352,7 +348,7 @@
 		}
 
 		&.overview-level-raid {
-			--accent-color: #d4b084;
+			--accent-color: var(--ui-warning-color);
 		}
 	}
 
@@ -377,7 +373,7 @@
 		gap: 10px;
 		padding: 8px 10px;
 		border-radius: 5px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -385,7 +381,7 @@
 		width: 38px;
 		height: 38px;
 		object-fit: cover;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
 	}
 
@@ -409,8 +405,8 @@
 	.overview-queue-amount {
 		padding: 1px 5px;
 		border-radius: 3px;
-		background: #203c4d;
-		color: #b7dbe7;
+		background: var(--ui-button-secondary-hover-background);
+		color: var(--ui-text-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
@@ -442,7 +438,7 @@
 		align-items: center;
 		justify-content: flex-end;
 		gap: 6px;
-		color: #b7dbe7;
+		color: var(--ui-text-color);
 		font-size: 14px;
 
 		svg {
@@ -484,11 +480,11 @@
 	border: 0;
 	border-radius: 4px;
 	overflow: hidden;
-	background: #233548;
+	background: var(--ui-button-secondary-hover-background);
 	color: var(--accent-color);
 
 	&::-webkit-progress-bar {
-		background: #233548;
+		background: var(--ui-button-secondary-hover-background);
 	}
 
 	&::-webkit-progress-value {
@@ -500,11 +496,11 @@
 	}
 
 	&.is-warning {
-		--accent-color: #e7bd6c;
+		--accent-color: var(--ui-warning-strong-color);
 	}
 
 	&.is-full {
-		--accent-color: #ef7a7a;
+		--accent-color: var(--ui-danger-strong-color);
 	}
 }
 
@@ -524,7 +520,7 @@
 	padding-bottom: 3px;
 
 	&.is-active {
-		border-color: #83cfb2;
+		border-color: var(--ui-success-color);
 	}
 
 	.v-popper {
@@ -612,22 +608,6 @@
 	}
 }
 
-.page-overview-planet-image input[type=radio] {
-	visibility: hidden;
-	position: absolute;
-}
-
-.page-overview-planet-image label {
-	border: 1px solid transparent;
-	display: inline-block;
-	width: 100%;
-	height: 100%;
-}
-
-.page-overview-planet-image input[type=radio]:checked + label {
-	border-color: #3abc55;
-}
-
 .overview-fleets {
 	border: 1px solid var(--border-color);
 	border-radius: 6px;
@@ -635,51 +615,51 @@
 }
 
 .overview-fleets-row {
-	--fleet-accent: #8cb9d1;
+	--fleet-accent: var(--fleet-default-color);
 	display: grid;
 	grid-template-columns: 150px minmax(0, 1fr);
 	gap: 14px;
 	padding: 12px;
 	border-left: 2px solid var(--fleet-accent);
-	background: #0e1b29;
+	background: var(--ui-panel-background);
 	color: var(--text-color);
 	font-size: 14px;
 	line-height: 1.55;
 
 	+ .overview-fleets-row {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	&:where(.own) {
-		--fleet-accent: #9bdcb4;
+		--fleet-accent: var(--fleet-own-color);
 	}
 
 	&:where(.own.espionage) {
-		--fleet-accent: #e3b17d;
+		--fleet-accent: var(--fleet-espionage-color);
 	}
 
 	&:where(.own.harvest) {
-		--fleet-accent: #d9cb85;
+		--fleet-accent: var(--fleet-harvest-color);
 	}
 
 	&:where(.own.colony, .federation) {
-		--fleet-accent: #a0bfe8;
+		--fleet-accent: var(--fleet-colony-color);
 	}
 
 	&:where(.own.federation) {
-		--fleet-accent: #89c5a4;
+		--fleet-accent: var(--fleet-federation-color);
 	}
 
 	&:where(.own.missile) {
-		--fleet-accent: #95d5da;
+		--fleet-accent: var(--fleet-missile-color);
 	}
 
 	&:where(:not(.own):is(.attack, .espionage, .missile, .destroy)) {
-		--fleet-accent: #e6a09b;
+		--fleet-accent: var(--fleet-hostile-color);
 	}
 
 	&:where(.return) {
-		--fleet-accent: #8cb99d;
+		--fleet-accent: var(--fleet-return-color);
 	}
 
 	.overview-fleet-time {
@@ -712,12 +692,12 @@
 	}
 
 	.overview-fleet-description > a {
-		color: #d5e5ee;
+		color: var(--text-color);
 		white-space: nowrap;
 	}
 
 	.overview-fleet-description > a:hover {
-		color: #f0f7fb;
+		color: var(--text-color);
 	}
 
 	.v-popper {
@@ -738,7 +718,7 @@
 	}
 
 	.overview-fleet-trigger:hover {
-		color: #f0f7fb;
+		color: var(--text-color);
 	}
 
 	.overview-fleet-mission {
@@ -785,27 +765,27 @@
 	}
 
 	> .grid + .grid {
-		border-top: 1px solid #2b4354;
+		border-top: 1px solid var(--border-color);
 	}
 
 	.text-right {
-		color: #b9ddea;
+		color: var(--ui-text-color);
 	}
 }
 
 .v-popper__popper.v-popper--theme-tooltip.overview-fleet-tooltip {
 	.v-popper__inner {
-		background: #0d1b29;
-		border-color: #355166;
-		box-shadow: 0 8px 24px #0006;
+		background: var(--ui-panel-background);
+		border-color: var(--ui-border-color);
+		box-shadow: 0 8px 24px var(--ui-shadow-color);
 	}
 
 	.v-popper__arrow-outer {
-		border-color: #355166;
+		border-color: var(--ui-border-color);
 	}
 
 	.v-popper__arrow-inner {
-		border-color: #0d1b29;
+		border-color: var(--ui-panel-background);
 	}
 }
 
@@ -818,7 +798,7 @@
 		align-items: center;
 		gap: 6px;
 		margin-bottom: 10px;
-		color: #a6c6d8;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
@@ -835,14 +815,14 @@
 		padding: 12px 14px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.planet-settings-heading > img {
 		flex-shrink: 0;
 		width: 64px;
 		height: 64px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		object-fit: cover;
 	}
@@ -854,7 +834,7 @@
 	.planet-settings-heading h1 {
 		margin: 0 0 5px;
 		width: auto;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 		text-align: left;
@@ -870,13 +850,13 @@
 	}
 
 	.planet-settings-identity strong {
-		color: #bdd3e1;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
 
 	.planet-settings-identity > span {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -885,14 +865,14 @@
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.planet-settings-panel > h2 {
 		margin: 0;
 		padding: 9px 14px;
-		background: #142737;
-		color: #c5dce9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
@@ -914,41 +894,18 @@
 	}
 
 	.planet-name-field label {
-		color: #a6c1d1;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.planet-name-field input {
 		width: 100%;
-		min-width: 0;
-		min-height: 32px;
-		padding: 5px 9px;
-		border-radius: 4px;
-		background: #091623;
-		color: #d5e5ef;
-		font-size: 14px;
-		text-align: left;
 	}
 
 	.planet-settings-hint {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 		line-height: 1.5;
-	}
-
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
-		min-height: 32px;
-		padding: 6px 10px;
-		font-size: 12px;
-	}
-
-	.button:disabled {
-		opacity: .45;
-		cursor: default;
 	}
 
 	.planet-image-grid {
@@ -965,25 +922,25 @@
 		position: relative;
 		min-width: 0;
 		padding: 4px;
-		border: 1px solid #2d4557;
+		border: 1px solid var(--border-color);
 		border-radius: 5px;
-		background: #0a1723;
+		background: var(--ui-input-background);
 		cursor: pointer;
 		transition: background-color .15s, border-color .15s;
 	}
 
 	.planet-image-option:hover {
-		border-color: #6894aa;
-		background: #193445;
+		border-color: var(--ui-border-hover-color);
+		background: var(--ui-active-background);
 	}
 
 	.planet-image-option.is-selected {
-		border-color: #86bbce;
-		background: #1b3c4d;
+		border-color: var(--border-hover-color);
+		background: var(--ui-button-background);
 	}
 
 	.planet-image-option:has(input:focus-visible) {
-		border-color: #c3e7ee;
+		border-color: var(--border-hover-color);
 	}
 
 	.planet-image-option input {
@@ -1011,19 +968,19 @@
 		justify-content: space-between;
 		gap: 3px;
 		padding: 5px 2px 1px;
-		color: #9eb8c9;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.is-selected .planet-image-caption {
-		color: #c5e5ee;
+		color: var(--text-color);
 	}
 
 	.planet-image-caption svg {
 		width: 15px;
 		height: 15px;
 		flex-shrink: 0;
-		color: #a4dbc4;
+		color: var(--ui-success-hover-color);
 	}
 
 	.planet-image-current {
@@ -1031,10 +988,10 @@
 		top: 8px;
 		left: 8px;
 		padding: 1px 5px;
-		border: 1px solid #427365;
+		border: 1px solid var(--ui-success-border-color);
 		border-radius: 3px;
-		background: #102820e8;
-		color: #a4dbc4;
+		background: color-mix(in srgb, var(--ui-success-muted-background) 90.98%, transparent);
+		color: var(--ui-success-hover-color);
 		font-size: 12px;
 		pointer-events: none;
 	}
@@ -1052,7 +1009,7 @@
 		display: grid;
 		flex-basis: 100%;
 		gap: 4px;
-		color: #dba29e;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 	}
 
@@ -1067,28 +1024,16 @@
 		flex-wrap: wrap;
 		gap: 12px;
 		padding: 12px 14px;
-		border: 1px solid #563d45;
+		border: 1px solid var(--ui-danger-border-muted-color);
 		border-radius: 6px;
-		background: #231c2666;
+		background: color-mix(in srgb, var(--ui-danger-muted-background) 40%, transparent);
 	}
 
 	.planet-abandon h2 {
 		margin: 0 0 3px;
-		color: #d3a19c;
+		color: var(--ui-danger-color);
 		font-size: 14px;
 		font-weight: 500;
-	}
-
-	.planet-abandon .button {
-		border-color: #704a50;
-		background: #39262e;
-		color: #dba9a5;
-	}
-
-	.planet-abandon .button:hover:enabled {
-		border-color: #986269;
-		background: #51313b;
-		color: #f0c2bc;
 	}
 
 	.planet-abandon .button svg {
@@ -1146,11 +1091,5 @@
 		.planet-abandon > .button {
 			margin-left: auto;
 		}
-	}
-}
-
-@layer base {
-	.page-overview-rename .planet-name-field input.is-invalid {
-		border-color: #bd7e79 !important;
 	}
 }

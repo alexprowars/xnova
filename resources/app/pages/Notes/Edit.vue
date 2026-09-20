@@ -3,11 +3,20 @@
 	<div class="page-notes">
 		<UiBackLink href="/notes">{{ $t('pages.notes.back_to_list') }}</UiBackLink>
 		<UiHeading :title="$t('pages.notes.edit.title')"/>
-		<UiPanel clip :title="$t('pages.notes.view.title')"><div class="notes-preview-body"><TextViewer :text="form.message"/></div></UiPanel>
-		<UiPanel clip><form class="ui-form-body" method="post" @submit.prevent="update">
-			<NoteFields :form="form"/>
-			<div class="ui-actions"><UiButton variant="secondary" :disabled="form.processing" @click="reset">{{ $t('pages.notes.edit.reset') }}</UiButton><UiButton type="submit" :disabled="form.processing">{{ $t('pages.notes.edit.save') }}</UiButton></div>
-		</form></UiPanel>
+		<UiPanel clip :title="$t('pages.notes.view.title')">
+			<div class="notes-preview-body">
+				<TextViewer :text="form.message"/>
+			</div>
+		</UiPanel>
+		<UiPanel clip>
+			<form class="ui-form-body" method="post" @submit.prevent="update">
+				<NoteFields :form="form"/>
+				<div class="ui-actions">
+					<UiButton variant="secondary" :disabled="form.processing" @click="reset">{{ $t('pages.notes.edit.reset') }}</UiButton>
+					<UiButton type="submit" :disabled="form.processing">{{ $t('pages.notes.edit.save') }}</UiButton>
+				</div>
+			</form>
+		</UiPanel>
 	</div>
 </template>
 

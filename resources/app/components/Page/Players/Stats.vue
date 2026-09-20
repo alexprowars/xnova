@@ -43,7 +43,10 @@
 	import { useI18n } from 'vue-i18n';
 
 	const props = defineProps({
-		type: { type: String, default: 'user' },
+		type: {
+			type: String,
+			default: 'user',
+		},
 		data: Object,
 	});
 
@@ -52,11 +55,11 @@
 	const rankChartRef = ref(null);
 	const typeChart = ref('total');
 	const typeChartColors = {
-		build: '#ca9e7a',
-		tech: '#b4a1d6',
-		defs: '#d6c080',
-		fleet: '#83bda8',
-		total: '#79c5de',
+		build: '--chart-build-color',
+		tech: '--chart-tech-color',
+		defs: '--chart-defs-color',
+		fleet: '--chart-fleet-color',
+		total: '--chart-total-color',
 	};
 	const typeChartLabels = computed(() => ({
 		build: t('pages.players.chart_label_buildings'),
@@ -65,18 +68,18 @@
 		fleet: t('pages.players.chart_label_fleet'),
 		total: t('pages.players.chart_label_total'),
 	}));
-	const chartTabs = computed(() => Object.entries(typeChartLabels.value).map(([id, label]) => ({ id, label, color: typeChartColors[id] })));
+	const chartTabs = computed(() => Object.entries(typeChartLabels.value).map(([id, label]) => ({ id, label, color: 'var(' + typeChartColors[id] + ')' })));
 	const latest = computed(() => props.data.points.at(-1));
 	const period = computed(() => props.data.points.length ? dayjs(props.data.points[0].date).tz().format('DD MMM') + ' — ' + dayjs(latest.value.date).tz().format('DD MMM YYYY') : '');
 
 	let pointsChart = null;
 	let rankChart = null;
 
-	function chartOptions(isRank) {
+	function chartOptions(isRank, color) {
 		return {
 			responsive: true,
 			maintainAspectRatio: false,
-			color: '#9eb8c9',
+			color: color('--ui-label-color'),
 			font: { size: 12 },
 			interaction: { mode: 'index', intersect: false },
 			elements: {
@@ -87,11 +90,11 @@
 				legend: {
 					display: isRank,
 					position: 'bottom',
-					labels: { color: '#aec5d3', usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14, font: { size: 12 } },
+					labels: { color: color('--ui-label-color'), usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14, font: { size: 12 } },
 				},
 				tooltip: {
-					backgroundColor: '#0b1926', borderColor: '#355166', borderWidth: 1,
-					titleColor: '#e0edf5', bodyColor: '#bed2df', padding: 10,
+					backgroundColor: color('--ui-panel-background'), borderColor: color('--ui-border-color'), borderWidth: 1,
+					titleColor: color('--ui-title-color'), bodyColor: color('--ui-text-color'), padding: 10,
 					titleFont: { size: 12 }, bodyFont: { size: 12 },
 					callbacks: { label: (context) => context.dataset.label + ': ' + number(context.parsed.y) },
 				},
@@ -99,15 +102,15 @@
 			scales: {
 				x: {
 					grid: { display: false },
-					border: { color: '#2b4354' },
-					ticks: { color: '#8faabb', maxTicksLimit: 6, autoSkipPadding: 12, maxRotation: 0, font: { size: 12 } },
+					border: { color: color('--border-color') },
+					ticks: { color: color('--ui-muted-color'), maxTicksLimit: 6, autoSkipPadding: 12, maxRotation: 0, font: { size: 12 } },
 				},
 				y: {
 					reverse: isRank,
 					min: isRank ? 1 : undefined,
-					grid: { color: '#263b4d80', drawTicks: false },
+					grid: { color: color('--chart-grid-color'), drawTicks: false },
 					border: { display: false },
-					ticks: { color: '#8faabb', maxTicksLimit: 6, padding: 8, precision: 0, font: { size: 12 }, callback: (value) => number(value) },
+					ticks: { color: color('--ui-muted-color'), maxTicksLimit: 6, padding: 8, precision: 0, font: { size: 12 }, callback: (value) => number(value) },
 				},
 			},
 		};
@@ -122,13 +125,16 @@
 			return;
 		}
 
+		const styles = getComputedStyle(rankChartRef.value);
+		const color = (name) => styles.getPropertyValue(name).trim();
+		const colors = Object.fromEntries(Object.entries(typeChartColors).map(([category, name]) => [category, color(name)]));
 		const labels = props.data.points.map((item) => dayjs(item.date).tz().format('DD MMM'));
 		const rankData = {
 			labels,
 			datasets: Object.keys(typeChartLabels.value).map((category) => ({
 				label: typeChartLabels.value[category],
-				borderColor: typeChartColors[category],
-				backgroundColor: typeChartColors[category],
+				borderColor: colors[category],
+				backgroundColor: colors[category],
 				data: props.data.points.map((item) => item.rank[category]),
 			})),
 		};
@@ -136,23 +142,25 @@
 			labels,
 			datasets: [{
 				label: typeChartLabels.value[typeChart.value],
-				borderColor: typeChartColors[typeChart.value],
-				backgroundColor: typeChartColors[typeChart.value],
+				borderColor: colors[typeChart.value],
+				backgroundColor: colors[typeChart.value],
 				data: props.data.points.map((item) => item.point[typeChart.value]),
 			}],
 		};
 
 		if (rankChart) {
 			rankChart.data = rankData;
+			rankChart.options = chartOptions(true, color);
 			rankChart.update('none');
 		} else {
-			rankChart = new Chart(rankChartRef.value, { type: 'line', data: rankData, options: chartOptions(true) });
+			rankChart = new Chart(rankChartRef.value, { type: 'line', data: rankData, options: chartOptions(true, color) });
 		}
 		if (pointsChart) {
 			pointsChart.data = pointData;
+			pointsChart.options = chartOptions(false, color);
 			pointsChart.update('none');
 		} else {
-			pointsChart = new Chart(pointChartRef.value, { type: 'line', data: pointData, options: chartOptions(false) });
+			pointsChart = new Chart(pointChartRef.value, { type: 'line', data: pointData, options: chartOptions(false, color) });
 		}
 	}
 

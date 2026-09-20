@@ -4,15 +4,13 @@
 	container: officiers / inline-size;
 
 	.officiers-credits {
-		margin-bottom: 12px;
+		margin-bottom: var(--ui-block-gap);
 	}
 
-	.block > .officiers-credits-content {
+	.officiers-credits-content {
 		display: flex;
 		align-items: center;
 		gap: 14px;
-		padding: 14px;
-		background: linear-gradient(110deg, #142b39, #101e2c);
 
 		.button {
 			flex-shrink: 0;
@@ -25,10 +23,10 @@
 		flex-shrink: 0;
 		width: 48px;
 		height: 48px;
-		border: 1px solid #716347;
+		border: 1px solid var(--ui-warning-border-color);
 		border-radius: 8px;
-		background: #d8b57a0a;
-		color: #ddbe82;
+		background: color-mix(in srgb, var(--ui-warning-color) 3.92%, transparent);
+		color: var(--ui-warning-color);
 
 		svg {
 			width: 28px;
@@ -41,7 +39,7 @@
 		min-width: 0;
 
 		strong {
-			color: #e5c98e;
+			color: var(--resource-credits-color);
 			font-size: 16px;
 			font-weight: 600;
 		}
@@ -56,7 +54,7 @@
 
 		.officiers-credits-hint {
 			font-size: 12px;
-			color: #aec8d7;
+			color: var(--ui-link-color);
 		}
 	}
 
@@ -70,10 +68,10 @@
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 
 		&.is-active {
-			border-color: #3f675e;
+			border-color: var(--ui-success-border-color);
 		}
 	}
 
@@ -85,7 +83,7 @@
 		gap: 5px 12px;
 		padding: 9px 12px;
 		border-bottom: 1px solid var(--border-color);
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 
 		h2 {
 			margin: 0;
@@ -99,20 +97,12 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		color: #d4a09d;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 
 		&.is-active {
-			color: #94ceba;
+			color: var(--ui-success-color);
 		}
-	}
-
-	.officiers-status-dot {
-		width: 5px;
-		height: 5px;
-		flex-shrink: 0;
-		border-radius: 50%;
-		background: currentColor;
 	}
 
 	.officiers-item-body {
@@ -128,7 +118,7 @@
 		width: 112px;
 		height: 112px;
 		object-fit: cover;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 	}
 
@@ -141,7 +131,7 @@
 	}
 
 	.officiers-biography {
-		color: #a8bbcb;
+		color: var(--ui-label-color);
 		line-height: 1.6;
 		overflow-wrap: anywhere;
 	}
@@ -152,7 +142,7 @@
 		margin: 10px 0 0;
 		padding: 0;
 		list-style: none;
-		color: #b1d8e2;
+		color: var(--ui-text-color);
 
 		li {
 			display: flex;
@@ -166,7 +156,7 @@
 			flex-shrink: 0;
 			align-self: flex-start;
 			margin-top: 3px;
-			color: #81baa7;
+			color: var(--ui-success-strong-color);
 		}
 	}
 
@@ -191,7 +181,7 @@
 
 	.officiers-contract-price {
 		flex-shrink: 0;
-		color: #e5c98e;
+		color: var(--resource-credits-color);
 		font-size: 14px;
 		font-weight: 600;
 

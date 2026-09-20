@@ -1,6 +1,6 @@
 <template>
 	<Head title="Исследования"/>
-	<div class="page-building page-building-tech">
+	<div class="page-building">
 		<div class="buldings">
 			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/research-bg.webp\')' }">
 				<div class="buldings-header-main">

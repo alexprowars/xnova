@@ -29,11 +29,11 @@
 			val = 100 - val
 
 		if (val >= 100) {
-			return '#dd928b';
+			return 'var(--ui-danger-color)';
 		} else if (val >= 80) {
-			return '#d8b57a';
+			return 'var(--ui-warning-color)';
 		} else {
-			return '#82c7b0';
+			return 'var(--ui-success-color)';
 		}
 	});
 </script>

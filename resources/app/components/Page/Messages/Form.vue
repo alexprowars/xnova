@@ -1,8 +1,19 @@
 <template>
 	<section class="message-compose">
-		<header class="message-compose-heading"><MessageIcon name="mail"/><h1>{{ $t('pages.messages.form.title') }}</h1></header>
+		<header class="message-compose-heading">
+			<MessageIcon name="mail"/>
+			<h1>{{ $t('pages.messages.form.title') }}</h1>
+		</header>
 		<form method="post" @submit.prevent="send">
-			<div class="message-recipient"><span class="message-recipient-icon"><MessageIcon name="user"/></span><div><span class="message-field-label">{{ $t('pages.messages.form.recipient') }}</span><div class="message-recipient-name" v-html="to || '—'"/></div></div>
+			<div class="message-recipient">
+				<span class="message-recipient-icon">
+					<MessageIcon name="user"/>
+				</span>
+				<div>
+					<span class="message-field-label">{{ $t('pages.messages.form.recipient') }}</span>
+					<div class="message-recipient-name" v-html="to || '—'"/>
+				</div>
+			</div>
 			<div class="message-compose-editor">
 				<div class="message-field-label">{{ $t('pages.messages.form.message') }}</div>
 				<TextEditor :class="{error: v$.message.$error || form.errors.message}" v-model="form.message"/>
@@ -11,7 +22,12 @@
 					<span v-for="(error, field) in form.errors" :key="field">{{ error }}</span>
 				</div>
 			</div>
-			<div class="message-compose-footer"><button type="submit" class="button" :disabled="form.processing || id <= 0"><MessageIcon name="send"/>{{ $t('pages.messages.form.submit') }}</button></div>
+			<div class="message-compose-footer">
+				<button type="submit" class="button" :disabled="form.processing || id <= 0">
+					<MessageIcon name="send"/>
+					{{ $t('pages.messages.form.submit') }}
+				</button>
+			</div>
 		</form>
 	</section>
 </template>

@@ -1,14 +1,25 @@
 <template>
-	<div v-if="visible" class="block resources-buy">
+	<div v-if="visible" class="block">
 		<div class="title">{{ $t('pages.resources.resources_buy') }}</div>
-		<div class="content resources-buy-content">
+		<div class="content resources-buy-content is-padded">
 			<i18n-t keypath="pages.resources.resources_buy_info" tag="div" scope="global" class="resources-buy-description">
-				<template #metal><Colored :value="item.metal || 0"/></template>
-				<template #crystal><Colored :value="item.crystal || 0"/></template>
-				<template #deuterium><Colored :value="item.deuterium || 0"/></template>
+				<template #metal>
+					<Colored :value="item.metal || 0"/>
+				</template>
+				<template #crystal>
+					<Colored :value="item.crystal || 0"/>
+				</template>
+				<template #deuterium>
+					<Colored :value="item.deuterium || 0"/>
+				</template>
 			</i18n-t>
-			<button v-if="!item.time" type="button" @click="buyResources" class="button">{{ $t('pages.resources.resources_buy_button') }}</button>
-			<div v-else class="resources-buy-timeout"><span>{{ $t('pages.resources.resources_buy_timeout') }}</span><strong>{{ $formatTime(item.time) }}</strong></div>
+			<button v-if="!item.time" type="button" @click="buyResources" class="button">
+				{{ $t('pages.resources.resources_buy_button') }}
+			</button>
+			<div v-else class="resources-buy-timeout">
+				<span>{{ $t('pages.resources.resources_buy_timeout') }}</span>
+				<strong>{{ $formatTime(item.time) }}</strong>
+			</div>
 		</div>
 	</div>
 </template>

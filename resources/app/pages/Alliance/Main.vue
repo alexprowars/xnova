@@ -2,18 +2,48 @@
 	<Head :title="$t('pages.alliance.index.page_title')"/>
 	<div class="page-alliance page-alliance-overview">
 		<header class="alliance-hero">
-			<div class="alliance-emblem"><img v-if="page.image" :src="page.image" :alt="page.name"><AllianceIcon v-else aria-hidden="true"/></div>
-			<div class="alliance-identity"><span class="alliance-eyebrow">{{ $t('pages.alliance.index.page_title') }}</span><h1><span class="alliance-tag">[{{ page.tag }}]</span> {{ page.name }}</h1></div>
+			<div class="alliance-emblem">
+				<img v-if="page.image" :src="page.image" :alt="page.name">
+				<AllianceIcon v-else aria-hidden="true"/>
+			</div>
+			<div class="alliance-identity">
+				<span class="alliance-eyebrow">{{ $t('pages.alliance.index.page_title') }}</span>
+				<h1>
+					<span class="alliance-tag">[{{ page.tag }}]</span>
+					{{ page.name }}
+				</h1>
+			</div>
 		</header>
 		<div class="alliance-metrics">
-			<div><span>{{ $t('pages.alliance.index.members') }}</span><strong>{{ page.members }}</strong></div>
-			<div><span>{{ $t('pages.alliance.index.your_rank') }}</span><strong>{{ page.range }}</strong></div>
-			<div v-if="page.web"><span>{{ $t('pages.alliance.index.homepage') }}</span><a :href="page.web" target="_blank" rel="noopener noreferrer">{{ page.web }}</a></div>
+			<div>
+				<span>{{ $t('pages.alliance.index.members') }}</span>
+				<strong>{{ page.members }}</strong>
+			</div>
+			<div>
+				<span>{{ $t('pages.alliance.index.your_rank') }}</span>
+				<strong>{{ page.range }}</strong>
+			</div>
+			<div v-if="page.web">
+				<span>{{ $t('pages.alliance.index.homepage') }}</span>
+				<a :href="page.web" target="_blank" rel="noopener noreferrer">{{ page.web }}</a>
+			</div>
 		</div>
 		<UiTabNavigation :items="navigation" :label="$t('pages.alliance.index.page_title')"/>
-		<section v-if="page.description" class="alliance-panel"><h2>{{ $t('pages.alliance.ui.about') }}</h2><div class="alliance-prose"><TextViewer :text="page.description"/></div></section>
-		<section v-if="page.text" class="alliance-panel"><h2>{{ $t('pages.alliance.index.internal_competence') }}</h2><div class="alliance-prose"><TextViewer :text="page.text"/></div></section>
-		<div v-if="!page.owner" class="alliance-footer"><button type="button" class="button is-danger" @click="exit">{{ $t('pages.alliance.index.leave_alliance') }}</button></div>
+		<section v-if="page.description" class="alliance-panel">
+			<h2>{{ $t('pages.alliance.ui.about') }}</h2>
+			<div class="alliance-prose">
+				<TextViewer :text="page.description"/>
+			</div>
+		</section>
+		<section v-if="page.text" class="alliance-panel">
+			<h2>{{ $t('pages.alliance.index.internal_competence') }}</h2>
+			<div class="alliance-prose">
+				<TextViewer :text="page.text"/>
+			</div>
+		</section>
+		<div v-if="!page.owner" class="alliance-footer">
+			<button type="button" class="button is-danger" @click="exit">{{ $t('pages.alliance.index.leave_alliance') }}</button>
+		</div>
 	</div>
 </template>
 

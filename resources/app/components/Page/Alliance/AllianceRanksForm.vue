@@ -1,12 +1,35 @@
 <template>
 	<form class="alliance-ranks" @submit.prevent="save">
-		<section v-for="rank in items" :key="rank.id" class="alliance-panel alliance-rank-card">
-			<header><h2>{{ rank.name }}</h2><button type="button" class="button is-danger icon-button" :disabled="form.processing" :title="$t('pages.alliance.ui.delete_rank')" :aria-label="$t('pages.alliance.ui.delete_rank') + ': ' + rank.name" @click="remove(rank.id)"><TrashIcon aria-hidden="true"/></button></header>
-			<div class="alliance-permissions"><label v-for="right in rights" :key="right" :class="{ 'is-readonly': !owner && ['delete', 'kick'].includes(right) }"><input type="checkbox" v-model="rank.rights[right]" :disabled="form.processing || (!owner && ['delete', 'kick'].includes(right))"><span>{{ $t('pages.alliance.ui.right_' + right) }}</span></label></div>
+		<section v-for="rank in items" :key="rank.id" class="alliance-panel">
+			<header>
+				<h2>{{ rank.name }}</h2>
+				<button
+					type="button"
+					class="button is-danger icon-button"
+					:disabled="form.processing"
+					:title="$t('pages.alliance.ui.delete_rank')"
+					:aria-label="$t('pages.alliance.ui.delete_rank') + ': ' + rank.name"
+					@click="remove(rank.id)"
+				>
+					<TrashIcon aria-hidden="true"/>
+				</button>
+			</header>
+			<div class="alliance-permissions">
+				<label v-for="right in rights" :key="right" :class="{ 'is-readonly': !owner && ['delete', 'kick'].includes(right) }">
+					<input
+						type="checkbox"
+						v-model="rank.rights[right]"
+						:disabled="form.processing || (!owner && ['delete', 'kick'].includes(right))"
+					>
+					<span>{{ $t('pages.alliance.ui.right_' + right) }}</span>
+				</label>
+			</div>
 		</section>
 		<div v-if="!items.length" class="alliance-panel alliance-empty">{{ $t('pages.alliance.ui.no_ranks') }}</div>
 		<div v-for="(error, key) in form.errors" :key="key" class="alliance-errors">{{ error }}</div>
-		<div v-if="items.length" class="alliance-actions"><button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button></div>
+		<div v-if="items.length" class="alliance-actions">
+			<button type="submit" class="button" :disabled="form.processing">{{ $t('pages.alliance.members.save') }}</button>
+		</div>
 	</form>
 </template>
 

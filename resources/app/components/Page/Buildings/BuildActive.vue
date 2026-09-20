@@ -36,7 +36,7 @@
 					<div class="flex gap-2">
 						<template v-for="(value, resource) in item['effects']">
 							<div v-if="value !== 0" class="flex items-center gap-1">
-								<component :is="resourceIcons[resource]" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+								<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
 								<span :class="{ positive: value > 0, negative: value < 0 }">{{ value > 0 ? '+' : '' }}{{ $formatNumber(value) }}</span>
 							</div>
 						</template>
@@ -87,10 +87,7 @@
 </template>
 
 <script setup>
-	import MetalIcon from '~/images/icons/resources/metal.svg?component';
-	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
-	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
-	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed } from 'vue';
@@ -98,13 +95,6 @@
 	import { useI18n } from 'vue-i18n';
 	import { queueByType, emptyFieldsCount } from '~/utils/buildings.js';
 	import { ModalLink } from '@inertiaui/modal-vue';
-
-	const resourceIcons = {
-		metal: MetalIcon,
-		crystal: CrystalIcon,
-		deuterium: DeuteriumIcon,
-		energy: EnergyIcon,
-	};
 
 	const props = defineProps({
 		item: {

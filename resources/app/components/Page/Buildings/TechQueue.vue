@@ -1,5 +1,5 @@
 <template>
-	<div class="building-info-upgrade-timer">
+	<div>
 		<span v-if="time > 0">
 			{{ $formatTime(time, ':', true) }}&nbsp;<a @click.prevent="cancelAction">{{ $t('pages.research.queue_cancel') }}<span v-if="build.name">{{ $t('pages.research.queue_cancel_on') }} {{ build.name }}</span></a>
 		</span>

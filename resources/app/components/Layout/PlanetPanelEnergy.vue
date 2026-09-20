@@ -2,7 +2,7 @@
 	<div class="resource-panel-item resource-energy">
 		<ModalLink navigate href="/info/4" :title="$t('resources.energy')" class="resource-panel-item-icon">
 			<Popper>
-				<EnergyIcon aria-hidden="true" focusable="false"/>
+				<ResourceIcon code="energy" aria-hidden="true" focusable="false"/>
 				<template #content>
 					<div class="resource-panel-item-tooltip">
 						<div class="resource-panel-item-tooltip-title">{{ $t('resources.energy') }}</div>
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import Popper from '~/components/Popper.vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
 

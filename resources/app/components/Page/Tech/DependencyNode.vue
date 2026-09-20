@@ -8,15 +8,31 @@
 				<ModalLink v-if="item" navigate :href="'/info/' + item.id" aria-haspopup="dialog">{{ item.name }}</ModalLink>
 				<span v-else>{{ requirement.name }}</span>
 				<div class="tech-dependency-levels">
-					<svg v-if="available" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>
-					<svg v-else viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 4v5m0 2v1"/></svg>
+					<svg v-if="available" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path d="m3 8 3 3 7-7"/>
+					</svg>
+					<svg v-else viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<circle cx="8" cy="8" r="6"/>
+						<path d="M8 4v5m0 2v1"/>
+					</svg>
 					<span v-if="isRace">{{ $t('races.' + requirement.level) }}</span>
 					<span v-else :title="$t('pages.techtree.level_hint')"><b>{{ requirement.current }}</b> / {{ requirement.level }}</span>
-					<span v-if="requirement.queue > 0" class="tech-queued">+{{ requirement.queue }} {{ $t('pages.techtree.in_queue') }}</span>
+					<span v-if="requirement.queue > 0" class="tech-queued">
+						+{{ requirement.queue }} {{ $t('pages.techtree.in_queue') }}
+					</span>
 				</div>
 			</div>
-			<button v-if="children.length" type="button" class="tech-branch-toggle" @click="expanded = !expanded" :aria-expanded="expanded" :aria-label="$t(expanded ? 'pages.techtree.collapse' : 'pages.techtree.expand', { name: requirement.name })">
-				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path :d="expanded ? 'm4 6 4 4 4-4' : 'm6 4 4 4-4 4'"/></svg>
+			<button
+				v-if="children.length"
+				type="button"
+				class="tech-branch-toggle button is-secondary icon-button"
+				@click="expanded = !expanded"
+				:aria-expanded="expanded"
+				:aria-label="$t(expanded ? 'pages.techtree.collapse' : 'pages.techtree.expand', { name: requirement.name })"
+			>
+				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+					<path :d="expanded ? 'm4 6 4 4 4-4' : 'm6 4 4 4-4 4'"/>
+				</svg>
 			</button>
 		</div>
 		<ul v-if="children.length && expanded" class="tech-dependency-children">
@@ -30,7 +46,10 @@
 	import { ModalLink } from '@inertiaui/modal-vue';
 	import useState from '~/composables/useState.js';
 
-	const props = defineProps({ requirement: Object, items: Array });
+	const props = defineProps({
+		requirement: Object,
+		items: Array,
+	});
 	const state = useState();
 	const item = computed(() => props.items.find((item) => item.id === props.requirement.id));
 	const children = computed(() => item.value?.requirments || []);

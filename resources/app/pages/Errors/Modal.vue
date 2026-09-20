@@ -1,7 +1,11 @@
 <template>
 	<Modal>
-
-	<div class="game-page page-error"><section class="error-notice" role="alert"><AlertIcon aria-hidden="true"/><div class="game-prose" v-html="page.message"></div></section></div>
+		<div class="game-page page-error">
+			<section class="error-notice" role="alert">
+				<AlertIcon aria-hidden="true"/>
+				<div class="game-prose" v-html="page.message"></div>
+			</section>
+		</div>
 	</Modal>
 </template>
 

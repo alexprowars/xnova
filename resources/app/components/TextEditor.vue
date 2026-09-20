@@ -9,59 +9,59 @@
 					<option value="25">Огромный</option>
 				</select>
 			</span>
-			<button type="button" class="buttons" title="Жирный" @click="addTag('[b]|[/b]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="Жирный" @click="addTag('[b]|[/b]')">
 				<BoldIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Курсив" @click="addTag('[i]|[/i]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="Курсив" @click="addTag('[i]|[/i]')">
 				<ItalicIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Подчёркнутый" @click="addTag('[u]|[/u]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="Подчёркнутый" @click="addTag('[u]|[/u]')">
 				<UnderlineIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Зачёркнутый" @click="addTag('[s]|[/s]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="Зачёркнутый" @click="addTag('[s]|[/s]')">
 				<StrikeIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="По центру" @click="addTag('[center]|[/center]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="По центру" @click="addTag('[center]|[/center]')">
 				<AlignCenterIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="По левому краю" @click="addTag('[left]|[/left]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="По левому краю" @click="addTag('[left]|[/left]')">
 				<AlignLeftIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="По правому краю" @click="addTag('[right]|[/right]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="По правому краю" @click="addTag('[right]|[/right]')">
 				<AlignRightIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="По ширине" @click="addTag('[justify]|[/justify]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="По ширине" @click="addTag('[justify]|[/justify]')">
 				<AlignJustifyIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Спойлер" @click="addTag('[spoiler=]|[/spoiler]')">
+			<button type="button" class="buttons button is-secondary icon-button" title="Спойлер" @click="addTag('[spoiler=]|[/spoiler]')">
 				<SpoilerIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="YOUTUBE" @click="addTag('[youtube]|[/youtube]', 2)">
+			<button type="button" class="buttons button is-secondary icon-button" title="YOUTUBE" @click="addTag('[youtube]|[/youtube]', 2)">
 				<VideoIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
 				<LinkIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
 				<ImageIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Вставить большую картинку" @click="addTag('[img_big]|[/img_big]', 4)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Вставить большую картинку" @click="addTag('[img_big]|[/img_big]', 4)">
 				<ImageLargeIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Нумерованый список" @click="addTag('[numlist]|[/numlist]', 5)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Нумерованый список" @click="addTag('[numlist]|[/numlist]', 5)">
 				<NumberedListIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Список" @click="addTag('[list]|[/list]', 5)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Список" @click="addTag('[list]|[/list]', 5)">
 				<ListIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Цитата" @click="addTag('[quote]|[/quote]', 0)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Цитата" @click="addTag('[quote]|[/quote]', 0)">
 				<QuoteIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Цитата с автором" @click="addTag('[quote author=]|[/quote]', 0)">
+			<button type="button" class="buttons button is-secondary icon-button" title="Цитата с автором" @click="addTag('[quote author=]|[/quote]', 0)">
 				<QuoteAuthorIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<Popper :triggers="['click']" :popper-triggers="['click']">
-				<button type="button" class="buttons" title="Смайлы">
+				<button type="button" class="buttons button is-secondary icon-button" title="Смайлы">
 					<SmileIcon aria-hidden="true" focusable="false"/>
 				</button>
 				<template #content>
@@ -70,14 +70,14 @@
 					</div>
 				</template>
 			</Popper>
-			<button type="button" class="buttons" title="Цвет текста" :aria-pressed="showColors" @click="showColors = !showColors">
+			<button type="button" class="buttons button is-secondary icon-button" title="Цвет текста" :aria-pressed="showColors" @click="showColors = !showColors">
 				<ColorIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons" title="Цвет фона" :aria-pressed="showBgColors" @click="showBgColors = !showBgColors">
+			<button type="button" class="buttons button is-secondary icon-button" title="Цвет фона" :aria-pressed="showBgColors" @click="showBgColors = !showBgColors">
 				<BackgroundIcon aria-hidden="true" focusable="false"/>
 			</button>
 
-			<button v-if="value.length > 0" type="button" class="buttons" title="Предварительный просмотр" :aria-pressed="showPreview" @click="showPreview = !showPreview">
+			<button v-if="value.length > 0" type="button" class="buttons button is-secondary icon-button" title="Предварительный просмотр" :aria-pressed="showPreview" @click="showPreview = !showPreview">
 				<PreviewIcon aria-hidden="true" focusable="false"/>
 			</button>
 		</div>

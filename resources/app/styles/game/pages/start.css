@@ -13,7 +13,7 @@
 
 	.start-section-title {
 		margin: 16px 0 8px;
-		color: #b7d1e0;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
@@ -28,9 +28,9 @@
 		position: relative;
 		display: block;
 		padding: 4px;
-		border: 1px solid #304b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
-		background: #091623;
+		background: var(--ui-input-background);
 		cursor: pointer;
 	}
 
@@ -49,16 +49,16 @@
 	}
 
 	.start-avatar-grid > label:hover, .start-race-card:hover {
-		border-color: #638ca2;
+		border-color: var(--ui-button-secondary-border-hover-color);
 	}
 
 	.start-avatar-grid > label.is-selected, .start-race-card.is-selected {
-		border-color: #80cce1;
-		background: #193e50;
+		border-color: var(--border-hover-color);
+		background: var(--ui-button-background);
 	}
 
 	.start-avatar-grid > label:focus-within, .start-race-card:focus-within {
-		border-color: #b8e4ef;
+		border-color: var(--border-hover-color);
 	}
 
 	.start-choice-mark {
@@ -68,8 +68,8 @@
 		bottom: 8px;
 		padding: 1px 5px;
 		border-radius: 4px;
-		background: #75bfd4;
-		color: #091623;
+		background: var(--accent-color);
+		color: var(--ui-on-accent-color);
 		font-size: 14px;
 	}
 
@@ -86,9 +86,9 @@
 	.start-race-card {
 		position: relative;
 		padding: 14px;
-		border: 1px solid #304b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
-		background: #0b1a28;
+		background: var(--ui-panel-background);
 		cursor: pointer;
 	}
 
@@ -103,23 +103,23 @@
 		width: 48px;
 		height: 48px;
 		flex-shrink: 0;
-		color: #9dbfd2;
+		color: var(--ui-label-color);
 	}
 
 	.start-race-title h2 {
 		flex: 1;
 		margin: 0;
-		color: #d0e4ee;
+		color: var(--text-color);
 		font-size: 16px;
 		font-weight: 500;
 	}
 
 	.start-race-title span {
-		color: #88d2e4;
+		color: var(--ui-info-color);
 	}
 
 	.start-race-description {
-		color: #9bb8ca;
+		color: var(--ui-label-color);
 		font-size: 14px;
 		overflow-wrap: anywhere;
 	}

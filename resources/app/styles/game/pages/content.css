@@ -11,7 +11,7 @@
 
 	.content-body h2, .content-body h3 {
 		margin: 20px 0 8px;
-		color: #cde1ec;
+		color: var(--text-color);
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -38,7 +38,7 @@
 	}
 
 	.content-body a {
-		color: #99c8df;
+		color: var(--ui-info-color);
 	}
 
 	.content-body table {

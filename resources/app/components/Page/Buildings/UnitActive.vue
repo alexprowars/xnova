@@ -24,7 +24,7 @@
 				<template v-if="item['effects']">
 					<template v-for="(value, resource) in item['effects']">
 						<div v-if="value !== 0" class="buildings-effects-row">
-							<component :is="resourceIcons[resource]" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+							<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
 							<span :class="{ positive: value > 0, negative: value < 0 }">{{ Math.abs(value) }}</span>
 						</div>
 					</template>
@@ -39,7 +39,7 @@
 					<div v-if="item['is_max']" class="text-center negative">
 						Вы можете построить только {{ item['max'] }} постройку данного типа
 					</div>
-					<div v-else-if="max > 0" class="buildmax">
+					<div v-else-if="max > 0">
 						<a @click.prevent="setMax">
 							{{ $t('pages.building.maximum') }}: <span class="positive">{{ $formatNumber(max) }}</span>
 						</a>
@@ -70,23 +70,13 @@
 </template>
 
 <script setup>
-	import MetalIcon from '~/images/icons/resources/metal.svg?component';
-	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
-	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
-	import EnergyIcon from '~/images/icons/resources/energy.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';
 	import { computed, ref } from 'vue';
 	import CloseIcon from '~/images/icons/close.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { ModalLink } from '@inertiaui/modal-vue';
-
-	const resourceIcons = {
-		metal: MetalIcon,
-		crystal: CrystalIcon,
-		deuterium: DeuteriumIcon,
-		energy: EnergyIcon,
-	};
 
 	const props = defineProps({
 		item: {

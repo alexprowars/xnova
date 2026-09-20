@@ -7,7 +7,7 @@
 		margin-bottom: 8px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.messages-heading h1 {
@@ -17,7 +17,7 @@
 		width: auto;
 		margin: 0 0 12px;
 		text-align: left;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -25,15 +25,15 @@
 	.messages-heading h1 svg {
 		width: 20px;
 		height: 20px;
-		color: #8dbdd1;
+		color: var(--ui-icon-color);
 	}
 
 	.messages-total {
 		padding: 1px 7px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		background: #0c1d2b;
-		color: #a9c8da;
+		background: var(--ui-panel-background);
+		color: var(--ui-link-color);
 		font-size: 12px;
 		font-weight: 400;
 	}
@@ -49,18 +49,12 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.messages-filters select {
-		min-height: 30px;
-		max-width: 100%;
-		margin: 0;
-		padding-block: 4px;
-		border-radius: 4px;
 		font-size: 12px;
-		text-align: left;
 	}
 
 	.messages-selection {
@@ -71,7 +65,7 @@
 		min-height: 36px;
 		margin-bottom: 8px;
 		padding: 0 2px;
-		color: #a9c1d0;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -83,41 +77,18 @@
 	}
 
 	input[type=checkbox] {
-		flex-shrink: 0;
 		width: 15px;
 		height: 15px;
 		margin: 0;
-		accent-color: #77b1ca;
-		cursor: pointer;
 	}
 
 	.messages-selected {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 	}
 
 	.messages-delete.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
 		min-height: 28px;
 		margin-left: auto;
-		padding: 4px 8px;
-		border-color: #624448;
-		background: #34242c;
-		color: #d7aaa7;
-		font-size: 12px;
-	}
-
-	.messages-delete.button:hover:enabled {
-		border-color: #976360;
-		background: #4b2d34;
-		color: #f0c6c0;
-	}
-
-	.messages-delete.button:disabled {
-		opacity: .45;
-		cursor: default;
 	}
 
 	.messages-delete svg {
@@ -131,44 +102,44 @@
 	}
 
 	.message-card {
-		--message-accent: #a7bdcf;
+		--message-accent: var(--message-default-color);
 		min-width: 0;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.message-type-1 {
-		--message-accent: #8dcac2;
+		--message-accent: var(--message-user-color);
 	}
 
 	.message-type-2 {
-		--message-accent: #a5b5e0;
+		--message-accent: var(--message-spy-color);
 	}
 
 	.message-type-3 {
-		--message-accent: #b9a7dc;
+		--message-accent: var(--message-alliance-color);
 	}
 
 	.message-type-4 {
-		--message-accent: #dca5a0;
+		--message-accent: var(--message-battle-color);
 	}
 
 	.message-type-6 {
-		--message-accent: #90bbdb;
+		--message-accent: var(--message-fleet-color);
 	}
 
 	.message-type-15 {
-		--message-accent: #d4bf8b;
+		--message-accent: var(--message-expedition-color);
 	}
 
 	.message-type-99 {
-		--message-accent: #9fc39b;
+		--message-accent: var(--message-queue-color);
 	}
 
 	.message-card.is-selected {
-		border-color: #6294aa;
+		border-color: var(--ui-border-hover-color);
 	}
 
 	.message-header {
@@ -176,11 +147,11 @@
 		align-items: center;
 		gap: 10px;
 		padding: 9px 12px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 	}
 
 	.is-selected .message-header {
-		background: #1b3647;
+		background: var(--ui-active-background);
 	}
 
 	.message-identity {
@@ -190,7 +161,7 @@
 
 	.message-subject {
 		display: block;
-		color: #d9e7ef;
+		color: var(--text-color);
 		font-size: 14px;
 		font-weight: 500;
 		line-height: 1.4;
@@ -203,7 +174,7 @@
 		align-items: center;
 		gap: 3px 14px;
 		margin-top: 4px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 		line-height: 1.4;
 	}
@@ -237,10 +208,10 @@
 		height: 28px;
 		min-width: 28px;
 		padding: 5px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		background: #1a3040;
-		color: #a9c8da;
+		background: var(--ui-active-background);
+		color: var(--ui-link-color);
 		cursor: pointer;
 		transition: background-color .15s, border-color .15s, color .15s;
 	}
@@ -252,26 +223,26 @@
 	}
 
 	.message-action:hover {
-		border-color: #568ba1;
-		background: #24495c;
-		color: #d9edf5;
+		border-color: var(--ui-border-hover-color);
+		background: var(--ui-button-hover-background);
+		color: var(--text-color);
 	}
 
 	.message-report {
-		color: #b99d9b;
+		color: var(--ui-danger-color);
 	}
 
 	.message-report:hover {
-		border-color: #976360;
-		background: #4b2d34;
-		color: #f0c6c0;
+		border-color: var(--ui-danger-border-hover-color);
+		background: var(--ui-danger-hover-background);
+		color: var(--ui-danger-hover-color);
 	}
 
 	.message-body {
 		min-width: 0;
 		padding: 12px;
 		overflow-x: auto;
-		color: #c5d9e5;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		line-height: 1.6;
 		overflow-wrap: anywhere;
@@ -296,19 +267,19 @@
 	.message-body .quotetitle {
 		margin-top: 6px;
 		padding: 5px 8px;
-		border-color: #355166;
+		border-color: var(--ui-border-color);
 		border-radius: 4px 4px 0 0;
-		background: #1b3040;
-		color: #97b8ca;
+		background: var(--ui-active-background);
+		color: var(--ui-icon-color);
 		font-size: 12px;
 		font-weight: 500;
 	}
 
 	.message-body .quotecontent {
 		padding: 8px;
-		border-color: #355166;
-		background: #0a1622;
-		color: #a8c0d0;
+		border-color: var(--ui-border-color);
+		background: var(--ui-input-background);
+		color: var(--ui-label-color);
 		font-size: 14px;
 	}
 
@@ -316,8 +287,8 @@
 		margin: 0 0 8px;
 		padding-left: 8px;
 		border: 0;
-		border-left: 2px solid #52768b;
-		background: #142737;
+		border-left: 2px solid var(--ui-divider-accent-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.message-body .quotewrapper > .quotetitle, .message-body .quotewrapper > .quotecontent {
@@ -327,16 +298,16 @@
 	}
 
 	.message-body a {
-		color: #a5cddd;
+		color: var(--ui-link-color);
 		text-decoration: none;
 	}
 
 	.message-body .quotecontent a {
-		color: #9dccdf;
+		color: var(--ui-link-color);
 	}
 
 	.message-body .quotetitle input {
-		color: #a9c8da;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
@@ -348,14 +319,14 @@
 		padding: 32px 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: #0e1b29;
-		color: #8faabb;
+		background: var(--ui-panel-background);
+		color: var(--ui-muted-color);
 	}
 
 	.messages-empty svg {
 		width: 32px;
 		height: 32px;
-		color: #5c8198;
+		color: var(--ui-subtle-color);
 	}
 
 	.messages-pagination {
@@ -374,17 +345,17 @@
 		min-width: 30px;
 		height: 30px;
 		padding: 4px 9px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		background: #142737;
-		color: #9eb8c9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.messages-pagination .pagination a:hover, .messages-pagination .pagination .active a {
-		border-color: #568ba1;
-		background: #24495c;
-		color: #d9edf5;
+		border-color: var(--ui-border-hover-color);
+		background: var(--ui-button-hover-background);
+		color: var(--text-color);
 	}
 
 	@media (max-width: 639px) {
@@ -406,7 +377,6 @@
 
 		.messages-filters select {
 			width: 100%;
-			min-width: 0;
 		}
 
 		.messages-selection {
@@ -446,7 +416,7 @@
 		align-items: center;
 		gap: 6px;
 		margin-bottom: 10px;
-		color: #a6c6d8;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
@@ -461,7 +431,7 @@
 	border: 1px solid var(--border-color);
 	border-radius: 6px;
 	overflow: hidden;
-	background: #0e1b29;
+	background: var(--ui-panel-background);
 	font-size: 14px;
 
 	.message-compose-heading {
@@ -469,20 +439,20 @@
 		align-items: center;
 		gap: 8px;
 		padding: 12px 14px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.message-compose-heading > svg {
 		width: 20px;
 		height: 20px;
-		color: #8dbdd1;
+		color: var(--ui-icon-color);
 	}
 
 	.message-compose-heading h1 {
 		width: auto;
 		margin: 0;
 		text-align: left;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -493,7 +463,7 @@
 		gap: 10px;
 		margin: 0 14px;
 		padding: 12px 0;
-		border-bottom: 1px solid #263b4d;
+		border-bottom: 1px solid var(--ui-border-muted-color);
 	}
 
 	.message-recipient > div {
@@ -507,10 +477,10 @@
 		flex-shrink: 0;
 		width: 36px;
 		height: 36px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
-		background: #172e40;
-		color: #9bc0d3;
+		background: var(--ui-heading-start-color);
+		color: var(--ui-label-color);
 	}
 
 	.message-recipient-icon svg {
@@ -519,12 +489,12 @@
 	}
 
 	.message-field-label {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.message-recipient-name {
-		color: #d5e5ef;
+		color: var(--text-color);
 		font-size: 14px;
 		font-weight: 500;
 		overflow-wrap: anywhere;
@@ -546,11 +516,6 @@
 	}
 
 	.message-compose-footer .button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 7px;
-		min-height: 32px;
 		padding: 6px 12px;
 	}
 
@@ -559,38 +524,33 @@
 		height: 16px;
 	}
 
-	.message-compose-footer .button:disabled {
-		opacity: .5;
-		cursor: default;
-	}
-
 	.message-form-errors {
 		display: grid;
 		gap: 4px;
 		margin-top: 8px;
-		color: #dca5a0;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 	}
 
 	.editor-component-preview .quotetitle {
-		border-color: #355166;
-		background: #1b3040;
-		color: #97b8ca;
+		border-color: var(--ui-border-color);
+		background: var(--ui-active-background);
+		color: var(--ui-icon-color);
 		font-size: 12px;
 	}
 
 	.editor-component-preview .quotecontent {
-		border-color: #355166;
-		background: #0a1622;
-		color: #a8c0d0;
+		border-color: var(--ui-border-color);
+		background: var(--ui-input-background);
+		color: var(--ui-label-color);
 	}
 
 	.editor-component-preview .quotewrapper {
 		margin: 0 0 8px;
 		padding-left: 8px;
 		border: 0;
-		border-left: 2px solid #52768b;
-		background: #142737;
+		border-left: 2px solid var(--ui-divider-accent-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.editor-component-preview .quotewrapper > .quotetitle, .editor-component-preview .quotewrapper > .quotecontent {
@@ -614,11 +574,5 @@
 		.message-compose-footer {
 			padding: 0 10px 10px;
 		}
-	}
-}
-
-@layer base {
-	.message-compose .editor-component.error > textarea {
-		border-color: #bd7e79 !important;
 	}
 }

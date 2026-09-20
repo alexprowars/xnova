@@ -12,20 +12,20 @@
 		padding: 12px 14px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.referrals-heading h1 {
 		width: auto;
 		margin: 0;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 		text-align: left;
 	}
 
 	.referrals-heading > span {
-		color: #a6c1d1;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -35,14 +35,14 @@
 		overflow: hidden;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.referrals-panel > h2 {
 		margin: 0;
 		padding: 9px 14px;
-		background: #142737;
-		color: #c5dce9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
@@ -53,7 +53,7 @@
 
 	.referrals-description {
 		margin: 0 0 12px;
-		color: #a9c3d2;
+		color: var(--ui-label-color);
 		font-size: 14px;
 		font-weight: 400;
 		line-height: 1.5;
@@ -66,7 +66,7 @@
 	.referrals-copy-field > label {
 		display: block;
 		margin-bottom: 5px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -79,25 +79,11 @@
 	.referrals-copy-control input {
 		flex: 1;
 		width: 0;
-		min-width: 0;
-		min-height: 32px;
-		padding: 5px 9px;
-		border-radius: 4px;
-		background: #091623;
-		color: #bdd3e1;
 		font-size: 12px;
-		text-align: left;
 	}
 
 	.referrals-copy-control .button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
 		min-width: 126px;
-		min-height: 32px;
-		padding: 5px 9px;
-		font-size: 12px;
 	}
 
 	.referrals-copy-control svg {
@@ -124,7 +110,7 @@
 		padding: 8px 14px;
 		border: 0;
 		background: transparent;
-		color: #c5d9e5;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 400;
 		text-align: left;
@@ -133,42 +119,42 @@
 
 	.referrals-table th {
 		padding-block: 7px;
-		color: #8faabb;
-		background: #101f2d;
+		color: var(--ui-muted-color);
+		background: var(--main-color);
 		font-size: 12px;
 	}
 
 	.referrals-table tbody tr + tr td {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.referrals-table tbody tr:hover td {
-		background: #142b3b;
+		background: var(--ui-hover-background);
 	}
 
 	.referral-player {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		color: #c3dce9;
+		color: var(--ui-text-color);
 		overflow-wrap: anywhere;
 	}
 
 	.referral-player > span {
 		flex-shrink: 0;
-		color: #6f9bb2;
+		color: var(--ui-subtle-color);
 		font-size: 12px;
 	}
 
 	.referrals-table time {
-		color: #a8c0d0;
+		color: var(--ui-label-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
 
 	.referrals-table time > span {
 		margin-left: 8px;
-		color: #829eaf;
+		color: var(--ui-subtle-color);
 	}
 
 	.referral-levels {
@@ -182,17 +168,17 @@
 		align-items: center;
 		gap: 6px;
 		padding: 2px 6px;
-		border: 1px solid #324d53;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		background: #15302d66;
+		background: color-mix(in srgb, var(--ui-success-muted-background) 40%, transparent);
 		font-size: 12px;
-		color: #9ac9b1;
+		color: var(--ui-success-color);
 	}
 
 	.referral-levels .referral-level-raid {
-		border-color: #554950;
-		background: #35273266;
-		color: #c9a2a0;
+		border-color: var(--ui-danger-border-muted-color);
+		background: color-mix(in srgb, var(--ui-danger-muted-background) 40%, transparent);
+		color: var(--ui-danger-color);
 	}
 
 	.referral-levels strong {
@@ -202,7 +188,7 @@
 
 	.referrals-empty {
 		padding: 26px 14px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		text-align: center;
 		font-size: 14px;
 	}
@@ -216,16 +202,16 @@
 		padding: 10px 14px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.referrals-referred-by > span {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.referrals-referred-by > a {
-		color: #bdd9e7;
+		color: var(--ui-text-color);
 		overflow-wrap: anywhere;
 	}
 
@@ -234,9 +220,9 @@
 		justify-content: center;
 		margin-bottom: 14px;
 		padding: 14px 10px;
-		border: 1px solid #2b4356;
+		border: 1px solid var(--border-color);
 		border-radius: 5px;
-		background: #091623;
+		background: var(--ui-input-background);
 	}
 
 	.referrals-userbar img {

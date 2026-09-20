@@ -11,13 +11,13 @@
 		padding: 10px 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.tech-heading h1 {
 		margin: 0;
 		width: auto;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 		text-align: left;
@@ -31,17 +31,17 @@
 	}
 
 	.tech-list-heading {
-		background: #142737;
-		color: #9eb8c9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.tech-list-row + .tech-list-row {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.tech-list-row:hover {
-		background: #142b3b;
+		background: var(--ui-hover-background);
 	}
 
 	.tech-list-identity {
@@ -54,18 +54,18 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 		line-height: 1.4;
 		overflow-wrap: anywhere;
 	}
 
 	.tech-list-name:hover {
-		color: #eff8fc;
+		color: var(--text-color);
 	}
 
 	.tech-list-name img {
 		flex-shrink: 0;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		object-fit: cover;
 	}
@@ -94,21 +94,9 @@
 	}
 
 	.tech-tree-link {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
 		flex-shrink: 0;
 		width: 30px;
 		height: 30px;
-		border: 1px solid #355166;
-		border-radius: 4px;
-		background: #192f3f;
-		color: #a0d0e0;
-	}
-
-	.tech-tree-link:hover {
-		background: #24495c;
-		border-color: #568ba1;
 	}
 
 	.tech-tree-link svg {
@@ -133,16 +121,6 @@
 	}
 }
 
-@layer base {
-	.page-techtree .positive {
-		color: #8fcab0 !important;
-	}
-
-	.page-techtree .negative {
-		color: #dba29e !important;
-	}
-}
-
 .page-tech-detail {
 	font-size: 14px;
 	font-variant-numeric: tabular-nums;
@@ -152,12 +130,12 @@
 		align-items: center;
 		gap: 6px;
 		margin-bottom: 10px;
-		color: #a6c6d8;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
 	.tech-back-link:hover {
-		color: #e0edf5;
+		color: var(--ui-title-color);
 	}
 
 	.tech-detail-heading {
@@ -169,12 +147,12 @@
 		padding: 12px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.tech-detail-heading > img {
 		flex-shrink: 0;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 	}
 
@@ -190,7 +168,7 @@
 		font-size: 18px;
 		line-height: 1.4;
 		font-weight: 600;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		overflow-wrap: anywhere;
 	}
 
@@ -205,7 +183,7 @@
 
 	.tech-detail-meta b {
 		margin-left: 4px;
-		color: #d6e7f0;
+		color: var(--text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
@@ -213,15 +191,15 @@
 	.tech-availability {
 		padding: 3px 7px;
 		border-radius: 4px;
-		background: #08152166;
+		background: color-mix(in srgb, var(--ui-input-background) 40%, transparent);
 	}
 
 	.is-ready {
-		--requirement-color: #8fcab0;
+		--requirement-color: var(--ui-success-color);
 	}
 
 	.is-missing {
-		--requirement-color: #dba29e;
+		--requirement-color: var(--ui-danger-color);
 	}
 
 	.tech-availability {
@@ -232,7 +210,7 @@
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.tech-dependencies-heading {
@@ -242,14 +220,14 @@
 		flex-wrap: wrap;
 		gap: 6px 12px;
 		padding: 10px 12px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 	}
 
 	.tech-dependencies-heading h2 {
 		margin: 0;
 		font-size: 14px;
 		font-weight: 500;
-		color: #d2e3ee;
+		color: var(--text-color);
 	}
 
 	.tech-dependencies-heading > span {
@@ -281,10 +259,10 @@
 		align-items: center;
 		gap: 10px;
 		padding: 8px 10px;
-		border: 1px solid #2b4354;
+		border: 1px solid var(--border-color);
 		border-left: 2px solid var(--requirement-color);
 		border-radius: 5px;
-		background: #112333;
+		background: var(--ui-surface-background);
 	}
 
 	.tech-dependency-card > img, .tech-dependency-placeholder {
@@ -299,14 +277,14 @@
 		display: grid;
 		place-items: center;
 		color: var(--requirement-color);
-		background: #1c3546;
+		background: var(--ui-active-background);
 		font-size: 24px;
 	}
 
 	.tech-dependency-info {
 		flex: 1;
 		min-width: 0;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 		line-height: 1.4;
 		overflow-wrap: anywhere;
 	}
@@ -316,7 +294,7 @@
 	}
 
 	.tech-dependency-info > a:hover {
-		color: #eff8fc;
+		color: var(--text-color);
 	}
 
 	.tech-dependency-levels {
@@ -341,26 +319,14 @@
 
 	.tech-queued {
 		margin-left: 4px;
-		color: #d9bc82;
+		color: var(--ui-warning-color);
 	}
 
 	.tech-branch-toggle {
-		display: grid;
-		place-items: center;
 		flex-shrink: 0;
 		width: 28px;
 		height: 28px;
 		padding: 0;
-		border: 1px solid #355166;
-		border-radius: 4px;
-		background: #192f3f;
-		color: #a0d0e0;
-		cursor: pointer;
-	}
-
-	.tech-branch-toggle:hover {
-		background: #24495c;
-		border-color: #568ba1;
 	}
 
 	.tech-branch-toggle svg {
@@ -372,7 +338,7 @@
 		position: relative;
 		padding: 8px 0 0 24px;
 		margin-left: 20px;
-		border-left: 1px solid #355166;
+		border-left: 1px solid var(--ui-border-color);
 	}
 
 	.tech-dependency-children > .tech-dependency::before {
@@ -382,7 +348,7 @@
 		left: -24px;
 		width: 24px;
 		height: 1px;
-		background: #355166;
+		background: var(--ui-border-color);
 	}
 
 	.tech-detail-empty {

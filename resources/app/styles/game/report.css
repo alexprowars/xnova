@@ -1,7 +1,7 @@
 .page-battle-report {
 	min-width: 0;
 	font-size: 14px;
-	color: #bfd2e0;
+	color: var(--ui-text-color);
 
 	> #report {
 		max-width: 100%;
@@ -22,7 +22,7 @@
 	min-width: 0;
 	margin: 0 auto 14px;
 	padding: 12px 0;
-	color: #bdd3e1;
+	color: var(--ui-text-color);
 	font-size: 14px;
 	line-height: 1.6;
 
@@ -47,18 +47,18 @@
 	.report_user {
 		width: auto;
 		margin: 0;
-		border: 1px solid #304b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		border-collapse: separate;
 		border-spacing: 0;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.report_fleet {
 		padding: 12px;
-		border: 1px solid #304b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 		overflow-x: auto;
 		text-align: center;
 	}
@@ -80,22 +80,22 @@
 		padding: 6px 9px;
 		border: 0;
 		background: transparent;
-		color: #b7cddd;
+		color: var(--ui-text-color);
 		font-size: 12px;
 		font-weight: 400;
 	}
 
 	table tr + tr > * {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	table tr:first-child > * {
-		background: #142d3e;
-		color: #cde2ed;
+		background: var(--ui-hover-background);
+		color: var(--text-color);
 	}
 
 	.report_fleet th:first-child {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		text-align: left;
 	}
 
@@ -104,17 +104,17 @@
 	}
 
 	.report_fleet small span {
-		color: #d9a19c !important;
+		color: var(--ui-danger-color) !important;
 	}
 
 	.report_result {
 		width: 100%;
 		margin: 0;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		border-collapse: separate;
 		border-spacing: 0;
-		background: #102332;
+		background: var(--ui-surface-background);
 	}
 
 	.report_result td {
@@ -125,32 +125,18 @@
 
 	> .text-center {
 		padding: 10px 14px;
-		border: 1px solid #263b4d;
+		border: 1px solid var(--ui-border-muted-color);
 		border-radius: 5px;
-		background: #0c1b29;
+		background: var(--ui-panel-background);
 	}
 
 	> .text-center > a {
 		display: inline-flex;
 		padding: 5px 12px;
-		border: 1px solid #41677d;
+		border: 1px solid var(--ui-border-active-color);
 		border-radius: 4px;
-		background: #1a394b;
-		color: #b9dce9;
+		background: var(--ui-button-background);
+		color: var(--ui-text-color);
 		font-size: 12px;
-	}
-}
-
-@layer base {
-	.page-battle-report .positive {
-		color: #99cdb1 !important;
-	}
-
-	.page-battle-report .negative {
-		color: #d9a19c !important;
-	}
-
-	.page-battle-report .neutral {
-		color: #d6be8f !important;
 	}
 }

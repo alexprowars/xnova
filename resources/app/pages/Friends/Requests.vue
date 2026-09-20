@@ -3,7 +3,12 @@
 	<div class="page-friends">
 		<UiHeading :title="isMy ? $t('pages.friends.tab_outgoing') : $t('pages.friends.tab_incoming')" :count="page.items.length"/>
 		<FriendsNavigation :active="isMy ? 'outgoing' : 'incoming'"/>
-		<UiPanel clip><UiEmptyState v-if="!page.items.length">{{ $t('pages.friends.requests.no_requests') }}</UiEmptyState><div v-else class="friends-requests"><RequestRow v-for="item in page.items" :key="item.id" :item="item" :is-my="isMy"/></div></UiPanel>
+		<UiPanel clip>
+			<UiEmptyState v-if="!page.items.length">{{ $t('pages.friends.requests.no_requests') }}</UiEmptyState>
+			<div v-else>
+				<RequestRow v-for="item in page.items" :key="item.id" :item="item" :is-my="isMy"/>
+			</div>
+		</UiPanel>
 	</div>
 </template>
 

@@ -3,10 +3,15 @@
 	<div class="page-notes">
 		<UiBackLink href="/notes">{{ $t('pages.notes.back_to_list') }}</UiBackLink>
 		<UiHeading :title="$t('pages.notes.create.title')"/>
-		<UiPanel clip><form class="ui-form-body" method="post" @submit.prevent="create">
-			<NoteFields :form="form"/>
-			<div class="ui-actions"><UiButton variant="secondary" :disabled="form.processing" @click="reset">{{ $t('pages.notes.create.reset') }}</UiButton><UiButton type="submit" :disabled="form.processing">{{ $t('pages.notes.create.save') }}</UiButton></div>
-		</form></UiPanel>
+		<UiPanel clip>
+			<form class="ui-form-body" method="post" @submit.prevent="create">
+				<NoteFields :form="form"/>
+				<div class="ui-actions">
+					<UiButton variant="secondary" :disabled="form.processing" @click="reset">{{ $t('pages.notes.create.reset') }}</UiButton>
+					<UiButton type="submit" :disabled="form.processing">{{ $t('pages.notes.create.save') }}</UiButton>
+				</div>
+			</form>
+		</UiPanel>
 	</div>
 </template>
 

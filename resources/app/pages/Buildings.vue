@@ -1,6 +1,6 @@
 <template>
 	<Head title="Постройки"/>
-	<div class="page-building page-building-build">
+	<div class="page-building">
 		<BuildQueue :queue="queueByType('build')"/>
 
 		<div class="buldings">
@@ -10,7 +10,7 @@
 						Постройки / {{ planet['name'] }}
 					</span>
 
-					<div class="flex flex-col items-end gap-2 bg-black/80 p-3">
+					<div class="flex flex-col items-end gap-2 bg-[var(--ui-image-scrim-color)] p-3">
 						<i18n-t keypath="pages.building.fields_used" tag="div" scope="global">
 							<template v-slot:used>
 								<span class="positive">{{ planet['field_used'] }}</span>

@@ -11,8 +11,14 @@
 	import UiCount from './UiCount.vue';
 
 	defineProps({
-		items: { type: Array, required: true },
-		label: { type: String, required: true },
+		items: {
+			type: Array,
+			required: true,
+		},
+		label: {
+			type: String,
+			required: true,
+		},
 		active: [String, Number],
 		embedded: Boolean,
 	});

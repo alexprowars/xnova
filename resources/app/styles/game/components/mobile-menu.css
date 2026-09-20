@@ -3,7 +3,7 @@
 	height: 45px;
 	position: fixed;
 	text-align: center;
-	background: #142537;
+	background: var(--ui-panel-heading-background);
 	border: 1px solid var(--border-color);
 	border-radius: 6px;
 	left: 5px;
@@ -26,7 +26,7 @@
 	width: 24px;
 	height: 2px;
 	left: 0;
-	background-color: #ffffff;
+	background-color: var(--ui-white-color);
 	transition: all ease-out 0.2s;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .menu-toggle:active span span, .planet-toggle:active span span {
-	background-color: #fbbe69;
+	background-color: var(--ui-warning-strong-color);
 }
 
 .menu-toggle > span, .planet-toggle > span {

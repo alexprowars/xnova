@@ -15,7 +15,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 		overflow-wrap: anywhere;
 	}
 
@@ -23,24 +23,24 @@
 		width: 14px;
 		height: 14px;
 		flex-shrink: 0;
-		color: #719eb5;
+		color: var(--ui-subtle-color);
 	}
 
 	.friend-coordinates {
-		color: #9fbfd2;
+		color: var(--ui-label-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
 
 	.friends-muted {
-		color: #7693a5;
+		color: var(--ui-subtle-color);
 	}
 
 	.friend-status {
 		display: inline-flex;
 		align-items: center;
 		gap: 5px;
-		color: #c99b98;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
@@ -54,11 +54,11 @@
 	}
 
 	.friend-status.online-1 {
-		color: #94caaa;
+		color: var(--ui-success-color);
 	}
 
 	.friend-status.online-2 {
-		color: #d4be8c;
+		color: var(--ui-warning-color);
 	}
 
 	.friend-remove {
@@ -76,7 +76,7 @@
 	}
 
 	.friend-request + .friend-request {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.friend-request-heading {
@@ -96,7 +96,7 @@
 	}
 
 	.friend-alliance {
-		color: #9cb0ce;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -110,8 +110,8 @@
 		margin-top: 10px;
 		padding: 9px 10px;
 		border-radius: 4px;
-		background: #0a1622;
-		color: #a9c1d0;
+		background: var(--ui-input-background);
+		color: var(--ui-label-color);
 		font-size: 14px;
 		line-height: 1.5;
 		overflow-wrap: anywhere;
@@ -123,16 +123,16 @@
 		flex-wrap: wrap;
 		gap: 6px 12px;
 		padding: 12px 14px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 	}
 
 	.friend-recipient > span {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.friend-recipient > a {
-		color: #d0e4ef;
+		color: var(--text-color);
 		overflow-wrap: anywhere;
 	}
 
@@ -142,22 +142,13 @@
 		justify-content: space-between;
 		gap: 10px;
 		margin-bottom: 6px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.friends-form textarea {
-		display: block;
 		width: 100%;
 		min-height: 140px;
-		padding: 9px;
-		border-radius: 5px;
-		background: #091623;
-		color: #c5d9e5;
-		font-size: 14px;
-		line-height: 1.5;
-		text-align: left;
-		resize: vertical;
 	}
 
 	@media (max-width: 639px) {
@@ -187,7 +178,7 @@
 		}
 
 		.friends-table tbody tr + tr {
-			border-top: 1px solid #263b4d;
+			border-top: 1px solid var(--ui-border-muted-color);
 		}
 
 		.friends-table td, .friends-table tbody tr + tr td {
@@ -223,11 +214,5 @@
 			width: auto;
 			text-align: right;
 		}
-	}
-}
-
-@layer base {
-	.page-friends .friends-form textarea.error {
-		border-color: #bd7e79 !important;
 	}
 }

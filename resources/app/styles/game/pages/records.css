@@ -1,8 +1,4 @@
 .page-records {
-	border: 1px solid var(--border-color);
-	border-radius: 6px;
-	overflow: hidden;
-	background: #0e1b29;
 	font-size: 14px;
 	font-variant-numeric: tabular-nums;
 
@@ -12,10 +8,6 @@
 		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: 8px 12px;
-		margin: 0;
-		padding: 10px 12px;
-		border: 0;
-		border-radius: 0;
 	}
 
 	.game-list-scroll {
@@ -32,8 +24,8 @@
 		th, td {
 			padding: 9px 12px;
 			border: 0;
-			border-bottom: 1px solid #263b4d;
-			background: #0e1b29;
+			border-bottom: 1px solid var(--ui-border-muted-color);
+			background: var(--ui-panel-background);
 			color: var(--text-color);
 			text-align: left;
 			vertical-align: middle;
@@ -43,14 +35,14 @@
 
 		thead th, .game-list-section th {
 			padding-block: 8px;
-			background: #142737;
-			color: #9eb8c9;
+			background: var(--ui-panel-heading-background);
+			color: var(--ui-label-color);
 			font-size: 12px;
 			font-weight: 500;
 		}
 
 		tbody tr:not(.game-list-section):hover > * {
-			background: #162e40;
+			background: var(--ui-hover-background);
 		}
 
 		tbody:last-child tr:last-child > * {
@@ -87,7 +79,7 @@
 		}
 
 		.records-winner {
-			color: #9fc9dc;
+			color: var(--ui-link-color);
 		}
 
 		.is-empty {
@@ -101,8 +93,8 @@
 		max-width: 100%;
 		padding: 2px 6px;
 		border-radius: 4px;
-		background: #d8b57a0d;
-		color: #dfc28b;
+		background: color-mix(in srgb, var(--ui-warning-color) 5.1%, transparent);
+		color: var(--ui-warning-color);
 		font-weight: 500;
 		white-space: nowrap;
 
@@ -122,15 +114,11 @@
 	}
 
 	.game-list-table .game-list-section th:first-child {
-		color: #badce6;
+		color: var(--ui-text-color);
 		font-size: 14px;
 	}
 
 	@media (max-width: 479px) {
-		> .game-list-heading {
-			padding: 9px 10px;
-		}
-
 		.game-list-table th, .game-list-table td {
 			padding: 8px;
 		}

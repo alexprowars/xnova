@@ -1,6 +1,6 @@
 <template>
 	<Head :title="$t('pages.options.email_change_head_title')"/>
-	<div class="page-options options-email">
+	<div class="page-options">
 		<Link href="/options" class="options-back">← {{ $t('pages.options.email_change_back') }}</Link>
 		<header class="options-heading">
 			<h1>{{ $t('pages.options.email_change_block_title') }}</h1>

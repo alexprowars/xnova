@@ -12,21 +12,21 @@
 		margin-bottom: 10px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.quests-heading h1 {
 		width: auto;
 		margin: 0;
 		text-align: left;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 	}
 
 	.quests-overall {
 		min-width: 160px;
-		color: #a6c1d1;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
@@ -35,20 +35,20 @@
 		margin-top: 6px;
 		border-radius: 2px;
 		overflow: hidden;
-		background: #294253;
+		background: var(--ui-progress-background);
 	}
 
 	.quests-progress > span {
 		display: block;
 		height: 100%;
-		background: #81bea5;
+		background: var(--ui-success-strong-color);
 	}
 
 	.quests-list {
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.quest-row {
@@ -57,11 +57,11 @@
 		align-items: center;
 		gap: 12px;
 		padding: 10px 12px;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 	}
 
 	.quest-row + .quest-row {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.quest-row.is-available {
@@ -69,8 +69,8 @@
 	}
 
 	.quest-row.is-available:hover {
-		background: #173143;
-		color: #eff8fc;
+		background: var(--ui-active-background);
+		color: var(--text-color);
 	}
 
 	.quest-image {
@@ -82,7 +82,7 @@
 		display: block;
 		width: 48px;
 		height: 48px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		object-fit: cover;
 	}
@@ -94,8 +94,8 @@
 		min-width: 18px;
 		padding: 0 3px;
 		border-radius: 4px 0 4px 0;
-		background: #0b1926eb;
-		color: #bed2df;
+		background: color-mix(in srgb, var(--head-bg-color) 92.16%, transparent);
+		color: var(--ui-text-color);
 		font-size: 12px;
 		text-align: center;
 	}
@@ -122,22 +122,22 @@
 	}
 
 	.quest-requirements-label {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 	}
 
 	.quest-requirements .is-missing {
-		color: #d3a19c;
+		color: var(--ui-danger-color);
 	}
 
 	.quest-requirements .is-met {
-		color: #8fcab0;
+		color: var(--ui-success-color);
 	}
 
 	.quest-status {
 		display: inline-flex;
 		align-items: center;
 		gap: 5px;
-		color: #a6ccde;
+		color: var(--ui-link-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
@@ -151,15 +151,15 @@
 	.quest-open {
 		width: 18px;
 		height: 18px;
-		color: #7cabc3;
+		color: var(--ui-muted-color);
 	}
 
 	.is-complete .quest-status {
-		color: #8fcab0;
+		color: var(--ui-success-color);
 	}
 
 	.is-locked .quest-status, .is-locked h2 {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 	}
 
 	.is-locked .quest-image img {
@@ -217,12 +217,12 @@
 		align-items: center;
 		gap: 6px;
 		margin-bottom: 10px;
-		color: #a6c6d8;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
 	.quest-back:hover {
-		color: #e0edf5;
+		color: var(--ui-title-color);
 	}
 
 	.quest-detail-heading {
@@ -233,14 +233,14 @@
 		margin-bottom: 10px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	.quest-detail-heading > img {
 		width: 100px;
 		height: 100px;
 		flex-shrink: 0;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
 		object-fit: cover;
 	}
@@ -250,7 +250,7 @@
 	}
 
 	.quest-number {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -258,7 +258,7 @@
 		margin: 3px 0 8px;
 		width: auto;
 		text-align: left;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 18px;
 		font-weight: 600;
 		line-height: 1.4;
@@ -266,7 +266,7 @@
 	}
 
 	.quest-description {
-		color: #b8cedc;
+		color: var(--ui-text-color);
 		line-height: 1.6;
 		overflow-wrap: anywhere;
 	}
@@ -294,7 +294,7 @@
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
 		overflow: hidden;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.quest-panel-heading {
@@ -303,7 +303,7 @@
 		justify-content: space-between;
 		gap: 10px;
 		padding: 9px 12px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 	}
 
 	.quest-panel-heading h2 {
@@ -311,26 +311,26 @@
 		align-items: center;
 		gap: 7px;
 		margin: 0;
-		color: #d2e3ee;
+		color: var(--text-color);
 		font-size: 14px;
 		font-weight: 500;
 		line-height: 1.4;
 	}
 
 	.quest-panel-heading > span {
-		color: #9eb8c9;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.quest-task-progress {
 		height: 3px;
-		background: #263e4e;
+		background: var(--ui-button-secondary-hover-background);
 	}
 
 	.quest-task-progress > span {
 		display: block;
 		height: 100%;
-		background: #81bea5;
+		background: var(--ui-success-strong-color);
 	}
 
 	.quest-task-list {
@@ -345,19 +345,19 @@
 		gap: 10px;
 		margin: 0;
 		padding: 10px 12px;
-		color: #c5d9e5;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		line-height: 1.5;
 		overflow-wrap: anywhere;
 	}
 
 	.quest-task-list li + li {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.quest-task-list b {
 		font-weight: 500;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 	}
 
 	.quest-task-status {
@@ -366,10 +366,10 @@
 		flex-shrink: 0;
 		width: 22px;
 		height: 22px;
-		border: 1px solid #58604d;
+		border: 1px solid var(--ui-warning-border-color);
 		border-radius: 4px;
-		background: #413b252e;
-		color: #d5bd87;
+		background: color-mix(in srgb, var(--ui-warning-hover-background) 18.04%, transparent);
+		color: var(--ui-warning-color);
 	}
 
 	.quest-task-status svg {
@@ -378,25 +378,25 @@
 	}
 
 	.is-done .quest-task-status {
-		color: #98d1b7;
-		background: #21463866;
-		border-color: #3d6b5c;
+		color: var(--ui-success-color);
+		background: color-mix(in srgb, var(--ui-success-background) 40%, transparent);
+		border-color: var(--ui-success-border-color);
 	}
 
 	.quest-task-list .is-done, .quest-task-list .is-done b {
-		color: #91b7aa;
+		color: var(--ui-success-color);
 	}
 
 	.quest-reward {
-		border-color: #60563e;
+		border-color: var(--ui-warning-border-color);
 	}
 
 	.quest-reward .quest-panel-heading {
-		background: #39332255;
+		background: color-mix(in srgb, var(--ui-warning-background) 33.33%, transparent);
 	}
 
 	.quest-reward .quest-panel-heading h2 {
-		color: #ddc28c;
+		color: var(--ui-warning-color);
 	}
 
 	.quest-reward h2 svg {
@@ -406,7 +406,7 @@
 
 	.quest-reward-content {
 		padding: 12px;
-		color: #ddcba5;
+		color: var(--ui-warning-hover-color);
 		line-height: 1.6;
 		overflow-wrap: anywhere;
 	}
@@ -421,18 +421,11 @@
 
 	.quest-finish .button {
 		width: 100%;
-		min-height: 32px;
-		padding: 6px 10px;
-	}
-
-	.quest-finish .button:disabled {
-		opacity: .5;
-		cursor: default;
 	}
 
 	.quest-errors {
 		padding: 0 12px 12px;
-		color: #dba29e;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 	}
 
@@ -442,7 +435,7 @@
 
 	.quest-solution-content {
 		padding: 12px 14px;
-		color: #a8c0d0;
+		color: var(--ui-label-color);
 		line-height: 1.6;
 		overflow-wrap: anywhere;
 	}
@@ -462,7 +455,7 @@
 	}
 
 	.quest-solution-content li::marker {
-		color: #729cb3;
+		color: var(--ui-subtle-color);
 		font-size: 12px;
 	}
 
@@ -473,7 +466,7 @@
 	}
 
 	.quest-solution-content a {
-		color: #a9d6e5;
+		color: var(--ui-text-color);
 		text-decoration: underline;
 	}
 

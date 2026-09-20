@@ -4,19 +4,19 @@
 		grid-template-columns: 100px minmax(0, 1fr);
 		gap: 12px;
 		padding: 12px 14px;
-		color: #97c7ad;
+		color: var(--ui-success-color);
 	}
 
 	.phalanx-flight + .phalanx-flight {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.phalanx-flight.is-returning {
-		color: #8db4cf;
+		color: var(--ui-icon-color);
 	}
 
 	.phalanx-flight.is-espionage {
-		color: #d2b583;
+		color: var(--ui-warning-color);
 	}
 
 	.phalanx-time {
@@ -40,7 +40,7 @@
 	}
 
 	.phalanx-coordinates {
-		color: #c5dce9;
+		color: var(--ui-text-color);
 	}
 
 	@media (max-width: 479px) {

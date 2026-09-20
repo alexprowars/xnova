@@ -1,17 +1,17 @@
 .page-blocked {
 	time {
-		color: #9bb7ca;
+		color: var(--ui-label-color);
 		font-size: 12px;
 		white-space: nowrap;
 	}
 
 	time span {
 		display: block;
-		color: #7898ad;
+		color: var(--ui-subtle-color);
 	}
 
 	.blocked-reason {
-		color: #cda6a7;
+		color: var(--ui-danger-color);
 	}
 
 	@media (max-width: 639px) {
@@ -35,7 +35,7 @@
 		}
 
 		.blocked-table tbody tr + tr {
-			border-top: 1px solid #263b4d;
+			border-top: 1px solid var(--ui-border-muted-color);
 		}
 
 		.blocked-table td, .blocked-table tbody tr + tr td {
@@ -46,7 +46,7 @@
 
 		.blocked-table td[data-label]::before {
 			display: block;
-			color: #7998ad;
+			color: var(--ui-subtle-color);
 			font-size: 12px;
 			content: attr(data-label);
 		}

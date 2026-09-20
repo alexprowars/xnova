@@ -70,16 +70,16 @@
 			}
 
 			&.type_5 {
-				background: #3b2029;
+				background: var(--ui-danger-background);
 			}
 
 			&.type_3 {
-				background: #202939;
+				background: var(--ui-button-secondary-background);
 			}
 
 			&.current {
-				border-color: #2d5365;
-				background: linear-gradient(90deg, #1b3f50, #122431);
+				border-color: var(--ui-border-color);
+				background: linear-gradient(90deg, var(--ui-button-background), var(--ui-surface-background));
 				box-shadow: inset 3px 0 var(--accent-color);
 
 				.reload {
@@ -121,7 +121,7 @@
 			right: 0;
 			padding: 64px 14px 20px;
 			z-index: 190;
-			background: #0c1623;
+			background: var(--head-bg-color);
 			border-left: 1px solid var(--border-color);
 			overflow-y: auto;
 			transform: translateX(100%);

@@ -3,10 +3,6 @@
 	font-size: 14px;
 	font-variant-numeric: tabular-nums;
 
-	> .content {
-		padding: 14px;
-	}
-
 	.merchant-intro {
 		display: flex;
 		align-items: center;
@@ -20,9 +16,9 @@
 		flex-shrink: 0;
 		width: 44px;
 		height: 44px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 7px;
-		background: #183343;
+		background: var(--ui-active-background);
 		color: var(--accent-color);
 
 		svg {
@@ -40,7 +36,7 @@
 		align-items: center;
 		gap: 6px;
 		margin-top: 5px;
-		color: #d9bb83;
+		color: var(--ui-warning-color);
 		font-size: 12px;
 
 		svg {
@@ -76,9 +72,9 @@
 		gap: 9px;
 		min-height: 64px;
 		padding: 10px;
-		border: 1px solid #30485c;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 6px;
-		background: #122534;
+		background: var(--ui-surface-background);
 		cursor: pointer;
 		transition: background-color .15s, border-color .15s;
 
@@ -86,7 +82,6 @@
 			width: 13px;
 			height: 13px;
 			flex-shrink: 0;
-			margin: 0;
 		}
 
 		svg {
@@ -96,26 +91,26 @@
 		}
 
 		&:hover {
-			background-color: #1b3545;
-			border-color: #528299;
+			background-color: var(--ui-active-background);
+			border-color: var(--ui-border-hover-color);
 		}
 
 		&.is-selected {
-			background-color: #1a3c4c;
-			border-color: #70b5c8;
+			background-color: var(--ui-button-background);
+			border-color: var(--border-hover-color);
 		}
 	}
 
 	.metal > svg {
-		color: #b4c6d5;
+		color: var(--resource-metal-color);
 	}
 
 	.crystal > svg {
-		color: #8bbedd;
+		color: var(--resource-crystal-color);
 	}
 
 	.deuterium > svg {
-		color: #8bc8af;
+		color: var(--resource-deuterium-color);
 	}
 
 	.merchant-rate-note {
@@ -152,18 +147,18 @@
 
 	.merchant-table-heading {
 		padding-block: 7px;
-		background: #142737;
+		background: var(--ui-panel-heading-background);
 		color: var(--text-muted);
 		font-size: 12px;
 		text-align: center;
 	}
 
 	.merchant-row {
-		border-top: 1px solid #263b4d;
-		background: #0e1b29;
+		border-top: 1px solid var(--ui-border-muted-color);
+		background: var(--ui-panel-background);
 
 		&.is-source {
-			background: #132d3b;
+			background: var(--ui-hover-background);
 		}
 	}
 
@@ -188,7 +183,7 @@
 	}
 
 	.merchant-rate {
-		color: #a8c2d3;
+		color: var(--ui-label-color);
 		text-align: center;
 		overflow-wrap: anywhere;
 	}
@@ -199,15 +194,13 @@
 
 		input {
 			width: 100%;
-			min-width: 0;
 			height: 34px;
-			font-size: 14px;
 		}
 
 		output {
 			font-size: 16px;
 			font-weight: 600;
-			color: #aedbe7;
+			color: var(--ui-text-color);
 			overflow-wrap: anywhere;
 		}
 	}
@@ -218,12 +211,7 @@
 		margin-top: 12px;
 
 		.button {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 8px;
 			min-height: 34px;
-			font-size: 14px;
 		}
 
 		svg {

@@ -2,10 +2,28 @@
 	<Head :title="$t('pages.alliance.admin.requests_head_title')"/>
 	<div class="page-alliance page-alliance-admin">
 		<AllianceBack href="/alliance/admin"/>
-		<header class="alliance-heading"><h1>{{ $t('pages.alliance.admin.requests_page_heading') }}<span class="alliance-count">{{ page.items.length }}</span></h1></header>
+		<header class="alliance-heading">
+			<h1>
+				{{ $t('pages.alliance.admin.requests_page_heading') }}
+				<span class="alliance-count">{{ page.items.length }}</span>
+			</h1>
+		</header>
 		<RequestAcceptForm v-if="request" :key="request.id" :request="request" @close="request = null"/>
-		<section class="alliance-panel"><div v-if="!page.items.length" class="alliance-empty">{{ $t('pages.alliance.admin.requests_empty_list') }}</div>
-			<button v-for="item in page.items" :key="item.id" type="button" class="alliance-request-button" :class="{ 'is-active': request?.id === item.id }" :aria-expanded="request?.id === item.id" @click="show(item)"><strong>{{ item.name }}</strong><time>{{ $formatDate(item.date, 'DD MMM YYYY HH:mm') }}</time><span>{{ $t('pages.alliance.ui.review') }} →</span></button>
+		<section class="alliance-panel">
+			<div v-if="!page.items.length" class="alliance-empty">{{ $t('pages.alliance.admin.requests_empty_list') }}</div>
+			<button
+				v-for="item in page.items"
+				:key="item.id"
+				type="button"
+				class="alliance-request-button"
+				:class="{ 'is-active': request?.id === item.id }"
+				:aria-expanded="request?.id === item.id"
+				@click="show(item)"
+			>
+				<strong>{{ item.name }}</strong>
+				<time>{{ $formatDate(item.date, 'DD MMM YYYY HH:mm') }}</time>
+				<span>{{ $t('pages.alliance.ui.review') }} →</span>
+			</button>
 		</section>
 	</div>
 </template>

@@ -2,26 +2,51 @@
 	<Head :title="$t('pages.messages.index.page_title')"/>
 	<section class="page-messages">
 		<header class="messages-heading">
-			<h1><MessageIcon name="mail"/>{{ $t('pages.messages.index.title') }}<span class="messages-total">{{ page.pagination.total }}</span></h1>
+			<h1>
+				<MessageIcon name="mail"/>
+				{{ $t('pages.messages.index.title') }}
+				<span class="messages-total">{{ page.pagination.total }}</span>
+			</h1>
 			<div class="messages-filters">
-				<label><span>{{ $t('pages.messages.index.category') }}</span><select name="category" v-model="category">
-					<option v-for="type in Object.keys($tm('message_types'))" :key="type" :value="type">{{ $t('message_types.' + type) }}</option>
-				</select></label>
-				<label><span>{{ $t('pages.messages.index.per_page') }}</span><select name="limit" v-model="limit">
-					<option v-for="i in limitItems" :key="i" :value="i">{{ i }}</option>
-				</select></label>
+				<label>
+					<span>{{ $t('pages.messages.index.category') }}</span>
+					<select name="category" v-model="category">
+						<option v-for="type in Object.keys($tm('message_types'))" :key="type" :value="type">
+							{{ $t('message_types.' + type) }}
+						</option>
+					</select>
+				</label>
+				<label>
+					<span>{{ $t('pages.messages.index.per_page') }}</span>
+					<select name="limit" v-model="limit">
+						<option v-for="i in limitItems" :key="i" :value="i">{{ i }}</option>
+					</select>
+				</label>
 			</div>
 		</header>
 		<div v-if="messages.length && canDelete" class="messages-selection">
-			<label><input type="checkbox" v-model="checkAll" :indeterminate="deleteItems.length > 0 && !checkAll">{{ $t('pages.messages.index.select_all') }}</label>
-			<span v-if="deleteItems.length" class="messages-selected">{{ $t('pages.messages.index.selected', { count: deleteItems.length }) }}</span>
-			<button type="button" class="button messages-delete" :disabled="!deleteItems.length" @click="deleteMessages"><MessageIcon name="trash"/>{{ $t('pages.messages.index.delete_selected') }}</button>
+			<label>
+				<input type="checkbox" v-model="checkAll" :indeterminate="deleteItems.length > 0 && !checkAll">
+				{{ $t('pages.messages.index.select_all') }}
+			</label>
+			<span v-if="deleteItems.length" class="messages-selected">
+				{{ $t('pages.messages.index.selected', { count: deleteItems.length }) }}
+			</span>
+			<button type="button" class="button messages-delete is-danger" :disabled="!deleteItems.length" @click="deleteMessages">
+				<MessageIcon name="trash"/>
+				{{ $t('pages.messages.index.delete_selected') }}
+			</button>
 		</div>
 		<div class="messages-list">
 			<MessagesRow v-for="item in messages" :key="item.id" :item="item" :can-delete="canDelete" v-model:delete="deleteItems"/>
 		</div>
-		<div v-if="!messages.length" class="messages-empty"><MessageIcon name="mail"/><span>{{ $t('pages.messages.index.no_messages') }}</span></div>
-		<div v-if="page.pagination.total > page.pagination.limit" class="messages-pagination"><Pagination :options="page.pagination"/></div>
+		<div v-if="!messages.length" class="messages-empty">
+			<MessageIcon name="mail"/>
+			<span>{{ $t('pages.messages.index.no_messages') }}</span>
+		</div>
+		<div v-if="page.pagination.total > page.pagination.limit" class="messages-pagination">
+			<Pagination :options="page.pagination"/>
+		</div>
 	</section>
 </template>
 

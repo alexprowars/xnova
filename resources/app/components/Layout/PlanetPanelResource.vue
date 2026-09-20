@@ -2,7 +2,7 @@
 	<div class="resource-panel-item" :class="'resource-' + type">
 		<ModalLink navigate :href="'/info/' + building[type]" class="resource-panel-item-icon" :aria-label="$t('resources.' + type)">
 			<Popper>
-				<component :is="resourceIcons[type]" aria-hidden="true" focusable="false"/>
+				<ResourceIcon :code="type" aria-hidden="true" focusable="false"/>
 				<template #content>
 					<ResourceTooltip :resource="resource" :type="type"/>
 				</template>
@@ -21,19 +21,11 @@
 </template>
 
 <script setup>
-	import MetalIcon from '~/images/icons/resources/metal.svg?component';
-	import CrystalIcon from '~/images/icons/resources/crystal.svg?component';
-	import DeuteriumIcon from '~/images/icons/resources/deuterium.svg?component';
+	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import ResourceTooltip from './PlanetPanelResourceTooltip.vue'
 	import { ref } from 'vue';
 	import Popper from '~/components/Popper.vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
-
-	const resourceIcons = {
-		metal: MetalIcon,
-		crystal: CrystalIcon,
-		deuterium: DeuteriumIcon,
-	};
 
 	defineProps({
 		resource: {

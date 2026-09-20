@@ -1,29 +1,62 @@
 <template>
-	<tr class="galaxy-row" :class="{ 'is-empty': !item, 'is-own': item?.user?.id === currentUser.id, 'is-destroyed': item?.planet?.destruyed }">
+	<tr
+		class="galaxy-row"
+		:class="{ 'is-empty': !item, 'is-own': item?.user?.id === currentUser.id, 'is-destroyed': item?.planet?.destruyed }"
+	>
 		<td class="th galaxy-position">{{ planet }}</td>
 		<td class="th img">
 			<Popper popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed']">
 				<template #content>
 					<div class="block-table w-80">
 						<div class="grid">
-							<div class="c">{{ $t('planet_type.' + item['planet']['type']) }} {{ item['planet']['name'] }} [{{ galaxy }}:{{ system }}:{{ planet }}]</div>
+							<div class="c">
+								{{ $t('planet_type.' + item['planet']['type']) }} {{ item['planet']['name'] }} [{{ galaxy }}:{{ system }}:{{ planet }}]
+							</div>
 						</div>
 						<div class="flex">
 							<div class="th">
-								<img :src="'/assets/images/planeten/small/s_' + item['planet']['image'] + '.jpg'" height="75" width="75" alt="">
+								<img
+									:src="'/assets/images/planeten/small/s_' + item['planet']['image'] + '.jpg'"
+									height="75"
+									width="75"
+									alt=""
+								>
 							</div>
 							<div class="th grow middle flex-col" v-if="!isVacation && item.user">
 								<div v-if="user['phalanx'] > 0">
-									<Link :href="'/phalanx?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet" target="_blank">{{ $t('pages.galaxy.phalanx') }}</Link>
+									<Link :href="'/phalanx?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet" target="_blank">
+										{{ $t('pages.galaxy.phalanx') }}
+									</Link>
 								</div>
 								<template v-if="item.user['id'] !== currentUser['id']">
-									<div><Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=1'">{{ $t('fleet_mission.1') }}</Link></div>
-									<div><Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=5'">{{ $t('fleet_mission.5') }}</Link></div>
+									<div>
+										<Link
+											:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=1'"
+										>
+											{{ $t('fleet_mission.1') }}
+										</Link>
+									</div>
+									<div>
+										<Link
+											:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=5'"
+										>
+											{{ $t('fleet_mission.5') }}
+										</Link>
+									</div>
 								</template>
 								<div v-else>
-									<Link v-if="item.user['id'] === currentUser['id']" :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=4'">{{ $t('fleet_mission.4') }}</Link>
+									<Link
+										v-if="item.user['id'] === currentUser['id']"
+										:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=4'"
+									>
+										{{ $t('fleet_mission.4') }}
+									</Link>
 								</div>
-								<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=3'">{{ $t('fleet_mission.3') }}</Link>
+								<Link
+									:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type'] + '&mission=3'"
+								>
+									{{ $t('fleet_mission.3') }}
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -74,18 +107,37 @@
 										<div v-if="!isVacation && item.user" class="grid">
 											<div class="th text-center">
 												<div v-if="item.user['id'] !== currentUser['id']">
-													<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=1'">{{ $t('fleet_mission.1') }}</Link>
+													<Link
+														:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=1'"
+													>
+														{{ $t('fleet_mission.1') }}
+													</Link>
 													<br>
-													<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=5'">{{ $t('fleet_mission.5') }}</Link>
-
+													<Link
+														:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=5'"
+													>
+														{{ $t('fleet_mission.5') }}
+													</Link>
 													<div v-if="currentPlanet['units']['dearth_star'] > 0">
-														<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=9'">{{ $t('fleet_mission.9') }}</Link>
+														<Link
+															:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=9'"
+														>
+															{{ $t('fleet_mission.9') }}
+														</Link>
 													</div>
 												</div>
 												<div v-else>
-													<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=4'">{{ $t('fleet_mission.4') }}</Link>
+													<Link
+														:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=4'"
+													>
+														{{ $t('fleet_mission.4') }}
+													</Link>
 												</div>
-												<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=3'">{{ $t('fleet_mission.3') }}</Link>
+												<Link
+													:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=3&mission=3'"
+												>
+													{{ $t('fleet_mission.3') }}
+												</Link>
 											</div>
 										</div>
 									</div>
@@ -132,7 +184,9 @@
 										</div>
 										<div v-if="!isVacation" class="grid">
 											<div class="th">
-												<Link :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=2&mission=8'">
+												<Link
+													:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=2&mission=8'"
+												>
 													{{ $t('pages.galaxy.debris_send_fleet') }}
 												</Link>
 											</div>
@@ -151,14 +205,22 @@
 				<template #content>
 					<div class="block-table w-96">
 						<div class="grid">
-							<div class="c">Игрок {{ item.user['name'] }}<template v-if="item.user['stats'] && item.user['stats']['rank'] > 0">, место {{ item.user['stats']['rank'] }}</template></div>
+							<div class="c">
+								Игрок
+								{{ item.user['name'] }}
+								<template v-if="item.user['stats'] && item.user['stats']['rank'] > 0">
+									, место {{ item.user['stats']['rank'] }}
+								</template>
+							</div>
 						</div>
 						<div class="flex">
 							<div v-if="user_avatar" class="w-1/3">
 								<img :src="user_avatar" class="object-cover object-center aspect-square" alt="">
 							</div>
 							<div class="w-2/3 th text-center flex flex-col justify-center gap-2">
-								<Link v-if="item.user['id'] !== currentUser['id']" :href="'/messages/write/' + item.user['id']">Послать сообщение</Link>
+								<Link v-if="item.user['id'] !== currentUser['id']" :href="'/messages/write/' + item.user['id']">
+									Послать сообщение
+								</Link>
 								<Link :href="'/friends/new/' + item.user['id']">Добавить в друзья</Link>
 								<Link :href="'/stats/players?page=' + stat_page + '&id=' + item.user['id']">Статистика</Link>
 							</div>
@@ -167,11 +229,14 @@
 				</template>
 				<div>
 					<span :class="[user_status_class]">{{ item.user['name'] }}</span>
-
 					<span v-if="user_status" :class="[user_status_class]">
-						<span style="color: white">(</span><span v-if="user_status === 'UG' || user_status === 'G'"><Link href="/blocked" :class="[user_status_class]">{{ user_status }}</Link></span><span v-else>{{ user_status }}</span><span style="color: white">)</span>
+						<span style="color: var(--text-color)">(</span>
+						<span v-if="user_status === 'UG' || user_status === 'G'">
+							<Link href="/blocked" :class="[user_status_class]">{{ user_status }}</Link>
+						</span>
+						<span v-else>{{ user_status }}</span>
+						<span style="color: var(--text-color)">)</span>
 					</span>
-
 					<span v-if="item.user['role'] === 'admin'" class="negative">A</span>
 					<span v-if="item.user['role'] === 'super-operator'" class="neutral">SGo</span>
 					<span v-if="item.user['role'] === 'operator'" class="positive">Go</span>
@@ -180,7 +245,13 @@
 		</td>
 		<td class="th">
 			<Link v-if="item && !item['planet']['destruyed'] && item.user && item.user['race']" :href="'/info/70' + item.user['race']">
-				<img :src="'/assets/images/skin/race' + item.user['race'] + '.gif'" width="20" height="20" :alt="$t('races.' + item.user['race'])" :title="$t('races.' + item.user['race'])">
+				<img
+					:src="'/assets/images/skin/race' + item.user['race'] + '.gif'"
+					width="20"
+					height="20"
+					:alt="$t('races.' + item.user['race'])"
+					:title="$t('races.' + item.user['race'])"
+				>
 			</Link>
 		</td>
 		<td class="th">
@@ -206,7 +277,6 @@
 				</template>
 				<span :class="{ allymember: currentUser['alliance']?.id === item['alliance']['id'] }">{{ item['alliance']['tag'] }}</span>
 			</Popper>
-
 			<div v-if="item && item['alliance'] && currentUser['alliance']?.id !== item['alliance']['id']">
 				<small v-if="item['alliance']['diplomacy'] === 0">[{{ $t('alliance.diplomacy_status.0') }}]</small>
 				<small v-if="item['alliance']['diplomacy'] === 1" class="neutral">[{{ $t('alliance.diplomacy_status.1') }}]</small>
@@ -217,43 +287,77 @@
 		<td class="th whitespace-nowrap">
 			<div class="actions">
 				<template v-if="item && !item['planet']['destruyed'] && item.user && item.user['id'] !== currentUser['id']">
-					<SendMessagePopup v-tooltip="$t('send_message')" :aria-label="$t('send_message')" :id="item.user['id']"><GalaxyIcon type="message"/></SendMessagePopup>
-					<Link :href="'/friends/new/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_friend')" :aria-label="$t('pages.galaxy.actions_friend')">
+					<SendMessagePopup v-tooltip="$t('send_message')" :aria-label="$t('send_message')" :id="item.user['id']">
+						<GalaxyIcon type="message"/>
+					</SendMessagePopup>
+					<Link
+						:href="'/friends/new/' + item.user['id']"
+						v-tooltip="$t('pages.galaxy.actions_friend')"
+						:aria-label="$t('pages.galaxy.actions_friend')"
+					>
 						<GalaxyIcon type="friend"/>
 					</Link>
-
-					<button type="button" v-if="!isVacation && user['missile']" @click="$emit('sendMissile')" v-tooltip="$t('pages.galaxy.actions_rockets')" :aria-label="$t('pages.galaxy.actions_rockets')">
+					<button
+						type="button"
+						v-if="!isVacation && user['missile']"
+						@click="$emit('sendMissile')"
+						v-tooltip="$t('pages.galaxy.actions_rockets')"
+						:aria-label="$t('pages.galaxy.actions_rockets')"
+					>
 						<GalaxyIcon type="missile"/>
 					</button>
-
-					<Popper popper-class="galaxy-tooltip" v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']">
+					<Popper
+						popper-class="galaxy-tooltip"
+						v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']"
+					>
 						<template #content>
 							<div class="text-center flex flex-col gap-2">
-								<div><input type="text" class="w-full min-w-full" v-model.number="spyCount"></div>
+								<div>
+									<input type="text" class="w-full min-w-full" v-model.number="spyCount">
+								</div>
 								<div>
 									<button @click.prevent="spy(item['planet']['type'], $event)" type="button" class="button w-full">
 										{{ $t('pages.galaxy.actions_spy_planet') }}
 									</button>
 								</div>
 								<div>
-									<button v-if="item['moon'] && !item['moon']['destruyed']" @click.prevent="spy(3, $event)" type="button" class="button w-full">
+									<button
+										v-if="item['moon'] && !item['moon']['destruyed']"
+										@click.prevent="spy(3, $event)"
+										type="button"
+										class="button w-full"
+									>
 										{{ $t('pages.galaxy.actions_spy_moon') }}
 									</button>
 								</div>
 							</div>
 						</template>
-						<button type="button" class="galaxy-spy-trigger" :aria-label="$t('pages.galaxy.espionage')"><GalaxyIcon type="spy"/></button>
+						<button type="button" class="galaxy-spy-trigger" :aria-label="$t('pages.galaxy.espionage')">
+							<GalaxyIcon type="spy"/>
+						</button>
 					</Popper>
-
-					<ModalLink navigate :href="'/players/' + item.user['id']" v-tooltip="$t('pages.galaxy.actions_player_info')" :aria-label="$t('pages.galaxy.actions_player_info')">
+					<ModalLink
+						navigate
+						:href="'/players/' + item.user['id']"
+						v-tooltip="$t('pages.galaxy.actions_player_info')"
+						:aria-label="$t('pages.galaxy.actions_player_info')"
+					>
 						<GalaxyIcon type="player"/>
 					</ModalLink>
-					<Link :href="'/fleet/shortcut/create?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type']" v-tooltip="$t('pages.galaxy.actions_bookmarks')" :aria-label="$t('pages.galaxy.actions_bookmarks')">
+					<Link
+						:href="'/fleet/shortcut/create?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&type=' + item['planet']['type']"
+						v-tooltip="$t('pages.galaxy.actions_bookmarks')"
+						:aria-label="$t('pages.galaxy.actions_bookmarks')"
+					>
 						<GalaxyIcon type="bookmark"/>
 					</Link>
 				</template>
-
-				<Link v-if="!isVacation && !item && currentPlanet['units']['colonizer']" :href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&mission=7'" v-tooltip="$t('fleet_mission.7')" :aria-label="$t('fleet_mission.7')">
+				<Link
+					v-if="!isVacation && !item && currentPlanet['units']['colonizer']"
+					:href="'/fleet?galaxy=' + galaxy + '&system=' + system + '&planet=' + planet + '&mission=7'"
+					v-tooltip="$t('fleet_mission.7')"
+					:aria-label="$t('fleet_mission.7')"
+				>
 					<GalaxyIcon type="colonize"/>
 				</Link>
 			</div>

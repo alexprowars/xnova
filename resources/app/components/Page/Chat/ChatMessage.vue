@@ -1,6 +1,8 @@
 <template>
 	<div class="page-chat-messages-row text-left">
-		<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" @click="emit('private', item['user'])">{{ $formatDate(item['date'], 'HH:mm') }}</span>
+		<span :class="{date1: !item['me'] && !item['my'], date2: !!item['me'], date3: !!item['my']}" @click="emit('private', item['user'])">
+			{{ $formatDate(item['date'], 'HH:mm') }}
+		</span>
 		<span class="page-chat-row-content">
 			<span v-if="item['my']" class="page-chat-row-author is-own">{{ item['user'] }}</span><span v-else class="page-chat-row-author to" @click="emit('player', item['user'])">{{ item['user'] }}</span>:
 			<span v-if="item['tou'].length" :class="[item['private'] ? 'private' : 'player']">

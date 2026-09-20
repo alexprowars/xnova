@@ -1,7 +1,7 @@
 <template>
 	<div v-if="messages.length > 0" class="block">
 		<div class="title">{{ $t('menu.chat') }}</div>
-		<div class="content">
+		<div class="content is-padded">
 			<div class="overflow-y-auto overflow-x-hidden max-h-72">
 				<ChatMessage v-for="message in messages" :key="message.id" :item="message"/>
 			</div>

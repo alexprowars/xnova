@@ -13,7 +13,7 @@
 		padding: 12px 14px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: linear-gradient(110deg, #172e40, #0e1b29);
+		background: var(--ui-heading-background);
 	}
 
 	h1 {
@@ -23,7 +23,7 @@
 		gap: 8px;
 		width: auto;
 		margin: 0;
-		color: #e0edf5;
+		color: var(--ui-title-color);
 		font-size: 16px;
 		font-weight: 600;
 		line-height: 1.4;
@@ -36,7 +36,7 @@
 		align-items: center;
 		gap: 6px;
 		margin-bottom: 10px;
-		color: #a6c6d8;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
@@ -51,7 +51,7 @@
 		margin-bottom: 10px;
 		border: 1px solid var(--border-color);
 		border-radius: 6px;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.alliance-panel > h2, .alliance-panel > header {
@@ -62,8 +62,8 @@
 		margin: 0;
 		padding: 9px 14px;
 		border-radius: 5px 5px 0 0;
-		background: #142737;
-		color: #c5dce9;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 500;
 	}
@@ -84,16 +84,16 @@
 		display: inline-flex;
 		align-items: center;
 		padding: 1px 6px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 4px;
-		color: #a6c1d1;
+		color: var(--ui-label-color);
 		font-size: 12px;
 		font-weight: 400;
 	}
 
 	.alliance-prose {
 		padding: 14px;
-		color: #b7cddb;
+		color: var(--ui-text-color);
 		line-height: 1.65;
 		overflow-wrap: anywhere;
 	}
@@ -107,23 +107,23 @@
 		margin: 8px 0;
 		padding-left: 8px;
 		border: 0;
-		border-left: 2px solid #52768b;
-		background: #142737;
+		border-left: 2px solid var(--ui-divider-accent-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.quotetitle {
 		padding: 5px 8px;
-		border-color: #355166;
-		background: #1b3040;
-		color: #97b8ca;
+		border-color: var(--ui-border-color);
+		background: var(--ui-active-background);
+		color: var(--ui-icon-color);
 		font-size: 12px;
 	}
 
 	.quotecontent {
 		padding: 8px;
-		border-color: #355166;
-		background: #0a1622;
-		color: #a8c0d0;
+		border-color: var(--ui-border-color);
+		background: var(--ui-input-background);
+		color: var(--ui-label-color);
 		font-size: 14px;
 	}
 
@@ -140,68 +140,11 @@
 		margin: 8px 0;
 		padding: 8px 12px;
 		border: 0;
-		border-left: 2px solid #52788e;
+		border-left: 2px solid var(--ui-divider-accent-color);
 		border-radius: 0 4px 4px 0;
-		background: #142b3a;
-		color: #a5bfce;
+		background: var(--ui-hover-background);
+		color: var(--ui-label-color);
 		font-size: 14px;
-	}
-
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
-		min-height: 30px;
-		padding: 5px 10px;
-		font-size: 12px;
-		line-height: 1.4;
-		text-align: center;
-	}
-
-	.button:disabled {
-		opacity: .45;
-		cursor: default;
-	}
-
-	.button.is-secondary {
-		border-color: #355166;
-		background: #162936;
-		color: #a5bdcd;
-	}
-
-	.button.is-secondary:hover:enabled {
-		border-color: #628399;
-		background: #223c4e;
-	}
-
-	.button.is-danger {
-		border-color: #704a50;
-		background: #39262e;
-		color: #dba9a5;
-	}
-
-	.button.is-danger:hover:enabled {
-		border-color: #986269;
-		background: #51313b;
-		color: #f0c2bc;
-	}
-
-	.button.is-success {
-		border-color: #426a5a;
-		background: #1f3b32;
-		color: #abd4bb;
-	}
-
-	.button.is-success:hover:enabled {
-		border-color: #699a81;
-		background: #2b5243;
-	}
-
-	.button.icon-button {
-		width: 28px;
-		min-height: 28px;
-		padding: 5px;
 	}
 
 	.alliance-form {
@@ -213,7 +156,7 @@
 		flex-direction: column;
 		gap: 6px;
 		min-width: 0;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -229,44 +172,14 @@
 
 	.alliance-form input:not([type=checkbox]), .alliance-form select, .alliance-form textarea {
 		width: 100%;
-		min-width: 0;
-		max-width: 100%;
-		padding: 7px 9px;
-		border-radius: 4px;
-		background: #091623;
-		color: #c5d9e5;
-		font-size: 14px;
-		line-height: 1.5;
-		text-align: left;
 	}
 
 	.alliance-form textarea {
-		display: block;
 		min-height: 120px;
-		resize: vertical;
 	}
 
 	.alliance-form input[type=file] {
-		border: 1px solid #355166;
 		font-size: 12px;
-	}
-
-	.alliance-form input[type=file]::file-selector-button {
-		margin-right: 8px;
-		padding: 4px 8px;
-		border: 1px solid #355166;
-		border-radius: 3px;
-		background: #1b3547;
-		color: #c0d8e5;
-		font-size: 12px;
-		cursor: pointer;
-	}
-
-	.alliance-form input[type=checkbox], .alliance-check input, .alliance-permissions input {
-		width: 16px;
-		height: 16px;
-		flex-shrink: 0;
-		accent-color: #75bfd4;
 	}
 
 	.alliance-search-field {
@@ -284,7 +197,7 @@
 		justify-content: space-between;
 		gap: 10px;
 		margin-bottom: 6px;
-		color: #91adbf;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -303,29 +216,29 @@
 
 	.alliance-errors {
 		margin-top: 6px;
-		color: #dba29e;
+		color: var(--ui-danger-color);
 		font-size: 12px;
 	}
 
 	.alliance-empty {
 		padding: 26px 14px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		text-align: center;
 	}
 
 	.alliance-tag {
-		color: #82bdd3;
+		color: var(--ui-icon-color);
 		font-size: 12px;
 		font-weight: 500;
 	}
 
 	.alliance-muted, time {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.alliance-number {
-		color: #d1e3ed;
+		color: var(--text-color);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -344,7 +257,7 @@
 		padding: 7px 10px;
 		border: 0;
 		background: transparent;
-		color: #bdd3e1;
+		color: var(--ui-text-color);
 		font-size: 14px;
 		font-weight: 400;
 		text-align: left;
@@ -355,17 +268,17 @@
 
 	.alliance-table th {
 		padding-block: 7px;
-		background: #142737;
-		color: #8faabb;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.alliance-table tbody tr + tr td {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-table tbody tr:hover td {
-		background: #142b3b;
+		background: var(--ui-hover-background);
 	}
 
 	.alliance-list-row {
@@ -377,7 +290,7 @@
 	}
 
 	.alliance-list-row + .alliance-list-row {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-list-row > a:first-child {
@@ -406,12 +319,6 @@
 	}
 }
 
-@layer base {
-	.page-alliance .alliance-form input.error, .page-alliance .alliance-form textarea.error {
-		border-color: #bd7e79 !important;
-	}
-}
-
 .page-alliance-overview {
 	.alliance-hero {
 		display: flex;
@@ -419,9 +326,9 @@
 		gap: 16px;
 		padding: 18px;
 		margin-bottom: 10px;
-		border: 1px solid #314b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 6px;
-		background: radial-gradient(ellipse at top right, #22455780, transparent 70%), #102333;
+		background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--ui-selected-background) 50.2%, transparent), transparent 70%), var(--ui-surface-background);
 	}
 
 	.alliance-emblem {
@@ -431,10 +338,10 @@
 		width: 84px;
 		height: 84px;
 		padding: 8px;
-		border: 1px solid #35546b;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 8px;
-		background: #091925;
-		color: #82b9d0;
+		background: var(--ui-input-background);
+		color: var(--ui-icon-color);
 	}
 
 	.alliance-emblem svg {
@@ -455,7 +362,7 @@
 	.alliance-eyebrow {
 		display: block;
 		margin-bottom: 6px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
@@ -486,16 +393,16 @@
 		gap: 3px;
 		min-width: 0;
 		padding: 11px 14px;
-		background: #0e1b29;
+		background: var(--ui-panel-background);
 	}
 
 	.alliance-metrics span {
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.alliance-metrics strong {
-		color: #d2e4ee;
+		color: var(--text-color);
 		font-size: 16px;
 		font-weight: 500;
 	}
@@ -517,21 +424,21 @@
 		align-items: center;
 		gap: 12px;
 		padding: 18px 14px;
-		border: 1px solid #355166;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 6px;
-		background: linear-gradient(120deg, #172f42, #0e1b29);
+		background: linear-gradient(120deg, var(--ui-active-background), var(--ui-panel-background));
 	}
 
 	.alliance-entry-actions > a:hover {
-		border-color: #6a9bb3;
-		background: #1b3648;
+		border-color: var(--ui-border-hover-color);
+		background: var(--ui-active-background);
 	}
 
 	.alliance-entry-actions svg {
 		width: 32px;
 		height: 32px;
 		flex-shrink: 0;
-		color: #80b8d0;
+		color: var(--ui-icon-color);
 	}
 
 	.alliance-entry-actions strong {
@@ -543,13 +450,13 @@
 	.alliance-entry-actions small {
 		display: block;
 		margin-top: 4px;
-		color: #8faabb;
+		color: var(--ui-muted-color);
 		font-size: 12px;
 	}
 
 	.alliance-entry-actions > a > span:last-child {
 		margin-left: auto;
-		color: #82bdd3;
+		color: var(--ui-icon-color);
 	}
 
 	@media (max-width: 639px) {
@@ -594,26 +501,26 @@
 		width: 14px;
 		height: 14px;
 		flex-shrink: 0;
-		color: #7aa7be;
+		color: var(--ui-muted-color);
 	}
 
 	.alliance-race {
 		width: 24px;
 		height: 24px;
 		flex-shrink: 0;
-		color: #8ebed6;
+		color: var(--ui-icon-color);
 	}
 
 	.alliance-race.race-2 {
-		color: #91bda5;
+		color: var(--ui-success-strong-color);
 	}
 
 	.alliance-race.race-3 {
-		color: #d6b47b;
+		color: var(--ui-warning-color);
 	}
 
 	.alliance-race.race-4 {
-		color: #bc999e;
+		color: var(--ui-danger-color);
 	}
 
 	.alliance-member-actions > div {
@@ -625,14 +532,6 @@
 	.alliance-coordinates, time {
 		font-size: 12px;
 		white-space: nowrap;
-	}
-
-	.alliance-online .positive {
-		color: #94caaa !important;
-	}
-
-	.alliance-online .negative {
-		color: #c99b98 !important;
 	}
 
 	.alliance-online {
@@ -649,15 +548,12 @@
 
 	.alliance-rank-editor label {
 		flex-basis: 100%;
-		color: #a8c5d7;
+		color: var(--ui-link-color);
 		font-size: 12px;
 	}
 
 	.alliance-rank-editor select {
 		min-width: 160px;
-		max-width: 100%;
-		padding: 6px 8px;
-		font-size: 14px;
 	}
 
 	@media (max-width: 800px) {
@@ -668,7 +564,7 @@
 		.alliance-members-table thead {
 			display: block;
 			padding: 7px 10px;
-			background: #142737;
+			background: var(--ui-panel-heading-background);
 		}
 
 		.alliance-members-table thead tr {
@@ -693,7 +589,7 @@
 		}
 
 		.alliance-members-table tbody tr + tr {
-			border-top: 1px solid #263b4d;
+			border-top: 1px solid var(--ui-border-muted-color);
 		}
 
 		.alliance-members-table td, .alliance-members-table tbody tr + tr td {
@@ -713,14 +609,14 @@
 		.alliance-members-table td[data-label]::before {
 			display: block;
 			margin-bottom: 2px;
-			color: #7998ad;
+			color: var(--ui-subtle-color);
 			font-size: 12px;
 			content: attr(data-label);
 		}
 
 		.alliance-members-table tr.alliance-member-edit {
 			display: block;
-			background: #132c3e;
+			background: var(--ui-hover-background);
 		}
 
 		.alliance-members-table .alliance-member-edit td {
@@ -748,20 +644,20 @@
 		justify-content: space-between;
 		gap: 10px;
 		padding: 10px 12px;
-		border: 1px solid #304b60;
+		border: 1px solid var(--ui-border-color);
 		border-radius: 5px;
-		background: #142a3b;
-		color: #bdd5e4;
+		background: var(--ui-hover-background);
+		color: var(--ui-text-color);
 		font-size: 12px;
 	}
 
 	.alliance-admin-links a:hover {
-		border-color: #52778b;
-		background: #204356;
+		border-color: var(--ui-divider-accent-color);
+		background: var(--ui-selected-background);
 	}
 
 	.alliance-admin-links a span {
-		color: #81b9d0;
+		color: var(--ui-icon-color);
 	}
 
 	.alliance-logo-preview {
@@ -783,16 +679,16 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		color: #9bb7ca;
+		color: var(--ui-label-color);
 		font-size: 12px;
 	}
 
 	.alliance-danger-zone {
 		margin-top: 14px;
 		padding: 0 14px;
-		border: 1px solid #58414c;
+		border: 1px solid var(--ui-danger-border-muted-color);
 		border-radius: 6px;
-		background: #241c27;
+		background: var(--ui-danger-muted-background);
 	}
 
 	.alliance-danger-zone > div {
@@ -802,11 +698,11 @@
 		flex-wrap: wrap;
 		gap: 10px;
 		padding: 12px 0;
-		color: #cda6a7;
+		color: var(--ui-danger-color);
 	}
 
 	.alliance-danger-zone > div + div {
-		border-top: 1px solid #493a45;
+		border-top: 1px solid var(--ui-danger-border-muted-color);
 	}
 
 	.alliance-ranks {
@@ -827,14 +723,14 @@
 		min-width: 0;
 		padding: 5px 7px;
 		border-radius: 4px;
-		color: #a7c0d0;
+		color: var(--ui-label-color);
 		font-size: 12px;
 		cursor: pointer;
 	}
 
 	.alliance-permissions label:has(input:checked) {
-		background: #193546;
-		color: #c4e0e9;
+		background: var(--ui-active-background);
+		color: var(--ui-text-color);
 	}
 
 	.alliance-permissions label.is-readonly {
@@ -844,7 +740,7 @@
 
 	.alliance-rights-help summary {
 		padding: 10px 14px;
-		color: #a6c4d6;
+		color: var(--ui-link-color);
 		font-size: 12px;
 		cursor: pointer;
 	}
@@ -862,17 +758,17 @@
 		padding: 12px 14px;
 		border: 0;
 		background: transparent;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 		text-align: left;
 		cursor: pointer;
 	}
 
 	.alliance-request-button + .alliance-request-button {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-request-button:hover, .alliance-request-button.is-active {
-		background: #183448;
+		background: var(--ui-active-background);
 	}
 
 	.alliance-request-button strong {
@@ -883,7 +779,7 @@
 	}
 
 	.alliance-request-button > span {
-		color: #82bdd3;
+		color: var(--ui-icon-color);
 		font-size: 12px;
 	}
 
@@ -891,8 +787,8 @@
 		margin: 12px 14px 0;
 		padding: 10px 12px;
 		border-radius: 4px;
-		background: #091623;
-		color: #b8d0df;
+		background: var(--ui-input-background);
+		color: var(--ui-text-color);
 		white-space: pre-wrap;
 		overflow-wrap: anywhere;
 	}
@@ -929,36 +825,36 @@
 	}
 
 	.alliance-relation + .alliance-relation {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-relation > strong {
 		flex: 1;
 		min-width: 120px;
-		color: #c5dce9;
+		color: var(--ui-text-color);
 		font-weight: 500;
 		overflow-wrap: anywhere;
 	}
 
 	.alliance-relation-status {
 		padding: 3px 8px;
-		border: 1px solid #5e5744;
+		border: 1px solid var(--ui-warning-border-color);
 		border-radius: 4px;
-		background: #302e27;
-		color: #cfbd93;
+		background: var(--ui-warning-background);
+		color: var(--ui-warning-color);
 		font-size: 12px;
 	}
 
 	.alliance-relation-status.relation-2 {
-		border-color: #385c50;
-		background: #1b322d;
-		color: #99c5ae;
+		border-color: var(--ui-success-border-color);
+		background: var(--ui-success-muted-background);
+		color: var(--ui-success-color);
 	}
 
 	.alliance-relation-status.relation-3 {
-		border-color: #69444b;
-		background: #35232b;
-		color: #d6a29e;
+		border-color: var(--ui-danger-border-color);
+		background: var(--ui-danger-background);
+		color: var(--ui-danger-color);
 	}
 
 	.alliance-relation-actions {
@@ -980,15 +876,15 @@
 	}
 
 	.alliance-chat-message + .alliance-chat-message {
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-chat-message.is-own {
-		background: #142a3780;
+		background: color-mix(in srgb, var(--ui-button-secondary-background) 50.2%, transparent);
 	}
 
 	.alliance-chat-message.is-selected {
-		background: #1a394b;
+		background: var(--ui-button-background);
 	}
 
 	.alliance-chat-message > header {
@@ -1002,18 +898,18 @@
 	.alliance-chat-message > header > a {
 		flex: 1;
 		min-width: 100px;
-		color: #a7cfe1;
+		color: var(--ui-link-color);
 		overflow-wrap: anywhere;
 	}
 
 	.alliance-chat-message > header input {
 		width: 16px;
 		height: 16px;
-		accent-color: #75bfd4;
+		accent-color: var(--accent-color);
 	}
 
 	.alliance-chat-body {
-		color: #bfd1de;
+		color: var(--ui-text-color);
 		line-height: 1.6;
 		overflow-wrap: anywhere;
 	}
@@ -1025,7 +921,7 @@
 
 	.alliance-chat-pagination {
 		padding: 10px;
-		border-top: 1px solid #263b4d;
+		border-top: 1px solid var(--ui-border-muted-color);
 	}
 
 	.alliance-chat-moderation {
@@ -1035,19 +931,17 @@
 		flex-wrap: wrap;
 		gap: 8px;
 		padding: 10px 14px;
-		border-top: 1px solid #263b4d;
-		background: #132636;
+		border-top: 1px solid var(--ui-border-muted-color);
+		background: var(--ui-panel-heading-background);
 	}
 
 	.alliance-chat-moderation > span {
 		margin-right: auto;
-		color: #92b4c8;
+		color: var(--ui-icon-color);
 		font-size: 12px;
 	}
 
 	.alliance-chat-moderation select {
-		max-width: 100%;
-		padding: 5px 8px;
 		font-size: 12px;
 	}
 
