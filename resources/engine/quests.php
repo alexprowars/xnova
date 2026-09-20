@@ -46,7 +46,7 @@ return [
 	9 => [
 		'required' => ['quest' => 8],
 		'task' => ['planets' => 2],
-		'reward' => ['build' => [605 => 259200]],
+		'reward' => ['officier' => ['architect' => 259200]],
 	],
 	10 => [
 		'required' => ['quest' => 9],

@@ -114,7 +114,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 			}
 		});
 
-		static::deleting(static function (User $model) {
+		static::deleting(function (User $model) {
 			if ($model->alliance) {
 				if ($model->alliance->user_id != $model->id) {
 					$model->alliance->deleteMember($model->id);
@@ -124,6 +124,14 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 			}
 
 			LogsStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
+
+			$model->queue()->delete();
+			$model->planets()->update([
+				'destroyed_at' => now()->addDay(),
+				'user_id' => null,
+			]);
+
+			Cache::forget('app::planetlist_' . $model->id);
 		});
 	}
 

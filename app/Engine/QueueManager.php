@@ -30,11 +30,12 @@ class QueueManager
 		$this->loadQueue();
 	}
 
-	public function loadQueue(): void
+	public function loadQueue(bool $forUpdate = false): void
 	{
 		$this->queue = $this->planet->user->queue()
 			->orderBy('id')
 			->whereBelongsTo($this->planet)
+			->when($forUpdate, fn($query) => $query->lockForUpdate())
 			->get()
 			->map(fn(Models\Queue $item) => $item->setRelation('planet', $item->planet))
 			->collect();
@@ -109,6 +110,22 @@ class QueueManager
 	}
 
 	public function update(): void
+	{
+		$user = $this->getUser();
+
+		$this->planet->getConnection()->transaction(function () use ($user) {
+			$user->refreshForUpdate();
+			$this->planet->refreshForUpdate();
+			$this->planet->setRelation('user', $user);
+			$this->planet->setRelation('entities', $this->planet->entities()->lockForUpdate()->get());
+			$this->planet->getProduction()->reset();
+
+			$this->loadQueue(true);
+			$this->updateLocked();
+		});
+	}
+
+	protected function updateLocked(): void
 	{
 		$buildingsCount = $this->getCount(QueueType::BUILDING);
 
@@ -329,7 +346,7 @@ class QueueManager
 			}
 		}
 
-		$this->loadQueue();
+		$this->loadQueue(true);
 
 		return true;
 	}

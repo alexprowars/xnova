@@ -7,6 +7,7 @@ use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Support\ToastType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MerchantController extends Controller
@@ -20,10 +21,6 @@ class MerchantController extends Controller
 
 	public function exchange(Request $request)
 	{
-		if ($this->user->credits <= 0) {
-			throw new Exception('Недостаточно кредитов для проведения обменной операции');
-		}
-
 		$metal = (int) $request->post('metal', 0);
 		$crystal = (int) $request->post('crystal', 0);
 		$deuterium = (int) $request->post('deuterium', 0);
@@ -52,33 +49,45 @@ class MerchantController extends Controller
 			throw new Exception('Вы не можете обменять такое количество ресурсов');
 		}
 
-		if ($this->planet->{$type} < $exchange) {
-			throw new Exception('На планете недостаточно ресурсов данного типа');
-		}
+		DB::transaction(function () use ($type, $exchange, $metal, $crystal, $deuterium) {
+			$this->user->refreshForUpdate();
 
-		$this->planet->{$type} -= $exchange;
-
-		foreach (Vars::getResources() as $res) {
-			if ($res != $type) {
-				$this->planet->{$res} += $$res;
+			if ($this->user->credits <= 0) {
+				throw new Exception('Недостаточно кредитов для проведения обменной операции');
 			}
-		}
 
-		$this->planet->update();
+			$this->planet->refreshForUpdate();
+			$this->planet->setRelation('user', $this->user);
+			$this->planet->getProduction()->reset();
 
-		$this->user->credits -= 1;
-		$this->user->update();
+			if ($this->planet->{$type} < $exchange) {
+				throw new Exception('На планете недостаточно ресурсов данного типа');
+			}
 
-		$quest = $this->user->quests()
-			->where('quest_id', 6)
-			->where('finish', false)
-			->where('stage', 0)
-			->first();
+			$this->planet->{$type} -= $exchange;
 
-		if ($quest) {
-			$quest->stage = 1;
-			$quest->save();
-		}
+			foreach (Vars::getResources() as $res) {
+				if ($res != $type) {
+					$this->planet->{$res} += $$res;
+				}
+			}
+
+			$this->planet->update();
+
+			$this->user->credits -= 1;
+			$this->user->update();
+
+			$quest = $this->user->quests()
+				->where('quest_id', 6)
+				->where('finish', false)
+				->where('stage', 0)
+				->first();
+
+			if ($quest) {
+				$quest->stage = 1;
+				$quest->save();
+			}
+		});
 
 		toast(ToastType::SUCCESS, 'Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type));
 	}

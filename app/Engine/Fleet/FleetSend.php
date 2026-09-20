@@ -174,6 +174,11 @@ class FleetSend
 			$targerUser = $this->targetPlanet->user;
 
 			if (!$targerUser) {
+				if ($this->mission == MissionType::Recycling) {
+					// Поле обломков может существовать без владельца планеты.
+					return;
+				}
+
 				throw new Exception('Неизвестная ошибка #FLTNFU' . $this->targetPlanet->user_id);
 			}
 		} else {

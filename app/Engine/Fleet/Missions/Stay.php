@@ -13,7 +13,7 @@ class Stay extends BaseMission
 {
 	public static function isMissionPossible(Planet $planet, Coordinates $target, ?Planet $targetPlanet, array $units = [], bool $isAssault = false): bool
 	{
-		return $targetPlanet && ($targetPlanet->user_id == $planet->user_id || $targetPlanet->user->isAdmin());
+		return $targetPlanet && ($targetPlanet->user_id == $planet->user_id || $targetPlanet->user?->isAdmin());
 	}
 
 	public function targetEvent(): void

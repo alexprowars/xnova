@@ -404,9 +404,9 @@
 			"subtitle_team": "Самые разрушительные групповые бои",
 			"col_outcome": "Итог",
 			"col_date": "Дата",
-			"outcome_loss": "Н",
+			"outcome_loss": "О",
 			"outcome_win": "А",
-			"outcome_draw": "О",
+			"outcome_draw": "Н",
 			"empty_list": "В этой вселенной еще не было крупных боев"
 		},
 		"players": {

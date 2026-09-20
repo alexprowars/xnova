@@ -156,11 +156,13 @@ class QuestController extends Controller
 						$result['rewd'][] = $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>';
 					} elseif ($type == ItemType::DEFENSE) {
 						$result['rewd'][] = $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>';
-					} elseif ($type == ItemType::OFFICIER) {
-						$result['rewd'][] = 'Офицер <b>' . __('main.tech.' . $element) . '</b> на ' . round($level / 3600 / 24, 1) . ' суток';
 					} else {
 						$result['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
 					}
+				}
+			} elseif ($rewardKey == 'officier') {
+				foreach ($rewardVal as $code => $duration) {
+					$result['rewd'][] = 'Офицер <b>' . __('officier.items.' . $code) . '</b> на ' . round($duration / 86400, 1) . ' суток';
 				}
 			} elseif ($rewardKey == 'storage_rand') {
 				$result['rewd'][] = '+1 уровень одного из хранилищ ресурсов';
@@ -226,15 +228,20 @@ class QuestController extends Controller
 							$this->user->setTech($element, $this->user->getTechLevel($element) + (int) $level);
 						} elseif ($type == ItemType::FLEET || $type == ItemType::DEFENSE) {
 							$this->planet->updateAmount($element, $level, true);
-						} elseif ($type == ItemType::OFFICIER) {
-							if ($this->user->{Vars::getName($element)}?->isFuture()) {
-								$this->user->{Vars::getName($element)} = $this->user->{Vars::getName($element)}->addSeconds($level);
-							} else {
-								$this->user->{Vars::getName($element)} = now()->addSeconds($level);
-							}
 						} elseif ($type == ItemType::BUILDING) {
 							$this->planet->updateAmount($element, (int) $level, true);
 						}
+					}
+				} elseif ($rewardKey == 'officier') {
+					foreach ($rewardVal as $code => $duration) {
+						if (!in_array($code, Vars::getOfficiers(), true)) {
+							throw new Exception('Неизвестный офицер в награде задания');
+						}
+
+						$attribute = 'officier_' . $code;
+						$expiresAt = $this->user->{$attribute};
+
+						$this->user->{$attribute} = ($expiresAt?->isFuture() ? $expiresAt : now())->addSeconds($duration);
 					}
 				} elseif ($rewardKey == 'storage_rand') {
 					$this->planet->updateAmount(random_int(22, 24), 1, true);

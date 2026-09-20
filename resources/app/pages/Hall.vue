@@ -29,9 +29,9 @@
 					<span v-else>{{ item['title'] }}</span>
 				</div>
 				<div class="col-span-1 th">
-					<template v-if="item['won'] === 0">{{ $t('pages.hall.outcome_loss') }}</template>
+					<template v-if="item['won'] === 0">{{ $t('pages.hall.outcome_draw') }}</template>
 					<template v-else-if="item['won'] === 1">{{ $t('pages.hall.outcome_win') }}</template>
-					<template v-else>{{ $t('pages.hall.outcome_draw') }}</template>
+					<template v-else>{{ $t('pages.hall.outcome_loss') }}</template>
 				</div>
 				<div class="col-span-3 th" :class="{ positive: page['last'] === item['id'] }">
 					{{ $formatDate(item['date'], 'DD MMM YYYY HH:mm:ss') }}

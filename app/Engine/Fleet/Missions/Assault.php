@@ -14,6 +14,11 @@ class Assault extends BaseMission
 
 	public function targetEvent(): void
 	{
+		// Ведущий флот рассчитывает бой и отправляет обратно всех участников САБ.
+		if ($this->fleet->assault_id) {
+			return;
+		}
+
 		$this->return();
 	}
 }

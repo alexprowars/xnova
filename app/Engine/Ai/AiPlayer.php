@@ -225,9 +225,14 @@ class AiPlayer
 			return false;
 		}
 
+		$queuedBuildingIds = $this->queue->get(QueueType::BUILDING)->pluck('id')->all();
+
 		$this->queue->add($object);
 
-		return true;
+		return $this->queue->get(QueueType::BUILDING)
+			->where('object_id', $object->getId())
+			->whereNotIn('id', $queuedBuildingIds)
+			->isNotEmpty();
 	}
 
 	private function tryQueueResearch(int $id): bool

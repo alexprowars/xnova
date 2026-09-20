@@ -79,6 +79,23 @@ class Build
 
 	public function delete(int $queueId): void
 	{
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
+
+		$planet->getConnection()->transaction(function () use ($planet, $user, $queueId) {
+			$user->refreshForUpdate();
+			$planet->refreshForUpdate();
+			$planet->setRelation('user', $user);
+			$planet->setRelation('entities', $planet->entities()->lockForUpdate()->get());
+			$planet->getProduction()->reset();
+
+			$this->queue->loadQueue(true);
+			$this->deleteLocked($queueId);
+		});
+	}
+
+	protected function deleteLocked(int $queueId): void
+	{
 		$queueArray = $this->queue->get(QueueType::BUILDING);
 
 		$queueItem = $queueArray->firstWhere('id', $queueId);
@@ -88,7 +105,7 @@ class Build
 		}
 
 		if (!$this->queue->deleteInQueue($queueItem)) {
-			$queueItem->delete();
+			return;
 		}
 
 		if ($queueItem->date) {
@@ -121,7 +138,7 @@ class Build
 			}
 		}
 
-		$this->queue->loadQueue();
+		$this->queue->loadQueue(true);
 		$this->queue->nextBuildingQueue();
 	}
 }
