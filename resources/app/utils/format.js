@@ -1,3 +1,5 @@
+import i18n from '../i18n.js';
+
 export function number (value)
 {
 	if (value > 1000000000)
@@ -25,15 +27,15 @@ export function time (value, separator, full)
 	let time = '';
 
 	if (dd !== 0)
-		time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' д. ');
+		time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' ' + i18n.global.t('duration.day') + ' ');
 
 	if (hh > 0 || full)
-		time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ч. ');
+		time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ' + i18n.global.t('duration.hour') + ' ');
 
 	if (mm > 0 || full)
-		time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' м. ');
+		time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' ' + i18n.global.t('duration.minute') + ' ');
 
-	time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' с. ');
+	time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' ' + i18n.global.t('duration.second') + ' ');
 
 	if (!time.length)
 		time = '-';

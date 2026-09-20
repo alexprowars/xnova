@@ -8,15 +8,15 @@
 						<div class="resource-panel-item-tooltip-title">{{ $t('resources.energy') }}</div>
 						<div class="resource-panel-item-tooltip-info">
 							<div>
-								<div>Доступно:</div>
+								<div>{{ $t('resource_panel.available') }}:</div>
 								<div>{{ $formatNumber(resource['value']) }}</div>
 							</div>
 							<div>
-								<div>Производство:</div>
+								<div>{{ $t('resource_panel.production') }}:</div>
 								<div>{{ $formatNumber(resource['capacity']) }}</div>
 							</div>
 							<div>
-								<div>Потребление:</div>
+								<div>{{ $t('resource_panel.consumption') }}:</div>
 								<div>{{ $formatNumber(resource['capacity'] - resource['value']) }}</div>
 							</div>
 						</div>
@@ -26,7 +26,7 @@
 		</ModalLink>
 		<div class="resource-panel-item-info">
 			<div class="resource-panel-item-label">{{ $t('resources.energy') }}</div>
-			<div class="resource-panel-item-value" :class="{ 'is-deficit': resource.value < 0 }" title="Доступно энергии">{{ $formatNumber(resource.value) }}</div>
+			<div class="resource-panel-item-value" :class="{ 'is-deficit': resource.value < 0 }" :title="$t('resource_panel.available_energy')">{{ $formatNumber(resource.value) }}</div>
 		</div>
 	</div>
 </template>

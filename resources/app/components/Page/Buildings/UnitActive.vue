@@ -37,7 +37,7 @@
 
 				<div v-if="item['available']" class="building-active-upgrade">
 					<div v-if="item['is_max']" class="text-center negative">
-						Вы можете построить только {{ item['max'] }} постройку данного типа
+						{{ $t('construction.unit_limit', { count: item['max'] }) }}
 					</div>
 					<div v-else-if="max > 0">
 						<a @click.prevent="setMax">
@@ -51,7 +51,7 @@
 				</div>
 
 				<div v-if="item['requirements']" class="building-active-requirements">
-					<div class="title">Требования</div>
+					<div class="title">{{ $t('pages.techtree.requirements') }}</div>
 					<div class="items">
 						<div v-for="req in item['requirements']" class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }" v-tooltip="req['name']">
 							<div class="item-title">

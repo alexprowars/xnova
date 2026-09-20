@@ -1,14 +1,14 @@
 <template>
-	<Head title="Оборона"/>
+	<Head :title="$t('menu.defense')"/>
 	<div class="page-building">
 		<div class="buldings">
 			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/defense-bg.webp\')' }">
 				<div class="buldings-header-main">
 					<span class="title">
-						Оборона / {{ planet['name'] }}
+						{{ $t('menu.defense') }} / {{ planet['name'] }}
 					</span>
 					<Link href="/fleet" class="button">
-						Флот
+						{{ $t('menu.fleet') }}
 					</Link>
 				</div>
 				<UnitActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction"/>

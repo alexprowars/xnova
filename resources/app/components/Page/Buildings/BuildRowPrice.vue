@@ -5,7 +5,7 @@
 				<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
 
 				<span v-if="resources[resource]['value'] >= value" class="resYes">{{ $formatNumber(value) }}</span>
-				<span v-else class="resNo" :v-tooltip="'Необходимо еще: '+$formatNumber(value - resources[resource]['value'])">{{ $formatNumber(value) }}</span>
+				<span v-else class="resNo" v-tooltip="$t('construction.resources_missing', { amount: $formatNumber(value - resources[resource]['value']) })">{{ $formatNumber(value) }}</span>
 			</div>
 		</template>
 	</div>

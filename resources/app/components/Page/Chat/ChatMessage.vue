@@ -6,7 +6,7 @@
 		<span class="page-chat-row-content">
 			<span v-if="item['my']" class="page-chat-row-author is-own">{{ item['user'] }}</span><span v-else class="page-chat-row-author to" @click="emit('player', item['user'])">{{ item['user'] }}</span>:
 			<span v-if="item['tou'].length" :class="[item['private'] ? 'private' : 'player']">
-				{{ item['private'] ? 'приватно' : 'для' }} [<span v-for="(u, i) in item['tou']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" @click.prevent="emit('player', u)">{{ u }}</a><a v-else @click.prevent="emit('private', u)">{{ u }}</a></span>]
+				{{ $t(item['private'] ? 'chat_recipient.private' : 'chat_recipient.public') }} [<span v-for="(u, i) in item['tou']">{{ i > 0 ? ',' : '' }}<a v-if="!item['private']" @click.prevent="emit('player', u)">{{ u }}</a><a v-else @click.prevent="emit('private', u)">{{ u }}</a></span>]
 			</span>
 			<span class="page-chat-row-message" v-html="reformatMessage(item['text'])"></span>
 		</span>

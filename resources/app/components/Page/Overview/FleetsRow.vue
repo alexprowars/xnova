@@ -6,14 +6,14 @@
 		</div>
 		<div class="overview-fleet-details">
 			<div class="overview-fleet-description">
-				<template v-if="item['owner']">Ваш</template>
-				<template v-else>{{ item['assault'] ? 'Союзный ' : 'Чужой' }}</template>
+				<template v-if="item['owner']">{{ $t('fleet_activity.own') }}</template>
+				<template v-else>{{ $t(item['assault'] ? 'fleet_activity.allied' : 'fleet_activity.foreign') }}</template>
 
 				<Popper popper-class="overview-fleet-tooltip">
 					<template #content>
 						<div class="overview-fleet-tooltip-content">
 							<div v-if="!Object.keys(item['units']).length" class="text-center">
-								Нет информации
+								{{ $t('fleet_activity.unknown') }}
 							</div>
 							<template v-else>
 								<div v-for="(count, unit) in item['units']" class="grid grid-cols-4">
@@ -22,7 +22,7 @@
 									<div v-if="count !== null" class="text-right">{{ $formatNumber(count) }}</div>
 								</div>
 								<div v-if="item['total']" class="grid grid-cols-2">
-									<div>Численность:</div>
+									<div>{{ $t('fleet_activity.count') }}</div>
 									<div class="text-right">{{ $formatNumber(item['total']) }}</div>
 								</div>
 							</template>
@@ -30,40 +30,40 @@
 					</template>
 
 					<template v-if="units.length && item['mission'] === 1">
-						<Link :href="'/sim?units=' + units" class="overview-fleet-trigger">флот</Link>
+						<Link :href="'/sim?units=' + units" class="overview-fleet-trigger">{{ $t('fleet_activity.fleet') }}</Link>
 					</template>
-					<button v-else type="button" class="overview-fleet-trigger">флот</button>
+					<button v-else type="button" class="overview-fleet-trigger">{{ $t('fleet_activity.fleet') }}</button>
 				</Popper>
 
 				<template v-if="!item['owner']">
-					игрока
+					{{ $t('fleet_activity.of_player') }}
 					<template v-if="item['user']">
 						{{ item['user']['name'] }} <Link :href="'/messages/write/' + item['user']['id']" :title="$t('send_message')" :aria-label="$t('send_message')"><SendIcon class="inline-block size-4 align-middle" aria-hidden="true" focusable="false"/></Link>
 					</template>
 				</template>
 
 				<template v-if="item['status'] === 0">
-					отправленный
+					{{ $t('fleet_activity.sent') }}
 					{{ start }} <Link :href="'/galaxy?galaxy=' + item['start']['galaxy'] + '&system=' + item['start']['system']">[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]</Link>
-					направляется к
+					{{ $t('fleet_activity.heading') }}
 					{{ target }} <Link :href="'/galaxy?galaxy=' + item['target']['galaxy'] + '&system=' + item['target']['system']">[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]</Link>
 				</template>
 				<template v-else-if="item['status'] === 1">
-					отправленный
+					{{ $t('fleet_activity.sent') }}
 					{{ start }} <Link :href="'/galaxy?galaxy=' + item['start']['galaxy'] + '&system=' + item['start']['system']">[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]</Link>
 
-					<template v-if="item['mission'] === 5">защищает</template>
-					<template v-else>исследует</template>
+					<template v-if="item['mission'] === 5">{{ $t('fleet_activity.defending') }}</template>
+					<template v-else>{{ $t('fleet_activity.exploring') }}</template>
 
 					{{ target }} <Link :href="'/galaxy?galaxy=' + item['target']['galaxy'] + '&system=' + item['target']['system']">[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]</Link>
 				</template>
 				<template v-else>
-					отправленный
+					{{ $t('fleet_activity.sent') }}
 					{{ target }} <Link :href="'/galaxy?galaxy=' + item['target']['galaxy'] + '&system=' + item['target']['system']">[{{ item['target']['galaxy'] }}:{{ item['target']['system'] }}:{{ item['target']['planet'] }}]</Link>
 					{{ start }} <Link :href="'/galaxy?galaxy=' + item['start']['galaxy'] + '&system=' + item['start']['system']">[{{ item['start']['galaxy'] }}:{{ item['start']['system'] }}:{{ item['start']['planet'] }}]</Link>
 				</template>.
 			</div>
-			<div class="overview-fleet-mission"><span class="overview-fleet-mission-label">Задание:</span>
+			<div class="overview-fleet-mission"><span class="overview-fleet-mission-label">{{ $t('fleet_activity.mission') }}</span>
 				<template v-if="item['resources']['metal'] > 0 || item['resources']['crystal'] > 0 || item['resources']['deuterium'] > 0">
 					<Popper popper-class="overview-fleet-tooltip">
 						<template #content>
@@ -96,9 +96,12 @@
 <script setup>
 	import SendIcon from '~/images/icons/send.svg?component';
 	import { computed } from 'vue';
+	import { useI18n } from 'vue-i18n';
 	import { Link } from '@inertiajs/vue3';
 	import Timer from '~/components/Timer.vue';
 	import Popper from '~/components/Popper.vue';
+
+	const { t } = useI18n();
 
 	const { item } = defineProps({
 		item: Object
@@ -123,28 +126,28 @@
 
 		if (item['status'] !== 2) {
 			if (item['start_name'] === null || item['start_name'] === '') {
-				result = ' с координат ';
+				result = t('fleet_activity.from_coordinates');
 			} else {
 				if (item['start']['planet_type'] === 1) {
-					result = 'с планеты';
+					result = t('fleet_activity.from_planet');
 				} else if (item['start']['planet_type'] === 3) {
-					result = 'с луны';
+					result = t('fleet_activity.from_moon');
 				} else if (item['start']['planet_type'] === 5) {
-					result = 'с военной базы';
+					result = t('fleet_activity.from_base');
 				}
 
 				result += ' ' + item['start_name'] + ' ';
 			}
 		} else {
 			if (item['start_name'] === null || item['start_name'] === '') {
-				result = ' на координаты ';
+				result = t('fleet_activity.return_coordinates');
 			} else {
 				if (item['start']['planet_type'] === 1) {
-					result = 'возвращается на планету';
+					result = t('fleet_activity.return_planet');
 				} else if (item['start']['planet_type'] === 3) {
-					result = 'возвращается на луну';
+					result = t('fleet_activity.return_moon');
 				} else if (item['start']['planet_type'] === 5) {
-					result = 'возвращается на военную базу';
+					result = t('fleet_activity.return_base');
 				}
 
 				result += ' ' + item['start_name'] + ' ';
@@ -159,40 +162,40 @@
 
 		if (item['status'] !== 2) {
 			if (item['target_name'] === null || item['target_name'] === '') {
-				result = ' координаты ';
+				result = t('fleet_activity.coordinates');
 			} else {
 				if (item['mission'] !== 15 && item['mission'] !== 5) {
 					if (item['target']['planet_type'] === 1) {
-						result = 'планете';
+						result = t('fleet_activity.planet');
 					} else if (item['target']['planet_type'] === 3) {
-						result = 'луне';
+						result = t('fleet_activity.moon');
 					} else if (item['target']['planet_type'] === 2) {
-						result = 'полю обломков';
+						result = t('fleet_activity.debris');
 					} else if (item['target']['planet_type'] === 5) {
-						result = ' военной базе ';
+						result = t('fleet_activity.base');
 					}
 				} else {
-					result = 'координатам';
+					result = t('fleet_activity.position');
 				}
 
 				result += ' ' + item['target_name'] + ' ';
 			}
 		} else {
 			if (item['target_name'] === null || item['target_name'] === '') {
-				result = ' с координат ';
+				result = t('fleet_activity.from_coordinates');
 			} else {
 				if (item['mission'] !== 15) {
 					if (item['target']['planet_type'] === 1) {
-						result = 'с планеты';
+						result = t('fleet_activity.from_planet');
 					} else if (item['target']['planet_type'] === 3) {
-						result = 'с луны';
+						result = t('fleet_activity.from_moon');
 					} else if (item['target']['planet_type'] === 2) {
-						result = 'с поля обломков';
+						result = t('fleet_activity.from_debris');
 					} else if (item['target']['planet_type'] === 5) {
-						result = ' с военной базы ';
+						result = t('fleet_activity.from_base');
 					}
 				} else {
-					result = 'с позиции';
+					result = t('fleet_activity.from_position');
 				}
 
 				result += ' ' + item['target_name'] + ' ';

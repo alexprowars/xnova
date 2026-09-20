@@ -1,4 +1,120 @@
 {
+	"fleet_activity": {
+		"own": "Your",
+		"unknown": "No information",
+		"fleet": "fleet",
+		"of_player": "belonging to",
+		"sent": "sent",
+		"heading": "is heading to",
+		"defending": "is defending",
+		"exploring": "is exploring",
+		"mission": "Mission:",
+		"count": "Count:",
+		"allied": "Allied",
+		"foreign": "Foreign",
+		"from_coordinates": "from coordinates",
+		"from_planet": "from planet",
+		"from_moon": "from moon",
+		"from_base": "from military base",
+		"return_coordinates": "is returning to coordinates",
+		"return_planet": "is returning to planet",
+		"return_moon": "is returning to moon",
+		"return_base": "is returning to military base",
+		"coordinates": "coordinates",
+		"planet": "planet",
+		"moon": "moon",
+		"debris": "debris field",
+		"base": "military base",
+		"position": "coordinates",
+		"from_debris": "from debris field",
+		"from_position": "from position"
+	},
+	"arcade": {
+		"sound_on": "Enable sound",
+		"sound_off": "Mute sound",
+		"start": "Press Space to start.",
+		"game_over": "Game over!",
+		"result": "Score: {score}. Level reached: {level}.",
+		"lives": "Lives: {count}",
+		"score": "Score: {score}, Level: {level}",
+		"paused": "Paused",
+		"level": "Level {level}",
+		"countdown": "Starting in {seconds}"
+	},
+	"construction": {
+		"resource_settings": "Resource settings",
+		"unit_limit": "You can build at most {count} units of this type.",
+		"resources_missing": "Still needed: {amount}"
+	},
+	"resource_panel": {
+		"available": "Available",
+		"production": "Production",
+		"consumption": "Consumption",
+		"efficiency": "Efficiency",
+		"capacity": "Capacity",
+		"available_energy": "Available energy"
+	},
+	"footer": {
+		"changes": "Latest changes",
+		"online": "Players online",
+		"total": "Total players"
+	},
+	"notifications": {
+		"vacation": "Vacation mode is active. Game functionality is limited.",
+		"deletion": "Account deletion is active.<br>Your account will be deleted after {date}. You can cancel deletion in the game settings."
+	},
+	"duration": {
+		"day": "d",
+		"hour": "h",
+		"minute": "m",
+		"second": "s"
+	},
+	"editor": {
+		"size": "Text size",
+		"small": "Small",
+		"normal": "Normal",
+		"large": "Large",
+		"huge": "Huge",
+		"bold": "Bold",
+		"italic": "Italic",
+		"underline": "Underline",
+		"strike": "Strikethrough",
+		"center": "Align center",
+		"left": "Align left",
+		"right": "Align right",
+		"justify": "Justify",
+		"spoiler": "Spoiler",
+		"link": "Insert link",
+		"image": "Insert image",
+		"large_image": "Insert large image",
+		"numbered_list": "Numbered list",
+		"list": "List",
+		"quote": "Quote",
+		"author_quote": "Quote with author",
+		"smiles": "Emoticons",
+		"text_color": "Text color",
+		"background_color": "Background color",
+		"preview": "Preview",
+		"enter_link": "Enter a URL:",
+		"enter_video": "Enter a video URL:",
+		"enter_image": "Enter an image URL:",
+		"enter_audio": "Enter an audio URL:",
+		"wrote": "wrote"
+	},
+	"chat_recipient": {
+		"private": "privately",
+		"public": "to"
+	},
+	"officer_dialog": {
+		"title": "Recruit officer",
+		"confirm": "Recruit <b>{name}</b> for <b>{days}</b> days for <b>{price}</b> credits?",
+		"cancel": "Cancel",
+		"hire": "Recruit"
+	},
+	"galaxy_player": {
+		"title": "Player",
+		"rank": "rank {rank}"
+	},
 	"interface": {
 		"navigation": "Navigation",
 		"colonies": "Colonies",
@@ -287,7 +403,7 @@
 		"9": ["lime", "Green"],
 		"10": ["maroon", "Dark red"],
 		"11": ["orange", "Orange"],
-		"12": ["сhocolate", ""],
+		"12": ["chocolate", ""],
 		"13": ["darkkhaki", "Dark Khaki"]
 	},
 	"info": {
@@ -642,6 +758,8 @@
 			"races_table_points_per_player": "Points per player"
 		},
 		"options": {
+			"order_ascending": "Ascending",
+			"order_descending": "Descending",
 			"vacation_heading": "Vacation mode",
 			"title": "Settings",
 			"planets_fleets": "Planets and flights",

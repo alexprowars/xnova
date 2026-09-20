@@ -24,11 +24,11 @@ class Chat extends Model
 		$publicUsers = [];
 		$privateUsers = [];
 
-		if (preg_match_all('/приватно \[(.*?)]/iu', $message, $match)) {
+		if (preg_match_all('/(?<![\pL\pN_])(?:приватно|privately) \[(.*?)]/iu', $message, $match)) {
 			$privateUsers = array_map('trim', $match[1]);
 		}
 
-		if (preg_match_all('/для \[(.*?)]/iu', $message, $match)) {
+		if (preg_match_all('/(?<![\pL\pN_])(?:для|to) \[(.*?)]/iu', $message, $match)) {
 			$publicUsers = array_map('trim', $match[1]);
 
 			if (!empty($privateUsers)) {

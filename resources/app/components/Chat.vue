@@ -53,9 +53,12 @@
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
 	import { onBeforeUnmount, onMounted, ref, watch, inject } from 'vue';
 	import ChatMessage from './Page/Chat/ChatMessage.vue';
 	import { isMobile } from '~/utils/helpers.js';
+
+	const { t } = useI18n();
 
 	const props = defineProps({
 		visible: {
@@ -124,11 +127,11 @@
 	}
 
 	function toPlayer (user) {
-		message.value = 'для [' + user + '] ' + message.value;
+		message.value = t('chat_recipient.public') + ' [' + user + '] ' + message.value;
 	}
 
 	function toPrivate (user) {
-		message.value = 'приватно [' + user + '] ' + message.value;
+		message.value = t('chat_recipient.private') + ' [' + user + '] ' + message.value;
 	}
 
 	function sendMessage () {

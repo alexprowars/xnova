@@ -1,6 +1,19 @@
 <?php
 
 return [
+	'NoPoints' => 'You do not have enough credits!',
+	'OffiRecrute' => 'Officer recruited!',
+	'off_points' => 'Available credits: ',
+	'Officier' => 'Officer',
+	'power' => [
+		'geologist' => ['+25% mine production', '+25% storage capacity'],
+		'admiral' => ['+2 fleet slots', '+10% maximum moon formation chance', '+25% ship speed', '-10% ship construction costs'],
+		'engineer' => ['+15% energy production', '-10% defense construction costs', '-30% defensive losses', '-50% Death Star explosion chance'],
+		'technocrat' => ['+2 espionage levels', '-25% research time'],
+		'architect' => ['+2 building queue slots', '-25% construction time'],
+		'metaphysician' => ['-20% deuterium consumption in flight'],
+		'mercenary' => ['+10% weapons', '+10% shields', '+10% armor'],
+	],
 	'items' => [
 		'geologist' => 'Geologist',
 		'admiral' => 'Admiral',

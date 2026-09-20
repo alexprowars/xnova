@@ -21,7 +21,7 @@ class ChatMessage extends JsonResource
 		$users = $recipients['users'];
 		$isPrivate = $recipients['private'];
 
-		$message = preg_replace('/(приватно|для) \[.*?]/iu', '', $message);
+		$message = preg_replace('/(?<![\pL\pN_])(?:приватно|для|privately|to) \[.*?]/iu', '', $message);
 
 		$message = trim($message);
 		$message = nl2br(str_replace(["\n", "\r"], '', $message));

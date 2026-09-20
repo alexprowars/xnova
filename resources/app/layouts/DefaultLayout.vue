@@ -9,8 +9,8 @@
 				<div class="main-content-row">
 					<MessagesRow v-for="message in state.messages" :type="message.type || ''" :text="message.text"/>
 					<MessagesRow v-if="message" type="message" :text="message"/>
-					<MessagesRow v-if="user?.vacation" type="warning" text="Включен режим отпуска! Функциональность игры ограничена."/>
-					<MessagesRow v-if="user?.deleted_at" type="info" :text="'Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после ' + $formatDate(user.deleted_at, 'DD MMM YYYY HH:mm') + '. Выключить режим удаления можно в настройках игры.'"/>
+					<MessagesRow v-if="user?.vacation" type="warning" :text="$t('notifications.vacation')"/>
+					<MessagesRow v-if="user?.deleted_at" type="info" :text="$t('notifications.deletion', { date: $formatDate(user.deleted_at, 'DD MMM YYYY HH:mm') })"/>
 					<slot/>
 				</div>
 			</div>

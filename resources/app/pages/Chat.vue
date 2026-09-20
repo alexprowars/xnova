@@ -125,11 +125,14 @@
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
 	import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 	import parser from '~/utils/parser';
 	import ChatMessage from '~/components/Page/Chat/ChatMessage.vue';
 	import { Head } from '@inertiajs/vue3';
 	import Popper from '~/components/Popper.vue';
+
+	const { t } = useI18n();
 
 	defineOptions({
 		layout: {
@@ -188,11 +191,11 @@
 	}
 
 	function toPlayer (user) {
-		message.value = 'для [' + user + '] ' + message.value;
+		message.value = t('chat_recipient.public') + ' [' + user + '] ' + message.value;
 	}
 
 	function toPrivate (user) {
-		message.value = 'приватно [' + user + '] ' + message.value;
+		message.value = t('chat_recipient.private') + ' [' + user + '] ' + message.value;
 	}
 
 	function clear () {

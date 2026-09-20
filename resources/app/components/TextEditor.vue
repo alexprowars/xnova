@@ -2,66 +2,66 @@
 	<div class="editor-component">
 		<div class="editor-component-toolbar">
 			<span class="gensmall">
-				<select name="btnSize" aria-label="Размер текста" @change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
-					<option value="9">Маленький</option>
-					<option value="11" selected>Нормальный</option>
-					<option value="20">Большой</option>
-					<option value="25">Огромный</option>
+				<select name="btnSize" :aria-label="$t('editor.size')" @change="addTag('[size='+$event.target.options[$event.target.selectedIndex].value+']|[/size]')">
+					<option value="9">{{ $t('editor.small') }}</option>
+					<option value="11" selected>{{ $t('editor.normal') }}</option>
+					<option value="20">{{ $t('editor.large') }}</option>
+					<option value="25">{{ $t('editor.huge') }}</option>
 				</select>
 			</span>
-			<button type="button" class="buttons button is-secondary icon-button" title="Жирный" @click="addTag('[b]|[/b]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.bold')" @click="addTag('[b]|[/b]')">
 				<BoldIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Курсив" @click="addTag('[i]|[/i]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.italic')" @click="addTag('[i]|[/i]')">
 				<ItalicIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Подчёркнутый" @click="addTag('[u]|[/u]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.underline')" @click="addTag('[u]|[/u]')">
 				<UnderlineIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Зачёркнутый" @click="addTag('[s]|[/s]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.strike')" @click="addTag('[s]|[/s]')">
 				<StrikeIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="По центру" @click="addTag('[center]|[/center]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.center')" @click="addTag('[center]|[/center]')">
 				<AlignCenterIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="По левому краю" @click="addTag('[left]|[/left]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.left')" @click="addTag('[left]|[/left]')">
 				<AlignLeftIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="По правому краю" @click="addTag('[right]|[/right]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.right')" @click="addTag('[right]|[/right]')">
 				<AlignRightIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="По ширине" @click="addTag('[justify]|[/justify]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.justify')" @click="addTag('[justify]|[/justify]')">
 				<AlignJustifyIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Спойлер" @click="addTag('[spoiler=]|[/spoiler]')">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.spoiler')" @click="addTag('[spoiler=]|[/spoiler]')">
 				<SpoilerIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<button type="button" class="buttons button is-secondary icon-button" title="YOUTUBE" @click="addTag('[youtube]|[/youtube]', 2)">
 				<VideoIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Вставить ссылку" @click="addTag('[url]|[/url]', 1)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.link')" @click="addTag('[url]|[/url]', 1)">
 				<LinkIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Вставить картинку" @click="addTag('[img]|[/img]', 3)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.image')" @click="addTag('[img]|[/img]', 3)">
 				<ImageIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Вставить большую картинку" @click="addTag('[img_big]|[/img_big]', 4)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.large_image')" @click="addTag('[img_big]|[/img_big]', 4)">
 				<ImageLargeIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Нумерованый список" @click="addTag('[numlist]|[/numlist]', 5)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.numbered_list')" @click="addTag('[numlist]|[/numlist]', 5)">
 				<NumberedListIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Список" @click="addTag('[list]|[/list]', 5)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.list')" @click="addTag('[list]|[/list]', 5)">
 				<ListIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Цитата" @click="addTag('[quote]|[/quote]', 0)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.quote')" @click="addTag('[quote]|[/quote]', 0)">
 				<QuoteIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Цитата с автором" @click="addTag('[quote author=]|[/quote]', 0)">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.author_quote')" @click="addTag('[quote author=]|[/quote]', 0)">
 				<QuoteAuthorIcon aria-hidden="true" focusable="false"/>
 			</button>
 			<Popper :triggers="['click']" :popper-triggers="['click']">
-				<button type="button" class="buttons button is-secondary icon-button" title="Смайлы">
+				<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.smiles')">
 					<SmileIcon aria-hidden="true" focusable="false"/>
 				</button>
 				<template #content>
@@ -70,31 +70,31 @@
 					</div>
 				</template>
 			</Popper>
-			<button type="button" class="buttons button is-secondary icon-button" title="Цвет текста" :aria-pressed="showColors" @click="showColors = !showColors">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.text_color')" :aria-pressed="showColors" @click="showColors = !showColors">
 				<ColorIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<button type="button" class="buttons button is-secondary icon-button" title="Цвет фона" :aria-pressed="showBgColors" @click="showBgColors = !showBgColors">
+			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.background_color')" :aria-pressed="showBgColors" @click="showBgColors = !showBgColors">
 				<BackgroundIcon aria-hidden="true" focusable="false"/>
 			</button>
 
-			<button v-if="value.length > 0" type="button" class="buttons button is-secondary icon-button" title="Предварительный просмотр" :aria-pressed="showPreview" @click="showPreview = !showPreview">
+			<button v-if="value.length > 0" type="button" class="buttons button is-secondary icon-button" :title="$t('editor.preview')" :aria-pressed="showPreview" @click="showPreview = !showPreview">
 				<PreviewIcon aria-hidden="true" focusable="false"/>
 			</button>
 		</div>
 
 		<div v-show="showColors" class="colorpicker">
-			<button v-for="color in colors" :key="color" type="button" @click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color" :title="'#' + color" :aria-label="'Цвет текста #' + color"></button>
+			<button v-for="color in colors" :key="color" type="button" @click="addTag('[color=#'+color+']|[/color]')" :style="'background:#'+color" :title="'#' + color" :aria-label="$t('editor.text_color') + ' #' + color"></button>
 		</div>
 
 		<div v-show="showBgColors" class="colorpicker">
-			<button v-for="color in colors" :key="color" type="button" @click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color" :title="'#' + color" :aria-label="'Цвет фона #' + color"></button>
+			<button v-for="color in colors" :key="color" type="button" @click="addTag('[bgcolor=#'+color+']|[/bgcolor]')" :style="'background:#'+color" :title="'#' + color" :aria-label="$t('editor.background_color') + ' #' + color"></button>
 		</div>
 
 
 		<textarea ref="textRef" :name="name" rows="10" v-model="value"></textarea>
 
 		<div v-if="showPreview" class="editor-component-preview">
-			<div class="editor-preview-title">Предварительный просмотр</div>
+			<div class="editor-preview-title">{{ $t('editor.preview') }}</div>
 			<div class="editor-preview-body" v-html="parser.parse(value)"></div>
 		</div>
 	</div>

@@ -16,7 +16,7 @@ x-base-image: &base-image
   networks:
     - xnova
   volumes:
-    - "../:/app"
+    - "../../:/app"
 
 services:
   backend:

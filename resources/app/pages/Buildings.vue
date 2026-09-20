@@ -1,5 +1,5 @@
 <template>
-	<Head title="Постройки"/>
+	<Head :title="$t('menu.buildings')"/>
 	<div class="page-building">
 		<BuildQueue :queue="queueByType('build')"/>
 
@@ -7,7 +7,7 @@
 			<div class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/buildings-bg.webp\')' }">
 				<div class="buldings-header-main">
 					<span class="title">
-						Постройки / {{ planet['name'] }}
+						{{ $t('menu.buildings') }} / {{ planet['name'] }}
 					</span>
 
 					<div class="flex flex-col items-end gap-2 bg-[var(--ui-image-scrim-color)] p-3">
@@ -24,7 +24,7 @@
 						</div>
 					</div>
 					<Link href="/resources" class="button">
-						Настройки ресурсов
+						{{ $t('construction.resource_settings') }}
 					</Link>
 				</div>
 				<BuildActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="addAction"/>

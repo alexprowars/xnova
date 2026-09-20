@@ -1,4 +1,120 @@
 {
+	"fleet_activity": {
+		"own": "Ваш",
+		"unknown": "Нет информации",
+		"fleet": "флот",
+		"of_player": "игрока",
+		"sent": "отправленный",
+		"heading": "направляется к",
+		"defending": "защищает",
+		"exploring": "исследует",
+		"mission": "Задание:",
+		"count": "Численность:",
+		"allied": "Союзный",
+		"foreign": "Чужой",
+		"from_coordinates": "с координат",
+		"from_planet": "с планеты",
+		"from_moon": "с луны",
+		"from_base": "с военной базы",
+		"return_coordinates": "на координаты",
+		"return_planet": "возвращается на планету",
+		"return_moon": "возвращается на луну",
+		"return_base": "возвращается на военную базу",
+		"coordinates": "координаты",
+		"planet": "планете",
+		"moon": "луне",
+		"debris": "полю обломков",
+		"base": "военной базе",
+		"position": "координатам",
+		"from_debris": "с поля обломков",
+		"from_position": "с позиции"
+	},
+	"arcade": {
+		"sound_on": "Со звуком",
+		"sound_off": "Без звука",
+		"start": "Нажмите пробел для начала игры.",
+		"game_over": "Игра окончена!",
+		"result": "Получено очков {score}, пройден уровень {level}.",
+		"lives": "Жизни: {count}",
+		"score": "Очки: {score}, Уровень: {level}",
+		"paused": "Пауза",
+		"level": "Уровень {level}",
+		"countdown": "Начало через {seconds}"
+	},
+	"construction": {
+		"resource_settings": "Настройки ресурсов",
+		"unit_limit": "Вы можете построить не более {count} единиц данного типа.",
+		"resources_missing": "Необходимо ещё: {amount}"
+	},
+	"resource_panel": {
+		"available": "Доступно",
+		"production": "Производство",
+		"consumption": "Потребление",
+		"efficiency": "Мощность",
+		"capacity": "Вместимость",
+		"available_energy": "Доступно энергии"
+	},
+	"footer": {
+		"changes": "Последние изменения",
+		"online": "Игроков в сети",
+		"total": "Всего игроков"
+	},
+	"notifications": {
+		"vacation": "Включен режим отпуска! Функциональность игры ограничена.",
+		"deletion": "Включен режим удаления профиля!<br>Ваш аккаунт будет удалён после {date}. Выключить режим удаления можно в настройках игры."
+	},
+	"duration": {
+		"day": "д.",
+		"hour": "ч.",
+		"minute": "м.",
+		"second": "с."
+	},
+	"editor": {
+		"size": "Размер текста",
+		"small": "Маленький",
+		"normal": "Нормальный",
+		"large": "Большой",
+		"huge": "Огромный",
+		"bold": "Жирный",
+		"italic": "Курсив",
+		"underline": "Подчёркнутый",
+		"strike": "Зачёркнутый",
+		"center": "По центру",
+		"left": "По левому краю",
+		"right": "По правому краю",
+		"justify": "По ширине",
+		"spoiler": "Спойлер",
+		"link": "Вставить ссылку",
+		"image": "Вставить картинку",
+		"large_image": "Вставить большую картинку",
+		"numbered_list": "Нумерованый список",
+		"list": "Список",
+		"quote": "Цитата",
+		"author_quote": "Цитата с автором",
+		"smiles": "Смайлы",
+		"text_color": "Цвет текста",
+		"background_color": "Цвет фона",
+		"preview": "Предварительный просмотр",
+		"enter_link": "Введите ссылку:",
+		"enter_video": "Введите ссылку на видео:",
+		"enter_image": "Введите ссылку на картинку:",
+		"enter_audio": "Введите ссылку на песню:",
+		"wrote": "написал(а)"
+	},
+	"chat_recipient": {
+		"private": "приватно",
+		"public": "для"
+	},
+	"officer_dialog": {
+		"title": "Вербовка офицера",
+		"confirm": "Нанять офицера <b>{name}</b> на <b>{days}</b> дней за <b>{price}</b> кредитов?",
+		"cancel": "Отменить",
+		"hire": "Нанять"
+	},
+	"galaxy_player": {
+		"title": "Игрок",
+		"rank": "место {rank}"
+	},
 	"interface": {
 		"navigation": "Навигация",
 		"colonies": "Колонии",

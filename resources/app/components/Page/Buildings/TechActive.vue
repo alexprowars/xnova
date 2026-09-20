@@ -47,7 +47,7 @@
 				</div>
 
 				<div v-if="item['requirements']" class="building-active-requirements">
-					<div class="title">Требования</div>
+					<div class="title">{{ $t('pages.techtree.requirements') }}</div>
 					<div class="items">
 						<div v-for="req in item['requirements']" class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }" v-tooltip="req['name']">
 							<div class="item-title">

@@ -47,10 +47,13 @@
 </template>
 
 <script setup>
+	import { useI18n } from 'vue-i18n';
 	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useForm } from '@inertiajs/vue3';
+
+	const { t } = useI18n();
 
 	const props = defineProps({
 		item: Object,
@@ -69,12 +72,12 @@
 
 	function submit (value, price) {
 		openConfirmModal(
-			'Вербовка офицера',
-			'Вы действительно хотите нанять офицера "<b>' + props.item['name'] + '</b>" на <b>' + value + '</b> дней за <b>' + price + '</b> кредитов?',
+			t('officer_dialog.title'),
+			t('officer_dialog.confirm', { name: props.item['name'], days: value, price }),
 			[{
-				title: 'Отменить',
+				title: t('officer_dialog.cancel'),
 			}, {
-				title: 'Нанять',
+				title: t('officer_dialog.hire'),
 				handler() {
 					useForm({
 						code: props.item['code'],

@@ -1,14 +1,14 @@
 <template>
-	<Head title="Исследования"/>
+	<Head :title="$t('menu.research')"/>
 	<div class="page-building">
 		<div class="buldings">
 			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/research-bg.webp\')' }">
 				<div class="buldings-header-main">
 					<span class="title">
-						Исследования / {{ planet['name'] }}
+						{{ $t('menu.research') }} / {{ planet['name'] }}
 					</span>
 					<Link href="/tech" class="button">
-						Технологии
+						{{ $t('menu.tech') }}
 					</Link>
 				</div>
 				<TechActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction(activeItem['id'])"/>

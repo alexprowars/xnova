@@ -10,13 +10,16 @@
 
 <script setup>
 	import { computed, onMounted, ref } from 'vue';
+	import { useI18n } from 'vue-i18n';
 	import Game from '~/utils/spaceinvaders';
+
+	const { t } = useI18n();
 
 	let game = null;
 	let gameRef = ref(null);
 
 	const sound = computed(() => {
-		return game && game.sounds.mute ? 'Со звуком' : 'Без звука';
+		return game && game.sounds.mute ? t('arcade.sound_on') : t('arcade.sound_off');
 	});
 
 	onMounted(() => {

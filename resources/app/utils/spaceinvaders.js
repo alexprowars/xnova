@@ -1,3 +1,5 @@
+import i18n from '../i18n.js';
+
 function Game()
 {
 	this.config = {
@@ -231,7 +233,7 @@ WelcomeState.prototype.draw = function (game, dt, ctx)
 	ctx.fillText("Space Invaders", game.width / 2, game.height / 2 - 40);
 	ctx.font = "16px Arial";
 
-	ctx.fillText("Нажмите 'пробел' для начала игры.", game.width / 2, game.height / 2);
+	ctx.fillText(i18n.global.t('arcade.start'), game.width / 2, game.height / 2);
 };
 
 WelcomeState.prototype.keyDown = function (game, keyCode)
@@ -264,11 +266,11 @@ GameOverState.prototype.draw = function (game, dt, ctx)
 	ctx.fillStyle = '#ffffff';
 	ctx.textBaseline = "middle";
 	ctx.textAlign = "center";
-	ctx.fillText("Игра окончена!", game.width / 2, game.height / 2 - 40);
+	ctx.fillText(i18n.global.t('arcade.game_over'), game.width / 2, game.height / 2 - 40);
 	ctx.font = "16px Arial";
-	ctx.fillText("Получено очков " + game.score + " и пройден уровень " + game.level, game.width / 2, game.height / 2);
+	ctx.fillText(i18n.global.t('arcade.result', { score: game.score, level: game.level }), game.width / 2, game.height / 2);
 	ctx.font = "16px Arial";
-	ctx.fillText("Нажмите 'пробел' для начала игры.", game.width / 2, game.height / 2 + 40);
+	ctx.fillText(i18n.global.t('arcade.start'), game.width / 2, game.height / 2 + 40);
 };
 
 GameOverState.prototype.keyDown = function (game, keyCode)
@@ -571,10 +573,10 @@ PlayState.prototype.draw = function (game, dt, ctx)
 	let textYpos = game.gameBounds.bottom + ((game.height - game.gameBounds.bottom) / 2) + 14 / 2;
 	ctx.font = "14px Arial";
 	ctx.fillStyle = '#ffffff';
-	let info = "Жизни: " + game.lives;
+	let info = i18n.global.t('arcade.lives', { count: game.lives });
 	ctx.textAlign = "left";
 	ctx.fillText(info, game.gameBounds.left, textYpos);
-	info = "Очки: " + game.score + ", Уровень: " + game.level;
+	info = i18n.global.t('arcade.score', { score: game.score, level: game.level });
 	ctx.textAlign = "right";
 	ctx.fillText(info, game.gameBounds.right, textYpos);
 
@@ -648,7 +650,7 @@ PauseState.prototype.draw = function (game, dt, ctx)
 	ctx.fillStyle = '#ffffff';
 	ctx.textBaseline = "middle";
 	ctx.textAlign = "center";
-	ctx.fillText("Пауза", game.width / 2, game.height / 2);
+	ctx.fillText(i18n.global.t('arcade.paused'), game.width / 2, game.height / 2);
 };
 
 /*
@@ -697,9 +699,9 @@ LevelIntroState.prototype.draw = function (game, dt, ctx)
 	ctx.fillStyle = '#ffffff';
 	ctx.textBaseline = "middle";
 	ctx.textAlign = "center";
-	ctx.fillText("Уровень " + this.level, game.width / 2, game.height / 2);
+	ctx.fillText(i18n.global.t('arcade.level', { level: this.level }), game.width / 2, game.height / 2);
 	ctx.font = "24px Arial";
-	ctx.fillText("Начало через " + this.countdownMessage, game.width / 2, game.height / 2 + 36);
+	ctx.fillText(i18n.global.t('arcade.countdown', { seconds: this.countdownMessage }), game.width / 2, game.height / 2 + 36);
 };
 
 /*

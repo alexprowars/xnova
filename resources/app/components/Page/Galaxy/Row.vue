@@ -206,10 +206,10 @@
 					<div class="block-table w-96">
 						<div class="grid">
 							<div class="c">
-								Игрок
+								{{ $t('galaxy_player.title') }}
 								{{ item.user['name'] }}
 								<template v-if="item.user['stats'] && item.user['stats']['rank'] > 0">
-									, место {{ item.user['stats']['rank'] }}
+									, {{ $t('galaxy_player.rank', { rank: item.user['stats']['rank'] }) }}
 								</template>
 							</div>
 						</div>
@@ -219,10 +219,10 @@
 							</div>
 							<div class="w-2/3 th text-center flex flex-col justify-center gap-2">
 								<Link v-if="item.user['id'] !== currentUser['id']" :href="'/messages/write/' + item.user['id']">
-									Послать сообщение
+									{{ $t('send_message') }}
 								</Link>
-								<Link :href="'/friends/new/' + item.user['id']">Добавить в друзья</Link>
-								<Link :href="'/stats/players?page=' + stat_page + '&id=' + item.user['id']">Статистика</Link>
+								<Link :href="'/friends/new/' + item.user['id']">{{ $t('pages.galaxy.actions_friend') }}</Link>
+								<Link :href="'/stats/players?page=' + stat_page + '&id=' + item.user['id']">{{ $t('menu.stats') }}</Link>
 							</div>
 						</div>
 					</div>

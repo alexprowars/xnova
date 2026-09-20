@@ -1,3 +1,4 @@
+import i18n from '../i18n.js';
 import DOMPurify from 'isomorphic-dompurify';
 
 export function sanitizeHtml(html) {
@@ -66,7 +67,7 @@ export default {
 		replace: [
 			'<br>',
 			'<div class="quotewrapper"><div class="quotecontent">$1</div></div>',
-			'<div class="quotewrapper"><div class="quotetitle">$1 написал(а):</div><div class="quotecontent">$2</div></div>',
+			(match, author, content) => '<div class="quotewrapper"><div class="quotetitle">' + author + ' ' + i18n.global.t('editor.wrote') + ':</div><div class="quotecontent">' + content + '</div></div>',
 			'<strong>$1</strong>',
 			'<em>$1</em>',
 			'<span style="text-decoration: underline;">$1</span>',
@@ -147,13 +148,13 @@ export default {
 		let rep = '', url;
 
 		if (type === 1) {
-			url = prompt('Введите ссылку:', '');
+			url = prompt(i18n.global.t('editor.enter_link'), '');
 		} else if (type === 2) {
-			url = prompt('Введите ссылку на видео:', '');
+			url = prompt(i18n.global.t('editor.enter_video'), '');
 		} else if (type === 3 || type === 4) {
-			url = prompt('Введите ссылку на картинку:', '');
+			url = prompt(i18n.global.t('editor.enter_image'), '');
 		} else if (type === 6) {
-			url = prompt('Введите ссылку на песню:', '');
+			url = prompt(i18n.global.t('editor.enter_audio'), '');
 		}
 
 		if (type > 0 && type <= 6 && (url === '' || url === null)) {

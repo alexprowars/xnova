@@ -1,14 +1,14 @@
 <template>
-	<Head title="Верфь"/>
+	<Head :title="$t('menu.shipyard')"/>
 	<div class="page-building">
 		<div class="buldings">
 			<div ref="activeRef" class="buldings-header" :style="{ backgroundImage: 'url(\'/assets/images/shipyard-bg.webp\')' }">
 				<div class="buldings-header-main">
 					<span class="title">
-						Верфь / {{ planet['name'] }}
+						{{ $t('menu.shipyard') }} / {{ planet['name'] }}
 					</span>
 					<Link href="/fleet" class="button">
-						Флот
+						{{ $t('menu.fleet') }}
 					</Link>
 				</div>
 				<UnitActive v-if="activeItem" :item="activeItem" @close="selectAction(null)" @build="buildAction"/>
