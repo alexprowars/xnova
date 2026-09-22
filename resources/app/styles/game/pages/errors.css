@@ -165,8 +165,8 @@
 	}
 
 	a:focus-visible {
-		outline: 2px solid var(--accent-color);
-		outline-offset: 4px;
+		outline: none;
+		color: var(--accent-color);
 	}
 
 	@media (max-width: 767px) {

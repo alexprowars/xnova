@@ -438,8 +438,12 @@
 	}
 
 	:is(a, button, input, [tabindex]):focus-visible {
-		outline: 2px solid var(--accent-color);
-		outline-offset: 4px;
+		outline: none;
+		border-color: var(--border-hover-color);
+	}
+
+	a:focus-visible {
+		color: var(--accent-color);
 	}
 
 	.landing-skip-link {

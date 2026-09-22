@@ -1,22 +1,16 @@
 <template>
 	<UiPanel class="game-panel">
 		<header class="start-heading">
-			<span class="game-eyebrow">02 / 02</span>
-			<h1>{{ $t('pages.start.race_selection') }}</h1>
+			<span class="game-eyebrow">02 / 03</span>
+			<h2>{{ $t('pages.start.race_selection') }}</h2>
 		</header>
-		<form class="game-form" @submit.prevent="save">
-			<div class="start-race-grid">
-				<label v-for="(race_id, index) in Object.keys($tm('races'))" :key="race_id" class="start-race-card" :class="{ 'is-selected': form.race === race_id }">
-					<input type="radio" :value="race_id" v-model="form.race" :aria-label="$t('races.' + race_id)">
-					<div class="start-race-title">
-						<RaceIcon :code="race_id" aria-hidden="true"/>
-						<h2>{{ $t('races.' + race_id) }}</h2><span v-if="form.race === race_id" aria-hidden="true">✓</span>
-					</div>
-					<div class="start-race-description" v-html="$t('info.' + (701 + index))"></div>
-				</label>
+		<form class="game-form" @submit.prevent="next">
+			<div class="race-grid">
+				<RaceCard v-for="faction in factions" :key="faction.id" :faction="faction" selectable :selected="form.race === faction.id" @select="selectRace"/>
 			</div>
-			<div v-for="(error, key) in form.errors" :key="key" class="game-errors">{{ error }}</div>
+			<div v-if="form.errors.race" class="game-errors">{{ form.errors.race }}</div>
 			<div class="game-actions">
+				<UiButton variant="secondary" :disabled="form.processing" @click="emit('back')">← {{ $t('pages.start.back') }}</UiButton>
 				<UiButton type="submit" :disabled="!form.race || form.processing">{{ $t('pages.start.continue') }} →</UiButton>
 			</div>
 		</form>
@@ -25,18 +19,22 @@
 
 <script setup>
 	import { UiButton, UiPanel } from '~/components/UI';
-	import RaceIcon from '~/components/RaceIcon.vue';
-	import { useForm } from '@inertiajs/vue3';
+	import RaceCard from '~/components/Page/Race/RaceCard.vue';
+	import factions from '~/components/Page/Race/factions.js';
 
-	const form = useForm({
-		race: null,
+	const props = defineProps({
+		form: { type: Object, required: true },
 	});
+	const emit = defineEmits(['back', 'next']);
 
-	async function save() {
-		if (form.processing) return;
+	function selectRace(race) {
+		props.form.race = race;
+		props.form.clearErrors('race');
+	}
 
-		form.post('/start/race', {
-			preserveUrl: true,
-		});
+	function next() {
+		if (props.form.processing || !props.form.race) return;
+
+		emit('next');
 	}
 </script>

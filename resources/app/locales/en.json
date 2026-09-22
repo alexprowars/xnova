@@ -526,6 +526,11 @@
 			"auth_remember_me": "Remember me"
 		},
 		"start": {
+			"welcome_title": "Welcome, Commander",
+			"welcome_description": "Your empire begins here. Set your nickname and interface language, choose your race and portrait, then set out to conquer the galaxy.",
+			"interface_language": "Choose your interface language",
+			"back": "Back",
+			"finish": "Start playing",
 			"title": "Character Selection",
 			"main_info": "Basic Information",
 			"game_nickname": "Enter your game nickname",
@@ -533,7 +538,7 @@
 			"male": "Male",
 			"female": "Female",
 			"continue": "Continue",
-			"race_selection": "Faction Selection"
+			"race_selection": "Race selection"
 		},
 		"registration": {
 			"title": "Registration",

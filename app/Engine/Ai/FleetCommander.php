@@ -11,6 +11,7 @@ use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\FleetSend;
 use App\Engine\Fleet\MissionType;
+use App\Engine\Game;
 use App\Engine\Objects\ShipObject;
 use App\Exceptions\Exception;
 use App\Facades\Galaxy;
@@ -25,6 +26,7 @@ use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -109,6 +111,15 @@ class FleetCommander
 		return ['duration' => $duration, 'fuel' => $fuel, 'capacity' => max(0, $collection->getStorage() - $fuel)];
 	}
 
+	private function maxFlightDuration(MissionType $mission): float
+	{
+		$maxFlightHours = $mission === MissionType::Colonization
+			? (float) config('ai.max_colonization_flight_hours', 48)
+			: (float) config('ai.max_flight_hours', 4);
+
+		return $maxFlightHours * 3600 / Game::getSpeed('fleet');
+	}
+
 	private function send(Coordinates $target, MissionType $mission, array $ships, array $resources = []): bool
 	{
 		if (empty($ships) || !$this->hasSlot()) {
@@ -117,7 +128,7 @@ class FleetCommander
 
 		$flight = $this->flight($ships, $target);
 
-		if ($flight['fuel'] + ($resources['deuterium'] ?? 0) > $this->planet->deuterium || $flight['duration'] > (float) config('ai.max_flight_hours', 4) * 3600) {
+		if ($flight['fuel'] + ($resources['deuterium'] ?? 0) > $this->planet->deuterium || $flight['duration'] > $this->maxFlightDuration($mission)) {
 			return false;
 		}
 
@@ -158,27 +169,23 @@ class FleetCommander
 			return;
 		}
 
-		$radius = (int) config('ai.search_radius', 50);
-		$systems = range(max(1, $this->planet->system - $radius), min((int) config('game.maxSystemInGalaxy'), $this->planet->system + $radius));
-		usort($systems, fn(int $a, int $b) => abs($a - $this->planet->system) <=> abs($b - $this->planet->system));
+		$ships = [208 => 1];
 
-		foreach ($systems as $system) {
-			$position = new Coordinates($this->planet->galaxy, $system);
+		foreach ($this->colonizationSystems() as $position) {
+			$flight = $this->flight($ships, $position);
+
+			if ($flight['fuel'] > $this->planet->deuterium || $flight['duration'] > $this->maxFlightDuration(MissionType::Colonization)) {
+				continue;
+			}
+
 			$positions = Galaxy::getFreePositions($position, 4, min(12, (int) config('game.maxPlanetInSystem')));
-			// Разным ботам нужны разные места, иначе они летят в одну и ту же колонию.
-			usort($positions, fn(int $a, int $b) => (($a + $user->id) % 9) <=> (($b + $user->id) % 9));
+			shuffle($positions);
 
 			foreach ($positions as $slot) {
-				$target = new Coordinates($this->planet->galaxy, $system, $slot, PlanetType::PLANET);
+				$target = new Coordinates($position->getGalaxy(), $position->getSystem(), $slot, PlanetType::PLANET);
 
 				if (Fleet::query()->coordinates(FleetDirection::END, $target)->where('mission', MissionType::Colonization)->where('mess', 0)->exists()) {
 					continue;
-				}
-
-				$ships = [208 => 1];
-				$flight = $this->flight($ships, $target);
-				if ($flight['fuel'] > $this->planet->deuterium || $flight['duration'] > (float) config('ai.max_flight_hours', 4) * 3600) {
-					return;
 				}
 
 				$resources = $this->cargo($flight, 0.2, ['metal' => 5000, 'crystal' => 3000, 'deuterium' => 2000]);
@@ -190,20 +197,86 @@ class FleetCommander
 		}
 	}
 
+	/** @return list<Coordinates> */
+	private function colonizationSystems(): array
+	{
+		$population = [];
+		$owners = [];
+		$planets = Planet::query()->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')
+			->get(['galaxy', 'system', 'user_id']);
+
+		foreach ($planets as $planet) {
+			$key = $planet->galaxy . ':' . $planet->system;
+			$population[$key] = ($population[$key] ?? 0) + 1;
+			$owners[$key][$planet->user_id] = true;
+		}
+
+		$fleets = Fleet::query()->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('mission', MissionType::Colonization)->where('mess', 0)
+			->get(['end_galaxy', 'end_system', 'user_id']);
+
+		foreach ($fleets as $fleet) {
+			$key = $fleet->end_galaxy . ':' . $fleet->end_system;
+			$population[$key] = ($population[$key] ?? 0) + 1;
+			$owners[$key][$fleet->user_id] = true;
+		}
+
+		$systems = [];
+		$maxGalaxies = (int) config('game.maxGalaxyInWorld');
+		$maxSystems = (int) config('game.maxSystemInGalaxy');
+		$maxBotsPerSystem = (int) config('ai.max_bots_per_system', 3);
+
+		for ($galaxy = 1; $galaxy <= $maxGalaxies; $galaxy++) {
+			for ($system = 1; $system <= $maxSystems; $system++) {
+				$key = $galaxy . ':' . $system;
+
+				if (isset($owners[$key][$this->planet->user_id]) || count($owners[$key] ?? []) >= $maxBotsPerSystem) {
+					continue;
+				}
+
+				$systems[] = new Coordinates($galaxy, $system);
+			}
+		}
+
+		// При равной заселённости выбираем случайную систему, без привязки к основной планете.
+		shuffle($systems);
+		usort($systems, fn(Coordinates $a, Coordinates $b) => ($population[$a->getGalaxy() . ':' . $a->getSystem()] ?? 0)
+			<=> ($population[$b->getGalaxy() . ':' . $b->getSystem()] ?? 0));
+
+		return $systems;
+	}
+
 	/** @return array<Planet> */
 	private function targets(): array
 	{
 		$radius = (int) config('ai.search_radius', 50);
-		$targets = Planet::query()->with(['user.roles'])
+		$galaxyRadius = (int) config('ai.search_galaxy_radius', 1);
+		$targetLimit = (int) config('ai.target_limit', 30);
+		$query = Planet::query()->with(['user.roles'])
 			->whereNot('user_id', $this->planet->user_id)
 			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')
-			->where('galaxy', $this->planet->galaxy)
-			->whereBetween('system', [max(1, $this->planet->system - $radius), $this->planet->system + $radius])
 			->whereHas('user', function (Builder $query) {
 				$query->whereNull('vacation')->whereNull('blocked_at')->whereDoesntHave('roles');
-			})
-			->orderByRaw('ABS(`system` - ?)', [$this->planet->system])
-			->orderBy('id')->limit((int) config('ai.target_limit', 30) * 5)->get();
+			});
+		/** @var Collection<int, Planet> $targets */
+		$targets = new Collection();
+		$firstGalaxy = max(1, $this->planet->galaxy - $galaxyRadius);
+		$lastGalaxy = min((int) config('game.maxGalaxyInWorld'), $this->planet->galaxy + $galaxyRadius);
+
+		for ($galaxy = $firstGalaxy; $galaxy <= $lastGalaxy; $galaxy++) {
+			$galaxyQuery = (clone $query)->where('galaxy', $galaxy);
+
+			if ($galaxy === $this->planet->galaxy) {
+				$galaxyQuery->whereBetween('system', [max(1, $this->planet->system - $radius), $this->planet->system + $radius])
+					->orderByRaw('ABS(`system` - ?)', [$this->planet->system])->orderBy('id');
+			} else {
+				// Межгалактическое расстояние не зависит от номера системы.
+				$galaxyQuery->inRandomOrder();
+			}
+
+			$targets = $targets->merge($galaxyQuery->limit($targetLimit * 5)->get());
+		}
 
 		$bots = Ai::query()->whereIn('user_id', $targets->pluck('user_id'))->pluck('user_id')->all();
 		$humans = User::query()->whereNotIn('id', Ai::query()->select('user_id'))
@@ -219,6 +292,8 @@ class FleetCommander
 			->get(['e_galaxy', 'e_system', 'e_planet'])
 			->mapWithKeys(fn(LogsFleet $log) => [$log->e_galaxy . ':' . $log->e_system . ':' . $log->e_planet => true])->all();
 		$eligible = [];
+		$distances = [];
+		$distanceCalculator = new FleetCollection();
 
 		foreach ($targets as $target) {
 			$user = $target->user;
@@ -257,17 +332,41 @@ class FleetCommander
 			}
 
 			$this->targetWeights[$target->id] = $preferBots && in_array($user->id, $bots) ? (float) config('ai.bot_target_bonus', 3) : 1.0;
+			$distances[$target->id] = $distanceCalculator->getDistance($this->planet->coordinates, $target->coordinates);
 			$eligible[] = $target;
 		}
 
-		usort($eligible, function (Planet $a, Planet $b) {
-			$scoreA = $this->targetWeights[$a->id] / (1 + abs($a->system - $this->planet->system) / 10);
-			$scoreB = $this->targetWeights[$b->id] / (1 + abs($b->system - $this->planet->system) / 10);
+		usort($eligible, function (Planet $a, Planet $b) use ($distances) {
+			$scoreA = $this->targetWeights[$a->id] / (1 + $distances[$a->id] / 950);
+			$scoreB = $this->targetWeights[$b->id] / (1 + $distances[$b->id] / 950);
 
 			return $scoreB <=> $scoreA ?: ($this->state['targets'][$a->id]['scouted_at'] ?? 0) <=> ($this->state['targets'][$b->id]['scouted_at'] ?? 0);
 		});
 
-		return array_slice($eligible, 0, (int) config('ai.target_limit', 30));
+		$byGalaxy = [];
+
+		foreach ($eligible as $target) {
+			$byGalaxy[$target->galaxy][] = $target;
+		}
+
+		// Ближайшие цели не должны вытеснять соседние галактики из ограниченной выборки.
+		$selected = [];
+
+		while (!empty($byGalaxy) && count($selected) < $targetLimit) {
+			foreach (array_keys($byGalaxy) as $galaxy) {
+				$selected[] = array_shift($byGalaxy[$galaxy]);
+
+				if (empty($byGalaxy[$galaxy])) {
+					unset($byGalaxy[$galaxy]);
+				}
+
+				if (count($selected) === $targetLimit) {
+					break;
+				}
+			}
+		}
+
+		return $selected;
 	}
 
 	private function loadReports(): void
@@ -382,7 +481,7 @@ class FleetCommander
 			$loot = array_sum(array_intersect_key($report['resources'], array_flip(['metal', 'crystal', 'deuterium']))) / 2;
 			$profit = min($loot, $flight['capacity']) - $flight['fuel'] * 2;
 
-			if ($flight['fuel'] > $this->planet->deuterium * 0.5 || $flight['duration'] > (float) config('ai.max_flight_hours', 4) * 3600 || $profit < (float) config('ai.min_raid_profit', 1000)) {
+			if ($flight['fuel'] > $this->planet->deuterium * 0.5 || $flight['duration'] > $this->maxFlightDuration(MissionType::Attack) || $profit < (float) config('ai.min_raid_profit', 1000)) {
 				continue;
 			}
 

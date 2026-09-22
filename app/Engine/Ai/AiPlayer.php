@@ -34,9 +34,13 @@ class AiPlayer
 			Galaxy::createPlanetByUser($user);
 		}
 
-		// getPlanets() также возвращает планеты альянса. Бот управляет только своими.
-		$planets = $user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)
-			->with('entities')->orderBy('id')->get();
+		$planets = $user->planets()
+			->whereNull('destroyed_at')
+			->where('planet_type', PlanetType::PLANET)
+			->with('entities')
+			->orderBy('id')
+			->get();
+
 		$hub = $planets->sortByDesc(fn(Planet $planet) => $planet->getLevel(31))->first();
 
 		foreach ($planets as $planet) {
@@ -49,8 +53,10 @@ class AiPlayer
 				}
 
 				$planet->setRelation('user', $user);
+
 				$queue = new QueueManager($planet);
 				$queue->update();
+
 				$planet->getProduction()->reset();
 				$planet->getProduction()->update();
 				$planet->checkUsedFields();
@@ -60,9 +66,9 @@ class AiPlayer
 				$commander->run();
 				$state = $commander->getState();
 
-				// Отправка флота обновляет модели и ресурсы, план строится после неё.
 				$probeTarget = max([7, ...array_column($state['targets'] ?? [], 'required_probes')]);
 				$planner = new StrategyPlanner($planet, $this->ai->strategy, $planet->id === $hub?->id, $probeTarget);
+
 				$this->develop($planet, new QueueManager($planet), $planner, $state);
 
 				$this->ai->state = $state;
@@ -153,7 +159,9 @@ class AiPlayer
 			StrategyType::MILITARY => ['build', 'tech', 'fleet', 'fleet'],
 			StrategyType::BALANCED => ['build', 'tech', 'fleet'],
 		};
+
 		$cursor = ($state['development'][$planet->id] ?? 0) % count($rotation);
+
 		$primary = array_key_first($plans);
 
 		for ($i = 0; $i < count($rotation); $i++) {

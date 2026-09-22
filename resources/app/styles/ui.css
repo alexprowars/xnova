@@ -51,8 +51,8 @@
 }
 
 .ui-tab-trigger:focus-visible, .ui-tab-panel:focus-visible {
-	outline: 2px solid var(--accent-color);
-	outline-offset: -2px;
+	outline: none;
+	border-color: var(--border-hover-color);
 }
 
 .ui-tab-trigger:disabled {
@@ -167,8 +167,8 @@
 }
 
 .ui-back:focus-visible {
-	outline: 2px solid var(--accent-color);
-	outline-offset: 2px;
+	outline: none;
+	color: var(--accent-color);
 }
 
 .ui-back {

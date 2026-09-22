@@ -23,8 +23,8 @@ class Locale
 			request()->get('locale') ??
 			request()->cookie('app_locale') ??
 			request()->header('locale') ??
-			config('app.locale', 'en') ??
-			request()->getPreferredLanguage();
+			request()->getPreferredLanguage() ??
+			config('app.locale', 'en');
 
 		return in_array($locale, self::getAvailableLanguages(), true) ? $locale : config('app.locale');
 	}

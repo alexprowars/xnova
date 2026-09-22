@@ -1108,12 +1108,13 @@
 		border-color: var(--ui-border-hover-color);
 	}
 
-	:is(input, select, textarea):is(.error, .is-invalid, [aria-invalid=true]), .editor-component.error > textarea {
-		border-color: var(--ui-danger-border-strong-color) !important;
+	:is(input, select, textarea):focus {
+		outline: none;
+		border-color: var(--border-hover-color);
 	}
 
-	:is(input, select, textarea):is(.error, .is-invalid, [aria-invalid=true]):focus-visible, .editor-component.error > textarea:focus-visible {
-		outline-color: var(--ui-danger-color);
+	:is(input, select, textarea):is(.error, .is-invalid, [aria-invalid=true]), .editor-component.error > textarea {
+		border-color: var(--ui-danger-border-strong-color) !important;
 	}
 
 	input[type=checkbox], input[type=radio] {
@@ -1126,8 +1127,7 @@
 	}
 
 	input[type=checkbox].error, input[type=radio].error {
-		outline: 1px solid var(--ui-danger-color);
-		outline-offset: 2px;
+		accent-color: var(--ui-danger-color);
 	}
 
 	.button, .ui-button, input[type=submit], input[type=button], input[type=reset], input::file-selector-button {
@@ -1207,8 +1207,9 @@
 	}
 
 	button:focus-visible, .button:focus-visible, .ui-button:focus-visible, input:is([type=submit], [type=button], [type=reset]):focus-visible {
-		outline: 2px solid var(--accent-color);
-		outline-offset: 2px;
+		outline: none;
+		border-color: var(--border-hover-color);
+		background-color: var(--button-hover-background, var(--ui-active-background));
 	}
 
 	button:disabled, input:disabled, select:disabled, textarea:disabled, :is(.button, .ui-button)[aria-disabled=true] {
@@ -1281,8 +1282,11 @@ body.loading {
 }
 
 .game-brand:focus-visible {
-	outline: 2px solid var(--accent-color) !important;
-	outline-offset: 4px;
+	outline: none;
+}
+
+.game-brand:focus-visible .game-brand-logo {
+	filter: brightness(1.15);
 }
 
 .eyebrow, .sidebar-caption {

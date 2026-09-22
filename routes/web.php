@@ -93,7 +93,6 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 	Route::withoutMiddleware(RedirectToStart::class)->group(function () {
 		Route::get('start', [Controllers\StartController::class, 'index'])->name('start');
 		Route::post('start', [Controllers\StartController::class, 'save']);
-		Route::post('start/race', [Controllers\StartController::class, 'race']);
 	});
 
 	Route::get('quests', [Controllers\QuestController::class, 'index'])->name('quests');

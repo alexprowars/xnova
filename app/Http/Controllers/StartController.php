@@ -3,97 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Vars;
-use App\Exceptions\Exception;
 use App\Models;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class StartController extends Controller
 {
 	public function index()
 	{
+		if ($this->isComplete()) {
+			return to_route('overview');
+		}
+
 		return Inertia::render('Start');
 	}
 
 	public function save(Request $request)
 	{
-		if ($this->user->sex && $this->user->avatar) {
-			throw new Exception('Уже выбрано');
+		if ($this->isComplete()) {
+			return to_route('overview');
 		}
 
 		$data = $request->validate([
-			'name' => 'required|string',
-			'avatar' => 'required|string',
+			'name' => 'required|string|max:30',
+			'locale' => 'required|string|in:ru,en',
+			'race' => 'required|integer|between:1,4',
+			'avatar' => ['required', 'string', 'regex:/\A[12]_[1-8]\z/'],
 		]);
 
 		$data['name'] = strip_tags(trim($data['name']));
 
 		if (!preg_match("/^[А-Яа-яЁёa-zA-Z0-9_\-!~.@ ]+$/u", $data['name'])) {
-			throw new Exception(__('start.error_charalpha'));
+			throw ValidationException::withMessages(['name' => __('start.error_charalpha')]);
 		}
 
 		$existUser = Models\User::query()
 			->where('username', $data['name'])
-			->where('id', '!=', $this->user->id)
+			->whereKeyNot($this->user->id)
 			->exists();
 
 		if ($existUser) {
-			throw new Exception(__('reg.error_userexist'));
+			throw ValidationException::withMessages(['name' => __('reg.error_userexist')]);
 		}
+
+		[$sex, $avatar] = explode('_', $data['avatar']);
 
 		$this->user->username = $data['name'];
-
-		$face = Str::sanitize($data['avatar']);
-
-		if (!empty($face)) {
-			$face = explode('_', $face);
-			$face[0] = (int) $face[0];
-
-			if ($face[0] != 1 && $face[0] != 2) {
-				$this->user->sex = 0;
-				$this->user->avatar = 1;
-			} else {
-				$face[1] = (int) $face[1];
-
-				if ($face[1] < 1 || $face[1] > 8) {
-					$face[1] = 1;
-				}
-
-				$this->user->sex = $face[0];
-				$this->user->avatar = $face[1];
-			}
-		}
-
-		$this->user->update();
-	}
-
-	public function race(Request $request)
-	{
-		if ($this->user->race) {
-			throw new Exception('Фракция уже выбрана');
-		}
-
-		$request->validate([
-			'race' => 'required|numeric',
-		]);
-
-		$r = (int) $request->post('race', 0);
-		$r = ($r < 1 || $r > 4) ? 0 : $r;
-
-		if ($r <= 0) {
-			throw new Exception('Выберите фракцию');
-		}
-
-		$this->user->race = $r;
+		$this->user->locale = $data['locale'];
+		$this->user->race = (int) $data['race'];
+		$this->user->sex = (int) $sex;
+		$this->user->avatar = (int) $avatar;
 		$this->user->daily_bonus = now()->addDay();
 
 		foreach (Vars::getOfficiers() as $code) {
-			$this->user->setAttribute('officier_' . $code, now()->addDay());
+			$this->user->setAttribute('officier_' . $code, now()->addDays(7));
 		}
 
 		$this->user->update();
 
 		return to_route('quests');
+	}
+
+	private function isComplete(): bool
+	{
+		return $this->user->race && $this->user->sex && $this->user->avatar;
 	}
 }

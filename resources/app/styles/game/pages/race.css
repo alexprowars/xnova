@@ -1,4 +1,4 @@
-.page-race {
+.page-race, .page-start {
 	font-size: 14px;
 
 	.race-heading {
@@ -66,6 +66,57 @@
 		border-color: var(--ui-success-border-color);
 	}
 
+	.race-card.is-selectable {
+		position: relative;
+		cursor: pointer;
+	}
+
+	.race-card.is-selectable .race-card-heading {
+		padding-right: 38px;
+	}
+
+	.race-choice-mark {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		display: grid;
+		place-items: center;
+		width: 20px;
+		height: 20px;
+		border-radius: 4px;
+		background: var(--accent-color);
+		color: var(--ui-on-accent-color);
+		pointer-events: none;
+	}
+
+	.race-choice-mark svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.race-card > input {
+		position: absolute;
+		opacity: 0;
+		width: 1px;
+		height: 1px;
+	}
+
+	.race-card.is-selectable:hover {
+		border-color: var(--ui-button-secondary-border-hover-color);
+	}
+
+	.race-card.is-selected {
+		border-color: var(--accent-color);
+	}
+
+	.race-card.is-selectable:focus-within {
+		border-color: var(--accent-color);
+	}
+
+	.race-card.is-selected .race-card-heading {
+		background: var(--ui-selected-background);
+	}
+
 	.race-card-heading {
 		display: flex;
 		align-items: flex-start;
@@ -94,7 +145,7 @@
 		overflow-wrap: anywhere;
 	}
 
-	.race-card-heading h2 {
+	.race-card-title {
 		margin: 0;
 		color: var(--faction-color);
 		font-size: 16px;
@@ -120,7 +171,7 @@
 		padding: 12px 14px;
 	}
 
-	.race-card-content h3 {
+	.race-perks-title {
 		margin: 0 0 6px;
 		color: var(--ui-muted-color);
 		font-size: 12px;
@@ -166,7 +217,7 @@
 		transition: background-color .15s, border-color .15s;
 	}
 
-	.race-ship:hover {
+	a.race-ship:hover {
 		background: var(--ui-active-background);
 		border-color: var(--ui-button-secondary-border-hover-color);
 	}

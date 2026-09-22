@@ -2,13 +2,46 @@
 	max-width: 880px;
 	margin: 0 auto;
 
+	.start-welcome {
+		margin-bottom: 18px;
+		padding: 28px;
+		border: 1px solid var(--ui-border-color);
+		border-left: 3px solid var(--accent-color);
+		border-radius: 6px;
+		background: var(--ui-heading-background);
+	}
+
+	.start-welcome-brand {
+		color: var(--accent-color);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: .2em;
+	}
+
+	.start-welcome h1 {
+		margin: 8px 0 10px;
+		font-size: clamp(24px, 4vw, 32px);
+		line-height: 1.2;
+	}
+
+	.start-welcome p {
+		max-width: 620px;
+		margin: 0;
+		color: var(--ui-label-color);
+		font-size: 14px;
+		line-height: 1.6;
+	}
+
 	.start-heading {
 		padding: 16px 18px 0;
 	}
 
-	.start-heading h1 {
-		margin-top: 5px;
+	.start-heading h2 {
+		margin: 5px 0 0;
+		color: var(--ui-title-color);
 		font-size: 20px;
+		font-weight: 600;
+		line-height: 1.4;
 	}
 
 	.start-section-title {
@@ -22,6 +55,7 @@
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 10px;
+		padding: 16px;
 	}
 
 	.start-avatar-grid > label {
@@ -35,29 +69,30 @@
 	}
 
 	.start-avatar-grid img {
+		display: block;
 		width: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
 		border-radius: 3px;
 	}
 
-	.start-avatar-grid input, .start-race-card > input {
+	.start-avatar-grid input {
 		position: absolute;
 		opacity: 0;
 		width: 1px;
 		height: 1px;
 	}
 
-	.start-avatar-grid > label:hover, .start-race-card:hover {
+	.start-avatar-grid > label:hover {
 		border-color: var(--ui-button-secondary-border-hover-color);
 	}
 
-	.start-avatar-grid > label.is-selected, .start-race-card.is-selected {
+	.start-avatar-grid > label.is-selected {
 		border-color: var(--border-hover-color);
 		background: var(--ui-button-background);
 	}
 
-	.start-avatar-grid > label:focus-within, .start-race-card:focus-within {
+	.start-avatar-grid > label:focus-within {
 		border-color: var(--border-hover-color);
 	}
 
@@ -77,64 +112,14 @@
 		display: block;
 	}
 
-	.start-race-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 10px;
-	}
-
-	.start-race-card {
-		position: relative;
-		padding: 14px;
-		border: 1px solid var(--ui-border-color);
-		border-radius: 5px;
-		background: var(--ui-panel-background);
-		cursor: pointer;
-	}
-
-	.start-race-title {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		margin-bottom: 10px;
-	}
-
-	.start-race-title svg {
-		width: 48px;
-		height: 48px;
-		flex-shrink: 0;
-		color: var(--ui-label-color);
-	}
-
-	.start-race-title h2 {
-		flex: 1;
-		margin: 0;
-		color: var(--text-color);
-		font-size: 16px;
-		font-weight: 500;
-	}
-
-	.start-race-title span {
-		color: var(--ui-info-color);
-	}
-
-	.start-race-description {
-		color: var(--ui-label-color);
-		font-size: 14px;
-		overflow-wrap: anywhere;
-	}
-
-	.start-race-description p {
-		margin: 0;
-	}
-
 	@media (max-width: 639px) {
-		.start-race-grid {
-			grid-template-columns: minmax(0, 1fr);
+		.start-welcome {
+			padding: 20px 18px;
 		}
 
 		.start-avatar-grid {
 			gap: 6px;
+			padding: 10px;
 		}
 	}
 }
