@@ -12,6 +12,7 @@ class Ai extends Model
 
 	protected $casts = [
 		'active' => 'boolean',
+		'state' => 'array',
 		'strategy' => StrategyType::class,
 	];
 

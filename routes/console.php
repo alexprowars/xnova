@@ -11,4 +11,4 @@ Schedule::command(Commands\UpdateOnline::class)->everyFifteenMinutes();
 Schedule::command(Commands\UpdateStats::class)->cron('5 */6 * * *');
 
 Schedule::command(Commands\AiUpdate::class)
-	->everyFiveMinutes()->runInBackground();
+	->everyMinute()->withoutOverlapping(30)->runInBackground();

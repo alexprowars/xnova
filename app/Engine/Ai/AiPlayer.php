@@ -4,303 +4,234 @@ namespace App\Engine\Ai;
 
 use App\Engine\Building;
 use App\Engine\Entity\Defence;
-use App\Engine\Entity\Research;
 use App\Engine\Entity\Ship;
-use App\Engine\EntityFactory;
 use App\Engine\Enums\ItemType;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\QueueType;
-use App\Engine\Objects\BuildingObject;
 use App\Engine\Objects\ObjectsFactory;
-use App\Engine\Objects\ResearchObject;
 use App\Engine\QueueManager;
 use App\Facades\Galaxy;
 use App\Models\Ai;
 use App\Models\Planet;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Log;
 
 class AiPlayer
 {
-	protected QueueManager $queue;
-	protected StrategyPlanner $planner;
-	protected Planet $planet;
-
-	public function __construct(protected Ai $ai)
+	public function __construct(private Ai $ai)
 	{
 	}
 
 	public function run(): void
 	{
-		UserService::checkLevelXp($this->ai->user);
+		$user = $this->ai->user;
 
-		if (!$this->ai->user->planet_current && !$this->ai->user->planet_id && $this->ai->user->race) {
-			Galaxy::createPlanetByUser($this->ai->user);
+		if (!$user || $user->isVacation() || $user->blocked_at) {
+			return;
 		}
 
-		$planets = $this->ai->user->getPlanets();
+		if (!$user->planet_current && !$user->planet_id && $user->race) {
+			Galaxy::createPlanetByUser($user);
+		}
+
+		// getPlanets() также возвращает планеты альянса. Бот управляет только своими.
+		$planets = $user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)
+			->with('entities')->orderBy('id')->get();
+		$hub = $planets->sortByDesc(fn(Planet $planet) => $planet->getLevel(31))->first();
 
 		foreach ($planets as $planet) {
-			$planet->getProduction()->update();
-			$planet->checkUsedFields();
-			$planet->setRelation('user', $this->ai->user);
+			$planet->getConnection()->transaction(function () use ($user, $planet, $hub) {
+				$user->refreshForUpdate();
+				$planet->refreshForUpdate();
 
-			$planet->user->onlinetime = now();
-			$planet->user->save();
+				if ($planet->trashed() || $planet->destroyed_at || $planet->user_id !== $user->id || $user->isVacation() || $user->blocked_at) {
+					return;
+				}
 
-			$this->planet = $planet;
-			$this->queue = new QueueManager($planet);
-			$this->planner = new StrategyPlanner($planet, $this->ai->strategy);
+				$planet->setRelation('user', $user);
+				$queue = new QueueManager($planet);
+				$queue->update();
+				$planet->getProduction()->reset();
+				$planet->getProduction()->update();
+				$planet->checkUsedFields();
 
-			$this->runEconomyActions();
+				$state = $this->ai->state ?? [];
+				$commander = new FleetCommander($planet, $this->ai->strategy, $state);
+				$commander->run();
+				$state = $commander->getState();
+
+				// Отправка флота обновляет модели и ресурсы, план строится после неё.
+				$probeTarget = max([7, ...array_column($state['targets'] ?? [], 'required_probes')]);
+				$planner = new StrategyPlanner($planet, $this->ai->strategy, $planet->id === $hub?->id, $probeTarget);
+				$this->develop($planet, new QueueManager($planet), $planner, $state);
+
+				$this->ai->state = $state;
+				$this->ai->save();
+				UserService::checkLevelXp($planet->user);
+				$planet->user->onlinetime = now();
+				$planet->user->save();
+			});
 		}
 	}
 
-	private function runEconomyActions(): bool
+	/** @return array<array<int|string|bool>> */
+	public function preview(): array
 	{
-		$canBuild = true;
-		$canResearch = true;
-		$canShipyard = true;
-		$canDefense = true;
+		$user = $this->ai->user;
 
-		if ($this->ai->strategy === StrategyType::ECONOMY) {
-			$canResearch = random_int(1, 100) <= 30;
-			$canShipyard = random_int(1, 100) <= 20;
-			$canDefense = random_int(1, 100) <= 20;
+		if (!$user || $user->isVacation() || $user->blocked_at) {
+			return [];
 		}
 
-		if ($this->ai->strategy === StrategyType::MILITARY) {
-			$canBuild = random_int(1, 100) <= 40;
-			$canResearch = random_int(1, 100) <= 30;
-		}
+		$planets = $user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)->with('entities')->orderBy('id')->get();
+		$hub = $planets->sortByDesc(fn(Planet $planet) => $planet->getLevel(31))->first();
+		$rows = [];
 
-		if ($canBuild && $this->tryUpgradeBuildings()) {
-			return true;
-		}
+		foreach ($planets as $planet) {
+			$planet->setRelation('user', $user);
+			$planet->getProduction()->getResourceProduction();
+			$state = $this->ai->state ?? [];
+			$probeTarget = max([7, ...array_column($state['targets'] ?? [], 'required_probes')]);
+			$planner = new StrategyPlanner($planet, $this->ai->strategy, $planet->id === $hub?->id, $probeTarget);
 
-		if ($canResearch && !$this->queue->getCount(QueueType::RESEARCH) && !Building::checkLabInQueue($this->planet)) {
-			$priority = $this->planner->getRecommendations(ItemType::TECH);
+			foreach ([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE] as $type) {
+				$item = $planner->getRecommendations($type)[0] ?? null;
 
-			foreach ($priority as $item) {
-				if ($this->tryQueueResearch($item['id'])) {
-					return true;
+				if ($item) {
+					$entity = $planner->getEntity($item['id']);
+					$rows[] = [$user->id, $planet->id, $type->value, $item['id'], $item['count'], $entity->canConstruct() ? 'yes' : 'saving', $item['reason']];
 				}
 			}
 		}
 
-		if ($canShipyard) {
-			$todo = $this->getShipyardTodo($this->ai->strategy);
-			$priority = $this->planner->getRecommendations(ItemType::FLEET);
-
-			foreach ($priority as $item) {
-				$cnt = $todo[$item['id']] ?? 0;
-
-				if ($cnt && $this->tryQueueShipyard($item['id'], $cnt)) {
-					return true;
-				}
-			}
-		}
-
-		if ($canDefense) {
-			$todo = $this->getDefenseTodo($this->ai->strategy);
-			$priority = $this->planner->getRecommendations(ItemType::DEFENSE);
-
-			foreach ($priority as $item) {
-				$cnt = $todo[$item['id']] ?? 0;
-
-				if ($cnt && $this->tryQueueShipyard($item['id'], $cnt)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return $rows;
 	}
 
-	private function getShipyardTodo(StrategyType $startegy): array
+	private function develop(Planet $planet, QueueManager $queue, StrategyPlanner $planner, array &$state): void
 	{
-		return match ($startegy) {
-			StrategyType::ECONOMY => [202 => 30, 203 => 10, 204 => 5, 209 => 15, 210 => 5],
-			StrategyType::MILITARY => [202 => 20, 203 => 10, 204 => 30, 205 => 15, 206 => 10, 207 => 5, 209 => 5, 210 => 10],
-			default => [202 => 25, 203 => 10, 204 => 15, 205 => 5, 206 => 3, 209 => 10, 210 => 5],
+		$plans = [];
+
+		if (!$queue->getCount(QueueType::BUILDING) && $planet->field_current < $planet->getMaxFields()) {
+			foreach ($planner->getRecommendations(ItemType::BUILDING) as $item) {
+				if ($item['id'] === 31 && config('game.BuildLabWhileRun', 0) != 1 && $planet->user->queue()->where('type', QueueType::RESEARCH)->exists()) {
+					continue;
+				}
+
+				// Последнее поле оставляем для расширения; его требования планируем заранее.
+				if ($planet->getMaxFields() - $planet->field_current <= 1 && $item['id'] !== 33) {
+					continue;
+				}
+
+				$plans['build'] = $item;
+				break;
+			}
+		}
+
+		if (!$planet->user->queue()->where('type', QueueType::RESEARCH)->exists() && !Building::checkLabInQueue($planet)) {
+			$research = $planner->getRecommendations(ItemType::TECH);
+
+			if (!empty($research)) {
+				$plans['tech'] = $research[0];
+			}
+		}
+
+		if (!$queue->getCount(QueueType::SHIPYARD)) {
+			$units = array_merge($planner->getRecommendations(ItemType::FLEET), $planner->getRecommendations(ItemType::DEFENSE));
+			usort($units, fn(array $a, array $b) => $b['score'] <=> $a['score'] ?: $a['id'] <=> $b['id']);
+
+			if (!empty($units)) {
+				$plans['fleet'] = $units[0];
+			}
+		}
+
+		if (empty($plans)) {
+			return;
+		}
+
+		$rotation = match ($this->ai->strategy) {
+			StrategyType::ECONOMY => ['build', 'build', 'tech', 'fleet'],
+			StrategyType::MILITARY => ['build', 'tech', 'fleet', 'fleet'],
+			StrategyType::BALANCED => ['build', 'tech', 'fleet'],
 		};
-	}
+		$cursor = ($state['development'][$planet->id] ?? 0) % count($rotation);
+		$primary = array_key_first($plans);
 
-	private function getDefenseTodo(StrategyType $startegy): array
-	{
-		return match ($startegy) {
-			StrategyType::ECONOMY => [401 => 20, 402 => 10, 407 => 1, 408 => 1],
-			StrategyType::MILITARY => [401 => 10, 402 => 5, 407 => 1],
-			default => [401 => 25, 402 => 15, 403 => 10, 404 => 3, 407 => 1, 408 => 1],
-		};
-	}
+		for ($i = 0; $i < count($rotation); $i++) {
+			$position = ($cursor + $i) % count($rotation);
 
-	private function tryUpgradeBuildings(): bool
-	{
-		$maxQueueSize = (int) config('game.maxBuildingQueue') + (int) $this->planet->user->bonus('queue', 0);
-
-		if ($this->queue->getCount(QueueType::BUILDING) >= $maxQueueSize) {
-			return false;
-		}
-
-		$energyFree = $this->planet->energy - $this->planet->energy_used;
-
-		if ($energyFree < 0) {
-			foreach ([4, 12] as $id) {
-				if ($this->tryQueueBuilding($id)) {
-					return true;
-				}
+			if (isset($plans[$rotation[$position]])) {
+				$primary = $rotation[$position];
+				$cursor = $position;
+				break;
 			}
 		}
 
-		$candidates = $this->planner->getRecommendations(ItemType::BUILDING);
+		if (isset($plans['build']) && ($plans['build']['score'] >= 700 || $this->waitHours($planet, $planner, $plans[$primary]) > (float)config('ai.saving_horizon_hours', 6))) {
+			$primary = 'build';
+		}
 
-		foreach ($candidates as $item) {
-			if ($this->tryQueueBuilding($item['id'])) {
-				return true;
+		$order = [$primary => $plans[$primary]] + $plans;
+		$reserve = [];
+
+		foreach ($order as $category => $item) {
+			if (($category === 'tech' && Building::checkLabInQueue($planet)) || ($item['id'] === 31 && config('game.BuildLabWhileRun', 0) != 1 && $planet->user->queue()->where('type', QueueType::RESEARCH)->exists())) {
+				continue;
 			}
-		}
 
-		return false;
-	}
+			$entity = $planner->getEntity($item['id']);
+			$price = $entity->getPrice();
+			$count = $item['count'];
 
-	/** @phpstan-ignore-next-line */
-	private function pickMineToUpgrade(): int
-	{
-		$mLvl = $this->planet->getLevel(1);
-		$cLvl = $this->planet->getLevel(2);
-		$dLvl = $this->planet->getLevel(3);
-
-		// keep Crystal within -2 of Metal
-		if ($cLvl < $mLvl - 2) {
-			return 2;
-		}
-
-		// keep Deut within -2 of Crystal
-		if ($dLvl < $cLvl - 2) {
-			return 3;
-		}
-
-		// otherwise metal
-		return 1;
-	}
-
-	/** @phpstan-ignore-next-line */
-	private function tryStorageIfNeeded(): bool
-	{
-		$storage = $this->planet->getProduction()->getStorageCapacity();
-		$storageMap = [[22, 'metal'], [23, 'crystal'], [24, 'deuterium']];
-
-		foreach ($storageMap as [$id, $resKey]) {
-			$cap = $storage->get($resKey);
-			$cur = $this->planet->{$resKey};
-
-			if ($cap > 0 && $cur > $cap * 0.85 && $this->tryQueueBuilding($id)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function tryQueueBuilding(int $id): bool
-	{
-		$object = ObjectsFactory::get($id);
-
-		if (!($object instanceof BuildingObject)) {
-			return false;
-		}
-
-		if (!$object->hasAllowedBuild($this->planet->planet_type)) {
-			return false;
-		}
-
-		$entity = $this->planet->getEntityUnit($object);
-
-		if (!$entity->canConstruct() || !$entity->isAvailable()) {
-			return false;
-		}
-
-		$maxQueueSize = (int) config('game.maxBuildingQueue') + (int) $this->planet->user->bonus('queue', 0);
-
-		if ($this->queue->getCount(QueueType::BUILDING) >= $maxQueueSize) {
-			return false;
-		}
-
-		$queuedBuildingIds = $this->queue->get(QueueType::BUILDING)->pluck('id')->all();
-
-		$this->queue->add($object);
-
-		return $this->queue->get(QueueType::BUILDING)
-			->where('object_id', $object->getId())
-			->whereNotIn('id', $queuedBuildingIds)
-			->isNotEmpty();
-	}
-
-	private function tryQueueResearch(int $id): bool
-	{
-		$object = ObjectsFactory::get($id);
-
-		if (!($object instanceof ResearchObject)) {
-			return false;
-		}
-
-		$entity = Research::createEntity(
-			$object->getId(),
-			$this->planet->user->getTechLevel($object->getId()),
-			$this->planet
-		);
-
-		if (!$entity->isAvailable() || !$entity->canConstruct()) {
-			return false;
-		}
-
-		if ($object->getMaxConstructable() && $this->planet->user->getTechLevel($object->getId()) >= $object->getMaxConstructable()) {
-			return false;
-		}
-
-		$this->queue->add($object);
-
-		return true;
-	}
-
-	private function tryQueueShipyard(int $id, int $count): bool
-	{
-		if (!$count) {
-			return false;
-		}
-
-		$object = ObjectsFactory::get($id);
-		$entity = EntityFactory::get($object->getId(), 1, $this->planet);
-
-		if ((!($entity instanceof Ship) && !($entity instanceof Defence))) {
-			return false;
-		}
-
-		if (!$entity->isAvailable()) {
-			return false;
-		}
-
-		$buildItems = $this->queue->get(QueueType::SHIPYARD);
-
-		if ($object->getMaxConstructable()) {
-			$total = $this->planet->getLevel($object->getId());
-
-			foreach ($buildItems as $item) {
-				if ($item->object_id == $object->getId()) {
-					$total += $item->level;
+			foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+				if (($price[$resource] ?? 0) > 0) {
+					$count = min($count, max(0, (int)floor(($planet->{$resource} - ($reserve[$resource] ?? 0)) / $price[$resource])));
 				}
 			}
 
-			$count = min($count, max(($object->getMaxConstructable() - $total), 0));
+			if ($entity instanceof Ship || $entity instanceof Defence) {
+				$count = min($count, max(1, (int)floor((float)config('ai.shipyard_hours', 2) * 3600 / max(1, $entity->getTime()))));
+			}
+
+			if ($count > 0 && $entity->isAvailable() && $entity->canConstruct()) {
+				$before = $queue->get()->pluck('id')->all();
+				$queue->add(ObjectsFactory::get($item['id']), $count);
+				$queue->loadQueue();
+				$added = $queue->get()->whereNotIn('id', $before)->first();
+
+				if ($added) {
+					if ($category === $primary) {
+						$state['development'][$planet->id] = ($cursor + 1) % count($rotation);
+					}
+
+					if (config('ai.log_decisions', true)) {
+						Log::info('ai.development', ['user_id' => $planet->user_id, 'planet_id' => $planet->id, 'object_id' => $item['id'], 'count' => $count, 'reason' => $item['reason']]);
+					}
+
+					continue;
+				}
+			}
+
+			if ($category === $primary) {
+				// Копим на выбранную цель; остальные очереди используют только излишки.
+				$reserve = $price;
+			}
+		}
+	}
+
+	private function waitHours(Planet $planet, StrategyPlanner $planner, array $item): float
+	{
+		$price = $planner->getEntity($item['id'])->getPrice();
+		$production = $planet->getProduction()->getResourceProduction();
+		$hours = 0.0;
+
+		foreach (['metal', 'crystal', 'deuterium'] as $resource) {
+			$missing = max(0, ($price[$resource] ?? 0) - $planet->{$resource});
+
+			if ($missing > 0) {
+				$hours = max($hours, $production->get($resource) > 0 ? $missing / $production->get($resource) : INF);
+			}
 		}
 
-		$count = min($count, $entity->getMaxConstructible());
-
-		if (!$count) {
-			return false;
-		}
-
-		$this->queue->add($object, $count);
-
-		return true;
+		return $hours;
 	}
 }
