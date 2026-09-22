@@ -50,17 +50,7 @@
 			</div>
 			<div class="logs-create-actions">
 				<button type="submit" class="button" :disabled="form.processing">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path d="m5 12 4 4L19 6"/>
-					</svg>
+					<CheckIcon stroke-width="1.5" aria-hidden="true"/>
 					{{ $t('pages.logs.create.save') }}
 				</button>
 				<Link href="/logs" class="logs-create-back">{{ $t('pages.logs.create.back') }}</Link>
@@ -70,6 +60,7 @@
 </template>
 
 <script setup>
+	import CheckIcon from '~/images/icons/check.svg?component';
 	import { useVuelidate } from '@vuelidate/core'
 	import { required } from '@vuelidate/validators'
 	import { Head, Link, useForm } from '@inertiajs/vue3';

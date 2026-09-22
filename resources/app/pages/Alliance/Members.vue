@@ -39,14 +39,7 @@
 								<td class="alliance-member-number">{{ index + 1 }}</td>
 								<td class="alliance-member-identity">
 									<div>
-										<component
-											v-if="raceIcons[m.race]"
-											:is="raceIcons[m.race]"
-											class="alliance-race"
-											:class="'race-' + m.race"
-											:aria-label="$t('pages.race.' + raceNames[m.race])"
-											role="img"
-										/>
+										<RaceIcon v-if="m.race" :code="m.race" class="alliance-race" :class="'race-' + m.race" role="img"/>
 										<SendMessagePopup :id="m.id" :title="$t('send_message')">
 											{{ m.username }}
 											<SendIcon aria-hidden="true"/>
@@ -68,25 +61,10 @@
 								</td>
 								<td v-if="page.admin" class="alliance-member-actions">
 									<div>
-										<button
-											type="button"
-											class="button is-secondary icon-button"
-											:disabled="memberForm.processing"
-											:title="$t('pages.alliance.members.set_rank_for', [m.username])"
-											:aria-label="$t('pages.alliance.members.set_rank_for', [m.username])"
-											:aria-expanded="changeRank === m.id"
-											@click="setRank(m.id)"
-										>
+										<button type="button" class="button is-secondary icon-button" :disabled="memberForm.processing" :title="$t('pages.alliance.members.set_rank_for', [m.username])" :aria-expanded="changeRank === m.id" @click="setRank(m.id)">
 											<EditIcon aria-hidden="true"/>
 										</button>
-										<button
-											type="button"
-											class="button is-danger icon-button"
-											:disabled="memberForm.processing"
-											:title="$t('pages.alliance.ui.kick')"
-											:aria-label="$t('pages.alliance.ui.kick') + ': ' + m.username"
-											@click="kick(m.id)"
-										>
+										<button type="button" class="button is-danger icon-button" :disabled="memberForm.processing" :title="$t('pages.alliance.ui.kick')" @click="kick(m.id)">
 											<TrashIcon aria-hidden="true"/>
 										</button>
 									</div>
@@ -123,10 +101,7 @@
 	import SendIcon from '~/images/icons/send.svg?component';
 	import EditIcon from '~/images/icons/edit.svg?component';
 	import TrashIcon from '~/images/icons/trash.svg?component';
-	import ConfederationIcon from '~/images/icons/races/confederation.svg?component';
-	import BionicsIcon from '~/images/icons/races/bionics.svg?component';
-	import CylonsIcon from '~/images/icons/races/cylons.svg?component';
-	import AncientsIcon from '~/images/icons/races/ancients.svg?component';
+	import RaceIcon from '~/components/RaceIcon.vue';
 
 	import SendMessagePopup from '~/components/Page/Messages/SendMessagePopup.vue';
 	import { computed, ref } from 'vue';
@@ -149,9 +124,7 @@
 	const { t } = useI18n();
 
 	const changeRank = ref();
-	const memberForm = useForm({ id: null, rank: null });
-	const raceIcons = { 1: ConfederationIcon, 2: BionicsIcon, 3: CylonsIcon, 4: AncientsIcon };
-	const raceNames = { 1: 'faction_confederation', 2: 'faction_bionics', 3: 'faction_cylons', 4: 'faction_ancients' };
+	const memberForm = useForm({ id: null, rank: null });	const raceNames = { 1: 'faction_confederation', 2: 'faction_bionics', 3: 'faction_cylons', 4: 'faction_ancients' };
 
 	const url = computed(() => {
 		return '/alliance/' + (props.page['admin'] ? 'admin/members' : 'members');

@@ -51,37 +51,12 @@
 					</div>
 				</div>
 				<span class="quest-status">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.6"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path v-if="quest.finish" d="m5 12 4 4L19 6"/>
-						<template v-else-if="!quest.available">
-							<rect x="5" y="10" width="14" height="11" rx="2"/>
-							<path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-						</template>
-						<path v-else d="M12 3v18m-9-9h18M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-					</svg>
+					<CheckIcon v-if="quest.finish" aria-hidden="true"/>
+					<LockIcon v-else-if="!quest.available" aria-hidden="true"/>
+					<TargetIcon v-else aria-hidden="true"/>
 					{{ $t(quest.finish ? 'pages.quests.completed' : quest.available ? 'pages.quests.available' : 'pages.quests.locked') }}
 				</span>
-				<svg
-					v-if="quest.available"
-					class="quest-open"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="m9 5 7 7-7 7"/>
-				</svg>
+				<RightIcon v-if="quest.available" class="quest-open" stroke-width="1.5" aria-hidden="true"/>
 			</component>
 			<div v-if="!page.items.length" class="quests-empty">{{ $t('pages.quests.empty') }}</div>
 		</div>
@@ -89,14 +64,26 @@
 </template>
 
 <script setup>
+	import LockIcon from '~/images/icons/lock.svg?component';
+	import TargetIcon from '~/images/icons/target.svg?component';
+	import CheckIcon from '~/images/icons/check.svg?component';
+	import RightIcon from '~/images/icons/right.svg?component';
 	import useState from '~/composables/useState.js';
 	import { Head, Link } from '@inertiajs/vue3';
 	import { computed } from 'vue';
 
-	defineOptions({ layout: { view: { resources: false } } });
+	defineOptions({
+		layout: {
+			view: {
+				resources: false
+			}
+		}
+	});
+
 	const props = defineProps({
 		page: Object,
 	});
+
 	const state = useState();
 	const user = computed(() => state.user);
 	const completed = computed(() => props.page.items.filter((quest) => quest.finish).length);

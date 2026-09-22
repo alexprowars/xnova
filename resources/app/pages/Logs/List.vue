@@ -4,9 +4,7 @@
 		<div class="title game-list-heading">
 			<span>{{ $t('pages.logs.index.title') }}</span>
 			<Link href="/logs/create" class="button game-list-action">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-					<path d="M12 5v14M5 12h14"/>
-				</svg>
+				<PlusIcon stroke-width="1.5" aria-hidden="true"/>
 				{{ $t('pages.logs.index.add_new') }}
 			</Link>
 		</div>
@@ -30,6 +28,7 @@
 </template>
 
 <script setup>
+	import PlusIcon from '~/images/icons/plus.svg?component';
 	import ItemRow from '~/components/Page/Logs/ItemRow.vue';
 	import { Head, Link } from '@inertiajs/vue3';
 

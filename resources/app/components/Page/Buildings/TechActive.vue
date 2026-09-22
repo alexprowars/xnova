@@ -12,9 +12,11 @@
 						{{ item['name'] }}
 					</ModalLink>
 
-					<span v-if="level" class="positive" v-tooltip="$t('pages.research.current_level')">
-						{{ $formatNumber(level) }} <template v-if="item.max > 0">{{ $t('pages.research.from') }} <span class="neutral">{{ $formatNumber(item.max) }}</span></template>
-					</span>
+					<Popper v-if="level" :content="$t('pages.research.current_level')">
+						<span class="positive">
+							{{ $formatNumber(level) }} <template v-if="item.max > 0">{{ $t('pages.research.from') }} <span class="neutral">{{ $formatNumber(item.max) }}</span></template>
+						</span>
+					</Popper>
 				</div>
 				<div v-if="available" class="flex items-center gap-1">
 					<svg class="icon">
@@ -24,7 +26,9 @@
 				</div>
 
 				<div v-if="item['effects']" class="buildings-effects-row">
-					<ResourceIcon code="energy" v-if="item.effects_resource === 'energy'" class="building-resource-icon resource-energy" v-tooltip="$t('resources.energy')" role="img" :aria-label="$t('resources.energy')" focusable="false"/>
+					<Popper v-if="item.effects_resource === 'energy'" :content="$t('resources.energy')">
+						<ResourceIcon code="energy" class="building-resource-icon resource-energy" role="img" :aria-label="$t('resources.energy')" focusable="false"/>
+					</Popper>
 					<span v-html="item['effects']" class="buildings-effects-row"></span>
 				</div>
 
@@ -49,11 +53,13 @@
 				<div v-if="item['requirements']" class="building-active-requirements">
 					<div class="title">{{ $t('pages.techtree.requirements') }}</div>
 					<div class="items">
-						<div v-for="req in item['requirements']" class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }" v-tooltip="req['name']">
-							<div class="item-title">
-								{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+						<Popper v-for="req in item['requirements']" :content="req['name']">
+							<div class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }">
+								<div class="item-title">
+									{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+								</div>
 							</div>
-						</div>
+						</Popper>
 					</div>
 				</div>
 
@@ -66,6 +72,7 @@
 </template>
 
 <script setup>
+	import Popper from '~/components/Popper.vue';
 	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from '../Buildings/BuildRowPrice.vue';

@@ -5,68 +5,89 @@
 				<img :src="brandLogo" class="game-brand-logo" width="152" height="40" alt="" aria-hidden="true">
 			</Link>
 			<div class="top-menu-block left">
-				<Link v-if="user['quests'] < 10" href="/quests" class="m1" v-tooltip="$t('menu.quests')" :aria-label="$t('menu.quests')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-book"></use>
-					</svg>
-					<b>{{ 10 - user['quests'] }}</b>
-				</Link>
-				<Link href="/chat" class="m1" v-tooltip="$t('menu.chat')" :aria-label="$t('menu.chat')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-chat"></use>
-					</svg>
-				</Link>
-				<Link href="/messages" class="m1" v-tooltip="$t('menu.messages')" :aria-label="$t('menu.messages')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-message"></use>
-					</svg>
-					<b v-if="user.messages > 0">{{ user.messages }}</b>
-				</Link>
-				<Link v-if="user.alliance" href="/alliance/chat" class="m1" v-tooltip="$t('menu.alliance-chat')" :aria-label="$t('menu.alliance-chat')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-alliance"></use>
-					</svg>
-					<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
-				</Link>
+				<Popper v-if="user['quests'] < 10" :content="$t('menu.quests')">
+					<Link href="/quests" class="m1" :aria-label="$t('menu.quests')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-book"></use>
+						</svg>
+						<b>{{ 10 - user['quests'] }}</b>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.chat')">
+					<Link href="/chat" class="m1" :aria-label="$t('menu.chat')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-chat"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.messages')">
+					<Link href="/messages" class="m1" :aria-label="$t('menu.messages')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-message"></use>
+						</svg>
+						<b v-if="user.messages > 0">{{ user.messages }}</b>
+					</Link>
+				</Popper>
+				<Popper v-if="user.alliance" :content="$t('menu.alliance-chat')">
+					<Link href="/alliance/chat" class="m1" :aria-label="$t('menu.alliance-chat')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-alliance"></use>
+						</svg>
+						<b v-if="user.alliance.messages > 0">{{ user.alliance.messages }}</b>
+					</Link>
+				</Popper>
 			</div>
 			<Clock class="game-clock"/>
 			<div class="top-menu-block right">
-				<Link href="/stats" class="m1" v-tooltip="$t('menu.stats')" :aria-label="$t('menu.stats')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-statistics"></use>
-					</svg>
-				</Link>
-				<Link href="/tech" class="m1" v-tooltip="$t('menu.tech')" :aria-label="$t('menu.tech')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-tech"></use>
-					</svg>
-				</Link>
-				<Link href="/sim" class="m1" v-tooltip="$t('menu.sim')" :aria-label="$t('menu.sim')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-sim"></use>
-					</svg>
-				</Link>
-				<Link href="/search" class="m1" v-tooltip="$t('menu.search')" :aria-label="$t('menu.search')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-search"></use>
-					</svg>
-				</Link>
-				<Link href="/options" class="m1" v-tooltip="$t('menu.options')" :aria-label="$t('menu.options')">
-					<svg class="icon">
-						<use xlink:href="/assets/images/symbols.svg#icon-settings"></use>
-					</svg>
-				</Link>
-				<a href="" @click.prevent="logout" class="m1" v-tooltip="$t('menu.logout')" :aria-label="$t('menu.logout')">
-					<svg class="icon red">
-						<use xlink:href="/assets/images/symbols.svg#icon-exit"></use>
-					</svg>
-				</a>
+				<Popper :content="$t('menu.stats')">
+					<Link href="/stats" class="m1" :aria-label="$t('menu.stats')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-statistics"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.tech')">
+					<Link href="/tech" class="m1" :aria-label="$t('menu.tech')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-tech"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.sim')">
+					<Link href="/sim" class="m1" :aria-label="$t('menu.sim')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-sim"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.search')">
+					<Link href="/search" class="m1" :aria-label="$t('menu.search')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-search"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.options')">
+					<Link href="/options" class="m1" :aria-label="$t('menu.options')">
+						<svg class="icon">
+							<use xlink:href="/assets/images/symbols.svg#icon-settings"></use>
+						</svg>
+					</Link>
+				</Popper>
+				<Popper :content="$t('menu.logout')">
+					<a href="" @click.prevent="logout" class="m1" :aria-label="$t('menu.logout')">
+						<svg class="icon red">
+							<use xlink:href="/assets/images/symbols.svg#icon-exit"></use>
+						</svg>
+					</a>
+				</Popper>
 			</div>
 		</div>
 	</header>
 </template>
 
 <script setup>
+	import Popper from '~/components/Popper.vue';
 	import Clock from './Clock.vue';
 	import brandLogo from '~/images/brand.png';
 	import useState from '~/composables/useState.js';

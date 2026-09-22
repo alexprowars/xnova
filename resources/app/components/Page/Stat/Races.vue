@@ -20,7 +20,7 @@
 					</td>
 					<th scope="row">
 						<div class="stats-race-name">
-							<img :src="'/assets/images/skin/race' + item.race + '.gif'" alt="" width="30" height="30">
+							<RaceIcon v-if="item.race" :code="item.race" :style="{ color: 'var(--faction-' + item.race + '-color)' }" width="30" height="30" aria-hidden="true" focusable="false"/>
 							<span>{{ $t('races.' + item.race) }}</span>
 						</div>
 					</th>
@@ -41,6 +41,7 @@
 
 <script setup>
 	import Rank from './Rank.vue';
+	import RaceIcon from '~/components/RaceIcon.vue';
 
 	defineProps({
 		items: {

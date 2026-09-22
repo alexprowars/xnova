@@ -265,7 +265,7 @@
 		background: var(--ui-surface-background);
 	}
 
-	.tech-dependency-card > img, .tech-dependency-placeholder {
+	.tech-dependency-card > img, .tech-dependency-card > svg, .tech-dependency-placeholder {
 		width: 40px;
 		height: 40px;
 		flex-shrink: 0;
@@ -394,7 +394,7 @@
 			gap: 7px;
 		}
 
-		.tech-dependency-card > img, .tech-dependency-placeholder {
+		.tech-dependency-card > img, .tech-dependency-card > svg, .tech-dependency-placeholder {
 			width: 32px;
 			height: 32px;
 		}

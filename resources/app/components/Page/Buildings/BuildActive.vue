@@ -12,9 +12,11 @@
 						{{ item['name'] }}
 					</ModalLink>
 
-					<span v-if="level" class="positive" v-tooltip="$t('pages.building.current_level')">
-						{{ $formatNumber(level) }}
-					</span>
+					<Popper v-if="level" :content="$t('pages.building.current_level')">
+						<span class="positive">
+							{{ $formatNumber(level) }}
+						</span>
+					</Popper>
 				</div>
 				<div v-if="available" class="flex gap-4">
 					<div class="flex items-center justify-center gap-1">
@@ -36,7 +38,9 @@
 					<div class="flex gap-2">
 						<template v-for="(value, resource) in item['effects']">
 							<div v-if="value !== 0" class="flex items-center gap-1">
-								<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+								<Popper :content="$t('resources.' + resource)">
+									<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+								</Popper>
 								<span :class="{ positive: value > 0, negative: value < 0 }">{{ value > 0 ? '+' : '' }}{{ $formatNumber(value) }}</span>
 							</div>
 						</template>
@@ -53,7 +57,7 @@
 						{{ $t('pages.building.status_no_more_fields') }}
 					</div>
 					<button v-else-if="user['queue_max'] > 1 && queueByType('build').length > 0" type="button" class="button building-queue-button" @click.prevent="buildAction">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+						<PlusIcon stroke-width="1.5" aria-hidden="true"/>
 						{{ $t('pages.building.status_add_to_list') }}
 					</button>
 					<div v-else-if="!hasResources" class="negative text-center">
@@ -70,11 +74,13 @@
 				<div v-if="item['requirements']" class="building-active-requirements">
 					<div class="title">{{ $t('pages.techtree.requirements') }}</div>
 					<div class="items">
-						<div v-for="req in item['requirements']" class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }" v-tooltip="req['name']">
-							<div class="item-title">
-								{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+						<Popper v-for="req in item['requirements']" :content="req['name']">
+							<div class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }">
+								<div class="item-title">
+									{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+								</div>
 							</div>
-						</div>
+						</Popper>
 					</div>
 				</div>
 
@@ -87,6 +93,8 @@
 </template>
 
 <script setup>
+	import PlusIcon from '~/images/icons/plus.svg?component';
+	import Popper from '~/components/Popper.vue';
 	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';

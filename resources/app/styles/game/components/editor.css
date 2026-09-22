@@ -59,9 +59,6 @@
 		color: var(--ui-text-color);
 	}
 
-	.v-popper {
-		display: inline-flex;
-	}
 
 	.gensmall {
 		display: inline-flex;

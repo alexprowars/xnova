@@ -9,7 +9,14 @@
 				<div class="info-description-image">
 					<img v-if="item['id'] < 600" :src="'/assets/images/elements/' + item['id'] + '.webp'" class="info" height="150" width="150" alt="">
 					<img v-else-if="item['id'] < 700" :src="'/assets/images/officiers/' + item['id'] + '.jpg'" class="info" height="120" width="120" alt="">
-					<img v-else :src="'/assets/images/skin/race' + (item['id'] - 700) + '.gif'" class="info-race-image" height="35" width="35" alt="">
+					<RaceIcon
+						v-else
+						:code="item.id - 700"
+						:style="{ color: 'var(--faction-' + (item.id - 700) + '-color)' }"
+						class="info-race-image" height="35" width="35"
+						aria-hidden="true"
+						focusable="false"
+					/>
 				</div>
 				<div class="info-description-text" v-html="item['description']"></div>
 			</div>
@@ -31,6 +38,7 @@
 	import InfoDestroy from './Destroy.vue';
 	import InfoMissile from './Missile.vue';
 	import InfoAlliance from './Alliance.vue';
+	import RaceIcon from '~/components/RaceIcon.vue';
 
 	defineProps({
 		item: {

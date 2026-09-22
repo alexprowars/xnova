@@ -15,9 +15,9 @@
 			<tbody>
 				<tr v-for="item in items" :key="item.id + ':' + item.g + ':' + item.s + ':' + item.p">
 					<td class="search-player-name">
-						<component
-							v-if="raceIcons[item.race]"
-							:is="raceIcons[item.race]"
+						<RaceIcon
+							v-if="item.race"
+							:code="item.race"
 							:aria-label="$t('races.' + item.race)"
 							role="img"
 						/>
@@ -65,18 +65,13 @@
 
 <script setup>
 	import { UiButton, UiEmptyState } from '~/components/UI';
-	import ConfederationIcon from '~/images/icons/races/confederation.svg?component';
-	import BionicsIcon from '~/images/icons/races/bionics.svg?component';
-	import CylonsIcon from '~/images/icons/races/cylons.svg?component';
-	import AncientsIcon from '~/images/icons/races/ancients.svg?component';
+	import RaceIcon from '~/components/RaceIcon.vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
 	import SendIcon from '~/images/icons/send.svg?component';
 	import UserAddIcon from '~/images/icons/user-add.svg?component';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
 	import { Link } from '@inertiajs/vue3';
 
-
-	const raceIcons = { 1: ConfederationIcon, 2: BionicsIcon, 3: CylonsIcon, 4: AncientsIcon };
 
 	defineProps({
 		items: {

@@ -10,9 +10,7 @@
 				{{ $t('pages.chat.meta_title') }}
 			</h1>
 			<button type="button" class="page-chat-clear" @click="clear">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-					<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/>
-				</svg>
+				<TrashIcon stroke-width="1.5" aria-hidden="true"/>
 				{{ $t('pages.chat.button_clear') }}
 			</button>
 		</div>
@@ -29,19 +27,7 @@
 						:aria-label="$t('pages.chat.toolbar_insert_link')"
 						@click="addTag('[url]|[/url]', 1)"
 					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							aria-hidden="true"
-						>
-							<path
-								d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 1 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0"
-								transform="translate(1 0)"
-							/>
-						</svg>
+						<LinkIcon stroke-width="1.5" aria-hidden="true"/>
 					</button>
 					<button
 						type="button"
@@ -49,32 +35,11 @@
 						:aria-label="$t('pages.chat.toolbar_insert_image')"
 						@click="addTag('[img]|[/img]', 3)"
 					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linejoin="round"
-							aria-hidden="true"
-						>
-							<rect x="3" y="3" width="18" height="18" rx="3"/>
-							<circle cx="8" cy="8" r="1.5"/>
-							<path d="m3 17 5-5 4 4 4-6 5 7"/>
-						</svg>
+						<ImageIcon stroke-width="1.5" aria-hidden="true"/>
 					</button>
-					<Popper :triggers="['click']" :popper-triggers="['click']">
+					<Popover>
 						<button type="button" :title="$t('pages.chat.toolbar_smilies')" :aria-label="$t('pages.chat.toolbar_smilies')">
-							<svg
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.5"
-								stroke-linecap="round"
-								aria-hidden="true"
-							>
-								<circle cx="12" cy="12" r="9"/>
-								<path d="M8 14s1 3 4 3 4-3 4-3M8 8v1M16 8v1"/>
-							</svg>
+							<SmileIcon stroke-width="1.5" aria-hidden="true"/>
 						</button>
 						<template #content>
 							<div class="page-chat-smiles">
@@ -83,7 +48,7 @@
 								</button>
 							</div>
 						</template>
-					</Popper>
+					</Popover>
 				</div>
 				<span class="page-chat-counter">{{ message.length }} / 750</span>
 			</div>
@@ -105,18 +70,7 @@
 					:title="$t('pages.chat.button_send')"
 					:aria-label="$t('pages.chat.button_send')"
 				>
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path d="m21 3-7 18-4-7-7-4 18-7Z"/>
-						<path d="m10 14 6-6"/>
-					</svg>
+					<SendIcon stroke-width="1.5" aria-hidden="true"/>
 					<span>{{ $t('pages.chat.button_send') }}</span>
 				</button>
 			</div>
@@ -125,12 +79,17 @@
 </template>
 
 <script setup>
+	import TrashIcon from '~/images/icons/trash.svg?component';
+	import LinkIcon from '~/images/icons/editor/link.svg?component';
+	import ImageIcon from '~/images/icons/editor/image.svg?component';
+	import SmileIcon from '~/images/icons/editor/smile.svg?component';
+	import SendIcon from '~/images/icons/send.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 	import parser from '~/utils/parser';
 	import ChatMessage from '~/components/Page/Chat/ChatMessage.vue';
 	import { Head } from '@inertiajs/vue3';
-	import Popper from '~/components/Popper.vue';
+	import Popover from '~/components/Popover.vue';
 
 	const { t } = useI18n();
 

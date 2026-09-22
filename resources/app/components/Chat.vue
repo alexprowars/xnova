@@ -34,18 +34,7 @@
 					:title="$t('pages.chat.button_send')"
 					:aria-label="$t('pages.chat.button_send')"
 				>
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path d="m21 3-7 18-4-7-7-4 18-7Z"/>
-						<path d="m10 14 6-6"/>
-					</svg>
+					<SendIcon stroke-width="1.5" aria-hidden="true"/>
 				</button>
 			</form>
 		</div>
@@ -53,6 +42,7 @@
 </template>
 
 <script setup>
+	import SendIcon from '~/images/icons/send.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { onBeforeUnmount, onMounted, ref, watch, inject } from 'vue';
 	import ChatMessage from './Page/Chat/ChatMessage.vue';

@@ -5,28 +5,28 @@
 		<PanelResource type="deuterium" :resource="planet.resources.deuterium"/>
 		<PlanetPanelEnergy :resource="planet.resources.energy"/>
 		<div class="resource-panel-item resource-credits">
-			<Link href="/officiers" class="resource-panel-item-icon" :aria-label="$t('credits')">
-				<Popper popper-class="officiers-tooltip">
-					<template #content>
-						<div class="resource-panel-officiers">
-							<div class="resource-panel-officiers-title">{{ $t('menu.officiers') }}</div>
-							<div class="resource-panel-officiers-list">
-								<div v-for="officier in user.officiers" :key="officier.code" class="resource-panel-officier" :class="{ 'is-active': officier.date }">
-									<span class="officier" :class="officier.code + (officier.date ? '_active' : '')" aria-hidden="true"></span>
-									<div class="resource-panel-officier-info">
-										<div class="resource-panel-officier-name">{{ $t('officiers.' + officier.code) }}</div>
-										<div v-if="officier.date" class="resource-panel-officier-status" :title="$t('pages.overview.officier_active_until')">
-											{{ $t('pages.overview.officier_active_until') }} {{ $formatDate(officier.date, 'DD MMM HH:mm') }}
-										</div>
-										<div v-else class="resource-panel-officier-status">{{ $t('pages.overview.officier_noactive') }}</div>
+			<Popper popper-class="officiers-tooltip">
+				<Link href="/officiers" class="resource-panel-item-icon" :aria-label="$t('credits')">
+					<ResourceIcon code="credits" aria-hidden="true" focusable="false"/>
+				</Link>
+				<template #content>
+					<div class="resource-panel-officiers">
+						<div class="resource-panel-officiers-title">{{ $t('menu.officiers') }}</div>
+						<div class="resource-panel-officiers-list">
+							<div v-for="officier in user.officiers" :key="officier.code" class="resource-panel-officier" :class="{ 'is-active': officier.date }">
+								<span class="officier" :class="officier.code + (officier.date ? '_active' : '')" aria-hidden="true"></span>
+								<div class="resource-panel-officier-info">
+									<div class="resource-panel-officier-name">{{ $t('officiers.' + officier.code) }}</div>
+									<div v-if="officier.date" class="resource-panel-officier-status" :title="$t('pages.overview.officier_active_until')">
+										{{ $t('pages.overview.officier_active_until') }} {{ $formatDate(officier.date, 'DD MMM HH:mm') }}
 									</div>
+									<div v-else class="resource-panel-officier-status">{{ $t('pages.overview.officier_noactive') }}</div>
 								</div>
 							</div>
 						</div>
-					</template>
-					<ResourceIcon code="credits" aria-hidden="true" focusable="false"/>
-				</Popper>
-			</Link>
+					</div>
+				</template>
+			</Popper>
 			<div class="resource-panel-item-info">
 				<div class="resource-panel-item-label">{{ $t('credits') }}</div>
 				<div class="resource-panel-item-value">{{ $formatNumber(user.credits) }}</div>

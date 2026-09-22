@@ -5,8 +5,8 @@
 			<div class="player-identity">
 				<span class="game-eyebrow">{{ $t('pages.players.profile_heading') }}</span>
 				<h1>{{ item.name }}</h1>
-				<div class="player-race" v-if="raceIcons[item.race]">
-					<component :is="raceIcons[item.race]" aria-hidden="true"/>
+				<div class="player-race" v-if="item.race">
+					<RaceIcon :code="item.race" aria-hidden="true"/>
 					{{ $t('races.' + item.race) }}
 				</div>
 				<div v-if="user" class="player-actions">
@@ -111,10 +111,7 @@
 
 <script setup>
 	import { UiButton, UiPanel } from '~/components/UI';
-	import ConfederationIcon from '~/images/icons/races/confederation.svg?component';
-	import BionicsIcon from '~/images/icons/races/bionics.svg?component';
-	import CylonsIcon from '~/images/icons/races/cylons.svg?component';
-	import AncientsIcon from '~/images/icons/races/ancients.svg?component';
+	import RaceIcon from '~/components/RaceIcon.vue';
 	import SendIcon from '~/images/icons/send.svg?component';
 	import UserAddIcon from '~/images/icons/user-add.svg?component';
 	import useState from '~/composables/useState.js';
@@ -129,8 +126,6 @@
 		}
 	});
 
-
-	const raceIcons = { 1: ConfederationIcon, 2: BionicsIcon, 3: CylonsIcon, 4: AncientsIcon };
 	const stats = [{ key: 'build', label: 'stat_buildings' }, { key: 'tech', label: 'stat_research' }, { key: 'fleet', label: 'stat_fleet' }, { key: 'defs', label: 'stat_defense' }, { key: 'total', label: 'stat_total' }];
 
 	const state = useState();

@@ -24,7 +24,9 @@
 				<template v-if="item['effects']">
 					<template v-for="(value, resource) in item['effects']">
 						<div v-if="value !== 0" class="buildings-effects-row">
-							<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" v-tooltip="$t('resources.' + resource)" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+							<Popper :content="$t('resources.' + resource)">
+								<ResourceIcon :code="resource" class="building-resource-icon" :class="'resource-' + resource" role="img" :aria-label="$t('resources.' + resource)" focusable="false"/>
+							</Popper>
 							<span :class="{ positive: value > 0, negative: value < 0 }">{{ Math.abs(value) }}</span>
 						</div>
 					</template>
@@ -53,11 +55,13 @@
 				<div v-if="item['requirements']" class="building-active-requirements">
 					<div class="title">{{ $t('pages.techtree.requirements') }}</div>
 					<div class="items">
-						<div v-for="req in item['requirements']" class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }" v-tooltip="req['name']">
-							<div class="item-title">
-								{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+						<Popper v-for="req in item['requirements']" :content="req['name']">
+							<div class="item" :style="{ backgroundImage: 'url(\'/assets/images/elements/' + req['id'] + '.webp\')' }">
+								<div class="item-title">
+									{{ req['level'] }} {{ req['diff'] !== 0 ? '(' + req['diff'] + ')' : '' }}
+								</div>
 							</div>
-						</div>
+						</Popper>
 					</div>
 				</div>
 
@@ -70,6 +74,7 @@
 </template>
 
 <script setup>
+	import Popper from '~/components/Popper.vue';
 	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import BuildRowPrice from './BuildRowPrice.vue';

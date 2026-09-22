@@ -6,24 +6,8 @@
 				<span class="eyebrow">{{ $t('interface.command') }}</span>
 				<div class="overview-title-line">
 					<h1>{{ planet.name }}</h1>
-					<Link
-						v-if="!user.vacation"
-						href="/overview/rename"
-						class="overview-rename"
-						:title="$t('pages.overview.planet_rename_hint')"
-						:aria-label="$t('pages.overview.planet_rename_hint')"
-					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							aria-hidden="true"
-						>
-							<path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15z"/>
-						</svg>
+					<Link v-if="!user.vacation" href="/overview/rename" class="overview-rename" :title="$t('pages.overview.planet_rename_hint')">
+						<EditIcon stroke-width="1.5" aria-hidden="true"/>
 					</Link>
 				</div>
 			</div>
@@ -49,20 +33,8 @@
 							<Link href="/overview/rename" :title="$t('pages.overview.planet_rename_hint')">
 								<img :src="'/assets/images/planeten/' + planet.image + '.jpg'" :alt="planet.name">
 							</Link>
-							<button
-								v-if="planet.moon"
-								type="button"
-								class="overview-moon"
-								@click="changePlanet(planet.moon.id)"
-								:title="planet.moon.name"
-								:aria-label="planet.moon.name"
-							>
-								<img
-									:src="'/assets/images/planeten/' + planet.moon.image + '.jpg'"
-									:alt="planet.moon.name"
-									width="40"
-									height="40"
-								>
+							<button v-if="planet.moon" type="button" class="overview-moon" @click="changePlanet(planet.moon.id)" :title="planet.moon.name">
+								<img :src="'/assets/images/planeten/' + planet.moon.image + '.jpg'" :alt="planet.moon.name" width="40" height="40">
 							</button>
 						</div>
 						<div>
@@ -71,35 +43,23 @@
 									<span>{{ $t('interface.fields') }}</span>
 									<strong>{{ userFiledsPercent }}%</strong>
 								</div>
-								<progress
-									:value="userFiledsPercent"
-									max="100"
-									:aria-label="$t('interface.fields')"
-									:class="{ 'is-warning': userFiledsPercent > 60, 'is-full': userFiledsPercent > 80 }"
-								/>
+								<progress :value="userFiledsPercent" max="100" :aria-label="$t('interface.fields')" :class="{ 'is-warning': userFiledsPercent > 60, 'is-full': userFiledsPercent > 80 }"/>
 							</div>
 							<div class="overview-section-label">{{ $t('menu.officiers') }}</div>
 							<div class="page-overview-officiers">
-								<Link
-									v-for="item in user.officiers"
-									:key="item.code"
-									href="/officiers"
-									class="page-overview-officiers-item"
-									:class="{ 'is-active': item.date }"
-									:aria-label="$t('officiers.' + item.code)"
-								>
-									<Popper>
-										<template #content>
-											<div>{{ $t('officiers.' + item.code) }}</div>
-											<div v-if="item.date">
-												{{ $t('pages.overview.officier_active_until') }}
-												<span class="positive">{{ $formatDate(item.date, 'DD MMM HH:mm') }}</span>
-											</div>
-											<div v-else>{{ $t('pages.overview.officier_noactive') }}</div>
-										</template>
+								<Popper v-for="item in user.officiers" :key="item.code">
+									<Link href="/officiers" class="page-overview-officiers-item" :class="{ 'is-active': item.date }" :aria-label="$t('officiers.' + item.code)">
 										<span class="officier" :class="item.code + (item.date ? '_active' : '')" aria-hidden="true"></span>
-									</Popper>
-								</Link>
+									</Link>
+									<template #content>
+										<div>{{ $t('officiers.' + item.code) }}</div>
+										<div v-if="item.date">
+											{{ $t('pages.overview.officier_active_until') }}
+											<span class="positive">{{ $formatDate(item.date, 'DD MMM HH:mm') }}</span>
+										</div>
+										<div v-else>{{ $t('pages.overview.officier_noactive') }}</div>
+									</template>
+								</Popper>
 							</div>
 						</div>
 					</div>
@@ -129,16 +89,20 @@
 								</button>
 							</div>
 							<div class="overview-debris">
-								<span v-tooltip="$t('resources.metal')">
-									<ResourceIcon code="metal" aria-hidden="true" focusable="false"/>
-									<span class="sr-only">{{ $t('resources.metal') }}:</span>
-									{{ $formatNumber(planet.debris.metal) }}
-								</span>
-								<span v-tooltip="$t('resources.crystal')">
-									<ResourceIcon code="crystal" aria-hidden="true" focusable="false" class="crystal"/>
-									<span class="sr-only">{{ $t('resources.crystal') }}:</span>
-									{{ $formatNumber(planet.debris.crystal) }}
-								</span>
+								<Popper :content="$t('resources.metal')">
+									<span>
+										<ResourceIcon code="metal" aria-hidden="true" focusable="false"/>
+										<span class="sr-only">{{ $t('resources.metal') }}:</span>
+										{{ $formatNumber(planet.debris.metal) }}
+									</span>
+								</Popper>
+								<Popper :content="$t('resources.crystal')">
+									<span>
+										<ResourceIcon code="crystal" aria-hidden="true" focusable="false" class="crystal"/>
+										<span class="sr-only">{{ $t('resources.crystal') }}:</span>
+										{{ $formatNumber(planet.debris.crystal) }}
+									</span>
+								</Popper>
 							</div>
 						</div>
 						<div class="overview-fact-group">
@@ -226,6 +190,7 @@
 </template>
 
 <script setup>
+	import EditIcon from '~/images/icons/edit.svg?component';
 	import ResourceIcon from '~/components/ResourceIcon.vue';
 	import useState from '~/composables/useState.js';
 	import Fleets from '~/components/Page/Overview/Feets.vue';

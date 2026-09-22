@@ -5,14 +5,17 @@
 		</td>
 		<th scope="row">
 			<div class="stats-player-identity">
-				<img
+				<RaceIcon
 					v-if="item.race"
-					:src="'/assets/images/skin/race' + item.race + '.gif'"
+					:code="item.race"
+					:style="{ color: 'var(--faction-' + item.race + '-color)' }"
 					width="18"
 					height="18"
-					:alt="$t('races.' + item.race)"
+					:aria-label="$t('races.' + item.race)"
+					role="img"
+					focusable="false"
 					:title="$t('races.' + item.race)"
-				>
+				/>
 				<ModalLink navigate :href="'/players/' + item.id" :class="{ 'stats-highlight': marked }">{{ item.name }}</ModalLink>
 			</div>
 			<Link
@@ -32,18 +35,7 @@
 				:id="item.id"
 				class="button is-secondary icon-button"
 			>
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<rect x="3" y="5" width="18" height="14" rx="2"/>
-					<path d="m3 6 9 7 9-7"/>
-				</svg>
+				<MessageIcon stroke-width="1.5" aria-hidden="true"/>
 			</SendMessagePopup>
 		</td>
 		<td class="stats-alliance-column">
@@ -59,6 +51,7 @@
 </template>
 
 <script setup>
+	import MessageIcon from '~/images/icons/message.svg?component';
 	import Rank from './Rank.vue';
 	import useState from '~/composables/useState.js';
 	import SendMessagePopup from '../Messages/SendMessagePopup.vue';
@@ -66,6 +59,7 @@
 	import { computed } from 'vue';
 	import { useUrlSearchParams } from '@vueuse/core';
 	import { ModalLink } from '@inertiaui/modal-vue';
+	import RaceIcon from '~/components/RaceIcon.vue';
 
 	const props = defineProps({
 		item: Object,

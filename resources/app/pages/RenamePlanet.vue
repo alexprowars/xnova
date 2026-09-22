@@ -2,17 +2,7 @@
 	<Head :title="$t('pages.overview.rename.page_title')"/>
 	<div class="page-overview-rename">
 		<Link href="/overview" class="planet-settings-back">
-			<svg
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.6"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<path d="m10 5-7 7 7 7M3 12h18"/>
-			</svg>
+			<ArrowLeftIcon stroke-width="1.6" aria-hidden="true"/>
 			{{ $t('pages.overview.rename.back') }}
 		</Link>
 		<header class="planet-settings-heading">
@@ -74,18 +64,7 @@
 						<img :src="'/assets/images/planeten/' + imageName(i) + '.jpg'" alt="" width="100" height="100" loading="lazy">
 						<span class="planet-image-caption">
 							<span>{{ $t('pages.overview.rename.image_variant', { number: i }) }}</span>
-							<svg
-								v-if="imageForm.image === i"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<path d="m5 12 4 4L19 6"/>
-							</svg>
+							<CheckIcon v-if="imageForm.image === i" stroke-width="2" aria-hidden="true"/>
 						</span>
 						<span v-if="imageName(i) === planet.image" id="planet-image-current" class="planet-image-current">
 							{{ $t('pages.overview.rename.current_image') }}
@@ -113,17 +92,7 @@
 				<span class="planet-settings-hint">{{ $t('pages.overview.rename.abandon_hint') }}</span>
 			</div>
 			<button type="button" class="button is-danger" :disabled="deleteForm.processing" @click="deletePlanet">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.6"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>
-				</svg>
+				<TrashIcon stroke-width="1.6" aria-hidden="true"/>
 				{{ $t('pages.overview.rename.abandon_colony') }}
 			</button>
 			<div v-if="Object.keys(deleteForm.errors).length" class="planet-settings-errors" role="alert">
@@ -134,6 +103,9 @@
 </template>
 
 <script setup>
+	import CheckIcon from '~/images/icons/check.svg?component';
+	import ArrowLeftIcon from '~/images/icons/arrow-left.svg?component';
+	import TrashIcon from '~/images/icons/trash.svg?component';
 	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';
 	import { Head, Link, useForm } from '@inertiajs/vue3';

@@ -2,15 +2,20 @@
 	<li class="tech-dependency">
 		<div class="tech-dependency-card" :class="available ? 'is-ready' : 'is-missing'">
 			<img v-if="item" :src="'/assets/images/elements/' + item.id + '.webp'" alt="" width="40" height="40" loading="lazy">
-			<img v-else-if="isRace" :src="'/assets/images/skin/race' + requirement.level + '.gif'" alt="" width="40" height="40">
+			<RaceIcon
+				v-else-if="isRace"
+				:code="requirement.level"
+				:style="{ color: 'var(--faction-' + requirement.level + '-color)' }"
+				width="40" height="40"
+				aria-hidden="true"
+				focusable="false"
+			/>
 			<span v-else class="tech-dependency-placeholder" aria-hidden="true">◇</span>
 			<div class="tech-dependency-info">
 				<ModalLink v-if="item" navigate :href="'/info/' + item.id" aria-haspopup="dialog">{{ item.name }}</ModalLink>
 				<span v-else>{{ requirement.name }}</span>
 				<div class="tech-dependency-levels">
-					<svg v-if="available" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-						<path d="m3 8 3 3 7-7"/>
-					</svg>
+					<CheckIcon v-if="available" stroke-width="2.25" aria-hidden="true"/>
 					<svg v-else viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
 						<circle cx="8" cy="8" r="6"/>
 						<path d="M8 4v5m0 2v1"/>
@@ -22,14 +27,7 @@
 					</span>
 				</div>
 			</div>
-			<button
-				v-if="children.length"
-				type="button"
-				class="tech-branch-toggle button is-secondary icon-button"
-				@click="expanded = !expanded"
-				:aria-expanded="expanded"
-				:aria-label="$t(expanded ? 'pages.techtree.collapse' : 'pages.techtree.expand', { name: requirement.name })"
-			>
+			<button v-if="children.length" type="button" class="tech-branch-toggle button is-secondary icon-button" @click="expanded = !expanded" :aria-expanded="expanded">
 				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
 					<path :d="expanded ? 'm4 6 4 4 4-4' : 'm6 4 4 4-4 4'"/>
 				</svg>
@@ -42,9 +40,11 @@
 </template>
 
 <script setup>
+	import CheckIcon from '~/images/icons/check.svg?component';
 	import { computed, ref } from 'vue';
 	import { ModalLink } from '@inertiaui/modal-vue';
 	import useState from '~/composables/useState.js';
+	import RaceIcon from '~/components/RaceIcon.vue';
 
 	const props = defineProps({
 		requirement: Object,

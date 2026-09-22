@@ -1,13 +1,13 @@
 <template>
 	<div class="resource-panel-item" :class="'resource-' + type">
-		<ModalLink navigate :href="'/info/' + building[type]" class="resource-panel-item-icon" :aria-label="$t('resources.' + type)">
-			<Popper>
+		<Popper>
+			<ModalLink navigate :href="'/info/' + building[type]" class="resource-panel-item-icon" :aria-label="$t('resources.' + type)">
 				<ResourceIcon :code="type" aria-hidden="true" focusable="false"/>
-				<template #content>
-					<ResourceTooltip :resource="resource" :type="type"/>
-				</template>
-			</Popper>
-		</ModalLink>
+			</ModalLink>
+			<template #content>
+				<ResourceTooltip :resource="resource" :type="type"/>
+			</template>
+		</Popper>
 		<div class="resource-panel-item-info">
 			<div class="resource-panel-item-label">{{ $t('resources.' + type) }}</div>
 			<div class="resource-panel-item-value" :class="{ 'is-full': resource.value >= resource.capacity }" :title="$formatNumber(resource.value) + ' / ' + $formatNumber(resource.capacity)">

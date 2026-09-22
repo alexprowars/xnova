@@ -4,33 +4,13 @@
 		<th scope="row" class="logs-name">{{ item.title }}</th>
 		<td class="logs-action-cell">
 			<a :href="'/logs/' + item.id" target="_blank" rel="noopener" class="game-list-action button is-secondary">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="M14 4h6v6m0-6L10 14M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/>
-				</svg>
+				<ExternalLinkIcon stroke-width="1.5" aria-hidden="true"/>
 				{{ $t('pages.logs.item.open') }}
 			</a>
 		</td>
 		<td class="logs-action-cell">
 			<button type="button" class="game-list-action button is-danger" @click="deleteItem">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5m4-5v5"/>
-				</svg>
+				<TrashIcon stroke-width="1.5" aria-hidden="true"/>
 				{{ $t('pages.logs.item.delete') }}
 			</button>
 		</td>
@@ -38,6 +18,8 @@
 </template>
 
 <script setup>
+	import ExternalLinkIcon from '~/images/icons/external-link.svg?component';
+	import TrashIcon from '~/images/icons/trash.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { useSuccessNotification } from '~/composables/useToast.js';

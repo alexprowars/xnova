@@ -60,7 +60,7 @@
 			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.author_quote')" @click="addTag('[quote author=]|[/quote]', 0)">
 				<QuoteAuthorIcon aria-hidden="true" focusable="false"/>
 			</button>
-			<Popper :triggers="['click']" :popper-triggers="['click']">
+			<Popover>
 				<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.smiles')">
 					<SmileIcon aria-hidden="true" focusable="false"/>
 				</button>
@@ -69,7 +69,7 @@
 						<img v-for="smile in smilesList" :src="'/assets/images/smile/'+smile+'.gif'" :alt="smile" @click="addSmile(smile)">
 					</div>
 				</template>
-			</Popper>
+			</Popover>
 			<button type="button" class="buttons button is-secondary icon-button" :title="$t('editor.text_color')" :aria-pressed="showColors" @click="showColors = !showColors">
 				<ColorIcon aria-hidden="true" focusable="false"/>
 			</button>
@@ -103,7 +103,7 @@
 <script setup>
 	import parser from '~/utils/parser.js';
 	import { computed, ref } from 'vue';
-	import Popper from './Popper.vue';
+	import Popover from './Popover.vue';
 	import BoldIcon from '~/images/icons/editor/bold.svg?component';
 	import ItalicIcon from '~/images/icons/editor/italic.svg?component';
 	import UnderlineIcon from '~/images/icons/editor/underline.svg?component';

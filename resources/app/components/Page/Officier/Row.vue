@@ -15,17 +15,7 @@
 				<div class="officiers-biography" v-html="item.description"></div>
 				<ul class="officiers-powers">
 					<li v-for="power in item.power" :key="power">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							aria-hidden="true"
-						>
-							<path d="m5 12 4 4L19 6"/>
-						</svg>
+						<CheckIcon stroke-width="1.5" aria-hidden="true"/>
 						<span>{{ power }}</span>
 					</li>
 				</ul>
@@ -47,6 +37,7 @@
 </template>
 
 <script setup>
+	import CheckIcon from '~/images/icons/check.svg?component';
 	import { useI18n } from 'vue-i18n';
 	import useState from '~/composables/useState.js';
 	import { computed } from 'vue';

@@ -4,10 +4,14 @@
 		<div class="col-span-6 sm:col-span-2 th">
 			<div>{{ $t('fleet_mission.' + item.mission) }}</div>
 			<div v-if="item.stage === 1" class="fleet-flight-stage">
-				<a v-tooltip="$t('pages.fleets.list.mission_R')">{{ $t('pages.fleets.list.mission_R') }}</a>
+				<Popper :content="$t('pages.fleets.list.mission_R')">
+					<a>{{ $t('pages.fleets.list.mission_R') }}</a>
+				</Popper>
 			</div>
 			<div v-else class="fleet-flight-stage">
-				<a v-tooltip="$t('pages.fleets.list.mission_A')">{{ $t('pages.fleets.list.mission_A') }}</a>
+				<Popper :content="$t('pages.fleets.list.mission_A')">
+					<a>{{ $t('pages.fleets.list.mission_A') }}</a>
+				</Popper>
 			</div>
 		</div>
 		<div class="col-span-3 sm:col-span-1 th">

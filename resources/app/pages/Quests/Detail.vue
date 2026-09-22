@@ -35,18 +35,8 @@
 							role="img"
 							:aria-label="$t(task[1] ? 'pages.quests.task_done' : 'pages.quests.task_pending')"
 						>
-							<svg
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.6"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-							>
-								<path v-if="task[1]" d="m5 12 4 4L19 6"/>
-								<circle v-else cx="12" cy="12" r="6"/>
-							</svg>
+							<CheckIcon v-if="task[1]" aria-hidden="true"/>
+							<CircleIcon v-else aria-hidden="true"/>
 						</span>
 						<span v-html="task[0]"></span>
 					</li>
@@ -55,17 +45,7 @@
 			<aside class="quest-panel quest-reward">
 				<header class="quest-panel-heading">
 					<h2>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							aria-hidden="true"
-						>
-							<path d="M8 3h8v6a4 4 0 0 1-8 0V3Zm0 2H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v6m-4 2h8"/>
-						</svg>
+						<TrophyIcon aria-hidden="true"/>
 						{{ $t('pages.quests.reward') }}
 					</h2>
 				</header>
@@ -90,6 +70,9 @@
 </template>
 
 <script setup>
+	import CircleIcon from '~/images/icons/circle.svg?component';
+	import TrophyIcon from '~/images/icons/trophy.svg?component';
+	import CheckIcon from '~/images/icons/check.svg?component';
 	import { computed } from 'vue';
 	import { Head, Link, useForm } from '@inertiajs/vue3';
 	import { useI18n } from 'vue-i18n';

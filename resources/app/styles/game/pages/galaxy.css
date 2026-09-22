@@ -308,15 +308,12 @@
 	}
 }
 
-.v-popper__popper.galaxy-tooltip {
-	.v-popper__inner {
-		max-width: calc(100vw - 24px);
-		padding: 8px;
-		border-color: var(--ui-border-color);
-		background: var(--ui-panel-background);
-		box-shadow: 0 8px 24px var(--ui-shadow-color);
-		font-size: 14px;
-	}
+.ui-tooltip.galaxy-tooltip {
+	--tooltip-background: var(--ui-panel-background);
+	--tooltip-border: var(--ui-border-color);
+	padding: 8px;
+	box-shadow: 0 8px 24px var(--ui-shadow-color);
+	font-size: 14px;
 
 	.block-table, table, .galaxy-legend {
 		max-width: 100%;
@@ -331,12 +328,213 @@
 	.c {
 		color: var(--ui-text-color);
 	}
+}
 
-	.v-popper__arrow-outer {
-		border-color: var(--ui-border-color);
+.galaxy-debris-card {
+	width: 320px;
+	max-width: 100%;
+	padding: 4px;
+	text-align: left;
+
+	.galaxy-debris-heading {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 4px 12px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid var(--border-color);
+
+		strong {
+			color: var(--ui-title-color);
+			font-weight: 600;
+		}
+
+		span {
+			color: var(--accent-color);
+			font-variant-numeric: tabular-nums;
+		}
 	}
 
-	.v-popper__arrow-inner {
-		border-color: var(--ui-panel-background);
+	.galaxy-debris-content {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-block: 12px;
+	}
+
+	.galaxy-debris-image {
+		width: 64px;
+		height: 64px;
+		flex-shrink: 0;
+		border: 1px solid var(--ui-border-color);
+		border-radius: 6px;
+		object-fit: cover;
+	}
+
+	.galaxy-debris-resources {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.galaxy-debris-label {
+		margin-bottom: 6px;
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.galaxy-debris-resource {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px 12px;
+		padding-block: 3px;
+
+		dt {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			color: var(--ui-text-color);
+		}
+
+		svg {
+			width: 20px;
+			height: 20px;
+			flex-shrink: 0;
+		}
+
+		dd {
+			margin-left: auto;
+			color: var(--text-color);
+			font-weight: 600;
+			font-variant-numeric: tabular-nums;
+		}
+	}
+
+	.galaxy-debris-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding-top: 10px;
+		border-top: 1px solid var(--border-color);
+
+		.button {
+			flex: 1 1 auto;
+		}
+	}
+}
+
+.galaxy-tooltip-card {
+	width: 280px;
+	max-width: 100%;
+	padding: 4px;
+	text-align: left;
+
+	.galaxy-tooltip-summary {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.galaxy-tooltip-image {
+		width: 64px;
+		height: 64px;
+		flex-shrink: 0;
+		border: 1px solid var(--ui-border-color);
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	.galaxy-tooltip-details {
+		display: grid;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	.galaxy-tooltip-type {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+
+	.galaxy-tooltip-title {
+		color: var(--ui-title-color);
+		font-weight: 600;
+		line-height: 1.4;
+		overflow-wrap: anywhere;
+	}
+
+	.galaxy-tooltip-meta {
+		color: var(--accent-color);
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.galaxy-tooltip-actions {
+		display: grid;
+		gap: 6px;
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid var(--border-color);
+
+		.button {
+			justify-content: flex-start;
+			gap: 9px;
+			width: 100%;
+		}
+
+		svg {
+			width: 18px;
+			height: 18px;
+			flex-shrink: 0;
+		}
+	}
+
+	.galaxy-tooltip-parameters {
+		display: grid;
+		gap: 6px;
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid var(--border-color);
+
+		> div {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: 4px 12px;
+		}
+
+		dt {
+			color: var(--text-muted);
+		}
+
+		dd {
+			margin-left: auto;
+			color: var(--text-color);
+			font-weight: 600;
+			font-variant-numeric: tabular-nums;
+		}
+	}
+}
+
+.galaxy-profile-card {
+	.galaxy-tooltip-image, .galaxy-profile-placeholder {
+		border-radius: 6px;
+	}
+
+	.galaxy-profile-placeholder {
+		display: grid;
+		place-items: center;
+		width: 64px;
+		height: 64px;
+		flex-shrink: 0;
+		border: 1px solid var(--ui-border-color);
+		background: var(--ui-surface-background);
+		color: var(--accent-color);
+
+		svg {
+			width: 36px;
+			height: 36px;
+		}
 	}
 }

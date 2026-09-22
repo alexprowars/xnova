@@ -14,7 +14,6 @@ import en from 'dayjs/locale/en';
 import ru from 'dayjs/locale/ru';
 import App from './App.vue';
 import DefaultLayout from './layouts/DefaultLayout.vue';
-import FloatingVue from 'floating-vue';
 import Vue3TouchEvents from 'vue3-touch-events'
 import { createModal } from '@kolirt/vue-modal';
 import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
@@ -77,7 +76,6 @@ createInertiaApp({
 		dayjs.locale(en, null, true);
 		dayjs.locale(ru, null, true);
 
-		app.use(FloatingVue);
 		app.use(Vue3TouchEvents, {
 			touchHoldTolerance: 100,
 		});

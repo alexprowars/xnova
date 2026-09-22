@@ -4,18 +4,7 @@
 		<div class="referrals-copy-control">
 			<input :id="id" type="text" :value="value" readonly @focus="$event.target.select()">
 			<button type="button" class="button" @click="copy(value)" :aria-label="$t('pages.referrals.copy_field', { field: label })">
-				<svg
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.6"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path v-if="copied" d="m5 12 4 4L19 6"/>
-					<path v-else d="M9 9h12v12H9V9ZM5 15H3V3h12v2"/>
-				</svg>
+				<component :is="copied ? CheckIcon : CopyIcon" aria-hidden="true"/>
 				<span aria-live="polite">{{ $t(copied ? 'pages.referrals.copied' : 'pages.referrals.copy') }}</span>
 			</button>
 		</div>
@@ -23,6 +12,8 @@
 </template>
 
 <script setup>
+	import CheckIcon from '~/images/icons/check.svg?component';
+	import CopyIcon from '~/images/icons/copy.svg?component';
 	import { useClipboard } from '@vueuse/core';
 
 	defineProps({

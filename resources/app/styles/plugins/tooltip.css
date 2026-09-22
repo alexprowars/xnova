@@ -1,30 +1,25 @@
-.v-popper__popper.v-popper--theme-tooltip {
-	.v-popper__inner {
-		transition: background 250ms ease-in-out;
-		background: var(--ui-button-secondary-background);
-		border: 1px solid var(--ui-border-active-color);
-		box-shadow: 0 0 30px 5px color-mix(in srgb, var(--ui-black-color) 75%, transparent);
-		@apply rounded-md p-1;
-	}
-
-	.v-popper__arrow-outer {
-		border-color: var(--ui-border-active-color);
-	}
+.ui-tooltip {
+	--tooltip-background: var(--ui-button-secondary-background);
+	--tooltip-border: var(--ui-border-active-color);
+	z-index: 10000;
+	max-width: calc(100vw - 24px);
+	color: var(--ui-text-color);
+	background: var(--tooltip-background);
+	border: 1px solid var(--tooltip-border);
+	box-shadow: 0 0 30px 5px color-mix(in srgb, var(--ui-black-color) 75%, transparent);
+	font-size: 13px;
+	line-height: 1.5;
+	@apply rounded-md p-1;
 }
 
-.v-popper__popper.v-popper--theme-tooltip.officiers-tooltip {
-	.v-popper__inner {
-		padding: 0;
-		background: var(--ui-panel-background);
-		border-color: var(--border-color);
-		box-shadow: 0 8px 24px var(--ui-shadow-color);
-	}
+.ui-tooltip-arrow {
+	fill: var(--tooltip-background);
+	stroke: var(--tooltip-border);
+}
 
-	.v-popper__arrow-outer {
-		border-color: var(--border-color);
-	}
-
-	.v-popper__arrow-inner {
-		border-color: var(--ui-panel-background);
-	}
+.ui-tooltip.officiers-tooltip {
+	--tooltip-background: var(--ui-panel-background);
+	--tooltip-border: var(--border-color);
+	padding: 0;
+	box-shadow: 0 8px 24px var(--ui-shadow-color);
 }
