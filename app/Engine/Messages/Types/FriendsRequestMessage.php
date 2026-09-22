@@ -6,7 +6,7 @@ use App\Engine\Messages\AbstractMessage;
 
 class FriendsRequestMessage extends AbstractMessage
 {
-	protected string $type = 'MissionAttack';
+	protected string $type = 'FriendsRequest';
 
 	public function getSubject(): ?string
 	{

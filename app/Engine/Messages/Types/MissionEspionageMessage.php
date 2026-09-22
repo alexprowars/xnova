@@ -5,6 +5,7 @@ namespace App\Engine\Messages\Types;
 use App\Engine\Fleet\MissionType;
 use App\Engine\Game;
 use App\Engine\Messages\AbstractMessage;
+use App\Facades\Vars;
 use App\Format;
 use Illuminate\Support\Uri;
 
@@ -126,7 +127,11 @@ class MissionEspionageMessage extends AbstractMessage
 					$result .= '</div><div class="grid grid-cols-2 col-span-2">';
 				}
 
-				$result .= '<div class="grid grid-cols-5"><div class="th col-span-4">' . __('main.tech.' . $unit['id']) . '</div><div class="c">' . $unit['lv'] . '</div></div>';
+				$name = in_array($unit['id'], Vars::getOfficiers(), true)
+					? __('officier.items.' . $unit['id'])
+					: __('main.tech.' . $unit['id']);
+
+				$result .= '<div class="grid grid-cols-5"><div class="th col-span-4">' . $name . '</div><div class="c">' . $unit['lv'] . '</div></div>';
 			}
 
 			if (count($row['items']) % 2 == 1) {

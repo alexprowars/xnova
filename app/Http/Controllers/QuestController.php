@@ -36,6 +36,8 @@ class QuestController extends Controller
 			];
 		}
 
+		usort($result['items'], fn (array $first, array $second) => $first['finish'] <=> $second['finish']);
+
 		return Inertia::render('Quests/List', $result);
 	}
 

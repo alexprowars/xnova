@@ -12,8 +12,8 @@ use App\Engine\Objects\ShipObject;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Planet;
+use App\Support\ToastType;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class FleetQuickController extends Controller
 {
@@ -82,6 +82,6 @@ class FleetQuickController extends Controller
 			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
-		Inertia::flash('Флот отправлен на координаты [' . $target->coordinates . '] с миссией ' . $mission->title() . ' и прибудет к цели ' . Game::datezone('d.m.Y H:i:s', $fleet->start_date));
+		toast(ToastType::SUCCESS, 'Флот отправлен на координаты [' . $target->coordinates . '] с миссией ' . $mission->title() . ' и прибудет к цели ' . Game::datezone('d.m.Y H:i:s', $fleet->start_date));
 	}
 }

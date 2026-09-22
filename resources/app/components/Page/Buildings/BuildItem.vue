@@ -7,10 +7,10 @@
 		<div class="level">
 			{{ level }}
 		</div>
-		<div v-if="inQueue" class="upgrade active">
+		<div v-if="available && user['queue_max'] > queueByType('build').length" class="upgrade" :class="{ active: inQueue }" @click.prevent.stop="emit('build', item['id'])">
 			<IconUpgrade/>
 		</div>
-		<div v-else-if="available && user['queue_max'] > queueByType('build').length" class="upgrade" @click.prevent.stop="emit('build', item['id'])">
+		<div v-else-if="inQueue" class="upgrade active">
 			<IconUpgrade/>
 		</div>
 	</div>
@@ -54,7 +54,8 @@
 	});
 
 	const available = computed(() => {
-		return props.item['available'] && hasResources.value && emptyFieldsCount.value > 0 && !user.value.vacation;
+		return props.item['available'] && (hasResources.value || queueByType('build').length > 0)
+			&& emptyFieldsCount.value > 0 && !user.value.vacation;
 	});
 
 	const inQueue = computed(() => {

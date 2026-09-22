@@ -47,7 +47,7 @@
 					</div>
 				</div>
 
-				<div v-if="available" class="buldings-active-price">
+				<div v-if="item['available'] && !user.vacation" class="buldings-active-price">
 					<span>{{ $t('pages.building.required_resources_level', { level: level + 1 }) }}</span>
 					<BuildRowPrice :price="item['price']"/>
 				</div>
@@ -56,15 +56,15 @@
 					<div v-if="emptyFieldsCount <= 0" class="negative">
 						{{ $t('pages.building.status_no_more_fields') }}
 					</div>
-					<button v-else-if="user['queue_max'] > 1 && queueByType('build').length > 0" type="button" class="button building-queue-button" @click.prevent="buildAction">
+					<div v-else-if="user['queue_max'] <= queueByType('build').length" class="negative">
+						{{ $t('pages.building.status_queue_full') }}
+					</div>
+					<button v-else-if="queueByType('build').length > 0" type="button" class="button building-queue-button" @click.prevent="buildAction">
 						<PlusIcon stroke-width="1.5" aria-hidden="true"/>
 						{{ $t('pages.building.status_add_to_list') }}
 					</button>
 					<div v-else-if="!hasResources" class="negative text-center">
 						{{ $t('pages.building.status_no_resources') }}
-					</div>
-					<div v-else-if="user['queue_max'] <= queueByType('build').length" class="negative">
-						{{ $t('pages.building.status_queue_full') }}
 					</div>
 					<button v-else-if="queueByType('build').length === 0"  @click.prevent="buildAction" class="button">
 						{{ level === 0 ? $t('pages.building.action_build') : $t('pages.building.action_improve') }}

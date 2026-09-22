@@ -454,11 +454,6 @@
 		font-size: 12px;
 	}
 
-	.alliance-entry-actions > a > span:last-child {
-		margin-left: auto;
-		color: var(--ui-icon-color);
-	}
-
 	@media (max-width: 639px) {
 		.alliance-hero {
 			gap: 12px;

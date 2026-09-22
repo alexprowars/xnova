@@ -17,7 +17,7 @@ use RuntimeException;
 
 class BotSeeder extends Seeder
 {
-	private const int BOT_COUNT = 1000;
+	private const int BOT_COUNT = 500;
 	private const int GALAXY = 2;
 
 	public function run(): void
@@ -116,7 +116,13 @@ class BotSeeder extends Seeder
 				continue;
 			}
 
-			$freePositions = Galaxy::getFreePositions(new Coordinates(self::GALAXY, $system), 1, $maxPlanets);
+			$freePositions = Galaxy::getFreePositions(
+				new Coordinates(self::GALAXY, $system),
+				(int) round($maxPlanets * 0.2),
+				(int) round($maxPlanets * 0.8)
+			);
+
+			shuffle($freePositions);
 
 			foreach (array_slice($freePositions, 0, $availableSlots) as $position) {
 				$positions[] = new Coordinates(self::GALAXY, $system, $position);

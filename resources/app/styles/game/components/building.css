@@ -175,7 +175,7 @@
 		}
 
 		.buldings-active-content {
-			@apply flex flex-col gap-2.5 grow relative;
+			@apply flex flex-col gap-2 grow relative;
 		}
 
 		.buldings-active-title {
@@ -342,8 +342,8 @@
 }
 
 .building-resource-icon {
-	width: 22px;
-	height: 22px;
+	width: 16px;
+	height: 16px;
 	flex-shrink: 0;
 	color: var(--resource-metal-color);
 

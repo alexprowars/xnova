@@ -112,7 +112,7 @@
 								</div>
 							</div>
 						</template>
-						<button type="button" class="galaxy-spy-trigger" :aria-label="$t('pages.galaxy.espionage')">
+						<button type="button" :aria-label="$t('pages.galaxy.espionage')">
 							<GalaxyIcon type="spy"/>
 						</button>
 					</Popper>

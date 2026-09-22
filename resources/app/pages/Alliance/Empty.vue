@@ -11,7 +11,6 @@
 					<strong>{{ $t('pages.alliance.search.page_heading') }}</strong>
 					<small>{{ $t('pages.alliance.ui.find_hint') }}</small>
 				</span>
-				<span aria-hidden="true">→</span>
 			</Link>
 			<Link href="/alliance/create">
 				<PlusIcon aria-hidden="true"/>
@@ -19,7 +18,6 @@
 					<strong>{{ $t('pages.alliance.create.title') }}</strong>
 					<small>{{ $t('pages.alliance.ui.create_hint') }}</small>
 				</span>
-				<span aria-hidden="true">→</span>
 			</Link>
 		</div>
 		<section v-if="page.requests.length" class="alliance-panel">
