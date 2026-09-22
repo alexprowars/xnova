@@ -92,6 +92,7 @@ class GalaxyService
 		$planet->deuterium = (int) config('game.baseDeuteriumProduction');
 
 		$planet->user()->associate($user);
+		$planet->last_update = now();
 		$planet->name = empty($title) ? __('main.sys_colo_defaultname') : $title;
 
 		if ($planet->save()) {

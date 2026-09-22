@@ -36,6 +36,7 @@ class MessagesChannel
 		$obj->from_id = $sender ?: null;
 		$obj->type = $type;
 		$obj->subject = $subject;
+		$obj->date = now();
 
 		if ($message instanceof MessageContract) {
 			$message = $message->toArray();

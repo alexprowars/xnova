@@ -184,7 +184,7 @@ class QueueManager
 		$buildItem->date_end = $buildItem->date->addSeconds($buildTime);
 		$buildItem->save();
 
-		if ($buildItem->date->timestamp + $buildTime <= time() + 5) {
+		if ($buildItem->date->timestamp + $buildTime <= now()->timestamp + 5) {
 			if (!$this->planet->planet_updated) {
 				$this->planet->getProduction()->update(true);
 			}
@@ -415,7 +415,7 @@ class QueueManager
 		$queueItem->date_end = $queueItem->date->addSeconds($buildTime);
 		$queueItem->save();
 
-		if ($queueItem->date->timestamp + $buildTime <= time() + 5) {
+		if ($queueItem->date->timestamp + $buildTime <= now()->timestamp + 5) {
 			$this->planet->user->setTech($queueItem->object_id, $queueItem->level);
 
 			if (!$this->deleteInQueue($queueItem)) {

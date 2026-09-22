@@ -31,3 +31,5 @@ Thumbs.db
 /.agents
 /.codex
 /AGENTS.md
+/rust/target/
+!/rust/Cargo.lock

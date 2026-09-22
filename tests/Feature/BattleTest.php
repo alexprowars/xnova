@@ -42,6 +42,9 @@ test('battle combat', function () {
 	$fleet->id = 1;
 	$fleet->entities = FleetEntityCollection::createFromArray($fleets);
 	$fleet->user()->associate($user);
+	$fleet->start_galaxy = 1;
+	$fleet->start_system = 1;
+	$fleet->start_planet = 2;
 	$fleet->end_galaxy = 1;
 	$fleet->end_system = 1;
 	$fleet->end_planet = 1;

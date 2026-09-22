@@ -53,7 +53,7 @@ For a native installation:
 - MySQL 8.0 or newer, with a database and user created for the application.
 - Redis when using Redis-backed queues or caching.
 
-Combat calculations load `storage/libbattle_engine_ffi.so` through PHP FFI. The library must be compatible with the runtime platform, and PHP must allow FFI calls (`ffi.enable=true`).
+Combat calculations use PHP FFI and load `storage/libbattle_engine_ffi.so` on Linux or `storage/libbattle_engine_ffi.dylib` on macOS. The bundled macOS library targets Apple Silicon. Run `./rust/build.sh` to rebuild for the host platform. The library architecture must match PHP, and the runtime must allow FFI calls (`ffi.enable=true` for web requests). A custom absolute library path can be set with `BATTLE_ENGINE_LIBRARY`.
 
 For the Docker setup, install Docker with the Compose plugin. PHP, Composer, and Node.js run inside the containers.
 

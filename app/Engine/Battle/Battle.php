@@ -15,13 +15,13 @@ use App\Facades\Vars;
 use App\Models\Fleet as FleetModel;
 use App\Models\Planet;
 use App\Models\User;
-use FFI;
 
 class Battle
 {
 	protected int $rounds = 6;
 	protected PlayerGroup $attackers;
 	protected PlayerGroup $defenders;
+	private ?NativeEngine $engine = null;
 
 	public function __construct()
 	{
@@ -151,20 +151,12 @@ class Battle
 
 	public function run(): Result
 	{
-		$ffi = FFI::cdef(
-			"char* fight_battle_rounds(const char* input_json);",
-			base_path('storage/libbattle_engine_ffi.so')
-		);
+		$this->engine ??= new NativeEngine(config('game.combat.library'));
 
-		$inputJson = json_encode([
+		$output = $this->engine->fight([
 			'attacker_fleets' => $this->attackers->convertToBattleInput(),
 			'defender_fleets' => $this->defenders->convertToBattleInput(),
 		]);
-
-		/** @noinspection PhpUndefinedMethodInspection, @phpstan-ignore-next-line */
-		$outputPtr = $ffi->fight_battle_rounds($inputJson);
-		$output = FFI::string($outputPtr);
-		$output = json_decode($output, true);
 
 		return new Result($this->attackers, $this->defenders, $output);
 	}

@@ -42,6 +42,7 @@ return [
 	// Множитель размера колонизируемых планет
 	'planetFactor' => env('GAME_PLANET_SIZE_FACTOR', 1),
 	'combat' => [
+		'library' => env('BATTLE_ENGINE_LIBRARY', storage_path('libbattle_engine_ffi.' . (PHP_OS_FAMILY === 'Darwin' ? 'dylib' : 'so'))),
 		// Максимальный ШВЛ
 		'moonUnitsProbability' => 100000,
 		'maxMoonProbability' => env('GAME_MAX_MOON_CHANCE', 20),

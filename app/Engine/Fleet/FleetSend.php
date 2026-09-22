@@ -88,7 +88,7 @@ class FleetSend
 			throw new Exception('Неизвестный тип планеты!');
 		}
 
-		if (in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::Spy, MissionType::Destruction]) && config('game.disableAttacks', 0) > 0 && time() < config('game.disableAttacks', 0)) {
+		if (in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::Spy, MissionType::Destruction]) && config('game.disableAttacks', 0) > 0 && now()->timestamp < config('game.disableAttacks', 0)) {
 			throw new Exception('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)));
 		}
 
@@ -480,7 +480,7 @@ class FleetSend
 				->where('e_galaxy', $this->targetPlanet->galaxy)
 				->where('e_system', $this->targetPlanet->system)
 				->where('e_planet', $this->targetPlanet->planet)
-				->where('created_at', '>', now()->startOfDay())
+				->where('created_at', '>=', now()->startOfDay())
 				->first();
 
 			if ($log && $log->amount > 2 && (!$this->diplomacy || $this->diplomacy->type != 3)) {

@@ -2,6 +2,7 @@
 
 namespace Tests\Support;
 
+use App\Engine\Battle\NativeEngine;
 use FFI;
 
 trait RequiresBattleEngine
@@ -13,7 +14,7 @@ trait RequiresBattleEngine
 		}
 
 		try {
-			FFI::cdef('char* fight_battle_rounds(const char* input_json);', base_path('storage/libbattle_engine_ffi.so'));
+			new NativeEngine(config('game.combat.library'));
 		} catch (FFI\Exception $exception) {
 			$this->markTestSkipped('The native battle engine is unavailable: ' . $exception->getMessage());
 		}
