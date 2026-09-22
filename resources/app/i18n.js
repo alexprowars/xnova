@@ -7,20 +7,20 @@ const messages = {
 	ru
 };
 
-const i18n = createI18n({
+export const resolveLocale = (locale) => Object.hasOwn(messages, locale) ? locale : 'en';
+
+export const createLocalization = (locale) => createI18n({
 	legacy: false,
-	locale: 'en',
+	locale: resolveLocale(locale),
 	fallbackLocale: 'en',
 	warnHtmlMessage: false,
 	messages,
 });
 
+const i18n = createLocalization();
+
 export const setLocale = (locale) => {
-    if (messages[locale]) {
-        i18n.global.locale.value = locale;
-    } else {
-        console.error(`Locale ${locale} not found.`);
-    }
+	i18n.global.locale.value = resolveLocale(locale);
 };
 
 export default i18n;

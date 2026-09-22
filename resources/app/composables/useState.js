@@ -1,5 +1,6 @@
 import { useHttp, usePage } from '@inertiajs/vue3';
 import { computed, hasInjectionContext, inject, reactive } from 'vue';
+import { resolveLocale } from '~/i18n.js';
 
 export const StateSymbol = Symbol('state');
 
@@ -10,7 +11,7 @@ export function createState () {
 	return reactive({
 		messages: computed(() => props.value.messages || []),
 		speed: computed(() => props.value.speed || {}),
-		locale: computed(() => props.value.locale),
+		locale: computed(() => resolveLocale(props.value.locale ?? page.props.locale)),
 		stats: computed(() => props.value.stats || {}),
 		user: computed(() => props.value.user),
 		planet: computed(() => props.value.planet),

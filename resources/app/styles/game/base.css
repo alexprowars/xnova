@@ -1108,12 +1108,6 @@
 		border-color: var(--ui-border-hover-color);
 	}
 
-	input:focus-visible, select:focus-visible, textarea:focus-visible {
-		border-color: var(--accent-color);
-		outline: 2px solid var(--accent-color);
-		outline-offset: 2px;
-	}
-
 	:is(input, select, textarea):is(.error, .is-invalid, [aria-invalid=true]), .editor-component.error > textarea {
 		border-color: var(--ui-danger-border-strong-color) !important;
 	}
@@ -1271,17 +1265,24 @@ body.loading {
 .game-brand {
 	display: flex;
 	align-items: center;
-	gap: 4px;
-	font-size: 22px;
-	font-weight: 750;
-	letter-spacing: .2em;
-	color: var(--text-color);
+	flex-shrink: 0;
+	border-radius: 4px;
 }
 
-.game-brand-mark {
-	color: var(--accent-color);
-	font-size: 30px;
-	font-weight: 300;
+.game-brand-logo {
+	display: block;
+	width: 152px;
+	height: 40px;
+	object-fit: cover;
+}
+
+.game-brand:hover .game-brand-logo {
+	filter: brightness(1.15);
+}
+
+.game-brand:focus-visible {
+	outline: 2px solid var(--accent-color) !important;
+	outline-offset: 4px;
 }
 
 .eyebrow, .sidebar-caption {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Engine\Locale;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -9,13 +10,7 @@ class LocaleDetect
 {
 	public function handle(Request $request, Closure $next): mixed
 	{
-		if ($request->header('locale')) {
-			app()->setLocale($request->header('locale'));
-		}
-
-		if ($request->user()) {
-			app()->setLocale($request->user()->locale);
-		}
+		app()->setLocale(Locale::getPreferredLocale());
 
 		return $next($request);
 	}

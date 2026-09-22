@@ -18,10 +18,11 @@ class Locale
 
 	public static function getPreferredLocale(): string
 	{
-		$locale = session()->get('locale') ??
+		$locale = self::getUserPreferredLocale() ??
+			session()->get('locale') ??
 			request()->get('locale') ??
 			request()->cookie('app_locale') ??
-			self::getUserPreferredLocale() ??
+			request()->header('locale') ??
 			config('app.locale', 'en') ??
 			request()->getPreferredLanguage();
 

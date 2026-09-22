@@ -1,5 +1,5 @@
 import { createInertiaApp } from '@inertiajs/vue3';
-import i18n, { setLocale } from './i18n.js';
+import i18n, { createLocalization, resolveLocale, setLocale } from './i18n.js';
 import './styles.css';
 import toastPlugin from './plugins/toast';
 import { morph, number, time } from './utils/format.js';
@@ -46,11 +46,17 @@ createInertiaApp({
 	},
 	withApp(app, options) {
 		const state = createState();
+		const locale = resolveLocale(options.page.props?.state?.locale ?? options.page.props?.locale);
+		const localization = options.ssr ? createLocalization(locale) : i18n;
+
+		if (!options.ssr) {
+			setLocale(locale);
+		}
 
 		app.provide(StateSymbol, state);
 
 		withInertiaModal(app);
-		app.use(i18n);
+		app.use(localization);
 
 		app.config.globalProperties.$morph = (value, ...titles) => {
 			return morph(value, titles);
@@ -58,7 +64,7 @@ createInertiaApp({
 
 		app.config.globalProperties.$formatDate = (value, format) => {
 			const offset = state.user?.options?.timezone;
-			const date = dayjs(value);
+			const date = dayjs(value).locale(localization.global.locale.value);
 
 			return (offset === null || offset === undefined || offset === ''
 				? date.tz()
@@ -66,7 +72,7 @@ createInertiaApp({
 		};
 
 		app.config.globalProperties.$formatNumber = number;
-		app.config.globalProperties.$formatTime = time;
+		app.config.globalProperties.$formatTime = (value, separator, full) => time(value, separator, full, localization.global.t);
 
 		dayjs.locale(en, null, true);
 		dayjs.locale(ru, null, true);
@@ -88,10 +94,7 @@ createInertiaApp({
 			console.error(error);
 		}
 
-		if (options.page.props?.state.locale) {
-			setLocale(options.page.props.state.locale);
-			dayjs.locale(options.page.props.state.locale);
-		}
+		dayjs.locale(locale);
 	},
 	progress: {
 		color: 'var(--accent-color)',

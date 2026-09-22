@@ -17,7 +17,7 @@
 	import Loader from '~/components/Layout/Loader.vue';
 	import useEcho from './composables/useEcho.js';
 	import useChatStore from './store/useChatStore.js';
-	import { setLocale } from './i18n.js';
+	import { useI18n } from 'vue-i18n';
 	import dayjs from 'dayjs';
 	import { closeModals } from './composables/useModals.js';
 
@@ -36,10 +36,11 @@
 	provide('chat', chatStore);
 
 	const state = useState();
+	const { locale } = useI18n();
 	const user = computed(() => state.user);
 
 	watch(() => state.locale, (value) => {
-		setLocale(value);
+		locale.value = value;
 		dayjs.locale(value);
 	});
 

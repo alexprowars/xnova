@@ -8,7 +8,7 @@ export function number (value)
 	return number_format(value, 0, ',', '.');
 }
 
-export function time (value, separator, full)
+export function time (value, separator, full, translate = i18n.global.t)
 {
 	if (typeof separator === 'undefined')
 		separator = '';
@@ -27,15 +27,15 @@ export function time (value, separator, full)
 	let time = '';
 
 	if (dd !== 0)
-		time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' ' + i18n.global.t('duration.day') + ' ');
+		time += ((separator !== '' && dd < 10) ? '0' : '')+dd+((separator !== '') ? separator : ' ' + translate('duration.day') + ' ');
 
 	if (hh > 0 || full)
-		time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ' + i18n.global.t('duration.hour') + ' ');
+		time += ((separator !== '' && hh < 10) ? '0' : '')+hh+((separator !== '') ? separator : ' ' + translate('duration.hour') + ' ');
 
 	if (mm > 0 || full)
-		time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' ' + i18n.global.t('duration.minute') + ' ');
+		time += ((separator !== '' && mm < 10) ? '0' : '')+mm+((separator !== '') ? separator : ' ' + translate('duration.minute') + ' ');
 
-	time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' ' + i18n.global.t('duration.second') + ' ');
+	time += ((separator !== '' && ss < 10) ? '0' : '')+ss+((separator !== '') ? '' : ' ' + translate('duration.second') + ' ');
 
 	if (!time.length)
 		time = '-';

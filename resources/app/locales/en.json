@@ -29,18 +29,6 @@
 		"from_debris": "from debris field",
 		"from_position": "from position"
 	},
-	"arcade": {
-		"sound_on": "Enable sound",
-		"sound_off": "Mute sound",
-		"start": "Press Space to start.",
-		"game_over": "Game over!",
-		"result": "Score: {score}. Level reached: {level}.",
-		"lives": "Lives: {count}",
-		"score": "Score: {score}, Level: {level}",
-		"paused": "Paused",
-		"level": "Level {level}",
-		"countdown": "Starting in {seconds}"
-	},
 	"construction": {
 		"resource_settings": "Resource settings",
 		"unit_limit": "You can build at most {count} units of this type.",
@@ -438,6 +426,10 @@
 			"battle_report": "Battle report"
 		},
 		"errors": {
+			"signal_lost": "Signal lost",
+			"unavailable": "Sector unavailable",
+			"lost_description": "There is nothing at these coordinates. The page may have moved, or the address may be incorrect.",
+			"return_hint": "Set a course for familiar territory.",
 			"not_found": "Page not found",
 			"home": "Home"
 		},
@@ -504,6 +496,19 @@
 			"expand": "Expand requirements: {name}"
 		},
 		"index": {
+			"headline_start": "The galaxy awaits",
+			"headline_accent": "your command.",
+			"go_to_login": "Skip to sign in",
+			"browser_note": "In your browser. No download needed.",
+			"new_commander": "New here?",
+			"features_label": "Your empire starts here",
+			"useful_links": "Useful links",
+			"build_title": "Develop your colonies",
+			"build_description": "Gather resources, build cities and research technologies. Turn your first planet into the heart of an empire.",
+			"explore_title": "Conquer the cosmos",
+			"explore_description": "Launch expeditions, build a powerful fleet and fight for new worlds. Choose your own path to supremacy.",
+			"unite_title": "Join forces",
+			"unite_description": "Find allies, join alliances and plan joint operations. Together, shift the balance of power across the galaxy.",
 			"meta_title": "Login",
 			"login_heading": "Login to the game:",
 			"remind_password_title": "Password recovery",

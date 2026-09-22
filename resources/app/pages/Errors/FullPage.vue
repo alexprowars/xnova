@@ -1,31 +1,46 @@
 <template>
-	<div class="game-page page-error page-error-full">
-		<UiPanel class="game-panel">
-			<header class="error-heading">
-				<span class="error-code">{{ page.status }}</span>
-				<h1 v-if="page.status === 404">{{ $t('pages.errors.not_found') }}</h1>
-				<div class="game-prose">{{ page.message }}</div>
-				<UiButton :as="Link" href="/">{{ $t('pages.errors.home') }}</UiButton>
+	<Head :title="page.status + ' — ' + title"/>
+	<div class="page-error-full">
+		<div class="error-shell">
+			<header class="error-header">
+				<Link href="/" class="game-brand" aria-label="XNova">
+					<img :src="brandLogo" class="game-brand-logo" width="152" height="40" alt="" aria-hidden="true">
+				</Link>
+				<span>{{ $t('interface.sector') }}</span>
 			</header>
-			<div class="error-game">
-				<Game/>
-			</div>
-		</UiPanel>
+
+			<main class="error-main">
+				<section class="error-heading" aria-labelledby="error-title">
+					<div class="error-eyebrow">{{ $t('pages.errors.signal_lost') }}</div>
+					<div class="error-code">{{ page.status }}</div>
+					<h1 id="error-title">{{ title }}</h1>
+					<p class="error-description">{{ page.status === 404 ? $t('pages.errors.lost_description') : page.message }}</p>
+					<UiButton :as="Link" href="/" class="error-home">{{ $t('pages.errors.home') }} <span aria-hidden="true">↗</span></UiButton>
+					<p class="error-return-hint">{{ $t('pages.errors.return_hint') }}</p>
+				</section>
+			</main>
+
+			<div class="error-footer">XNOVA · {{ $t('interface.sector') }}</div>
+		</div>
 	</div>
 </template>
 
 <script setup>
-	import { UiButton, UiPanel } from '~/components/UI';
-	import { Link } from '@inertiajs/vue3';
-	import Game from '~/components/Layout/Game.vue';
+	import { computed } from 'vue';
+	import { useI18n } from 'vue-i18n';
+	import { Head, Link } from '@inertiajs/vue3';
+	import { UiButton } from '~/components/UI';
+	import brandLogo from '~/images/brand.png';
 	import App from '~/App.vue';
-	import EmptyLayout from '~/layouts/EmptyLayout.vue';
 
 	defineOptions({
-		layout: [App, EmptyLayout],
+		layout: [App],
 	});
 
-	defineProps({
+	const props = defineProps({
 		page: Object,
 	});
+
+	const { t } = useI18n();
+	const title = computed(() => t(props.page.status === 404 ? 'pages.errors.not_found' : 'pages.errors.unavailable'));
 </script>

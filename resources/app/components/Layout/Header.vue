@@ -2,7 +2,7 @@
 	<header class="top-menu">
 		<div class="top-menu-container">
 			<Link href="/overview" class="game-brand" aria-label="XNova">
-				<span class="game-brand-mark" aria-hidden="true">X</span><span>NOVA</span>
+				<img :src="brandLogo" class="game-brand-logo" width="152" height="40" alt="" aria-hidden="true">
 			</Link>
 			<div class="top-menu-block left">
 				<Link v-if="user['quests'] < 10" href="/quests" class="m1" v-tooltip="$t('menu.quests')" :aria-label="$t('menu.quests')">
@@ -68,6 +68,7 @@
 
 <script setup>
 	import Clock from './Clock.vue';
+	import brandLogo from '~/images/brand.png';
 	import useState from '~/composables/useState.js';
 	import { Link, router } from '@inertiajs/vue3';
 	import { computed } from 'vue';

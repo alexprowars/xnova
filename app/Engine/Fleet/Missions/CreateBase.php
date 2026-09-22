@@ -48,7 +48,7 @@ class CreateBase extends BaseMission
 				$NewOwnerPlanet = Galaxy::createPlanet(
 					$this->fleet->getDestinationCoordinates()->setType(PlanetType::MILITARY_BASE),
 					$this->fleet->user,
-					__('fleet_engine.sys_base_defaultname'),
+					__('main.sys_base_defaultname'),
 				);
 
 				// Если планета-база создана

@@ -22,6 +22,7 @@ class PageResponseFactory extends ResponseFactory
 		}
 
 		return parent::render($component, [
+			'locale' => app()->getLocale(),
 			'page' => $props,
 		]);
 	}

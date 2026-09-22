@@ -2,6 +2,7 @@
 
 use App\Http\Controllers;
 use App\Http\Middleware\CheckReferral;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\IsVacationMode;
 use App\Http\Middleware\RedirectToGame;
 use App\Http\Middleware\RedirectToStart;
@@ -205,3 +206,5 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 	Route::post('planet/rename', [Controllers\PlanetController::class, 'rename'])->middleware(IsVacationMode::class);
 	Route::post('planet/image', [Controllers\PlanetController::class, 'image'])->middleware(IsVacationMode::class);
 });
+
+Route::fallback(fn () => abort(404))->withoutMiddleware(HandleInertiaRequests::class);
