@@ -26,7 +26,7 @@ class ContentResource extends Resource
 		return __('admin.content.content');
 	}
 
-	protected static ?string $recordTitleAttribute = 'title';
+	protected static ?string $recordTitleAttribute = 'title_ru';
 
 	public static function getNavigationIcon(): string
 	{
@@ -54,11 +54,25 @@ class ContentResource extends Resource
 			->components([
 				Section::make()
 					->schema([
-						TextInput::make('title')
-							->label(__('admin.common.title')),
 						TextInput::make('alias')
 							->label(__('admin.content.slug')),
-						RichEditor::make('html')
+					]),
+				Section::make(__('admin.content.language_ru'))
+					->schema([
+						TextInput::make('title_ru')
+							->label(__('admin.common.title'))
+							->required()
+							->maxLength(150),
+						RichEditor::make('html_ru')
+							->label(__('admin.content.content'))
+							->required(),
+					]),
+				Section::make(__('admin.content.language_en'))
+					->schema([
+						TextInput::make('title_en')
+							->label(__('admin.common.title'))
+							->maxLength(150),
+						RichEditor::make('html_en')
 							->label(__('admin.content.content')),
 					]),
 			]);

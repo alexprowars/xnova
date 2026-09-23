@@ -26,9 +26,8 @@
 	import RaceCard from '~/components/Page/Race/RaceCard.vue';
 	import RaceChange from '~/components/Page/Race/RaceChange.vue';
 	import factions from '~/components/Page/Race/factions.js';
-	import { computed, nextTick, onMounted } from 'vue';
+	import { computed } from 'vue';
 	import { Head } from '@inertiajs/vue3';
-	import { visitModal } from '@inertiaui/modal-vue';
 
 	defineProps({
 		page: Object,
@@ -45,14 +44,4 @@
 	const state = useState();
 	const user = computed(() => state.user);
 	const race = computed(() => user.value?.race || 0);
-
-	onMounted(() => {
-		if (race.value) {
-			return;
-		}
-
-		nextTick(() => {
-			visitModal('/content/welcome');
-		})
-	});
 </script>

@@ -31,8 +31,11 @@ class ListContents extends ListRecords
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
-				TextColumn::make('title')
-					->label(__('admin.common.title'))
+				TextColumn::make('title_ru')
+					->label(__('admin.content.language_ru'))
+					->sortable(),
+				TextColumn::make('title_en')
+					->label(__('admin.content.language_en'))
 					->sortable(),
 				TextColumn::make('alias')
 					->label(__('admin.content.slug'))

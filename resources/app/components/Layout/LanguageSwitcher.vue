@@ -24,7 +24,7 @@
 		}
 
 		changingLanguage.value = true;
-		router.post('/options/locale', { locale }, {
+		router.post('/locale', { locale }, {
 			preserveScroll: true,
 			onFinish: () => {
 				changingLanguage.value = false;

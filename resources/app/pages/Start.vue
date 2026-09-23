@@ -18,7 +18,8 @@
 	import SelectAvatar from '~/components/Page/Start/SelectAvatar.vue';
 	import useState from '~/composables/useState.js';
 	import { Head, useForm } from '@inertiajs/vue3';
-	import { ref } from 'vue';
+	import { nextTick, onMounted, ref } from 'vue';
+	import { visitModal } from '@inertiaui/modal-vue';
 
 	defineOptions({
 		layout: {
@@ -40,8 +41,16 @@
 		avatar: null,
 	});
 
+	onMounted(() => {
+		nextTick(() => {
+			visitModal('/content/welcome');
+		});
+	});
+
 	function save() {
-		if (form.processing) return;
+		if (form.processing) {
+			return;
+		}
 
 		form.post('/start', {
 			onError: (errors) => {

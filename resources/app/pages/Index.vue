@@ -7,6 +7,7 @@
 				<Link href="/" class="game-brand" aria-label="XNova">
 					<img :src="brandLogo" class="game-brand-logo" width="152" height="40" alt="" aria-hidden="true">
 				</Link>
+				<LanguageSwitcher/>
 				<nav class="landing-nav" :aria-label="$t('interface.navigation')">
 					<Link href="/stats">{{ $t('menu.stats') }}</Link>
 					<Link href="/content/rules">{{ $t('menu.rules') }}</Link>
@@ -65,7 +66,7 @@
 			<footer class="landing-footer">
 				<div class="landing-copyright">&copy; {{ (new Date).getFullYear() }} XNOVA<span>{{ $t('pages.index.footer_desk') }}</span></div>
 				<nav :aria-label="$t('pages.index.useful_links')">
-					<Link href="/xnsim" external>{{ $t('menu.sim') }}</Link>
+					<Link href="/sim">{{ $t('menu.sim') }}</Link>
 					<Link href="/blocked">{{ $t('menu.blocked') }}</Link>
 					<Link href="/contacts">{{ $t('menu.contacts') }}</Link>
 				</nav>
@@ -81,6 +82,7 @@
 	import RadarIcon from '~/images/icons/radar.svg?component';
 	import AllianceIcon from '~/images/icons/alliance.svg?component';
 	import AuthForm from '~/components/Page/Index/AuthForm.vue';
+	import LanguageSwitcher from '~/components/Layout/LanguageSwitcher.vue';
 	import { isMobile } from '~/utils/helpers';
 	import { Head, Link, router } from '@inertiajs/vue3';
 	import { visitModal } from '@inertiaui/modal-vue';

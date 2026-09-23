@@ -17,6 +17,7 @@ Route::get('login/reset', [Controllers\ResetPasswordController::class, 'resetPag
 Route::post('login/reset', [Controllers\ResetPasswordController::class, 'reset'])->middleware(RedirectToGame::class);
 Route::post('login/forgot', [Controllers\ResetPasswordController::class, 'forgot'])->middleware(RedirectToGame::class);
 Route::get('state', [Controllers\StateController::class, 'index']);
+Route::post('locale', [Controllers\LocaleController::class, 'update']);
 Route::get('blocked', [Controllers\BlockedController::class, 'index'])->name('blocked');
 Route::get('contacts', [Controllers\ContactsController::class, 'index']);
 Route::get('content/{slug}', [Controllers\ContentController::class, 'index'])->name('content');
@@ -29,15 +30,15 @@ Route::match(['get', 'post'], 'stats/alliances', [Controllers\StatsController::c
 Route::match(['get', 'post'], 'stats/races', [Controllers\StatsController::class, 'races']);
 Route::get('players/{id}', [Controllers\PlayersController::class, 'index'])->whereNumber('id')->name('players.detail');
 Route::get('userbar{id}.jpg', [Controllers\UserBarController::class, 'index'])->whereNumber('id');
+Route::get('sim', [Controllers\SimController::class, 'index']);
+Route::get('sim/report', [Controllers\SimController::class, 'report']);
+Route::match(['get', 'post'], 'sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 
 Route::middleware(['auth', RedirectToStart::class])->group(function () {
 	Route::post('logout', [Controllers\LogoutController::class, 'index'])->withoutMiddleware(RedirectToStart::class);
 	Route::get('tech', [Controllers\TechController::class, 'index']);
 	Route::get('tech/{id}', [Controllers\TechController::class, 'info'])->whereNumber('id');
 
-	Route::get('sim', [Controllers\SimController::class, 'index']);
-	Route::get('sim/report', [Controllers\SimController::class, 'report']);
-	Route::match(['get', 'post'], 'sim/report/{id}', [Controllers\SimController::class, 'reportById'])->whereUuid('id');
 	Route::get('records', [Controllers\RecordsController::class, 'index']);
 	Route::get('players/{id}/stats', [Controllers\PlayersController::class, 'stats'])->whereNumber('id');
 
@@ -168,7 +169,6 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 
 	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
-	Route::post('options/locale', [Controllers\OptionsController::class, 'changeLocale']);
 	Route::get('options/email', [Controllers\OptionsController::class, 'email']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'changeEmail']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);

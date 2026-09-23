@@ -1,12 +1,12 @@
 {
     "name": "xnova-game",
     "private": true,
+    "license": "MIT",
     "type": "module",
     "scripts": {
         "dev": "vite --host 127.0.0.1",
         "watch": "vite build --watch",
-        "build": "vite build",
-        "build:ssr": "vite build && vite build --ssr"
+        "build": "vite build && vite build --ssr"
     },
     "devDependencies": {
         "@fancyapps/ui": "^6.1.15",

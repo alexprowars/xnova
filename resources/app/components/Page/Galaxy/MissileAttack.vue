@@ -46,6 +46,8 @@
 		}
 	});
 
+	const emit = defineEmits(['close']);
+
 	const state = useState();
 	const currentPlanet = computed(() => state.planet);
 
@@ -62,6 +64,9 @@
 		})
 		.post('/rocket', {
 			preserveUrl: true,
+			onSuccess() {
+				emit('close');
+			},
 		});
 	}
 </script>

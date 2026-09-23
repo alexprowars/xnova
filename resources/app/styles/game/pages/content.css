@@ -1,12 +1,43 @@
 .page-content {
-	.game-panel > .game-heading {
-		margin: 0;
-		border: 0;
-		border-radius: 5px 5px 0 0;
+	.content-body {
+		padding: 12px;
 	}
 
-	.content-body {
-		padding: 18px;
+	.content-article-intro {
+		margin: 0 0 22px;
+		padding: 12px 14px;
+		border: 1px solid var(--ui-border-muted-color);
+		border-radius: 5px;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-title-color);
+		font-weight: 600;
+		text-align: center;
+	}
+
+	.content-article-section + .content-article-section {
+		margin-top: 20px;
+	}
+
+	.content-body .content-article-section > h2 {
+		margin: 0 0 8px;
+		padding: 8px 10px;
+		border-left: 3px solid var(--accent-color);
+		border-radius: 0 4px 4px 0;
+		background: var(--ui-panel-heading-background);
+		color: var(--ui-title-color);
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	.content-article-section-body {
+		line-height: 1.75;
+	}
+
+	.content-article-section-body u {
+		font-weight: 600;
+		text-decoration-color: var(--ui-divider-accent-color);
+		text-underline-offset: 3px;
 	}
 
 	.content-body h2, .content-body h3 {
@@ -48,13 +79,68 @@
 		font-size: 14px;
 	}
 
+	.content-table-wrap {
+		max-width: 100%;
+		margin: 16px 0;
+		border: 1px solid var(--ui-border-muted-color);
+		background: var(--ui-panel-background);
+		scrollbar-width: thin;
+		scrollbar-color: var(--ui-border-color) var(--ui-panel-background);
+	}
+
+	.content-table-wrap:focus-visible {
+		outline: 2px solid var(--accent-color);
+		outline-offset: 3px;
+	}
+
+	.content-body .content-table {
+		display: table;
+		min-width: 600px;
+		overflow: visible;
+		font-variant-numeric: tabular-nums;
+
+		caption {
+			padding: 12px;
+			border-bottom: 1px solid var(--ui-border-muted-color);
+			color: var(--ui-title-color);
+			font-weight: 600;
+			text-align: left;
+		}
+
+		th, td {
+			text-align: right;
+			overflow-wrap: normal;
+		}
+
+		th:first-child, td:first-child {
+			text-align: center;
+		}
+
+		tbody th, tbody td {
+			white-space: nowrap;
+		}
+
+		tbody th {
+			color: var(--ui-title-color);
+			font-weight: 600;
+		}
+
+		tbody tr:nth-child(even) > * {
+			background: var(--ui-surface-background);
+		}
+
+		tbody tr:hover > * {
+			background: var(--ui-hover-background);
+		}
+	}
+
 	.content-body iframe {
 		max-width: 100%;
 	}
 
 	@media (max-width: 479px) {
 		.content-body {
-			padding: 12px;
+			padding: 8px;
 		}
 	}
 }

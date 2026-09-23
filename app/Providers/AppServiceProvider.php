@@ -72,9 +72,15 @@ class AppServiceProvider extends ServiceProvider
 		});*/
 
 		Inertia::disableSsr(function () {
-			$path = request()->path();
+			$request = request();
 
-			if ($path == '/' || str_starts_with($path, 'content') || str_starts_with($path, 'stats') || str_starts_with($path, 'players')) {
+			if ($request->routeIs('content')) {
+				return $request->user() !== null;
+			}
+
+			$path = $request->path();
+
+			if ($path == '/' || str_starts_with($path, 'stats') || str_starts_with($path, 'players')) {
 				return false;
 			}
 

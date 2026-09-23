@@ -25,15 +25,19 @@ class ContentController extends Controller
 			throw new Exception(__('main.content_page_not_found'));
 		}
 
+		$locale = app()->getLocale();
+		$fallbackLocale = app()->getFallbackLocale();
+
 		$result = [
-			'title' => $content->title,
-			'body' => stripslashes($content->html),
+			'title' => $content->{'title_' . $locale} ?: ($content->{'title_' . $fallbackLocale} ?? ''),
+			'body' => stripslashes($content->{'html_' . $locale} ?: ($content->{'html_' . $fallbackLocale} ?? '')),
 		];
 
-		$component = $request->hasHeader(Modal::HEADER_MODAL)
-			? 'Content/Modal' : 'Content/Detail';
+		if ($request->hasHeader(Modal::HEADER_MODAL)) {
+			return Inertia::modal('Content/Modal', $result)
+				->baseRoute('content', [$content->alias]);
+		}
 
-		return Inertia::modal($component, $result)
-			->baseRoute('content', [$content->alias]);
+		return Inertia::render('Content/Detail', $result);
 	}
 }

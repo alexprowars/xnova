@@ -63,17 +63,6 @@
 	}
 
 	.records-table {
-		min-width: 480px;
-		table-layout: fixed;
-
-		th:first-child {
-			width: 42%;
-		}
-
-		.game-list-number {
-			width: 22%;
-		}
-
 		th, td {
 			overflow-wrap: anywhere;
 		}
@@ -89,7 +78,6 @@
 
 	.records-value {
 		display: inline-block;
-		min-width: 32px;
 		max-width: 100%;
 		padding: 2px 6px;
 		border-radius: 4px;
@@ -121,14 +109,6 @@
 	@media (max-width: 479px) {
 		.game-list-table th, .game-list-table td {
 			padding: 8px;
-		}
-
-		.records-table th:first-child {
-			width: 40%;
-		}
-
-		.records-table .game-list-number {
-			width: 25%;
 		}
 	}
 }

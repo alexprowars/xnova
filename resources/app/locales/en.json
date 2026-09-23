@@ -556,7 +556,8 @@
 		},
 		"contacts": {
 			"section_heading": "Staff",
-			"intro_hint": "Here you will find contact details for all game administrators and operators",
+			"intro_hint": "You can contact game administrators and operators by email or send them a private message in the game after signing in.",
+			"write_message": "Message in game",
 			"table_header_name": "Name",
 			"table_header_role": "Role",
 			"table_header_email": "E-mail",
@@ -884,7 +885,7 @@
 			"stats_fleet": "Fleet",
 			"stats_defs": "Defense",
 			"stats_tech": "Research",
-			"stats_total": "Total",
+			"stats_total": "Total points",
 			"place": "Place",
 			"place_diff": "Change in ranking place",
 			"mine_level": "Industrial level",

@@ -2,6 +2,7 @@
     "name": "xnova/server",
     "type": "project",
     "description": "The Xnova game backend server",
+    "license": "MIT",
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

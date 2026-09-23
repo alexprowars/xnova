@@ -83,6 +83,38 @@
 		background: color-mix(in srgb, var(--head-bg-color) 92.94%, transparent);
 	}
 
+	.game-language-switch {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		gap: 2px;
+	}
+
+	.game-language-option {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		background: transparent;
+		font-size: 20px;
+		cursor: pointer;
+
+		&:hover, &:focus-visible {
+			background: var(--ui-active-background);
+		}
+
+		&.is-active {
+			border-color: var(--border-color);
+		}
+
+		&:disabled {
+			cursor: default;
+		}
+	}
+
 	.top-menu-container {
 		display: flex;
 		align-items: center;
@@ -99,38 +131,6 @@
 			font-size: 12px;
 			font-variant-numeric: tabular-nums;
 			white-space: nowrap;
-		}
-
-		.game-language-switch {
-			display: flex;
-			align-items: center;
-			flex-shrink: 0;
-			gap: 2px;
-		}
-
-		.game-language-option {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 30px;
-			height: 30px;
-			border: 1px solid transparent;
-			border-radius: 5px;
-			background: transparent;
-			font-size: 20px;
-			cursor: pointer;
-
-			&:hover, &:focus-visible {
-				background: var(--ui-active-background);
-			}
-
-			&.is-active {
-				border-color: var(--border-color);
-			}
-
-			&:disabled {
-				cursor: default;
-			}
 		}
 
 		.top-menu-block {
@@ -167,6 +167,23 @@
 				svg.red {
 					fill: var(--ui-danger-strong-color);
 				}
+			}
+		}
+
+		.guest-nav {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+			gap: 8px 24px;
+			margin-left: auto;
+			font-size: 13px;
+
+			.guest-login {
+				padding: 8px 16px;
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				background: var(--ui-panel-background);
 			}
 		}
 
@@ -222,6 +239,17 @@
 				width: 32px;
 				height: 32px;
 			}
+		}
+	}
+
+	@media (max-width: 479px) {
+		.guest-header .top-menu-container {
+			padding-inline: 12px;
+		}
+
+		.guest-header .guest-nav {
+			justify-content: center;
+			margin-left: 0;
 		}
 	}
 

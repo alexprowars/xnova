@@ -1,9 +1,9 @@
 <template>
 	<article class="game-page page-content">
+		<UiHeading v-if="title" class="game-heading">
+			<h1 v-html="title"></h1>
+		</UiHeading>
 		<UiPanel class="game-panel">
-			<UiHeading v-if="title" class="game-heading">
-				<h1 v-html="title"></h1>
-			</UiHeading>
 			<div class="game-prose content-body" v-html="body"></div>
 		</UiPanel>
 	</article>

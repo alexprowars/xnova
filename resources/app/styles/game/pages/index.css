@@ -25,7 +25,7 @@
 	.landing-header {
 		display: flex;
 		align-items: center;
-		gap: 48px;
+		gap: 20px;
 		min-height: 100px;
 		border-bottom: 1px solid var(--landing-line);
 	}
@@ -464,6 +464,15 @@
 	@media (max-width: 1100px) {
 		.landing-shell {
 			width: calc(100% - 56px);
+		}
+
+		.landing-nav {
+			gap: 18px;
+		}
+
+		.landing-login-link {
+			gap: 12px;
+			padding-inline: 12px;
 		}
 
 		.landing-hero {

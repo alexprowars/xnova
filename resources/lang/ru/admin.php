@@ -97,6 +97,8 @@ return [
 		'content_not_found' => 'Контент не найден',
 		'create_record' => 'Создать запись',
 		'edit_record' => 'Редактирование записи',
+		'language_en' => 'Английский',
+		'language_ru' => 'Русский',
 		'slug' => 'Символьный код',
 	],
 	'fleets' => [

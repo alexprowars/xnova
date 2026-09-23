@@ -97,6 +97,8 @@ return [
 		'content_not_found' => 'No content found',
 		'create_record' => 'Create entry',
 		'edit_record' => 'Edit entry',
+		'language_en' => 'English',
+		'language_ru' => 'Russian',
 		'slug' => 'Slug',
 	],
 	'fleets' => [

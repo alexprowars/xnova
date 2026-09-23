@@ -173,8 +173,7 @@ Run these commands from the repository root. For builds and checks in Docker, pr
 | --- | --- |
 | `composer dev` | Start the native development processes |
 | `npm run dev` | Start the Vite development server |
-| `npm run build` | Build frontend assets |
-| `npm run build:ssr` | Build frontend assets and the SSR bundle |
+| `npm run build` | Build frontend assets and the SSR bundle |
 | `composer test` | Run the Pest test suite |
 | `composer analyse` | Run PHPStan and Larastan |
 | `php artisan game:daemon` | Process fleet events and game queues |
@@ -188,3 +187,8 @@ Game rules are defined in [config/game.php](config/game.php). Common speed multi
 | `GAME_BASE_SPEED` | Building and research speed | `50` |
 | `GAME_RESOURCE_SPEED` | Resource production speed | `50` |
 | `GAME_FLEET_SPEED` | Fleet travel speed | `50` |
+
+## License
+
+XNova source code is licensed under the [MIT License](LICENSE).
+Third-party components and assets retain their respective licenses and copyright notices, including the [Rust battle engine license](rust/LICENSE).

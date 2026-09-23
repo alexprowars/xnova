@@ -8,7 +8,7 @@
 				</div>
 				<div>
 					<a href="https://t.me/x_nova_game" target="_blank">Telegram</a>|
-					<Link href="/support">{{ $t('menu.support') }}</Link>|
+					<template v-if="state.user"><Link href="/support">{{ $t('menu.support') }}</Link>|</template>
 					<Link href="/blocked">{{ $t('menu.blocked') }}</Link>|
 					<Link href="/contacts">{{ $t('menu.contacts') }}</Link>|
 					<Link href="/content/help">{{ $t('menu.help') }}</Link>|
@@ -20,7 +20,7 @@
 		<div class="sm:hidden footer-mobile">
 			<div class="text-center mb-4">
 				<a href="https://t.me/x_nova_game" target="_blank">Telegram</a>|
-				<Link href="/support">{{ $t('menu.support') }}</Link>|
+				<template v-if="state.user"><Link href="/support">{{ $t('menu.support') }}</Link>|</template>
 				<Link href="/blocked">{{ $t('menu.blocked') }}</Link>|
 				<Link href="/contacts">{{ $t('menu.contacts') }}</Link>|
 				<Link href="/content/help">{{ $t('menu.help') }}</Link>|

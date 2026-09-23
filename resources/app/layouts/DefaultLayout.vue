@@ -1,6 +1,7 @@
 <template>
 	<div class="application" v-touch:swipe.left.right="swipe">
 		<Header v-if="user && view['header']"/>
+		<GuestHeader v-else-if="view['header']"/>
 		<main>
 			<MainMenu v-if="user && view['menu']" :active="sidebar === 'menu'" @toggle="sidebarToggle('menu')"/>
 			<PlanetsList v-if="user && view['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')"/>
@@ -18,7 +19,7 @@
 
 		<Chat v-if="!isSSR() && user" :visible="!isChatPage && view['menu'] && view['chat']"/>
 
-		<Footer v-if="user && view['header']"/>
+		<Footer v-if="view['header'] && view['footer']"/>
 	</div>
 </template>
 
@@ -28,6 +29,7 @@
 	import { ref, computed } from 'vue';
 	import MessagesRow from '~/components/Layout/MessagesRow.vue';
 	import Header from '~/components/Layout/Header.vue';
+	import GuestHeader from '~/components/Layout/GuestHeader.vue';
 	import MainMenu from '~/components/Layout/MainMenu.vue';
 	import PlanetsList from '~/components/Layout/PlanetsList.vue';
 	import PlanetPanel from '~/components/Layout/PlanetPanel.vue';
@@ -74,7 +76,7 @@
 			chat: true,
 		}, props.view || {});
 
-		if (user && !user.value['options']['chatbox']) {
+		if (user.value && !user.value['options']['chatbox']) {
 			views.chat = false;
 		}
 
