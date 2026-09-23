@@ -14,19 +14,19 @@ class Format
 		$time = '';
 
 		if ($day != 0) {
-			$time .= $day . (($separator != '') ? $separator : ' д. ');
+			$time .= $day . (($separator != '') ? $separator : ' ' . __('main.format_time.day') . ' ');
 		}
 
 		if ($hh > 0) {
-			$time .= $hh . (($separator != '') ? $separator : ' ч. ');
+			$time .= $hh . (($separator != '') ? $separator : ' ' . __('main.format_time.hour') . ' ');
 		}
 
 		if ($mm > 0) {
-			$time .= $mm . (($separator != '') ? $separator : ' мин. ');
+			$time .= $mm . (($separator != '') ? $separator : ' ' . __('main.format_time.minute') . ' ');
 		}
 
 		if ($ss != 0) {
-			$time .= $ss . (($separator != '') ? '' : ' с. ');
+			$time .= $ss . (($separator != '') ? '' : ' ' . __('main.format_time.second') . ' ');
 		}
 
 		if (!$time) {

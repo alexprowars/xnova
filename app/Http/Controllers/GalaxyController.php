@@ -105,11 +105,14 @@ class GalaxyController extends Controller
 			}
 		}
 
+		$now = now()->startOfSecond();
+
 		foreach ($items as $item) {
 			$activeTime = $item->last_active;
+			$moonActiveTime = $item->moon?->last_active;
 
-			if ($item->moon && $item->moon->last_active && $item->moon->last_active->timestamp > $activeTime->timestamp) {
-				$activeTime = $item->moon->last_active;
+			if ($moonActiveTime && (!$activeTime || $moonActiveTime->greaterThan($activeTime))) {
+				$activeTime = $moonActiveTime;
 			}
 
 			if ($item->destroyed_at && $item->destroyed_at->isPast()) {
@@ -126,8 +129,8 @@ class GalaxyController extends Controller
 				$item->unsetRelation('moon');
 			}
 
-			if ($activeTime?->timestamp > time() - 59 * 60) {
-				$planetActive = floor((time() - $activeTime->timestamp) / 60);
+			if ($activeTime?->greaterThan($now->subMinutes(59))) {
+				$planetActive = floor($activeTime->diffInMinutes($now));
 			} else {
 				$planetActive = 60;
 			}

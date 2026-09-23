@@ -1,6 +1,12 @@
 <?php
 
 return [
+	'format_time' => [
+		'day' => 'd.',
+		'hour' => 'h.',
+		'minute' => 'min.',
+		'second' => 's.',
+	],
 	'module_name' => 'Game',
 	'user_level' => ['Player', 'Moderator', 'Operator', 'Administrator'],
 	'sys_overview' => 'Overview',
@@ -37,6 +43,7 @@ return [
 	'sim_log_not_found' => 'Simulation log not found',
 	'sim_report_error' => 'Error processing the battle report: :error',
 	'sim_no_data' => 'No data for battle simulation',
+	'sim_player' => 'Player :number',
 	'notes_added' => 'Note added',
 	'notes_updated' => 'Note updated',
 	'notes_not_found' => 'Note not found',

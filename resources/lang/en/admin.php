@@ -113,6 +113,7 @@ return [
 		'target_player' => 'Target player',
 	],
 	'mailing' => [
+		'default_subject' => 'Information message (:name)',
 		'mailing_sent' => 'Message sent to all players!',
 		'mailing_title' => 'Send a message to all players',
 		'message_subject' => 'Message subject',
@@ -139,6 +140,8 @@ return [
 	'payments' => [
 		'amount' => 'Amount',
 		'create_payment' => 'Create transaction',
+		'credit_notification' => ':amount credits have been added to your account',
+		'credit_notification_subject' => 'Payment processing',
 		'credits_added' => ':amount credits added successfully',
 		'method' => 'Method',
 		'player_lookup_failed' => 'Could not find player',

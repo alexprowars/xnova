@@ -434,7 +434,7 @@ class UpdateStatistics
 
 		$settings = app(Settings::class);
 
-		$settings->statUpdate = time();
+		$settings->statUpdate = now()->timestamp;
 		$settings->activeUsers = $active_users;
 		$settings->activeAlliance = $active_alliance;
 		$settings->save();

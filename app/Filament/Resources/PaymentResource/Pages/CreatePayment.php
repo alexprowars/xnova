@@ -62,7 +62,11 @@ class CreatePayment extends CreateRecord
 		]);
 
 		$user->notify(
-			new SystemMessage(MessageType::System, 'На ваш счет зачислено ' . $data['amount'] . ' кредитов', 'Обработка платежей')
+			new SystemMessage(
+				MessageType::System,
+				__('admin.payments.credit_notification', ['amount' => $data['amount']], $user->preferredLocale()),
+				__('admin.payments.credit_notification_subject', [], $user->preferredLocale()),
+			)
 		);
 
 		return $record;

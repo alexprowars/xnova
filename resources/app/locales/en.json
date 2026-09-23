@@ -47,6 +47,10 @@
 		"online": "Players online",
 		"total": "Total players"
 	},
+	"pagination": {
+		"label": "Pagination",
+		"page": "Page {page}"
+	},
 	"notifications": {
 		"vacation": "Vacation mode is active. Game functionality is limited.",
 		"deletion": "Account deletion is active.<br>Your account will be deleted after {date}. You can cancel deletion in the game settings."

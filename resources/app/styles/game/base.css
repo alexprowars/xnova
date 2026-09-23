@@ -101,6 +101,38 @@
 			white-space: nowrap;
 		}
 
+		.game-language-switch {
+			display: flex;
+			align-items: center;
+			flex-shrink: 0;
+			gap: 2px;
+		}
+
+		.game-language-option {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 30px;
+			height: 30px;
+			border: 1px solid transparent;
+			border-radius: 5px;
+			background: transparent;
+			font-size: 20px;
+			cursor: pointer;
+
+			&:hover, &:focus-visible {
+				background: var(--ui-active-background);
+			}
+
+			&.is-active {
+				border-color: var(--border-color);
+			}
+
+			&:disabled {
+				cursor: default;
+			}
+		}
+
 		.top-menu-block {
 			display: flex;
 			align-items: center;
@@ -151,6 +183,14 @@
 				order: 1;
 				flex-basis: 100%;
 				text-align: center;
+			}
+
+			.game-language-switch {
+				order: 2;
+			}
+
+			.right {
+				order: 3;
 			}
 
 			.top-menu-block {

@@ -12,6 +12,7 @@ use App\Models\Planet;
 use App\Models\PlanetEntity;
 use App\Models\UserAuthentication;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -59,6 +60,18 @@ class OptionsController extends Controller
 		$this->user->save();
 
 		return to_route('options');
+	}
+
+	public function changeLocale(Request $request): RedirectResponse
+	{
+		$data = $request->validate([
+			'locale' => 'required|string|in:en,ru',
+		]);
+
+		$this->user->locale = $data['locale'];
+		$this->user->save();
+
+		return back();
 	}
 
 	public function save(Request $request): void

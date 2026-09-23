@@ -105,7 +105,7 @@ class Mailing extends Page
 			$user->notify(new SystemMessage(
 				MessageType::System,
 				$data['message'],
-				$data['subject'] ?: '<span style="color: ' . $color . '">Информационное сообщение (' . $currentUser->username . ')</span>',
+				$data['subject'] ?: '<span style="color: ' . $color . '">' . __('admin.mailing.default_subject', ['name' => $currentUser->username], $user->preferredLocale()) . '</span>',
 			));
 		}
 

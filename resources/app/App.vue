@@ -42,6 +42,10 @@
 	watch(() => state.locale, (value) => {
 		locale.value = value;
 		dayjs.locale(value);
+
+		if (typeof document !== 'undefined') {
+			document.documentElement.lang = value;
+		}
 	});
 
 	router.on('navigate', () => {

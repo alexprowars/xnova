@@ -38,6 +38,7 @@
 				</Popper>
 			</div>
 			<Clock class="game-clock"/>
+			<LanguageSwitcher/>
 			<div class="top-menu-block right">
 				<Popper :content="$t('menu.stats')">
 					<Link href="/stats" class="m1" :aria-label="$t('menu.stats')">
@@ -89,6 +90,7 @@
 <script setup>
 	import Popper from '~/components/Popper.vue';
 	import Clock from './Clock.vue';
+	import LanguageSwitcher from './LanguageSwitcher.vue';
 	import brandLogo from '~/images/brand.png';
 	import useState from '~/composables/useState.js';
 	import { Link, router } from '@inertiajs/vue3';

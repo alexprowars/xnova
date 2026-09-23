@@ -92,7 +92,7 @@ class Simulation
 					$units[$shipArr['id']] = $shipArr['count'];
 				}
 
-				$user = new User(['id' => 1000 + $i, 'username' => 'Игрок ' . ($i + 1)]);
+				$user = new User(['id' => 1000 + $i, 'username' => __('main.sim_player', ['number' => $i + 1])]);
 
 				foreach ($units as $id => $lvl) {
 					if (Vars::getItemType($id) !== ItemType::TECH) {

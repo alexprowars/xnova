@@ -55,6 +55,8 @@ class AllianceMembersController extends Controller
 
 		$result['members'] = [];
 
+		$now = now()->startOfSecond();
+
 		foreach ($members as $member) {
 			$item = [
 				'id' => $member->user_id,
@@ -70,12 +72,14 @@ class AllianceMembersController extends Controller
 			];
 
 			if ($result['status']) {
-				if (strtotime($member->user->onlinetime) + 60 * 10 >= time()) {
+				$lastOnline = $member->user->onlinetime;
+
+				if ($lastOnline?->addMinutes(10)->greaterThanOrEqualTo($now)) {
 					$item['online'] = '<span class="positive">' . __('alliance.on') . '</span>';
-				} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time()) {
+				} elseif ($lastOnline?->addMinutes(20)->greaterThanOrEqualTo($now)) {
 					$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
 				} else {
-					$hours = (int) floor((time() - strtotime($member->user->onlinetime)) / 3600);
+					$hours = (int) floor($lastOnline?->diffInHours($now) ?? 0);
 
 					$item['online'] = '<span class="negative">' . __('alliance.off') . ' ' . Format::time($hours * 3600) . '</span>';
 				}

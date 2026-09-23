@@ -1,6 +1,12 @@
 <?php
 
 return [
+	'format_time' => [
+		'day' => 'д.',
+		'hour' => 'ч.',
+		'minute' => 'мин.',
+		'second' => 'с.',
+	],
 	'sys_moon' => 'Луна',
 	'sys_nomore_level' => 'Вы пытаетесь разрушить здание которого нету( :item ).',
 	'sys_buildlist' => 'Список построек',
@@ -26,6 +32,7 @@ return [
 	'sim_log_not_found' => 'Лога не существует',
 	'sim_report_error' => 'Ошибка обработки боевого отчета: :error',
 	'sim_no_data' => 'Нет данных для симуляции боя',
+	'sim_player' => 'Игрок :number',
 	'notes_added' => 'Заметка добавлена',
 	'notes_updated' => 'Заметка обновлена',
 	'notes_not_found' => 'Заметка не найдена',

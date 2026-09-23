@@ -168,6 +168,7 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 
 	Route::get('options', [Controllers\OptionsController::class, 'index'])->name('options');
 	Route::post('options', [Controllers\OptionsController::class, 'save']);
+	Route::post('options/locale', [Controllers\OptionsController::class, 'changeLocale']);
 	Route::get('options/email', [Controllers\OptionsController::class, 'email']);
 	Route::post('options/email', [Controllers\OptionsController::class, 'changeEmail']);
 	Route::post('options/password', [Controllers\OptionsController::class, 'password']);

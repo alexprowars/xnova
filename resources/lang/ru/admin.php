@@ -113,6 +113,7 @@ return [
 		'target_player' => 'Игрок-цель',
 	],
 	'mailing' => [
+		'default_subject' => 'Информационное сообщение (:name)',
 		'mailing_sent' => 'Сообщение успешно отправлено всем игрокам!',
 		'mailing_title' => 'Отправить сообщение всем игрокам',
 		'message_subject' => 'Тема сообщения',
@@ -139,6 +140,8 @@ return [
 	'payments' => [
 		'amount' => 'Сумма',
 		'create_payment' => 'Создать транзакцию',
+		'credit_notification' => 'На ваш счет зачислено :amount кредитов',
+		'credit_notification_subject' => 'Обработка платежей',
 		'credits_added' => 'Начисление :amount кредитов прошло успешно',
 		'method' => 'Метод',
 		'player_lookup_failed' => 'Не удалось найти игрока',

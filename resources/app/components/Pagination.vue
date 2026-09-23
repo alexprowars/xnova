@@ -5,12 +5,12 @@
 		:items-per-page="options.limit"
 		:sibling-count="3"
 		show-edges
-		aria-label="Пагинация"
+		:aria-label="$t('pagination.label')"
 		@update:page="load"
 	>
 		<PaginationList v-slot="{ items }" as="ul" class="pagination">
 			<li v-for="(item, index) in items" :key="item.type === 'page' ? item.value : 'ellipsis-' + index" :class="{ active: options.page === item.value }">
-				<PaginationListItem v-if="item.type === 'page'" :value="item.value" :aria-label="'Страница ' + item.value">
+				<PaginationListItem v-if="item.type === 'page'" :value="item.value" :aria-label="$t('pagination.page', { page: item.value })">
 					{{ item.value }}
 				</PaginationListItem>
 				<PaginationEllipsis v-else as="span" aria-hidden="true">...</PaginationEllipsis>
