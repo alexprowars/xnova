@@ -15,12 +15,12 @@ class Dashboard extends BaseDashboard
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.dashboard');
+		return __('admin.pages.dashboard');
 	}
 
 	public function getTitle(): string
 	{
-		return __('admin.navigation.pages.dashboard');
+		return __('admin.pages.dashboard');
 	}
 
 	public function getWidgets(): array

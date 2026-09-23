@@ -29,7 +29,7 @@ class QuestController extends Controller
 		foreach ($quests as $questId => $quest) {
 			$result['items'][] = [
 				'id' => $questId,
-				'title' => __('quests.' . $questId . '.title'),
+				'title' => __('quests.quests.' . $questId . '.title'),
 				'finish' => isset($userQuests[$questId]) && $userQuests[$questId]['finish'] == 1,
 				'required' => $quest['required'],
 				'available' => $this->meetsRequirements($quest['required'] ?? []),
@@ -44,20 +44,20 @@ class QuestController extends Controller
 	public function info(int $id)
 	{
 		if ($id <= 0) {
-			throw new Exception('Не выбрано задание');
+			throw new Exception(__('quests.no_quest_selected'));
 		}
 
 		$quest = require resource_path('engine/quests.php');
 
 		if (!isset($quest[$id])) {
-			throw new Exception('Задание не существует');
+			throw new Exception(__('quests.quest_not_found'));
 		}
 
 		$result = [
 			'id' => $id,
-			'title' => __('quests.' . $id . '.title'),
-			'description' => __('quests.' . $id . '.description'),
-			'solution' => __('quests.' . $id . '.solution'),
+			'title' => __('quests.quests.' . $id . '.title'),
+			'description' => __('quests.quests.' . $id . '.description'),
+			'solution' => __('quests.quests.' . $id . '.solution'),
 			'task' => [],
 			'rewd' => [],
 		];
@@ -93,43 +93,43 @@ class QuestController extends Controller
 					}
 
 					if ($type == ItemType::TECH) {
-						$result['task'][] = ['Исследовать <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
+						$result['task'][] = [__('quests.task_research', ['element' => __('main.tech.' . $element), 'level' => $level]), $chk];
 					} elseif ($type == ItemType::FLEET) {
-						$result['task'][] = ['Построить ' . $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
+						$result['task'][] = [__('quests.task_fleet', ['amount' => $level, 'element' => __('main.tech.' . $element)]), $chk];
 					} elseif ($type == ItemType::DEFENSE) {
-						$result['task'][] = ['Построить ' . $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>', $chk];
+						$result['task'][] = [__('quests.task_defense', ['amount' => $level, 'element' => __('main.tech.' . $element)]), $chk];
 					} else {
-						$result['task'][] = ['Построить <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня', $chk];
+						$result['task'][] = [__('quests.task_build', ['element' => __('main.tech.' . $element), 'level' => $level]), $chk];
 					}
 				}
 			}
 
 			if ($taskKey == '!planet_name') {
-				$result['task'][] = ['Переименовать планету', $check];
+				$result['task'][] = [__('quests.task_rename_planet'), $check];
 			}
 
 			if ($taskKey == 'friends_count') {
-				$result['task'][] = ['Кол-во друзей в игре: ' . $taskVal, $check];
+				$result['task'][] = [__('quests.task_friends_count', ['count' => $taskVal]), $check];
 			}
 
 			if ($taskKey == 'ally') {
-				$result['task'][] = ['Вступить в альянс с кол-во игроков: ' . $taskVal, $check];
+				$result['task'][] = [__('quests.task_ally', ['count' => $taskVal]), $check];
 			}
 
 			if ($taskKey == 'storage' && $taskVal === true) {
-				$result['task'][] = ['Построить любое хранилище ресурсов', $check];
+				$result['task'][] = [__('quests.task_storage'), $check];
 			}
 
 			if ($taskKey == 'trade') {
-				$result['task'][] = ['Обменять ресурсы у торговца', $check];
+				$result['task'][] = [__('quests.task_trade'), $check];
 			}
 
 			if ($taskKey == 'fleet_mission') {
-				$result['task'][] = ['Отправить флот в миссию: ' . __('main.type_mission.' . $taskVal->value), $check];
+				$result['task'][] = [__('quests.task_fleet_mission', ['mission' => __('main.type_mission.' . $taskVal->value)]), $check];
 			}
 
 			if ($taskKey == 'planets') {
-				$result['task'][] = ['Кол-во колонизированных планет: ' . $taskVal, $check];
+				$result['task'][] = [__('quests.task_planets', ['count' => $taskVal]), $check];
 			}
 
 			$errors += !$check ? 1 : 0;
@@ -141,33 +141,33 @@ class QuestController extends Controller
 
 		foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
 			if ($rewardKey == 'metal') {
-				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.metal') . 'а';
+				$result['rewd'][] = __('quests.reward_metal', ['amount' => Format::number($rewardVal)]);
 			} elseif ($rewardKey == 'crystal') {
-				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.crystal') . 'а';
+				$result['rewd'][] = __('quests.reward_crystal', ['amount' => Format::number($rewardVal)]);
 			} elseif ($rewardKey == 'deuterium') {
-				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.deuterium');
+				$result['rewd'][] = __('quests.reward_deuterium', ['amount' => Format::number($rewardVal)]);
 			} elseif ($rewardKey == 'credits') {
-				$result['rewd'][] = Format::number($rewardVal) . ' ед. ' . __('main.credits');
+				$result['rewd'][] = __('quests.reward_credits', ['amount' => Format::number($rewardVal)]);
 			} elseif ($rewardKey == 'build') {
 				foreach ($rewardVal as $element => $level) {
 					$type = Vars::getItemType($element);
 
 					if ($type == ItemType::TECH) {
-						$result['rewd'][] = 'Исследование <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
+						$result['rewd'][] = __('quests.reward_research', ['element' => __('main.tech.' . $element), 'level' => $level]);
 					} elseif ($type == ItemType::FLEET) {
-						$result['rewd'][] = $level . ' ед. флота типа <b>' . __('main.tech.' . $element) . '</b>';
+						$result['rewd'][] = __('quests.reward_fleet', ['amount' => $level, 'element' => __('main.tech.' . $element)]);
 					} elseif ($type == ItemType::DEFENSE) {
-						$result['rewd'][] = $level . ' ед. обороны типа <b>' . __('main.tech.' . $element) . '</b>';
+						$result['rewd'][] = __('quests.reward_defense', ['amount' => $level, 'element' => __('main.tech.' . $element)]);
 					} else {
-						$result['rewd'][] = 'Постройка <b>' . __('main.tech.' . $element) . '</b> ' . $level . ' уровня';
+						$result['rewd'][] = __('quests.reward_build', ['element' => __('main.tech.' . $element), 'level' => $level]);
 					}
 				}
 			} elseif ($rewardKey == 'officier') {
 				foreach ($rewardVal as $code => $duration) {
-					$result['rewd'][] = 'Офицер <b>' . __('officier.items.' . $code) . '</b> на ' . round($duration / 86400, 1) . ' суток';
+					$result['rewd'][] = __('quests.reward_officer', ['officer' => __('officier.items.' . $code), 'days' => round($duration / 86400, 1)]);
 				}
 			} elseif ($rewardKey == 'storage_rand') {
-				$result['rewd'][] = '+1 уровень одного из хранилищ ресурсов';
+				$result['rewd'][] = __('quests.reward_storage');
 			}
 		}
 
@@ -180,13 +180,13 @@ class QuestController extends Controller
 	public function finish(int $id)
 	{
 		if ($id <= 0) {
-			throw new Exception('Не выбрано задание');
+			throw new Exception(__('quests.no_quest_selected'));
 		}
 
 		$quest = require resource_path('engine/quests.php');
 
 		if (!isset($quest[$id])) {
-			throw new Exception('Задание не существует');
+			throw new Exception(__('quests.quest_not_found'));
 		}
 
 		DB::transaction(function () use ($id, $quest) {
@@ -199,7 +199,7 @@ class QuestController extends Controller
 				->first();
 
 			if (!$qInfo) {
-				throw new Exception('Задание не существует');
+				throw new Exception(__('quests.quest_not_found'));
 			}
 
 			$errors = 0;
@@ -210,7 +210,7 @@ class QuestController extends Controller
 			}
 
 			if ($errors || $qInfo->finish || !$this->meetsRequirements($quest[$id]['required'] ?? [])) {
-				throw new Exception('Задание не выполнено');
+				throw new Exception(__('quests.quest_not_completed'));
 			}
 
 			foreach ($quest[$id]['reward'] as $rewardKey => $rewardVal) {
@@ -237,7 +237,7 @@ class QuestController extends Controller
 				} elseif ($rewardKey == 'officier') {
 					foreach ($rewardVal as $code => $duration) {
 						if (!in_array($code, Vars::getOfficiers(), true)) {
-							throw new Exception('Неизвестный офицер в награде задания');
+							throw new Exception(__('quests.unknown_reward_officer'));
 						}
 
 						$attribute = 'officier_' . $code;

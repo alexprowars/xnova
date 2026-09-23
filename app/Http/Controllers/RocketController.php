@@ -39,33 +39,33 @@ class RocketController extends Controller
 		$targetPlanet = Planet::findByCoordinates(new Coordinates($galaxy, $system, $planet, PlanetType::PLANET));
 
 		if (!$targetPlanet) {
-			throw new Exception('Планета не найдена');
+			throw new Exception(__('fleet.noplanetrow'));
 		}
 
 		if ($targetPlanet->user_id == $this->user->id) {
-			throw new Exception(__('fleet.fl_ownpl_err'));
+			throw new Exception(__('fleet.ownpl_err'));
 		}
 
 		$targetUser = $targetPlanet->user;
 
 		if (!$targetUser) {
-			throw new Exception('Игрока не существует');
+			throw new Exception(__('fleet.rocket_player_not_found'));
 		}
 
 		if ($targetUser->isVacation()) {
-			throw new Exception('Игрок в режиме отпуска');
+			throw new Exception(__('fleet.vacation_pla'));
 		}
 
 		if ($this->planet->getLevel('missile_facility') < 4) {
-			throw new Exception('Постройте ракетную шахту');
+			throw new Exception(__('fleet.rocket_silo_required'));
 		} elseif ($this->user->getTechLevel('impulse_motor') == 0) {
-			throw new Exception('Необходима технология "Импульсный двигатель"');
+			throw new Exception(__('fleet.rocket_impulse_required'));
 		} elseif ($distance > $maxDistance || $galaxy != $this->planet->galaxy) {
-			throw new Exception('Превышена дистанция ракетной атаки');
+			throw new Exception(__('fleet.rocket_out_of_range'));
 		} elseif ($count <= 0 || $count > $this->planet->getLevel('interplanetary_misil')) {
-			throw new Exception('У вас нет такого кол-ва ракет');
+			throw new Exception(__('fleet.rocket_not_enough_missiles'));
 		} elseif ((!is_numeric($destroyType) && $destroyType != 'all') || (!in_array($destroyType, Vars::getItemsByType(ItemType::DEFENSE)) && $destroyType != 'all')) {
-			throw new Exception('Не найдена цель');
+			throw new Exception(__('fleet.rocket_target_not_found'));
 		}
 
 		if ($destroyType == 'all') {
@@ -101,6 +101,6 @@ class RocketController extends Controller
 			$this->planet->update();
 		}
 
-		toast(ToastType::SUCCESS, '<b>' . $count . '</b> межпланетные ракеты запущены для атаки удалённой планеты!');
+		toast(ToastType::SUCCESS, __('fleet.rocket_launched', ['count' => $count]));
 	}
 }

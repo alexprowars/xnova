@@ -10,6 +10,7 @@ class AllianceMemberRejectMessage extends AbstractMessage
 
 	public function render(): string
 	{
-		return 'Привет!<br>Альянс <b>' . $this->data['name'] . '</b> отклонил вашу кандидатуру!' . ((!empty($this->data['message'])) ? '<br>Причина:<br>' . $this->data['message'] : '');
+		return __('messages.alliance_member_reject', ['name' => $this->data['name']])
+			. (!empty($this->data['message']) ? __('messages.alliance_member_reject_reason', ['message' => $this->data['message']]) : '');
 	}
 }

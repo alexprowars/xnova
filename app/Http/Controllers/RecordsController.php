@@ -54,11 +54,11 @@ class RecordsController extends Controller
 		}
 
 		$records = [
-			'Постройки' => $Builds,
-			'Лунные постройки' => $MoonsBuilds,
-			'Исследования' => $Techno,
-			'Флот' => $Fleet,
-			'Оборона' => $Defense,
+			__('main.records.buildings') => $Builds,
+			__('main.records.moon_buildings') => $MoonsBuilds,
+			__('main.records.research') => $Techno,
+			__('main.records.fleet') => $Fleet,
+			__('main.records.defense') => $Defense,
 		];
 
 		return Inertia::render('Records', [

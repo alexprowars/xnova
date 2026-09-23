@@ -17,7 +17,11 @@ use Filament\Schemas\Schema;
 class EditMessage extends EditRecord
 {
 	protected static string $resource = MessageResource::class;
-	protected static ?string $title = 'Редактирование сообщения';
+
+	public function getTitle(): string
+	{
+		return __('admin.messages.edit_message');
+	}
 
 	protected function getHeaderActions(): array
 	{
@@ -33,29 +37,29 @@ class EditMessage extends EditRecord
 				Section::make()
 					->schema([
 						Select::make('from_id')
-							->label('От кого')
+							->label(__('admin.messages.sender'))
 							->relationship('from', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email'])
 							->nullable()
 							->default(null),
 						Select::make('user_id')
-							->label('Кому')
+							->label(__('admin.messages.to'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email'])
 							->required(),
 						DateTimePicker::make('time')
-							->label('Дата')
+							->label(__('admin.common.date'))
 							->required(),
 						Select::make('type')
-							->label('Тип')
+							->label(__('admin.common.type'))
 							->options(MessageType::class)
 							->required(),
 						TextInput::make('subject')
-							->label('Тема'),
+							->label(__('admin.messages.subject')),
 						TextEntry::make('message')
-							->label('Текст')
+							->label(__('admin.messages.text'))
 							->getStateUsing(fn(Message $record) => json_encode($record->message)),
 					]),
 			]);

@@ -11,12 +11,12 @@ class MissionExpeditionReturnMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_expe_report');
+		return __('fleet_engine.expedition.report');
 	}
 
 	public function render(): string
 	{
-		return __('fleet_engine.sys_expe_back_home', [
+		return __('fleet_engine.expedition.returned', [
 			'metal' => Format::number($this->data['metal']),
 			'crystal' => Format::number($this->data['crystal']),
 			'deuterium' => Format::number($this->data['deuterium']),

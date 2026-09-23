@@ -29,7 +29,7 @@ class InfoController extends Controller
 		try {
 			$itemObject = ObjectsFactory::get($itemId);
 		} catch (Throwable) {
-			throw new Exception('Мы не сможем дать вам эту информацию');
+			throw new Exception(__('info.information_unavailable'));
 		}
 
 		$result = [
@@ -164,7 +164,7 @@ class InfoController extends Controller
 		$fleetId = (int) $request->post('fleet', 0);
 
 		if ($fleetId <= 0) {
-			throw new Exception('Флот отсутствует у планеты');
+			throw new Exception(__('info.fleet_not_at_planet'));
 		}
 
 		$fleet = Fleet::query()
@@ -174,7 +174,7 @@ class InfoController extends Controller
 			->first();
 
 		if (!$fleet) {
-			throw new Exception('Флот отсутствует у планеты');
+			throw new Exception(__('info.fleet_not_at_planet'));
 		}
 
 		$tt = 0;

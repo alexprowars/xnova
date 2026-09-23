@@ -110,17 +110,17 @@ class OptionsController extends Controller
 				$username = preg_replace('/([\s\x{0}\x{0B}]+)/iu', ' ', $request->post('name'));
 
 				if ($this->user->username_change?->greaterThan(now()->subDay())) {
-					throw new Exception(__('options.username_change_once_error'));
+					throw new Exception(__('main.options_username_change_once_error'));
 				}
 
 				$existName = Models\User::query()->where('username', $username)->exists();
 
 				if ($existName) {
-					throw new Exception(__('options.username_exist_error'));
+					throw new Exception(__('main.options_username_exist_error'));
 				}
 
 				if (!preg_match('/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u', $username) || Str::length($username) < 5) {
-					throw new Exception(__('options.username_invalid_error'));
+					throw new Exception(__('main.options_username_invalid_error'));
 				}
 
 				$this->user->username = $username;
@@ -140,9 +140,9 @@ class OptionsController extends Controller
 			}
 
 			if ($request->has('timezone')) {
-				$timezone = (int) $request->post('timezone', 0);
+				$timezone = $request->filled('timezone') ? $request->integer('timezone') : null;
 
-				if ($timezone < -12 || $timezone > 12) {
+				if ($timezone !== null && ($timezone < -12 || $timezone > 12)) {
 					$timezone = null;
 				}
 
@@ -249,11 +249,11 @@ class OptionsController extends Controller
 			->count();
 
 		if ($queueCount > 0) {
-			throw new Exception(__('options.mode_vacations_error', ['queue' => $queueCount]));
+			throw new Exception(__('main.options_mode_vacations_error', ['queue' => $queueCount]));
 		}
 
 		if ($flyingFleets > 0) {
-			throw new Exception(__('options.mode_vacations_fleet_error'));
+			throw new Exception(__('main.options_mode_vacations_fleet_error'));
 		}
 
 		$vacationStartedAt = CarbonImmutable::now();

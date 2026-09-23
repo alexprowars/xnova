@@ -35,59 +35,59 @@ class ListPlanets extends ListRecords
 					->sortable()
 					->searchable(),
 				TextColumn::make('name')
-					->label('Название')
+					->label(__('admin.common.title'))
 					->searchable(),
 				TextColumn::make('user.username')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('galaxy')
-					->label('Г')
+					->label(__('admin.common.galaxy_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('system')
-					->label('C')
+					->label(__('admin.common.system_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('planet')
-					->label('П')
+					->label(__('admin.common.planet_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('planet_type')
-					->label('Тип')
+					->label(__('admin.common.type'))
 					->sortable(),
 				TextColumn::make('last_update')
-					->label('Время обновления')
+					->label(__('admin.planets.updated_at'))
 					->dateTime()
 					->sortable(),
 				TextColumn::make('last_active')
-					->label('Активность')
+					->label(__('admin.common.activity'))
 					->dateTime()
 					->sortable(),
 				TextColumn::make('metal')
-					->label('Металл')
+					->label(__('admin.planets.metal'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('crystal')
-					->label('Кристалл')
+					->label(__('admin.planets.crystal'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('deuterium')
-					->label('Дейтерий')
+					->label(__('admin.planets.deuterium'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('debris_metal')
-					->label('Обл. металла')
+					->label(__('admin.planets.debris_metal_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('debris_crystal')
-					->label('Обл. кристалла')
+					->label(__('admin.planets.debris_crystal_short'))
 					->numeric()
 					->sortable(),
 			])
 			->filters([
 				SelectFilter::make('user_id')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email']),

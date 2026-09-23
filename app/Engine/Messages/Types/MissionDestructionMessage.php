@@ -10,21 +10,21 @@ class MissionDestructionMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_destruc_report');
+		return __('fleet_engine.destruction.report');
 	}
 
 	public function render(): string
 	{
 		if ($this->data['destroyed']) {
 			if (!$this->data['killed']) {
-				return __('fleet_engine.sys_destruc_reussi');
+				return __('fleet_engine.destruction.moon_destroyed');
 			} else {
-				return __('fleet_engine.sys_destruc_all');
+				return __('fleet_engine.destruction.both_destroyed');
 			}
 		} elseif (!$this->data['killed']) {
-			return __('fleet_engine.sys_destruc_null');
+			return __('fleet_engine.destruction.failed');
 		} else {
-			return __('fleet_engine.sys_destruc_echec');
+			return __('fleet_engine.destruction.fleet_destroyed');
 		}
 	}
 }

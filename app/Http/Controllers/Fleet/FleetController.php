@@ -18,7 +18,7 @@ class FleetController extends Controller
 	public function index(Request $request)
 	{
 		if (!$this->planet) {
-			throw new Exception(__('fleet.fl_noplanetrow'));
+			throw new Exception(__('fleet.noplanetrow'));
 		}
 
 		$expeditionTech = $this->user->getTechLevel('expedition');

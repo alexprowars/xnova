@@ -16,7 +16,11 @@ use Nubs\RandomNameGenerator;
 class CreateAi extends CreateRecord
 {
 	protected static string $resource = AiResources::class;
-	protected static ?string $title = 'Создать бота';
+
+	public function getTitle(): string
+	{
+		return __('admin.ai.create_bot');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -25,9 +29,9 @@ class CreateAi extends CreateRecord
 				Section::make()
 					->schema([
 						Toggle::make('active')
-							->label('Активность'),
+							->label(__('admin.common.activity')),
 						Select::make('strategy')
-							->label('Стратегия')
+							->label(__('admin.ai.strategy'))
 							->required()
 							->options(StrategyType::class),
 					]),

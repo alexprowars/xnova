@@ -58,11 +58,11 @@ class NotesController extends Controller
 		$message = $request->post('message');
 
 		if (empty($title)) {
-			$title = __('notes.no_title');
+			$title = __('main.notes_no_title');
 		}
 
 		if (empty($message)) {
-			$message = __('notes.no_text');
+			$message = __('main.notes_no_text');
 		}
 
 		$note = $this->user->notes()->make();
@@ -71,7 +71,7 @@ class NotesController extends Controller
 		$note->text = $message;
 		$note->save();
 
-		toast(ToastType::SUCCESS, 'Заметка добавлена');
+		toast(ToastType::SUCCESS, __('main.notes_added'));
 
 		return to_route('notes.detail', ['id' => $note->id]);
 	}
@@ -81,7 +81,7 @@ class NotesController extends Controller
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new PageException(__('notes.not_found'));
+			throw new PageException(__('main.notes_not_found'));
 		}
 
 		$result = [
@@ -101,7 +101,7 @@ class NotesController extends Controller
 		$note = $this->user->notes()->findOne($id);
 
 		if (!$note) {
-			throw new PageException(__('notes.not_found'));
+			throw new PageException(__('main.notes_not_found'));
 		}
 
 		$priority = (int) $request->post('priority', 0);
@@ -110,11 +110,11 @@ class NotesController extends Controller
 		$message = $request->post('message');
 
 		if (empty($title)) {
-			$title = __('notes.no_title');
+			$title = __('main.notes_no_title');
 		}
 
 		if (empty($message)) {
-			$message = __('notes.no_text');
+			$message = __('main.notes_no_text');
 		}
 
 		$note->priority = $priority;
@@ -122,7 +122,7 @@ class NotesController extends Controller
 		$note->text = $message;
 		$note->save();
 
-		toast(ToastType::SUCCESS, 'Заметка обновлена');
+		toast(ToastType::SUCCESS, __('main.notes_updated'));
 
 		return back();
 	}

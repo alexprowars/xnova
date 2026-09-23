@@ -45,7 +45,7 @@ class SupportController extends Controller
 		$subject = $request->post('subject');
 
 		if (empty($message) || empty($subject)) {
-			throw new Exception('Не заполнены все поля');
+			throw new Exception(__('main.support_fields_required'));
 		}
 
 		$ticket = new SupportTicket();
@@ -55,7 +55,7 @@ class SupportController extends Controller
 		$ticket->status = 1;
 
 		if (!$ticket->save()) {
-			throw new Exception('Не удалось создать тикет');
+			throw new Exception(__('main.support_create_failed'));
 		}
 	}
 
@@ -66,19 +66,19 @@ class SupportController extends Controller
 			->findOne($id);
 
 		if (!$ticket) {
-			throw new Exception('Тикет не найден');
+			throw new Exception(__('main.support_ticket_not_found'));
 		}
 
 		$message = $request->post('message');
 
 		if (empty($message)) {
-			throw new Exception('Не заполнены все поля');
+			throw new Exception(__('main.support_fields_required'));
 		}
 
 		$message = Str::sanitize($message);
 
 		if (mb_strlen($message) > 255) {
-			throw new Exception('Ответ слишком длинный. Сократите текст.');
+			throw new Exception(__('main.support_answer_too_long'));
 		}
 
 		$ticket->messages()->make([
@@ -114,7 +114,7 @@ class SupportController extends Controller
 			->findOne($id);
 
 		if (!$ticket) {
-			throw new Exception('Тикет не найден');
+			throw new Exception(__('main.support_ticket_not_found'));
 		}
 
 		$result = [

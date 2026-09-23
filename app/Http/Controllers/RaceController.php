@@ -26,24 +26,24 @@ class RaceController extends Controller
 	public function change(Request $request)
 	{
 		if (!$this->user->race) {
-			throw new Exception('Нельзя изменить фракцию в данный момент');
+			throw new Exception(__('main.race_change_unavailable'));
 		}
 
 		$isChangeAvailable = $this->user->race_change_count > 0 || $this->user->credits >= 100;
 
 		if (!$isChangeAvailable) {
-			throw new Exception('Вы исчерпали лимит на смену фракции');
+			throw new Exception(__('main.race_change_limit_reached'));
 		}
 
 		$r = $request->post('race', 0);
 		$r = max(min($r, 4), 0);
 
 		if (!$r) {
-			throw new Exception('Выберите фракцию');
+			throw new Exception(__('main.race_select_required'));
 		}
 
 		if ($r == $this->user->race) {
-			throw new Exception('Вы уже состоите в этой фракции');
+			throw new Exception(__('main.race_already_selected'));
 		}
 
 		$queueCount = $this->user->queue()->count();
@@ -51,9 +51,9 @@ class RaceController extends Controller
 		$flyingFleets = Fleet::query()->whereBelongsTo($this->user)->count();
 
 		if ($queueCount > 0) {
-			throw new Exception('Для смены фракции y вac нe дoлжнo идти cтpoитeльcтвo или иccлeдoвaниe нa плaнeтe');
+			throw new Exception(__('main.race_queue_not_empty'));
 		} elseif ($flyingFleets > 0) {
-			throw new Exception('Для смены фракции y вac нe дoлжeн нaxoдитьcя флoт в пoлeтe');
+			throw new Exception(__('main.race_fleet_in_flight'));
 		}
 
 		$raceChangedAt = CarbonImmutable::now();
@@ -89,7 +89,7 @@ class RaceController extends Controller
 			$planet->update();
 		}
 
-		toast(ToastType::SUCCESS, 'Фракция изменена');
+		toast(ToastType::SUCCESS, __('main.race_changed'));
 
 		return to_route('overview');
 	}

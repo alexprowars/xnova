@@ -15,7 +15,11 @@ use Filament\Schemas\Schema;
 class EditAi extends EditRecord
 {
 	protected static string $resource = AiResources::class;
-	protected static ?string $title = 'Редактирование бота';
+
+	public function getTitle(): string
+	{
+		return __('admin.ai.edit_bot');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -24,9 +28,9 @@ class EditAi extends EditRecord
 				Section::make()
 					->schema([
 						Toggle::make('active')
-							->label('Активность'),
+							->label(__('admin.common.activity')),
 						TextEntry::make('user')
-							->label('Игрок')
+							->label(__('admin.common.player'))
 							->formatStateUsing(function (?User $state) {
 								if (!$state) {
 									return null;
@@ -35,7 +39,7 @@ class EditAi extends EditRecord
 								return '[' . $state->id . '] ' . $state->username . ' [' . $state->galaxy . ':' . $state->system . ':' . $state->planet . ']';
 							}),
 						Select::make('strategy')
-							->label('Стратегия')
+							->label(__('admin.ai.strategy'))
 							->options(StrategyType::class),
 					]),
 			]);

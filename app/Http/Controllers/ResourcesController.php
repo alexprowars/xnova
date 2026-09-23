@@ -81,15 +81,15 @@ class ResourcesController extends Controller
 			$this->planet->refreshForUpdate();
 
 			if (!$this->planet->id || $this->planet->planet_type != PlanetType::PLANET) {
-				throw new Exception('На этой планете нельзя купить ресурсы');
+				throw new Exception(__('main.resources_purchase_unavailable'));
 			}
 
 			if ($this->user->credits < 10) {
-				throw new Exception('Для покупки вам необходимо еще ' . (10 - $this->user->credits) . ' кредитов');
+				throw new Exception(__('main.resources_credits_required', ['amount' => 10 - $this->user->credits]));
 			}
 
 			if ($this->planet->merchand?->isFuture()) {
-				throw new Exception('Покупать ресурсы можно только раз в 48 часов');
+				throw new Exception(__('main.resources_purchase_cooldown'));
 			}
 
 			$this->planet->merchand = now()->addDays(2);
@@ -114,7 +114,7 @@ class ResourcesController extends Controller
 			return $resources;
 		});
 
-		toast(ToastType::SUCCESS, 'Вы успешно купили ' . $resources['metal'] . ' металла, ' . $resources['crystal'] . ' кристалла, ' . $resources['deuterium'] . ' дейтерия');
+		toast(ToastType::SUCCESS, __('main.resources_purchase_success', $resources));
 	}
 
 	public function shutdown(Request $request): void

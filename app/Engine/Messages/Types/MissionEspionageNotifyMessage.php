@@ -10,11 +10,11 @@ class MissionEspionageNotifyMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_spy_activity');
+		return __('fleet_engine.espionage.activity');
 	}
 
 	public function render(): string
 	{
-		return __('fleet_engine.sys_mess_spy_ennemy', $this->data);
+		return __('fleet_engine.espionage.enemy_detected', $this->data);
 	}
 }

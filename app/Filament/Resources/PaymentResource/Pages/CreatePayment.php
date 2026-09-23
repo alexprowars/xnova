@@ -20,7 +20,11 @@ use Filament\Schemas\Schema;
 class CreatePayment extends CreateRecord
 {
 	protected static string $resource = PaymentResource::class;
-	protected static ?string $title = 'Создать транзакцию';
+
+	public function getTitle(): string
+	{
+		return __('admin.payments.create_payment');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -28,12 +32,12 @@ class CreatePayment extends CreateRecord
 			->columns(1)
 			->schema([
 				Select::make('user_id')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email']),
 				TextInput::make('amount')
-					->label('Сумма')
+					->label(__('admin.payments.amount'))
 					->integer(),
 			]);
 	}
@@ -43,7 +47,7 @@ class CreatePayment extends CreateRecord
 		$user = User::find($data['user_id']);
 
 		if (!$user) {
-			throw new Exception('Не удалось найти игрока');
+			throw new Exception(__('admin.payments.player_lookup_failed'));
 		}
 
 		/** @var Payment $record */
@@ -66,6 +70,6 @@ class CreatePayment extends CreateRecord
 
 	protected function getCreatedNotificationTitle(): ?string
 	{
-		return 'Начисление ' . $this->record->amount . ' кредитов прошло успешно';
+		return __('admin.payments.credits_added', ['amount' => $this->record->amount]);
 	}
 }

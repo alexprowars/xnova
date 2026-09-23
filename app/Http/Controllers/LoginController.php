@@ -22,7 +22,7 @@ class LoginController extends Controller
 	{
 		try {
 			if (empty($request->post('email'))) {
-				throw new Exception('Введите Email');
+				throw new Exception(__('main.login_email_required'));
 			}
 
 			$exist = User::query()
@@ -30,13 +30,13 @@ class LoginController extends Controller
 				->exists();
 
 			if (!$exist) {
-				throw new Exception('Игрок с таким E-mail адресом и паролем не найден');
+				throw new Exception(__('main.login_player_not_found'));
 			}
 
 			$credentials = $request->only(['email', 'password']);
 
 			if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-				throw new Exception('Неверный E-mail и/или пароль');
+				throw new Exception(__('main.login_invalid_credentials'));
 			}
 		} catch (Throwable $e) {
 			return back()->withErrors(['error' => $e->getMessage()]);

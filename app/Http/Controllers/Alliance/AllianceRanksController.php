@@ -19,7 +19,7 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$parse['alliance'] = $alliance->only(['id', 'user_id']);
@@ -47,7 +47,7 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$rank = [
@@ -74,13 +74,13 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$rights = Arr::wrap($request->post('rigths', []));
 
 		if (empty($rights)) {
-			throw new PageException('Ошибка в передаче параметров');
+			throw new PageException(__('alliance.invalid_rights'));
 		}
 
 		DB::transaction(function () use ($alliance, $rights) {
@@ -113,7 +113,7 @@ class AllianceRanksController extends Controller
 		$alliance = $this->getAlliance();
 
 		if (!$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS) && !$this->user->isAdmin()) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		DB::transaction(function () use ($alliance, $id) {

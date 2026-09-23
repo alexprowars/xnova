@@ -11,13 +11,13 @@ class MissionCreateBaseMaxReachedMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_base_mess_from');
+		return __('fleet_engine.base.subject');
 	}
 
 	public function render(): string
 	{
 		$this->data['target'] = Coordinates::fromArray($this->data['target'])->getLink();
 
-		return __('fleet_engine.sys_base_maxcolo', $this->data);
+		return __('fleet_engine.base.limit_reached', $this->data);
 	}
 }

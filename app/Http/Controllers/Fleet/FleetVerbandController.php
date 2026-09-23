@@ -111,7 +111,7 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if ($fleet->assault_id) {
-			throw new PageException('Для этого флота уже задана ассоциация!');
+			throw new PageException(__('fleet.association_already_set'));
 		}
 
 		$data = $request->validate([
@@ -129,7 +129,7 @@ class FleetVerbandController extends Controller
 				'user_id' 		=> $this->user->id,
 			]);
 		} catch (Throwable) {
-			throw new PageException('Невозможно получить идентификатор САБ атаки');
+			throw new PageException(__('fleet.association_creation_failed'));
 		}
 
 		$assault->users()->create([
@@ -145,13 +145,13 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if (!$fleet->assault_id) {
-			throw new PageException('Для этого флота не задана ассоциация!');
+			throw new PageException(__('fleet.association_not_set'));
 		}
 
 		$assault = $fleet->assault;
 
 		if ($assault->fleet_id != $fleet->id) {
-			throw new PageException("Вы не можете добавлять сюда игроков");
+			throw new PageException(__('fleet.association_cannot_add_players'));
 		}
 
 		$user = null;
@@ -169,7 +169,7 @@ class FleetVerbandController extends Controller
 		}
 
 		if (!$user) {
-			throw new PageException('Игрок не найден');
+			throw new PageException(__('fleet.association_player_not_found'));
 		}
 
 		$assaultUser = $assault->users()
@@ -177,7 +177,7 @@ class FleetVerbandController extends Controller
 			->first();
 
 		if ($assaultUser) {
-			throw new PageException('Игрок уже приглашён для нападения');
+			throw new PageException(__('fleet.association_player_already_invited'));
 		}
 
 		$assault->users()->create([
@@ -204,33 +204,33 @@ class FleetVerbandController extends Controller
 		$fleet = $this->getFleet($fleetId);
 
 		if (!$fleet->assault_id) {
-			throw new PageException('Для этого флота не задана ассоциация!');
+			throw new PageException(__('fleet.association_not_set'));
 		}
 
 		$assault = $fleet->assault;
 
 		if ($assault->fleet_id != $fleet->id) {
-			throw new PageException('Вы не можете менять имя ассоциации');
+			throw new PageException(__('fleet.association_cannot_rename'));
 		}
 
 		$name = strip_tags($request->post('name'));
 
 		if (mb_strlen($name) < 5) {
-			throw new PageException('Слишком короткое имя ассоциации');
+			throw new PageException(__('fleet.association_name_too_short'));
 		}
 
 		if (mb_strlen($name) > 20) {
-			throw new PageException('Слишком длинное имя ассоциации');
+			throw new PageException(__('fleet.association_name_too_long'));
 		}
 
 		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			throw new PageException('Имя ассоциации содержит запрещённые символы');
+			throw new PageException(__('fleet.association_name_invalid_characters'));
 		}
 
 		$exist = Assault::where('name', $name)->exists();
 
 		if ($exist) {
-			throw new PageException('Имя уже зарезервировано другим игроком');
+			throw new PageException(__('fleet.association_name_taken'));
 		}
 
 		$assault->name = $name;
@@ -240,7 +240,7 @@ class FleetVerbandController extends Controller
 	protected function getFleet(int $id): Fleet
 	{
 		if ($id <= 0) {
-			throw new PageException('Флот не выбран');
+			throw new PageException(__('fleet.association_fleet_not_selected'));
 		}
 
 		$fleet = Fleet::query()
@@ -249,11 +249,11 @@ class FleetVerbandController extends Controller
 			->findOne($id);
 
 		if (!$fleet) {
-			throw new PageException('Этот флот не существует!');
+			throw new PageException(__('fleet.fleet_not_found'));
 		}
 
 		if ($fleet->start_date->isPast() || $fleet->end_date->isPast() || $fleet->mess == 1) {
-			throw new PageException('Ваш флот возвращается на планету!');
+			throw new PageException(__('fleet.fleet_returning'));
 		}
 
 		return $fleet;

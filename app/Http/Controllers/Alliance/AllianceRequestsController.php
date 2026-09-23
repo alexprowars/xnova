@@ -24,7 +24,7 @@ class AllianceRequestsController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT) && !$alliance->canAccess(AllianceAccess::REQUEST_ACCESS)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$result = [];
@@ -54,11 +54,11 @@ class AllianceRequestsController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		if ($alliance->total_members >= 150) {
-			throw new PageException('Альянс не может иметь больше 150 участников');
+			throw new PageException(__('alliance.member_limit'));
 		}
 
 		$req = $alliance->requests()
@@ -66,7 +66,7 @@ class AllianceRequestsController extends Controller
 			->first();
 
 		if (!$req) {
-			throw new PageException('Заявка не найдена');
+			throw new PageException(__('alliance.request_not_found'));
 		}
 
 		if (!empty($request->post('message'))) {
@@ -110,7 +110,7 @@ class AllianceRequestsController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_ACCEPT)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$req = $alliance->requests()
@@ -118,7 +118,7 @@ class AllianceRequestsController extends Controller
 			->first();
 
 		if (!$req) {
-			throw new PageException('Заявка не найдена');
+			throw new PageException(__('alliance.request_not_found'));
 		}
 
 		if (!empty($request->post('message'))) {
@@ -143,7 +143,7 @@ class AllianceRequestsController extends Controller
 	public function remove(int $id): void
 	{
 		if (!$id) {
-			throw new PageException('Не указан идентификатор заявки');
+			throw new PageException(__('alliance.request_id_required'));
 		}
 
 		AllianceRequest::query()->where('id', $id)

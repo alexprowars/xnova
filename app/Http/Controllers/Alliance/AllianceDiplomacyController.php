@@ -20,7 +20,7 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$parse['DText'] = $parse['DMyQuery'] = $parse['DQuery'] = [];
@@ -57,7 +57,7 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$item = $alliance->diplomacy()->where('id', (int) $request->input('id'))
@@ -65,7 +65,7 @@ class AllianceDiplomacyController extends Controller
 			->first();
 
 		if (!$item) {
-			throw new PageException('Ошибка ввода параметров');
+			throw new PageException(__('alliance.invalid_parameters'));
 		}
 
 		AllianceDiplomacy::query()->where('alliance_id', $item->alliance_id)
@@ -82,14 +82,14 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$item = $alliance->diplomacy()->where('id', (int) $request->input('id'))
 			->first();
 
 		if (!$item) {
-			throw new PageException('Ошибка ввода параметров');
+			throw new PageException(__('alliance.invalid_parameters'));
 		}
 
 		AllianceDiplomacy::query()->where('alliance_id', $item->alliance_id)
@@ -106,18 +106,18 @@ class AllianceDiplomacyController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::DIPLOMACY_ACCESS)) {
-			throw new PageException(__('alliance.Denied_access'));
+			throw new PageException(__('alliance.denied_access'));
 		}
 
 		$stts = (int) $request->post('status', 0);
 		$ally = Alliance::find((int) $request->post('alliance'));
 
 		if (!$ally) {
-			throw new PageException('Ошибка ввода параметров');
+			throw new PageException(__('alliance.invalid_parameters'));
 		}
 
 		if ($ally->id == $alliance->id) {
-			throw new PageException('Нельзя заключить соглашение с собственным альянсом.');
+			throw new PageException(__('alliance.own_alliance_agreement'));
 		}
 
 		$ad = $alliance->diplomacy()
@@ -125,7 +125,7 @@ class AllianceDiplomacyController extends Controller
 			->count();
 
 		if ($ad) {
-			throw new PageException('У вас уже есть соглашение с этим альянсом. Разорвите старое соглашения прежде чем создать новое.');
+			throw new PageException(__('alliance.agreement_exists'));
 		}
 
 		if ($stts < 0 || $stts > 3) {

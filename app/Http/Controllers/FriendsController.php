@@ -124,11 +124,11 @@ class FriendsController extends Controller
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new PageException('Друг не найден');
+			throw new PageException(__('main.friends_not_found'));
 		}
 
 		if ($user->is($this->user)) {
-			throw new PageException('Нельзя дружить сам с собой');
+			throw new PageException(__('main.friends_self_request'));
 		}
 
 		return Inertia::render('Friends/New', [
@@ -142,11 +142,11 @@ class FriendsController extends Controller
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new Exception('Друг не найден');
+			throw new Exception(__('main.friends_not_found'));
 		}
 
 		if ($user->id == $this->user->id) {
-			throw new Exception('Нельзя дружить сам с собой');
+			throw new Exception(__('main.friends_self_request'));
 		}
 
 		$friend = Friend::query()
@@ -159,13 +159,13 @@ class FriendsController extends Controller
 			->exists();
 
 		if ($friend) {
-			throw new Exception('Запрос дружбы был уже отправлен ранее');
+			throw new Exception(__('main.friends_request_already_sent'));
 		}
 
 		$message = strip_tags($request->post('message', ''));
 
 		if (mb_strlen($message) > 250) {
-			throw new Exception('Максимальная длина сообщения — 250 символов.');
+			throw new Exception(__('main.friends_message_too_long'));
 		}
 
 		Friend::create([
@@ -187,13 +187,13 @@ class FriendsController extends Controller
 		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
-			throw new Exception('Заявка не найдена');
+			throw new Exception(__('main.friends_request_not_found'));
 		}
 
 		if ($friend->friend_id == $this->user->id || $friend->user_id == $this->user->id) {
 			$friend->delete();
 		} else {
-			throw new Exception('Заявка не найдена');
+			throw new Exception(__('main.friends_request_not_found'));
 		}
 	}
 
@@ -202,11 +202,11 @@ class FriendsController extends Controller
 		$friend = Models\Friend::find($id);
 
 		if (!$friend) {
-			throw new Exception('Заявка не найдена');
+			throw new Exception(__('main.friends_request_not_found'));
 		}
 
 		if ($friend->friend_id != $this->user->id || $friend->active) {
-			throw new Exception('Заявка не найдена');
+			throw new Exception(__('main.friends_request_not_found'));
 		}
 
 		$friend->active = true;

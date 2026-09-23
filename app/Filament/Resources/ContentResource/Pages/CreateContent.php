@@ -8,5 +8,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateContent extends CreateRecord
 {
 	protected static string $resource = ContentResource::class;
-	protected static ?string $title = 'Создать запись';
+
+	public function getTitle(): string
+	{
+		return __('admin.content.create_record');
+	}
 }

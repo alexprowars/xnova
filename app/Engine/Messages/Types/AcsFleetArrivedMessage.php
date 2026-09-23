@@ -11,7 +11,7 @@ class AcsFleetArrivedMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_tower');
+		return __('fleet_engine.stay.subject');
 	}
 
 	public function render(): string
@@ -19,6 +19,6 @@ class AcsFleetArrivedMessage extends AbstractMessage
 		$this->data['start'] = Coordinates::fromArray($this->data['start'])->getLink();
 		$this->data['target'] = Coordinates::fromArray($this->data['target'])->getLink();
 
-		return __('fleet_engine.sys_stay_mess_user', $this->data);
+		return __('fleet_engine.stay.ally_arrived', $this->data);
 	}
 }

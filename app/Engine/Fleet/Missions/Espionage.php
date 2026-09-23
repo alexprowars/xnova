@@ -93,16 +93,16 @@ class Espionage extends BaseMission
 				'rows' => [],
 			];
 
-			$resultMessage['rows'][] = $this->spyTarget($TargetPlanet, 0, 'fleet_engine.sys_spy_maretials');
+			$resultMessage['rows'][] = $this->spyTarget($TargetPlanet, 0, 'fleet_engine.espionage.resources');
 
-			$PlanetFleetInfo = $this->spyTarget($TargetPlanet, 1, 'fleet_engine.sys_spy_fleet', $alliedFleetUnits);
+			$PlanetFleetInfo = $this->spyTarget($TargetPlanet, 1, 'fleet_engine.espionage.fleet', $alliedFleetUnits);
 
 			if ($ST >= 2) {
 				$resultMessage['rows'][] = $PlanetFleetInfo;
 			}
 
 			if ($ST >= 3) {
-				$resultMessage['rows'][] = $this->spyTarget($TargetPlanet, 2, 'fleet_engine.sys_spy_defenses');
+				$resultMessage['rows'][] = $this->spyTarget($TargetPlanet, 2, 'fleet_engine.espionage.defense');
 			}
 
 			if ($ST >= 5) {

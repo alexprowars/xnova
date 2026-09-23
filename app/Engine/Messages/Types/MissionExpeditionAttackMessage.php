@@ -13,7 +13,7 @@ class MissionExpeditionAttackMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_tower');
+		return __('fleet_engine.battle.report');
 	}
 
 	public function render(): string
@@ -22,22 +22,22 @@ class MissionExpeditionAttackMessage extends AbstractMessage
 			'<a href="%s" target="_blank"><center><span style="color: %s">%s %s</span></a><br><br><span style="color: %s">%s: %s</span> <span style="color: %s">%s: %s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span> %s:<span style="color: #f77542">%s</span><br>%s %s:<span style="color: #adaead">%s</span> %s:<span style="color: #ef51ef">%s</span><br></center>',
 			'/rw/' . $this->data['report_id'] . '?signature=' . Crypt::encrypt($this->data['report_id']),
 			$this->data['color_att'],
-			'Боевой доклад',
+			__('fleet_engine.battle.report'),
 			Coordinates::fromArray($this->data),
 			$this->data['color_att'],
-			__('fleet_engine.sys_perte_attaquant'),
+			__('fleet_engine.battle.attacker_lost'),
 			Format::number($this->data['lost']['attackers']),
 			$this->data['color_def'],
-			__('fleet_engine.sys_perte_defenseur'),
+			__('fleet_engine.battle.defender_lost'),
 			Format::number($this->data['lost']['defenders']),
-			__('fleet_engine.sys_gain'),
+			__('fleet_engine.battle.loot'),
 			__('main.metal'),
 			0,
 			__('main.crystal'),
 			0,
 			__('main.deuterium'),
 			0,
-			__('fleet_engine.sys_debris'),
+			__('fleet_engine.battle.debris'),
 			__('main.metal'),
 			0,
 			__('main.crystal'),

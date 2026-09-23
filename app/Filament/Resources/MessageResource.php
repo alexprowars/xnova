@@ -11,8 +11,17 @@ class MessageResource extends Resource
 	protected static ?string $model = Message::class;
 
 	protected static ?int $navigationSort = 90;
-	protected static ?string $modelLabel = 'Сообщение';
-	protected static ?string $pluralModelLabel = 'Сообщения';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.common.message');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.messages.messages');
+	}
+
 	protected static ?string $recordTitleAttribute = 'id';
 
 	public static function getNavigationIcon(): string
@@ -22,12 +31,12 @@ class MessageResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.messages');
+		return __('admin.pages.messages');
 	}
 
 	public static function canAccess(): bool

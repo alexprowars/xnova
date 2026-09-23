@@ -37,17 +37,17 @@ class Mailing extends Page
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.mailing');
+		return __('admin.pages.mailing');
 	}
 
 	public function getTitle(): string
 	{
-		return 'Отправить сообщение всем игрокам';
+		return __('admin.mailing.mailing_title');
 	}
 
 	public static function canAccess(): bool
@@ -68,10 +68,10 @@ class Mailing extends Page
 					->compact()
 					->schema([
 						TextInput::make('subject')
-							->label('Тема сообщения')
+							->label(__('admin.mailing.message_subject'))
 							->maxLength(50),
 						Textarea::make('message')
-							->label('Сообщение')
+							->label(__('admin.common.message'))
 							->required()
 							->rows(10),
 				]),
@@ -82,7 +82,7 @@ class Mailing extends Page
 	protected function getFormActions(): array
 	{
 		return [
-			Action::make('Отправить')
+			Action::make('send')->label(__('admin.mailing.send'))
 				->action(function () {
 					$this->submit($this->form->getState());
 				})
@@ -111,7 +111,7 @@ class Mailing extends Page
 
 		Notification::make()
 			->success()
-			->title('Сообщение успешно отправлено всем игрокам!')
+			->title(__('admin.mailing.mailing_sent'))
 			->send();
 
 		$this->form->fill();

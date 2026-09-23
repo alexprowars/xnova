@@ -30,7 +30,7 @@ class ListMoons extends ListRecords
 		return $table
 			->defaultSort('id', 'desc')
 			->modifyQueryUsing(fn (Builder $query) => $query->where('planet_type', PlanetType::MOON))
-			->emptyStateHeading('Не найдены луны')
+			->emptyStateHeading(__('admin.moons.moons_not_found'))
 			->columns([
 				TextColumn::make('id')
 					->label('ID')
@@ -38,32 +38,32 @@ class ListMoons extends ListRecords
 					->sortable()
 					->searchable(),
 				TextColumn::make('name')
-					->label('Название')
+					->label(__('admin.common.title'))
 					->searchable(),
 				TextColumn::make('user.username')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('galaxy')
-					->label('Г')
+					->label(__('admin.common.galaxy_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('system')
-					->label('C')
+					->label(__('admin.common.system_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('planet')
-					->label('П')
+					->label(__('admin.common.planet_short'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('last_active')
-					->label('Активность')
+					->label(__('admin.common.activity'))
 					->dateTime()
 					->sortable(),
 			])
 			->filters([
 				SelectFilter::make('user_id')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email'])

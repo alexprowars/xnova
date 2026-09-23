@@ -16,7 +16,7 @@ class UserDelete extends Mailable
 	public function envelope(): Envelope
 	{
 		return new Envelope(
-			subject: config('app.name') . ': Уведомление об удалении аккаунта: ' . config('game.universe') . ' вселенная',
+			subject: __('main.mail.user_delete_subject', ['app' => config('app.name'), 'universe' => config('game.universe')]),
 		);
 	}
 

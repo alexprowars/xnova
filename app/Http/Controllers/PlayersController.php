@@ -20,7 +20,7 @@ class PlayersController extends Controller
 		$user = User::find($userId);
 
 		if (!$user) {
-			throw new Exception('Профиль не найден');
+			throw new Exception(__('main.players_profile_not_found'));
 		}
 
 		$result = [
@@ -103,7 +103,7 @@ class PlayersController extends Controller
 		$player = User::find($id);
 
 		if (!$player) {
-			throw new Exception('Информация о данном игроке не найдена');
+			throw new Exception(__('main.players_info_not_found'));
 		}
 
 		$result = [

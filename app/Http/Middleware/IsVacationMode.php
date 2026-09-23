@@ -12,7 +12,7 @@ class IsVacationMode
 	public function handle(Request $request, Closure $next): Response
 	{
 		if ($request->user()->isVacation()) {
-			throw new Exception('Нет доступа! Включен режим отпуска');
+			throw new Exception(__('main.vacation_access_denied'));
 		}
 
 		return $next($request);

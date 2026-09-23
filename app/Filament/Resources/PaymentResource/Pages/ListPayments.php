@@ -11,7 +11,11 @@ use Filament\Tables\Table;
 class ListPayments extends ListRecords
 {
 	protected static string $resource = PaymentResource::class;
-	protected static ?string $title = 'Транзакции';
+
+	public function getTitle(): string
+	{
+		return __('admin.payments.transactions');
+	}
 
 	protected function getHeaderActions(): array
 	{
@@ -23,24 +27,24 @@ class ListPayments extends ListRecords
 	public function table(Table $table): Table
 	{
 		return $table
-			->emptyStateHeading('Транзакции не найдены')
+			->emptyStateHeading(__('admin.payments.transactions_not_found'))
 			->columns([
 				TextColumn::make('transaction_id')
 					->label('ID')
 					->sortable(),
 				TextColumn::make('transaction_time')
-					->label('Дата')
+					->label(__('admin.common.date'))
 					->dateTime()
 					->sortable(),
 				TextColumn::make('method')
-					->label('Метод')
+					->label(__('admin.payments.method'))
 					->sortable(),
 				TextColumn::make('amount')
-					->label('Сумма')
+					->label(__('admin.payments.amount'))
 					->numeric()
 					->sortable(),
 				TextColumn::make('user.username')
-					->label('Игрок')
+					->label(__('admin.common.player'))
 					->numeric()
 					->sortable(),
 			]);

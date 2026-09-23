@@ -15,7 +15,7 @@ class MissionEspionageMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_spy_report');
+		return __('fleet_engine.espionage.report');
 	}
 
 	public function render(): string
@@ -39,9 +39,9 @@ class MissionEspionageMessage extends AbstractMessage
 			$result .= '<div class="text-center mt-2">';
 
 			if ($this->data['chance'] === null) {
-				$result .= '<span style="color: red">' . __('fleet_engine.sys_mess_spy_destroyed') . '</span>';
+				$result .= '<span style="color: red">' . __('fleet_engine.espionage.probes_destroyed') . '</span>';
 			} else {
-				$result .= sprintf(__('fleet_engine.sys_mess_spy_lostproba'), $this->data['chance']);
+				$result .= sprintf(__('fleet_engine.espionage.detection_chance'), $this->data['chance']);
 			}
 
 			$result .= '</div>';
@@ -59,7 +59,7 @@ class MissionEspionageMessage extends AbstractMessage
 
 		if (!empty($fleetLink)) {
 			$result .= '<div class="text-center mt-2">';
-			$result .= '<a href="/sim?units=' . $fleetLink . '" target="_blank">Симуляция</a>';
+			$result .= '<a href="/sim?units=' . $fleetLink . '" target="_blank">' . __('fleet_engine.espionage.simulation') . '</a>';
 			$result .= '</div>';
 		}
 
@@ -98,7 +98,7 @@ class MissionEspionageMessage extends AbstractMessage
 			$result .= ' <a href="/players/' . $row['user']['id'] . '">' . $row['user']['name'] . '</a>';
 		}
 
-		$result .= '<br>на ' . Game::datezone('H:i:s', $date) . '</div>';
+		$result .= '<br>' . __('fleet_engine.espionage.at', ['time' => Game::datezone('H:i:s', $date)]) . '</div>';
 		$result .= '</div><div class="grid grid-cols-4">';
 		$result .= '<div class="th">' . __('main.res.metal') . ':</div><div class="th c">' . Format::number($row['resources']['metal']) . '</div>';
 		$result .= '<div class="th">' . __('main.res.crystal') . ':</div><div class="th c">' . Format::number($row['resources']['crystal']) . '</div>';
@@ -118,7 +118,7 @@ class MissionEspionageMessage extends AbstractMessage
 		$result .= '<div class="c col-span-2">' . __($row['title']) . '</div>';
 
 		if (empty($row['items'])) {
-			$result .= '<div class="th col-span-2">нет данных</div>';
+			$result .= '<div class="th col-span-2">' . __('fleet_engine.espionage.no_data') . '</div>';
 		} else {
 			$result .= '<div class="grid grid-cols-2 col-span-2">';
 

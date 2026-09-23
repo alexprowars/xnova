@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Table;
 use App\Filament\AvatarProviders\GravatarProvider;
+use App\Filament\Plugins\LanguageSwitcherPlugin;
 use App\Filament\Resources\UserResource;
+use App\Http\Middleware\LocaleDetect;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -25,6 +28,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -51,14 +55,18 @@ class AdminPanelProvider extends PanelProvider
 					->label(__('admin.edit_profile'))
 					->url(UserResource::getUrl('edit', ['record' => auth()->user()], false)),
 			])
+			->sidebarCollapsibleOnDesktop()
+			->sidebarWidth('270px')
 			->databaseTransactions()
 			->errorNotifications(false)
 			->globalSearch(false)
-			->sidebarCollapsibleOnDesktop()
 			->maxContentWidth(Width::ScreenTwoExtraLarge)
+			->brandLogo(asset('/assets/images/logo.png'))
+			->brandLogoHeight('2.5rem')
 			->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
 			->defaultAvatarProvider(GravatarProvider::class)
 			->font('Helvetica Neue', provider: LocalFontProvider::class)
+			->viteTheme('resources/css/admin.css')
 			->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
 			->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
 			->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
@@ -69,14 +77,20 @@ class AdminPanelProvider extends PanelProvider
 				StartSession::class,
 				AuthenticateSession::class,
 				ShareErrorsFromSession::class,
+				LocaleDetect::class,
 				PreventRequestForgery::class,
 				SubstituteBindings::class,
 				DisableBladeIconComponents::class,
 				DispatchServingFilamentEvent::class,
 			])
+			->persistentMiddleware([LocaleDetect::class])
 			->authMiddleware([
 				Authenticate::class,
 			])
+			->plugin(LanguageSwitcherPlugin::make()->locales([
+				['code' => 'ru', 'name' => 'Русский', 'flag' => 'ru'],
+				['code' => 'en', 'name' => 'English', 'flag' => 'gb'],
+			]))
 			->plugin(FilamentSpatieLaravelBackupPlugin::make())
 			->bootUsing(function (Panel $panel) {
 				$this->afterBoot();
@@ -84,15 +98,15 @@ class AdminPanelProvider extends PanelProvider
 				Event::listen(function (ServingFilament $event) use ($panel) {
 					$panel->navigationGroups([
 						NavigationGroup::make('game')
-							->label(__('admin.navigation.groups.game'))
+							->label(__('admin.groups.game'))
 							->icon('lucide-gamepad')
 							->collapsed(),
 						NavigationGroup::make('management')
-							->label(__('admin.navigation.groups.management'))
+							->label(__('admin.groups.management'))
 							->icon('lucide-hammer')
 							->collapsed(),
 						NavigationGroup::make('settings')
-							->label(__('admin.navigation.groups.settings'))
+							->label(__('admin.groups.settings'))
 							->icon('lucide-cog')
 							->collapsed(),
 					]);
@@ -170,5 +184,10 @@ class AdminPanelProvider extends PanelProvider
 			'actions::make-collection-root-action' => 'lucide-corner-left-up',
 			'tables::empty-state' => 'lucide-x',
 		]);
+
+		FilamentView::registerRenderHook(
+			PanelsRenderHook::HEAD_END,
+			fn() => view('admin.head'),
+		);
 	}
 }

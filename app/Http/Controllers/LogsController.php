@@ -46,11 +46,11 @@ class LogsController extends Controller
 			->first();
 
 		if (!$log) {
-			throw new Exception('Боевой доклад не найден');
+			throw new Exception(__('logs.battle_report_not_found'));
 		}
 
 		if (!$log->delete()) {
-			throw new Exception('Ошибка удаления.');
+			throw new Exception(__('logs.delete_failed'));
 		}
 	}
 
@@ -60,24 +60,24 @@ class LogsController extends Controller
 		$code = $request->post('code');
 
 		if (empty($title)) {
-			throw new PageException('Введите название для боевого отчёта');
+			throw new PageException(__('logs.title_required'));
 		}
 
 		if (empty($code)) {
-			throw new PageException('Введите ID боевого отчёта');
+			throw new PageException(__('logs.report_id_required'));
 		}
 
 		$key = substr($code, 0, 32);
 		$id = (int) substr($code, 32, (mb_strlen($code) - 32));
 
 		if (md5(config('app.key') . $id) != $key) {
-			throw new PageException('Неправильный ключ');
+			throw new PageException(__('logs.invalid_key'));
 		}
 
 		$log = Report::find($id);
 
 		if (!$log) {
-			throw new PageException('Боевой отчёт не найден в базе');
+			throw new PageException(__('logs.report_not_found'));
 		}
 
 		if ($log->hasLostContact($this->user->id)) {
@@ -92,10 +92,10 @@ class LogsController extends Controller
 		$new->data = $dataLog;
 
 		if (!$new->save()) {
-			throw new PageException('Произошла ошибка при сохранении боевого отчета');
+			throw new PageException(__('logs.save_failed'));
 		}
 
-		toast(ToastType::SUCCESS, 'Боевой отчёт успешно сохранён');
+		toast(ToastType::SUCCESS, __('logs.saved'));
 
 		return to_route('logs');
 	}
@@ -105,21 +105,21 @@ class LogsController extends Controller
 		$raport = LogsBattle::find($id);
 
 		if (!$raport) {
-			throw new PageException('Запрашиваемого лога не существует в базе данных');
+			throw new PageException(__('logs.log_not_found'));
 		}
 
 		if (empty($raport->data)) {
-			throw new PageException('Контакт с флотом потерян.<br>(Флот был уничтожен в первой волне атаки.)');
+			throw new PageException(__('logs.fleet_contact_lost'));
 		}
 
 		if (!$raport->user_id && Carbon::parse($raport->data['date'])->isAfter(now()->subHours(2)) && !$this->user?->isAdmin()) {
-			throw new PageException('Данный лог боя пока недоступен для просмотра!');
+			throw new PageException(__('logs.not_available_yet'));
 		}
 
 		try {
 			$html = new BattleReport($raport->data)->report();
 		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			throw new PageException(__('logs.processing_failed'));
 		}
 
 		return Inertia::render('Logs/Log', [

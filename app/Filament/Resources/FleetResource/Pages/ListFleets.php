@@ -19,45 +19,45 @@ class ListFleets extends ListRecords
 		return $table
 			->defaultSort('end_date')
 			->paginated(false)
-			->emptyStateHeading('Флоты не найдены')
+			->emptyStateHeading(__('admin.fleets.fleets_not_found'))
 			->columns([
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
 				TextColumn::make('mission')
-					->label('Миссия')
+					->label(__('admin.fleets.mission'))
 					->html()
 					->formatStateUsing(fn(FleetModel $record) =>
 						Fleet::createFleetPopupedMissionLink($record, $record->mission->title(), '')
 						. ' ' . ($record->mess == 1 ? 'R' : 'A'))
 					->sortable(),
 				TextColumn::make('entities')
-					->label('Состав')
+					->label(__('admin.fleets.fleet_composition'))
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => Fleet::createFleetPopupedFleetLink($record)),
 				TextColumn::make('user_name')
-					->label('Владелец')
+					->label(__('admin.fleets.owner'))
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->user_id . '] ' . $record->user_name)
 					->sortable(),
 				TextColumn::make('start_galaxy')
-					->label('Старт')
+					->label(__('admin.fleets.origin'))
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->start_galaxy . ':' . $record->start_system . ':' . $record->start_planet . '] ' . (($record->start_type == PlanetType::PLANET) ? '[P]' : (($record->start_type == PlanetType::DEBRIS) ? 'D' : 'L'))),
 				TextColumn::make('start_date')
-					->label('Отправление')
+					->label(__('admin.fleets.departure'))
 					->dateTime('H:i:s d.m')
 					->sortable(),
 				TextColumn::make('target_user_id')
-					->label('Игрок-цель')
+					->label(__('admin.fleets.target_player'))
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => !empty($record->target_user_id) ? '[' . $record->target_user_id . '] ' . $record->target_user_name : '')
 					->sortable(),
 				TextColumn::make('end_galaxy')
-					->label('Цель')
+					->label(__('admin.fleets.destination'))
 					->html()
 					->formatStateUsing(fn(FleetModel $record) => '[' . $record->end_galaxy . ':' . $record->end_system . ':' . $record->end_planet . '] ' . (($record->end_type == PlanetType::PLANET) ? '[P]' : (($record->end_type == PlanetType::DEBRIS) ? 'D' : 'L'))),
 				TextColumn::make('end_date')
-					->label('Прибытие')
+					->label(__('admin.fleets.arrival'))
 					->dateTime('H:i:s d.m')
 					->sortable(),
 		]);

@@ -12,7 +12,11 @@ use Filament\Schemas\Schema;
 class CreateUser extends CreateRecord
 {
 	protected static string $resource = UserResource::class;
-	protected static ?string $title = 'Создать пользователя';
+
+	public function getTitle(): string
+	{
+		return __('admin.users.create_user');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -20,7 +24,7 @@ class CreateUser extends CreateRecord
 			->columns(1)
 			->schema([
 				TextInput::make('username')
-					->label('Юзернэйм')
+					->label(__('admin.users.username'))
 					->maxLength(50)
 					->required(),
 				TextInput::make('email')
@@ -29,7 +33,7 @@ class CreateUser extends CreateRecord
 					->email()
 					->required(),
 				TextInput::make('password')
-					->label('Пароль')
+					->label(__('admin.users.password'))
 					->password()
 					->required(),
 			]);
@@ -46,6 +50,6 @@ class CreateUser extends CreateRecord
 
 	protected function getCreatedNotificationTitle(): ?string
 	{
-		return 'Пользователь создан';
+		return __('admin.users.user_created');
 	}
 }

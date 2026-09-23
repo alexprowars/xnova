@@ -67,23 +67,23 @@ class ResearchController extends Controller
 
 			if ($available) {
 				if ($element->getId() >= 120 && $element->getId() <= 122) {
-					$row['effects'] = '<span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon damage" title="' . __('buildings.effect_attack') . '"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 115) {
-					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (10 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon speed" title="' . __('buildings.effect_speed') . '"></span><span class="positive">' . (10 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 117) {
-					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (20 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon speed" title="' . __('buildings.effect_speed') . '"></span><span class="positive">' . (20 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 118) {
-					$row['effects'] = '<span class="icon speed" title="Скорость"></span><span class="positive">' . (30 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon speed" title="' . __('buildings.effect_speed') . '"></span><span class="positive">' . (30 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 108) {
-					$row['effects'] = '+' . ($entity->getLevel() + 1) . ' слотов флота</div>';
+					$row['effects'] = __('buildings.effect_fleet_slots') . ': <span class="positive">+' . ($entity->getLevel() + 1) . '</span>';
 				} elseif ($element->getId() == 109) {
-					$row['effects'] = '<span class="icon damage" title="Атака"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon damage" title="' . __('buildings.effect_attack') . '"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 110) {
-					$row['effects'] = '<span class="icon shield" title="Щиты"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon shield" title="' . __('buildings.effect_shields') . '"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 111) {
-					$row['effects'] = '<span class="icon armor" title="Броня"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
+					$row['effects'] = '<span class="icon armor" title="' . __('buildings.effect_armor') . '"></span><span class="positive">' . (5 * $entity->getLevel()) . '%</span>';
 				} elseif ($element->getId() == 123) {
-					$row['effects'] = '+' . $entity->getLevel() . '% лабораторий';
+					$row['effects'] = __('buildings.effect_laboratories') . ': <span class="positive">+' . $entity->getLevel() . '%</span>';
 				} elseif ($element->getId() == 113) {
 					$row['effects_resource'] = 'energy';
 					$row['effects'] = '<span class="positive">' . ($entity->getLevel() * 2) . '%</span>';
@@ -100,7 +100,7 @@ class ResearchController extends Controller
 						? $this->planet : $techHandle->planet;
 
 					if (!$planet) {
-						throw new Exception('Planet not found');
+						throw new Exception(__('buildings.research_planet_not_found'));
 					}
 
 					$planet->setRelation('user', $this->user);

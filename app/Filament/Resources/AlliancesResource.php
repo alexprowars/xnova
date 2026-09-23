@@ -11,8 +11,17 @@ class AlliancesResource extends Resource
 	protected static ?string $model = Alliance::class;
 
 	protected static ?int $navigationSort = 100;
-	protected static ?string $modelLabel = 'Альянс';
-	protected static ?string $pluralModelLabel = 'Альянсы';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.common.alliance');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.alliances.alliances');
+	}
+
 	protected static ?string $recordTitleAttribute = 'name';
 
 	public static function getNavigationIcon(): string
@@ -22,12 +31,12 @@ class AlliancesResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.alliances');
+		return __('admin.pages.alliances');
 	}
 
 	public static function canAccess(): bool

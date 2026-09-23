@@ -29,28 +29,28 @@ class EditMoon extends EditRecord
 				Section::make()
 					->schema([
 						TextInput::make('name')
-							->label('Название')
+							->label(__('admin.common.title'))
 							->maxLength(50)
 							->default(__('main.sys_colo_defaultname')),
 						Select::make('user_id')
-							->label('Игрок')
+							->label(__('admin.common.player'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email']),
 						TextInput::make('galaxy')
-							->label('Галактика')
+							->label(__('admin.common.galaxy'))
 							->integer()
 							->required(),
 						TextInput::make('system')
-							->label('Система')
+							->label(__('admin.common.system'))
 							->required()
 							->integer(),
 						TextInput::make('planet')
-							->label('Планета')
+							->label(__('admin.common.planet'))
 							->integer()
 							->required(),
 						TextInput::make('diameter')
-							->label('Диаметр')
+							->label(__('admin.common.diameter'))
 							->integer()
 							->required(),
 					]),

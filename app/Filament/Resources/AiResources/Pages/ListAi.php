@@ -32,18 +32,18 @@ class ListAi extends ListRecords
 					->label('ID')
 					->sortable(),
 				TextColumn::make('strategy')
-					->label('Стратегия'),
+					->label(__('admin.ai.strategy')),
 				TextColumn::make('user.id')
-					->label('ID игрока'),
+					->label(__('admin.ai.player_id')),
 				TextColumn::make('user.username')
-					->label('Имя'),
+					->label(__('admin.common.name')),
 				TextColumn::make('user.galaxy')
-					->label('Координаты')
+					->label(__('admin.common.coordinates'))
 					->formatStateUsing(function (Ai $record) {
 						return $record->user->galaxy . ':' . $record->user->system . ':' . $record->user->planet;
 					}),
 				TextColumn::make('created_at')
-					->label('Дата создания')
+					->label(__('admin.common.created_at'))
 					->dateTime()
 					->sortable(),
 			])

@@ -1,6 +1,10 @@
 <?php
 
 return [
+	'email_in_use' => 'Этот адрес электронной почты уже используется.',
+	'password_min' => 'Пароль должен содержать не менее :min символов.',
+	'password_mismatch' => 'Пароли не совпадают.',
+	'current_password_invalid' => 'Неверно введён текущий пароль.',
 	'accepted' => 'Вы должны принять :attribute.',
 	'active_url' => 'Поле :attribute содержит недействительный URL.',
 	'after' => 'В поле :attribute должна быть дата после :date.',

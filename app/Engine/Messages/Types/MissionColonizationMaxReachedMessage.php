@@ -11,13 +11,13 @@ class MissionColonizationMaxReachedMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_colo_mess_from');
+		return __('fleet_engine.colonization.subject');
 	}
 
 	public function render(): string
 	{
 		$this->data['target'] = Coordinates::fromArray($this->data['target'])->getLink();
 
-		return __('fleet_engine.sys_colo_maxcolo', $this->data);
+		return __('fleet_engine.colonization.limit_reached', $this->data);
 	}
 }

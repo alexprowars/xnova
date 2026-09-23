@@ -25,9 +25,12 @@ class UserUnBan extends Page
 
 	protected static ?int $navigationSort = 30;
 	protected static ?string $slug = 'unban';
-	protected static ?string $title = 'Разблокировать пользователя';
-
 	public ?array $data = [];
+
+	public function getTitle(): string
+	{
+		return __('admin.user_unban.unban_user');
+	}
 
 	public static function getNavigationIcon(): string
 	{
@@ -36,12 +39,12 @@ class UserUnBan extends Page
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.management');
+		return __('admin.groups.management');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.user_unban');
+		return __('admin.pages.user_unban');
 	}
 
 	public static function canAccess(): bool
@@ -62,7 +65,7 @@ class UserUnBan extends Page
 					->compact()
 					->schema([
 						TextInput::make('username')
-							->label('Логин/email игрока')
+							->label(__('admin.common.player_login_or_email'))
 							->required()
 							->maxLength(50),
 				]),
@@ -73,7 +76,7 @@ class UserUnBan extends Page
 	public function getFormActions(): array
 	{
 		return [
-			Action::make('Разблокировать')
+			Action::make('unban')->label(__('admin.user_unban.unban'))
 				->action(function () {
 					$this->submit($this->form->getState());
 				})
@@ -88,7 +91,7 @@ class UserUnBan extends Page
 
 		if (!$user) {
 			Notification::make()
-				->title('Игрок не найден')
+				->title(__('admin.common.player_not_found'))
 				->danger()->send();
 
 			return;
@@ -105,7 +108,7 @@ class UserUnBan extends Page
 		$user->save();
 
 		Notification::make()
-			->title('Игрок "' . $user->username . '" разбанен!')
+			->title(__('admin.user_unban.player_unbanned', ['name' => $user->username]))
 			->success()->send();
 
 		$this->form->fill();

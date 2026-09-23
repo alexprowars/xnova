@@ -79,11 +79,11 @@ class BuildingsController extends Controller
 		$object = ObjectsFactory::get($elementId);
 
 		if (!($object instanceof BuildingObject)) {
-			throw new Exception('Invalid building object');
+			throw new Exception(__('buildings.invalid_building_object'));
 		}
 
 		if (!$object->hasAllowedBuild($this->planet->planet_type)) {
-			throw new Exception('Not allowed');
+			throw new Exception(__('buildings.building_not_allowed'));
 		}
 
 		$queueManager = new QueueManager($this->planet);

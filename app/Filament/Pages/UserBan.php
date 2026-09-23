@@ -31,9 +31,12 @@ class UserBan extends Page
 
 	protected static ?int $navigationSort = 20;
 	protected static ?string $slug = 'ban';
-	protected static ?string $title = 'Заблокировать пользователя';
-
 	public ?array $data = [];
+
+	public function getTitle(): string
+	{
+		return __('admin.user_ban.ban_user');
+	}
 
 	public static function getNavigationIcon(): string
 	{
@@ -42,12 +45,12 @@ class UserBan extends Page
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.management');
+		return __('admin.groups.management');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.user_ban');
+		return __('admin.pages.user_ban');
 	}
 
 	public static function canAccess(): bool
@@ -68,21 +71,21 @@ class UserBan extends Page
 					->compact()
 					->schema([
 						TextInput::make('username')
-							->label('Логин/email игрока')
+							->label(__('admin.common.player_login_or_email'))
 							->required()
 							->maxLength(50),
 						TextInput::make('reason')
-							->label('Причина')
+							->label(__('admin.user_ban.reason'))
 							->maxLength(50),
-						Fieldset::make('Время бана')
+						Fieldset::make(__('admin.user_ban.ban_duration'))
 							->schema([
-								TextInput::make('days')->integer()->label('дней'),
-								TextInput::make('hour')->integer()->label('часов'),
-								TextInput::make('mins')->integer()->label('минут'),
+								TextInput::make('days')->integer()->label(__('admin.user_ban.days')),
+								TextInput::make('hour')->integer()->label(__('admin.user_ban.hours')),
+								TextInput::make('mins')->integer()->label(__('admin.user_ban.minutes')),
 							])
 							->columns(3),
 						Checkbox::make('vacation')
-							->label('Режим отпуска')
+							->label(__('admin.user_ban.vacation_mode'))
 							->default(false),
 					]),
 			])
@@ -92,7 +95,7 @@ class UserBan extends Page
 	public function getFormActions(): array
 	{
 		return [
-			Action::make('Заблокировать')
+			Action::make('ban')->label(__('admin.user_ban.ban'))
 				->action(function () {
 					$this->submit($this->form->getState());
 				})
@@ -107,7 +110,7 @@ class UserBan extends Page
 
 		if (!$user) {
 			Notification::make()
-				->title('Игрок не найден')
+				->title(__('admin.common.player_not_found'))
 				->danger()->send();
 
 			return;
@@ -149,7 +152,7 @@ class UserBan extends Page
 		}
 
 		Notification::make()
-			->title('Игрок "' . $user->username . '" заблокирован!')
+			->title(__('admin.user_ban.player_banned', ['name' => $user->username]))
 			->success()->send();
 
 		$this->form->fill();

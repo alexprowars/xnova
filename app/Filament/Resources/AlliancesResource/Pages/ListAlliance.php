@@ -29,26 +29,26 @@ class ListAlliance extends ListRecords
 				return $query->with(['user']);
 			})
 			->defaultSort('id', 'desc')
-			->emptyStateHeading('Альянсы не найдены')
+			->emptyStateHeading(__('admin.alliances.alliances_not_found'))
 			->columns([
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
 				TextColumn::make('name')
-					->label('Имя')
+					->label(__('admin.common.name'))
 					->searchable(),
 				TextColumn::make('tag')
-					->label('Тэг')
+					->label(__('admin.alliances.tag'))
 					->searchable(),
 				TextColumn::make('user')
-					->label('Лидер')
+					->label(__('admin.alliances.leader'))
 					->formatStateUsing(function (User $state) {
 						return $state->username . ($state->galaxy ? ' [' . $state->galaxy . ':' . $state->system . ':' . $state->planet . ']' : '');
 					}),
 				TextColumn::make('total_members')
-					->label('Кол-во участников'),
+					->label(__('admin.alliances.member_count')),
 				TextColumn::make('created_at')
-					->label('Дата создания')
+					->label(__('admin.common.created_at'))
 					->dateTime(),
 			])
 			->recordActions([

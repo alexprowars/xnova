@@ -22,34 +22,34 @@ class RwController extends Controller
 				throw new Exception();
 			}
 		} catch (Throwable) {
-			throw new PageException('Недействительная подпись');
+			throw new PageException(__('logs.invalid_signature'));
 		}
 
 		$report = Report::find($id);
 
 		if (!$report) {
-			throw new PageException('Данный боевой отчет не найден или удалён');
+			throw new PageException(__('logs.report_missing_or_deleted'));
 		}
 
 		if (!$this->user->isAdmin()) {
 			if (!in_array($this->user->id, $report->users_id)) {
-				throw new PageException('Вы не можете просматривать этот боевой доклад');
+				throw new PageException(__('logs.view_forbidden'));
 			}
 
 			if ($report->hasLostContact($this->user->id)) {
-				throw new PageException('Контакт с вашим флотом потерян<br>(Ваш флот был уничтожен в первой волне атаки)');
+				throw new PageException(__('logs.own_fleet_contact_lost'));
 			}
 		}
 
 		try {
 			$html = new BattleReport($report->data)->report();
 		} catch (Throwable) {
-			throw new PageException('Ошибка обработки боевого отчета');
+			throw new PageException(__('logs.processing_failed'));
 		}
 
 		$logCode = md5(config('app.key') . $report->id) . $report->id;
 
-		$html .= '<div class="text-center mt-2">ID боевого доклада: <a href="/logs/create?code=' . $logCode . '"><span style="color: red">' . $logCode . '</span></a></div>';
+		$html .= '<div class="text-center mt-2">' . __('logs.report_id_label') . ' <a href="/logs/create?code=' . $logCode . '"><span style="color: red">' . $logCode . '</span></a></div>';
 
 		return Inertia::render('Rw', [
 			'raport' => $html,

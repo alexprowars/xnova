@@ -283,7 +283,7 @@ class FinishExpeditionAction
 		if ($chance == 1) {
 			$points = [-3, -5, -8];
 			$which = 1;
-			$mame = __('fleet_engine.sys_expe_attackname_1');
+			$mame = __('fleet_engine.expedition.enemy.1');
 			$add = 0;
 			$defenderFleetArray = [
 				204 => 5,
@@ -293,7 +293,7 @@ class FinishExpeditionAction
 		} else {
 			$points = [-4, -6, -9];
 			$which = 2;
-			$mame = __('fleet_engine.sys_expe_attackname_2');
+			$mame = __('fleet_engine.expedition.enemy.2');
 			$add = 0.1;
 			$defenderFleetArray = [
 				205 => 5,

@@ -10,7 +10,7 @@ class VersionWidget extends BaseWidget
 	protected function getStats(): array
 	{
 		return [
-			Stat::make('Версия сервера', config('game.version')),
+			Stat::make(__('admin.dashboard.server_version'), config('game.version')),
 		];
 	}
 }

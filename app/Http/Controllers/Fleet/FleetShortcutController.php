@@ -59,7 +59,7 @@ class FleetShortcutController extends Controller
 		$name = $request->post('name');
 
 		if (empty($name) || !preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			$name = 'Планета';
+			$name = __('fleet.planet');
 		}
 
 		$galaxy = (int) $request->post('galaxy', 0);
@@ -93,7 +93,7 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new PageException('Данной ссылки не существует!');
+			throw new PageException(__('fleet.shortcut_not_found'));
 		}
 
 		return Inertia::render('Fleet/Shortcuts/Edit', [
@@ -113,7 +113,7 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new PageException('Данной ссылки не существует!');
+			throw new PageException(__('fleet.shortcut_not_found'));
 		}
 
 		$shortcut->name = strip_tags(str_replace(',', '', $request->post('name', '')));
@@ -147,7 +147,7 @@ class FleetShortcutController extends Controller
 			->first();
 
 		if (!$shortcut) {
-			throw new PageException('Данной ссылки не существует!');
+			throw new PageException(__('fleet.shortcut_not_found'));
 		}
 
 		$shortcut->delete();

@@ -26,16 +26,16 @@ class ListContents extends ListRecords
 	{
 		return $table
 			->defaultSort('id', 'desc')
-			->emptyStateHeading('Контент не найден')
+			->emptyStateHeading(__('admin.content.content_not_found'))
 			->columns([
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
 				TextColumn::make('title')
-					->label('Название')
+					->label(__('admin.common.title'))
 					->sortable(),
 				TextColumn::make('alias')
-					->label('Символьный код')
+					->label(__('admin.content.slug'))
 					->sortable(),
 			])
 			->recordActions([

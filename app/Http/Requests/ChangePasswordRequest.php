@@ -19,7 +19,8 @@ class ChangePasswordRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'password.confirmed' => 'Bвeдeнныe пapoли нe coвпaдaют',
+			'password.min' => __('validation.password_min'),
+			'password.confirmed' => __('validation.password_mismatch'),
 		];
 	}
 }

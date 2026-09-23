@@ -16,7 +16,7 @@ class UserRegistration extends Mailable
 	public function envelope(): Envelope
 	{
 		return new Envelope(
-			subject: config('app.name') . ': Регистрация',
+			subject: __('main.mail.user_registration_subject', ['app' => config('app.name')]),
 		);
 	}
 

@@ -36,27 +36,27 @@ class OfficiersController extends Controller
 		$duration = (int) $request->post('duration', 0);
 
 		if (!$code || !$duration) {
-			throw new Exception('Ошибка входных параметров');
+			throw new Exception(__('officier.invalid_parameters'));
 		}
 
 		$credits = match ($duration) {
 			7 => 20,
 			14 => 40,
 			30 => 80,
-			default => throw new Exception('Ошибка входных параметров'),
+			default => throw new Exception(__('officier.invalid_parameters')),
 		};
 
 		$time = $duration * 86400;
 
 		if (!in_array($code, Vars::getOfficiers())) {
-			throw new Exception('Выбран неверный элемент');
+			throw new Exception(__('officier.invalid_item'));
 		}
 
 		DB::transaction(function () use ($code, $credits, $time) {
 			$this->user->refreshForUpdate();
 
 			if ($this->user->credits < $credits) {
-				throw new Exception(__('officier.NoPoints'));
+				throw new Exception(__('officier.no_points'));
 			}
 
 			$planets = $code === 'geologist'

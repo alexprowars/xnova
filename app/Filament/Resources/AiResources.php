@@ -20,12 +20,12 @@ class AiResources extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.ai');
+		return __('admin.pages.ai');
 	}
 
 	public static function canAccess(): bool

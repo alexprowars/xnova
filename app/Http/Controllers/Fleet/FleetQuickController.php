@@ -23,7 +23,7 @@ class FleetQuickController extends Controller
 		$mission = MissionType::tryFrom($mission);
 
 		if (!$mission) {
-			throw new Exception('<span class="error"><b>Не выбрана миссия!</b></span>');
+			throw new Exception('<span class="error"><b>' . __('fleet.quick_mission_required') . '</b></span>');
 		}
 
 		$num = (int) $request->post('count', 0);
@@ -40,7 +40,7 @@ class FleetQuickController extends Controller
 			->first();
 
 		if (!$target) {
-			throw new Exception('Цели не существует!');
+			throw new Exception(__('fleet.quick_target_not_found'));
 		}
 
 		$fleetArray = [];
@@ -51,7 +51,7 @@ class FleetQuickController extends Controller
 			$debrisSize = $target->debris_metal + $target->debris_crystal;
 
 			if ($debrisSize <= 0) {
-				throw new Exception('Нет обломков для сбора!');
+				throw new Exception(__('fleet.quick_no_debris'));
 			}
 
 			$recyclerNeeded = 0;
@@ -67,10 +67,10 @@ class FleetQuickController extends Controller
 			if ($recyclerNeeded > 0) {
 				$fleetArray[209] = $recyclerNeeded;
 			} else {
-				throw new Exception('Произошла какая-то непонятная ситуация');
+				throw new Exception(__('fleet.quick_unexpected_error'));
 			}
 		} else {
-			throw new Exception('Такой миссии не существует!');
+			throw new Exception(__('fleet.quick_mission_not_found'));
 		}
 
 		$sender = new FleetSend($this->planet, new Coordinates($galaxy, $system, $planet, $planetType), $mission);
@@ -82,6 +82,10 @@ class FleetQuickController extends Controller
 			throw new Exception('<span class="error"><b>' . $e->getMessage() . '</b></span>');
 		}
 
-		toast(ToastType::SUCCESS, 'Флот отправлен на координаты [' . $target->coordinates . '] с миссией ' . $mission->title() . ' и прибудет к цели ' . Game::datezone('d.m.Y H:i:s', $fleet->start_date));
+		toast(ToastType::SUCCESS, __('fleet.quick_fleet_sent', [
+			'coordinates' => (string) $target->coordinates,
+			'mission' => $mission->title(),
+			'arrival' => Game::datezone('d.m.Y H:i:s', $fleet->start_date),
+		]));
 	}
 }

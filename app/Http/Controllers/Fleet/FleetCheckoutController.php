@@ -75,7 +75,7 @@ class FleetCheckoutController extends Controller
 		}
 
 		if (empty($fleets)) {
-			throw new Exception('Не выбран флот');
+			throw new Exception(__('fleet.fleet_not_selected'));
 		}
 
 		$target = new Coordinates($galaxy, $system, $planet, $type);
@@ -111,7 +111,7 @@ class FleetCheckoutController extends Controller
 				}
 
 				if ($row->planet_type == PlanetType::MOON) {
-					$row->name .= ' ' . __('fleet.fl_shrtcup3');
+					$row->name .= ' ' . __('fleet.shrtcup3');
 				}
 
 				$result['planets'][] = $row->only(['id', 'name', 'galaxy', 'system', 'planet', 'planet_type']);

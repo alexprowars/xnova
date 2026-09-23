@@ -20,9 +20,9 @@ class RegistrationRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'email.unique' => 'Такой e-mail уже используется',
-			'password.min' => 'Пароль должен состоять как минимум из :min символов',
-			'password_confirmation.same' => 'Пароли должны быть одинаковыми',
+			'email.unique' => __('validation.email_in_use'),
+			'password.min' => __('validation.password_min'),
+			'password.confirmed' => __('validation.password_mismatch'),
 		];
 	}
 }

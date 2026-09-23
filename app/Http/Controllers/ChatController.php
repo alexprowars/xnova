@@ -28,7 +28,7 @@ class ChatController extends Controller
 		$message = Str::sanitize($request->post('message'));
 
 		if (empty($message)) {
-			throw new Exception('Введите текст сообщения');
+			throw new Exception(__('main.chat_message_required'));
 		}
 
 		$chatMessage = new Chat([

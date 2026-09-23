@@ -10,11 +10,11 @@ class MissionExpeditionFailedMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_expe_report');
+		return __('fleet_engine.expedition.report');
 	}
 
 	public function render(): string
 	{
-		return __('fleet_engine.sys_expe_nothing_' . $this->data['type']);
+		return __('fleet_engine.expedition.empty.' . $this->data['type']);
 	}
 }

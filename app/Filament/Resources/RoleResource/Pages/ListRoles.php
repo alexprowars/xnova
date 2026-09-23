@@ -12,7 +12,7 @@ class ListRoles extends ListRecords
 
 	public function getHeading(): string
 	{
-		return __('admin.navigation.pages.roles');
+		return __('admin.pages.roles');
 	}
 
 	protected function getHeaderActions(): array

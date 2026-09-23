@@ -11,8 +11,17 @@ class PlanetResource extends Resource
 	protected static ?string $model = Planet::class;
 
 	protected static ?int $navigationSort = 60;
-	protected static ?string $modelLabel = 'Планета';
-	protected static ?string $pluralModelLabel = 'Планеты';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.common.planet');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.planets.planets');
+	}
+
 	protected static ?string $recordTitleAttribute = 'name';
 	protected static ?string $slug = 'planets';
 
@@ -23,12 +32,12 @@ class PlanetResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.planets');
+		return __('admin.pages.planets');
 	}
 
 	public static function canAccess(): bool

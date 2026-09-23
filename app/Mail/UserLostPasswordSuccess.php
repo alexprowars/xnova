@@ -16,7 +16,7 @@ class UserLostPasswordSuccess extends Mailable
 	public function envelope(): Envelope
 	{
 		return new Envelope(
-			subject: config('app.name') . ': Новый пароль',
+			subject: __('main.mail.user_lost_password_success_subject', ['app' => config('app.name')]),
 		);
 	}
 

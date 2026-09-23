@@ -12,7 +12,7 @@ trait AllianceControllerTrait
 		$alliance = $this->user->alliance;
 
 		if (!$alliance) {
-			throw new Exception('Alliance not found');
+			throw new Exception(__('alliance.ally_notexist'));
 		}
 
 		$alliance->getRanks();

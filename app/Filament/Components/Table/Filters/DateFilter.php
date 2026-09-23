@@ -33,7 +33,7 @@ class DateFilter extends BaseFilter
 						->native(false)
 						->closeOnDateSelection()
 						->weekStartsOnMonday()
-						->placeholder(__('admin/panel.from'))
+						->placeholder(__('admin.common.from_date'))
 						->displayFormat($this->displayFormat)
 						->format($this->displayFormat)
 						->default($this->startDate)
@@ -43,7 +43,7 @@ class DateFilter extends BaseFilter
 						->native(false)
 						->closeOnDateSelection()
 						->weekStartsOnMonday()
-						->placeholder(__('admin/panel.until'))
+						->placeholder(__('admin.common.until_date'))
 						->displayFormat($this->displayFormat)
 						->format($this->displayFormat)
 						->default($this->endDate)
@@ -64,8 +64,8 @@ class DateFilter extends BaseFilter
 				$displayFormat = $this->evaluate($this->displayFormat);
 
 				$labels = [
-					'from' => __('admin/panel.from'),
-					'until' => __('admin/panel.until'),
+					'from' => __('admin.common.from_date'),
+					'until' => __('admin.common.until_date'),
 				];
 
 				$format = fn(string $field) => $state[$field] ?? null

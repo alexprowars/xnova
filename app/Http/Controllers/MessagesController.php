@@ -122,7 +122,7 @@ class MessagesController extends Controller
 				try {
 					$row['message'] = $message->render();
 				} catch (Throwable $e) {
-					$row['message'] = 'render message error: ' . $e->getMessage();
+					$row['message'] = __('messages.render_failed', ['error' => $e->getMessage()]);
 				}
 			}
 
@@ -237,7 +237,7 @@ class MessagesController extends Controller
 
 		$user->notify(new SystemMessage(MessageType::User, $message, $this->user->username_formatted));
 
-		toast(ToastType::SUCCESS, 'Сообщение отправлено!');
+		toast(ToastType::SUCCESS, __('messages.sent'));
 	}
 
 	public function delete(Request $request): void
@@ -246,7 +246,7 @@ class MessagesController extends Controller
 		$items = array_map('intval', $items);
 
 		if (empty($items)) {
-			throw new Exception('Не выбраны сообщения');
+			throw new Exception(__('messages.none_selected'));
 		}
 
 		Message::query()
@@ -263,7 +263,7 @@ class MessagesController extends Controller
 			->first();
 
 		if (!$message) {
-			throw new Exception('Сообщение не найдено');
+			throw new Exception(__('messages.not_found'));
 		}
 
 		$users = User::query()
@@ -277,7 +277,7 @@ class MessagesController extends Controller
 				$this->user,
 				MessageType::User,
 				'<span style="color: red">' . $this->user->username . '</span>',
-				'От кого: ' . $message->from->username . '<br>Дата отправления: ' . $message->date->format('d-m-Y H:i:s') . '<br>Текст сообщения: ' . $messageText->render()
+				__('messages.abuse_from') . ' ' . $message->from->username . '<br>' . __('messages.abuse_sent_at') . ' ' . $message->date->format('d-m-Y H:i:s') . '<br>' . __('messages.abuse_text') . ' ' . $messageText->render()
 			));
 		}
 	}

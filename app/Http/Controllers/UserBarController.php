@@ -49,8 +49,8 @@ class UserBarController extends Controller
 		}
 
 		// Очки
-		imagettftext($image, 6, 0, 13, 55, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), 'Очки: ' . Format::number($stats->total_points ?? 0));
-		imagettftext($image, 6, 0, 13, 70, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), 'Место: ' . Format::number($stats->total_rank ?? 0) . ' из ' . Format::number($settings->usersTotal));
+		imagettftext($image, 6, 0, 13, 55, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), __('main.userbar_points', ['points' => Format::number($stats->total_points ?? 0)]));
+		imagettftext($image, 6, 0, 13, 70, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), __('main.userbar_rank', ['rank' => Format::number($stats->total_rank ?? 0), 'total' => Format::number($settings->usersTotal)]));
 
 		// Дата генерации
 		imagettftext($image, 6, 0, 365, 13, $txt_color, public_path('/assets/images/KLMNFP2005.ttf'), date('d.m.Y'));

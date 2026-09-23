@@ -18,7 +18,7 @@ class PhalanxController extends Controller
 	public function index(Request $request)
 	{
 		if ($this->planet->destroyed_at) {
-			throw new PageException('Нельзя использовать фалангу на уничтоженной луне!');
+			throw new PageException(__('fleet.phalanx_destroyed_moon'));
 		}
 
 		$galaxy = $request->integer('galaxy');
@@ -47,26 +47,26 @@ class PhalanxController extends Controller
 		$target = new Coordinates($galaxy, $system, $planet);
 
 		if ($this->planet->planet_type != PlanetType::MOON) {
-			throw new PageException('Вы можете использовать фалангу только на луне!');
+			throw new PageException(__('fleet.phalanx_moon_only'));
 		}
 
 		if ($phalanx == 0) {
-			throw new PageException('Постройте сначало сенсорную фалангу');
+			throw new PageException(__('fleet.phalanx_required'));
 		}
 
 		if ($this->planet->deuterium < $consumption) {
-			throw new PageException('Недостаточно дейтерия для использования. Необходимо: ' . $consumption . '.');
+			throw new PageException(__('fleet.phalanx_not_enough_deuterium', ['amount' => $consumption]));
 		}
 
 		if (($target->getSystem() <= $systemFrom || $target->getSystem() >= $systemTo) || $target->getGalaxy() != $this->planet->galaxy) {
-			throw new PageException('Вы не можете сканировать данную планету. Недостаточный уровень сенсорной фаланги.');
+			throw new PageException(__('fleet.phalanx_out_of_range'));
 		}
 
 		$planetExist = Models\Planet::query()->coordinates($target)
 			->exists();
 
 		if (!$planetExist) {
-			throw new PageException('Планета не существует!');
+			throw new PageException(__('fleet.phalanx_planet_not_found'));
 		}
 
 		$this->planet->deuterium -= $consumption;
@@ -89,24 +89,15 @@ class PhalanxController extends Controller
 		foreach ($fleets as $row) {
 			$end = !($row->start_galaxy == $galaxy && $row->start_system == $system && $row->start_planet == $planet && $row->start_type == PlanetType::PLANET);
 
-			if ($row->start_type == PlanetType::MOON) {
-				$type = 'лун';
-			} else {
-				$type = 'планет';
-			}
-
-			if ($row->end_type == PlanetType::MOON) {
-				$type2 = 'лун';
-			} else {
-				$type2 = 'планет';
-			}
+			$type1 = $row->start_type == PlanetType::MOON ? 'moon' : 'planet';
+			$type2 = $row->end_type == PlanetType::MOON ? 'moon' : 'planet';
 
 			if ($row->start_date->isFuture() && $end && !($row->start_type == PlanetType::MOON && ($row->end_type == PlanetType::DEBRIS || $row->end_type == PlanetType::MOON))) {
 				$items[] = [
 					'time' => $row->start_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),
-					'type_1' => $type . 'ы',
-					'type_2' => $type2 . 'у',
+					'type_1' => $type1,
+					'type_2' => $type2,
 					'planet_name' => $row->user_name,
 					'planet_position' => $row->splitStartPosition(),
 					'target_name' => $row->target_user_name,
@@ -120,8 +111,8 @@ class PhalanxController extends Controller
 				$items[] = [
 					'time' => $row->end_date->utc()->toAtomString(),
 					'fleet' => Fleet::createFleetPopupedFleetLink($row, $this->user),
-					'type_1' => $type2 . 'ы',
-					'type_2' => $type . 'у',
+					'type_1' => $type2,
+					'type_2' => $type1,
 					'planet_name' => $row->target_user_name,
 					'planet_position' => $row->splitTargetPosition(),
 					'target_name' => $row->user_name,

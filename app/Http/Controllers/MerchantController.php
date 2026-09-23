@@ -26,13 +26,13 @@ class MerchantController extends Controller
 		$deuterium = (int) $request->post('deuterium', 0);
 
 		if ($metal < 0 || $crystal < 0 || $deuterium < 0) {
-			throw new Exception('Злобный читер');
+			throw new Exception(__('main.merchant_invalid_amount'));
 		}
 
 		$type = trim($request->post('type'));
 
 		if (!in_array($type, Vars::getResources())) {
-			throw new Exception('Ресурс не существует');
+			throw new Exception(__('main.merchant_resource_not_found'));
 		}
 
 		$exchangeRate = Game::getMerchantExchangeRate();
@@ -46,14 +46,14 @@ class MerchantController extends Controller
 		}
 
 		if ($exchange <= 0) {
-			throw new Exception('Вы не можете обменять такое количество ресурсов');
+			throw new Exception(__('main.merchant_exchange_invalid_amount'));
 		}
 
 		DB::transaction(function () use ($type, $exchange, $metal, $crystal, $deuterium) {
 			$this->user->refreshForUpdate();
 
 			if ($this->user->credits <= 0) {
-				throw new Exception('Недостаточно кредитов для проведения обменной операции');
+				throw new Exception(__('main.merchant_insufficient_credits'));
 			}
 
 			$this->planet->refreshForUpdate();
@@ -61,7 +61,7 @@ class MerchantController extends Controller
 			$this->planet->getProduction()->reset();
 
 			if ($this->planet->{$type} < $exchange) {
-				throw new Exception('На планете недостаточно ресурсов данного типа');
+				throw new Exception(__('main.merchant_insufficient_resources'));
 			}
 
 			$this->planet->{$type} -= $exchange;
@@ -89,6 +89,6 @@ class MerchantController extends Controller
 			}
 		});
 
-		toast(ToastType::SUCCESS, 'Вы обменяли ' . $exchange . ' ' . __('main.res.' . $type));
+		toast(ToastType::SUCCESS, __('main.merchant_exchange_success', ['amount' => $exchange, 'resource' => __('main.res.' . $type)]));
 	}
 }

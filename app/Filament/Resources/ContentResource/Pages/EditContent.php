@@ -8,5 +8,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditContent extends EditRecord
 {
 	protected static string $resource = ContentResource::class;
-	protected static ?string $title = 'Редактирование записи';
+
+	public function getTitle(): string
+	{
+		return __('admin.content.edit_record');
+	}
 }

@@ -17,7 +17,11 @@ use Filament\Schemas\Schema;
 class CreateMoon extends CreateRecord
 {
 	protected static string $resource = MoonResource::class;
-	protected static ?string $title = 'Создать луну';
+
+	public function getTitle(): string
+	{
+		return __('admin.moons.create_moon');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -27,24 +31,24 @@ class CreateMoon extends CreateRecord
 				Section::make()
 					->schema([
 						Select::make('user_id')
-							->label('Игрок')
+							->label(__('admin.common.player'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email']),
 						TextInput::make('galaxy')
-							->label('Галактика')
+							->label(__('admin.common.galaxy'))
 							->integer()
 							->required(),
 						TextInput::make('system')
-							->label('Система')
+							->label(__('admin.common.system'))
 							->required()
 							->integer(),
 						TextInput::make('planet')
-							->label('Планета')
+							->label(__('admin.common.planet'))
 							->integer()
 							->required(),
 						TextInput::make('diameter')
-							->label('Диаметр')
+							->label(__('admin.common.diameter'))
 							->integer()
 							->required()
 							->default(1)
@@ -65,7 +69,7 @@ class CreateMoon extends CreateRecord
 		);
 
 		if (!$moon) {
-			throw new Exception('Не удалось создать луну');
+			throw new Exception(__('admin.moons.moon_creation_failed'));
 		}
 
 		return $moon;
@@ -73,6 +77,6 @@ class CreateMoon extends CreateRecord
 
 	protected function getCreatedNotificationTitle(): ?string
 	{
-		return 'Луна создана';
+		return __('admin.moons.moon_created');
 	}
 }

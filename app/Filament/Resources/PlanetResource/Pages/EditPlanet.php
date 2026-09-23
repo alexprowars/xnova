@@ -30,52 +30,52 @@ class EditPlanet extends EditRecord
 				Section::make()
 					->schema([
 						TextInput::make('name')
-							->label('Название')
+							->label(__('admin.common.title'))
 							->maxLength(50)
 							->default(__('main.sys_colo_defaultname')),
 						Select::make('user_id')
-							->label('Игрок')
+							->label(__('admin.common.player'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email']),
 						TextInput::make('galaxy')
-							->label('Галактика')
+							->label(__('admin.common.galaxy'))
 							->integer()
 							->required(),
 						TextInput::make('system')
-							->label('Система')
+							->label(__('admin.common.system'))
 							->required()
 							->integer(),
 						TextInput::make('planet')
-							->label('Планета')
+							->label(__('admin.common.planet'))
 							->integer()
 							->required(),
 						Select::make('planet_type')
-							->label('Тип')
+							->label(__('admin.common.type'))
 							->options(PlanetType::class)
 							->required(),
 						TextInput::make('metal')
-							->label('Металл')
+							->label(__('admin.planets.metal'))
 							->required()
 							->integer()
 							->default(config('game.baseMetalProduction')),
 						TextInput::make('crystal')
-							->label('Кристалл')
+							->label(__('admin.planets.crystal'))
 							->required()
 							->integer()
 							->default(config('game.baseCrystalProduction')),
 						TextInput::make('deuterium')
-							->label('Дейтерий')
+							->label(__('admin.planets.deuterium'))
 							->required()
 							->integer()
 							->default(config('game.baseDeuteriumProduction')),
 						TextInput::make('debris_metal')
-							->label('Поле обломков: Металл')
+							->label(__('admin.planets.debris_metal'))
 							->required()
 							->integer()
 							->default(0),
 						TextInput::make('debris_crystal')
-							->label('Поле обломков: Кристалл')
+							->label(__('admin.planets.debris_crystal'))
 							->required()
 							->integer()
 							->default(0),

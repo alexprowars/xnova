@@ -27,7 +27,7 @@ class AllianceChatController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CHAT_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$result = [
@@ -41,7 +41,7 @@ class AllianceChatController extends Controller
 		$result['pagination'] = [
 			'total' => $messagesCount,
 			'limit' => 10,
-			'page' => (int) $request->query('p', 1),
+			'page' => (int) $request->query('page', 1),
 		];
 
 		if ($messagesCount > 0) {
@@ -73,13 +73,13 @@ class AllianceChatController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CHAT_ACCESS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$message = $request->post('message');
 
 		if (empty($message)) {
-			throw new Exception('Введите сообщение');
+			throw new Exception(__('alliance.message_required'));
 		}
 
 		AllianceChat::create([
@@ -99,7 +99,7 @@ class AllianceChatController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$type = $request->post('type', 'marked');

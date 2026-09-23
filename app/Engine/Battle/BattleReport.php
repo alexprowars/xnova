@@ -45,7 +45,7 @@ class BattleReport
 
 		$html = '<div class="report">';
 
-		$html .= sprintf('В %s произошёл бой между следующими флотами:', Game::datezone('d.m.Y H:i:s', $this->resultData['date']));
+		$html .= __('fleet_engine.battle.intro', ['date' => Game::datezone('d.m.Y H:i:s', $this->resultData['date'])]);
 		$html .= '<div class="flex row gap-2 justify-center">';
 
 		$checkName = [];
@@ -57,13 +57,13 @@ class BattleReport
 
 			$html .= '<div><table class="table report_user">
 						<tr><td class="c" colspan="3"><div class="text-center negative">' . $info['name'] . '</div></td></tr>
-						<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
-						<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
-						<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
-						<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
-						<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
-						<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-						<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
+						<tr><th>' . __('fleet_engine.battle.technology') . '</th><th>' . __('fleet_engine.battle.level') . '</th><th>%</th></tr>
+						<tr><th>' . __('fleet_engine.battle.weapon') . '</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.shield') . '</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.armor') . '</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.laser') . '</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.ion') . '</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.plasma') . '</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
 
 			$checkName[] = $info['name'];
 		}
@@ -77,13 +77,13 @@ class BattleReport
 
 			$html .= '<div><table class="table report_user">
 						<tr><td class="c" colspan="3"><div class="text-center positive">' . $info['name'] . '</div></td></tr>
-						<tr><th>Технология</th><th>Ур.</th><th>%</th></tr>
-						<tr><th>Оружие</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
-						<tr><th>Щиты</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
-						<tr><th>Броня</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
-						<tr><th>Лазер</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
-						<tr><th>Ион</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
-						<tr><th>Плазма</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
+						<tr><th>' . __('fleet_engine.battle.technology') . '</th><th>' . __('fleet_engine.battle.level') . '</th><th>%</th></tr>
+						<tr><th>' . __('fleet_engine.battle.weapon') . '</th><th>' . $info['tech']['military_tech'] . '</th><th>' . ($info['tech']['military_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.shield') . '</th><th>' . $info['tech']['shield_tech'] . '</th><th>' . ($info['tech']['shield_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.armor') . '</th><th>' . $info['tech']['defence_tech'] . '</th><th>' . ($info['tech']['defence_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.laser') . '</th><th>' . $info['tech']['laser_tech'] . '</th><th>' . ($info['tech']['laser_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.ion') . '</th><th>' . $info['tech']['ionic_tech'] . '</th><th>' . ($info['tech']['ionic_tech'] * 5) . '</th></tr>
+						<tr><th>' . __('fleet_engine.battle.plasma') . '</th><th>' . $info['tech']['buster_tech'] . '</th><th>' . ($info['tech']['buster_tech'] * 5) . '</th></tr></table></div>';
 
 			$checkName[] = $info['name'];
 		}
@@ -93,8 +93,8 @@ class BattleReport
 		foreach ($this->resultData['rounds'] as $round => $data) {
 			if ($data['hits_attacker'] > 0 && $data['hits_defender'] > 0) {
 				$html .= '<div class="text-center">';
-				$html .= sprintf('Атакующий флот делает %s выстрела(ов) с общей мощностью %s по защитнику. Щиты защитника поглощают %s мощности.<br>', Format::number($data['hits_attacker']), Format::number($data['full_strength_attacker']), Format::number($data['absorbed_damage_defender']));
-				$html .= sprintf('Защитный флот делает %s выстрела(ов) с общей мощностью %s по атакующему. Щиты атакующего поглащают %s мощности.', Format::number($data['hits_defender']), Format::number($data['full_strength_defender']), Format::number($data['absorbed_damage_attacker']));
+				$html .= __('fleet_engine.battle.attacker_fire', ['hits' => Format::number($data['hits_attacker']), 'strength' => Format::number($data['full_strength_attacker']), 'absorbed' => Format::number($data['absorbed_damage_defender'])]);
+				$html .= __('fleet_engine.battle.defender_fire', ['hits' => Format::number($data['hits_defender']), 'strength' => Format::number($data['full_strength_defender']), 'absorbed' => Format::number($data['absorbed_damage_attacker'])]);
 				$html .= '</div>';
 			}
 
@@ -102,7 +102,7 @@ class BattleReport
 			$defenders = $data['defenders'];
 
 			if (!count($attackers)) {
-				$html .= '<div class="report_fleet">Атакующий флот уничтожен</div>';
+				$html .= '<div class="report_fleet">' . __('fleet_engine.battle.attacker_fleet_destroyed') . '</div>';
 			}
 
 			$html .= '<div class="flex gap-2">';
@@ -111,14 +111,14 @@ class BattleReport
 				$user = $usersInfo[$fleet_id]['user_id'];
 
 				$html .= '<div class="report_fleet">';
-				$html .= '<div class="mb-2 negative">Атакующий ' . $this->resultData['attackers'][$user]['name'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
+				$html .= '<div class="mb-2 negative">' . __('fleet_engine.battle.attacker') . ' ' . $this->resultData['attackers'][$user]['name'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
 				$html .= '<table class="table">';
 
 				if (array_sum($data2) > 0) {
-					$raport1 = '<tr><th>Тип</th>';
-					$raport2 = '<tr><th>Кол-во</th>';
-					$raport3 = '<tr><th>Атака</th>';
-					$raport4 = '<tr><th>Корпус</th>';
+					$raport1 = '<tr><th>' . __('fleet_engine.battle.type') . '</th>';
+					$raport2 = '<tr><th>' . __('fleet_engine.battle.count') . '</th>';
+					$raport3 = '<tr><th>' . __('fleet_engine.battle.attack') . '</th>';
+					$raport4 = '<tr><th>' . __('fleet_engine.battle.hull') . '</th>';
 
 					foreach ($data2 as $ship_id => $ship_count) {
 						if ($ship_count <= 0) {
@@ -166,7 +166,7 @@ class BattleReport
 
 					$html .= $raport1 . $raport2 . $raport3 . $raport4;
 				} else {
-					$html .= '<br>уничтожен';
+					$html .= '<br>' . __('fleet_engine.battle.destroyed');
 				}
 
 				$html .= '</table>';
@@ -176,7 +176,7 @@ class BattleReport
 			$html .= '</div>';
 
 			if (!count($defenders)) {
-				$html .= '<div class="report_fleet">Защитный флот уничтожен</div>';
+				$html .= '<div class="report_fleet">' . __('fleet_engine.battle.defender_fleet_destroyed') . '</div>';
 			}
 
 			$html .= '<div class="flex gap-2">';
@@ -185,15 +185,15 @@ class BattleReport
 				$user = $usersInfo[$fleet_id]['user_id'];
 
 				$html .= '<div class="report_fleet">';
-				$html .= '<div class="mb-2 positive">Защитник ' . $this->resultData['defenders'][$user]['name'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
+				$html .= '<div class="mb-2 positive">' . __('fleet_engine.battle.defender') . ' ' . $this->resultData['defenders'][$user]['name'] . ' [' . $usersInfo[$fleet_id]['galaxy'] . ':' . $usersInfo[$fleet_id]['system'] . ':' . $usersInfo[$fleet_id]['planet'] . ']</div>';
 
 				$html .= '<table class="table">';
 
 				if (array_sum($data2) > 0) {
-					$raport1 = '<tr><th>Тип</th>';
-					$raport2 = '<tr><th>Кол-во</th>';
-					$raport3 = '<tr><th>Атака</th>';
-					$raport4 = '<tr><th>Корпус</th>';
+					$raport1 = '<tr><th>' . __('fleet_engine.battle.type') . '</th>';
+					$raport2 = '<tr><th>' . __('fleet_engine.battle.count') . '</th>';
+					$raport3 = '<tr><th>' . __('fleet_engine.battle.attack') . '</th>';
+					$raport4 = '<tr><th>' . __('fleet_engine.battle.hull') . '</th>';
 
 					foreach ($data2 as $ship_id => $ship_count) {
 						if ($ship_count <= 0) {
@@ -241,7 +241,7 @@ class BattleReport
 
 					$html .= $raport1 . $raport2 . $raport3 . $raport4;
 				} else {
-					$html .= '<br>уничтожен';
+					$html .= '<br>' . __('fleet_engine.battle.destroyed');
 				}
 
 				$html .= '</table>';
@@ -252,15 +252,15 @@ class BattleReport
 		}
 
 		if ($this->resultData['won'] == 2) {
-			$result1 = 'Обороняющийся выиграл битву!';
+			$result1 = __('fleet_engine.battle.defender_won');
 		} elseif ($this->resultData['won'] == 1) {
-			$result1 = 'Атакующий выиграл битву!';
+			$result1 = __('fleet_engine.battle.attacker_won');
 
 			if (!empty($this->resultData['steal'])) {
-				$result1 .= sprintf('<br>Он получает %s металла, %s кристалла и %s дейтерия', Format::number($this->resultData['steal']['metal']), Format::number($this->resultData['steal']['crystal']), Format::number($this->resultData['steal']['deuterium']));
+				$result1 .= '<br>' . __('fleet_engine.battle.stolen', ['metal' => Format::number($this->resultData['steal']['metal']), 'crystal' => Format::number($this->resultData['steal']['crystal']), 'deuterium' => Format::number($this->resultData['steal']['deuterium'])]);
 			}
 		} else {
-			$result1 = 'Бой закончился ничьёй!';
+			$result1 = __('fleet_engine.battle.draw');
 		}
 
 		$html .= '<div><table class="table report_result text-center"><tr><td class="c">' . $result1 . '</td></tr>';
@@ -268,24 +268,24 @@ class BattleReport
 		$debirs_meta = $this->resultData['debris']['metal'];
 		$debirs_crys = $this->resultData['debris']['crystal'];
 
-		$html .= '<tr><th>' . sprintf('Атакующий потерял %s единиц', Format::number($this->resultData['lost']['attackers'])) . '.</th></tr>';
-		$html .= '<tr><th>' . sprintf('Обороняющийся потерял %s единиц', Format::number($this->resultData['lost']['defenders'])) . '</th></tr>';
+		$html .= '<tr><th>' . __('fleet_engine.battle.attacker_lost_units', ['count' => Format::number($this->resultData['lost']['attackers'])]) . '</th></tr>';
+		$html .= '<tr><th>' . __('fleet_engine.battle.defender_lost_units', ['count' => Format::number($this->resultData['lost']['defenders'])]) . '</th></tr>';
 
 		if ($debirs_meta > 0 || $debirs_crys > 0) {
-			$html .= '<tr><td class="c">' . sprintf('Поле обломков: %s металла и %s кристалла.', Format::number($debirs_meta), Format::number($debirs_crys)) . '</td></tr>';
+			$html .= '<tr><td class="c">' . __('fleet_engine.battle.debris_field', ['metal' => Format::number($debirs_meta), 'crystal' => Format::number($debirs_crys)]) . '</td></tr>';
 		}
 
-		$html .= '<tr><th>' . sprintf('Шанс появления луны составляет %s %%', $this->resultData['moon_probability'] ?? 0) . '<br>';
+		$html .= '<tr><th>' . __('fleet_engine.battle.moon_chance', ['chance' => $this->resultData['moon_probability'] ?? 0]) . '<br>';
 
 		if (!empty($this->resultData['moon'])) {
 			if ($this->resultData['moon'] == 1) {
-				$html .= __('fleet_engine.sys_moonbuilt', [
+				$html .= __('fleet_engine.battle.moon_created', [
 					'galaxy' => $position['galaxy'] ?? '?',
 					'system' => $position['system'] ?? '?',
 					'planet' => $position['planet'] ?? '?',
 				]);
 			} else {
-				$html .= 'Предпринята попытка образования луны, но данные координаты уже заняты другой луной';
+				$html .= __('fleet_engine.battle.moon_occupied');
 			}
 		}
 
@@ -294,7 +294,7 @@ class BattleReport
 
 		if (!empty($this->resultData['repair'])) {
 			foreach ($this->resultData['repair'] as $data2) {
-				$html .= '<div class="report_fleet mb-2"><span class="neutral">Восстановленная оборона:</div>';
+				$html .= '<div class="report_fleet mb-2"><span class="neutral">' . __('fleet_engine.battle.repaired_defense') . '</div>';
 				$html .= '<div class="report_fleet mb-2"><table class="table">';
 
 				$raport1 = '';
@@ -315,7 +315,7 @@ class BattleReport
 			}
 		}
 
-		$html .= '<div class="text-center"><a href="' . $this->convertToSimLink($this->resultData, $this->resultData['attackers'], $this->resultData['defenders']) . '" target="_blank">Симуляция</a></div>';
+		$html .= '<div class="text-center"><a href="' . $this->convertToSimLink($this->resultData, $this->resultData['attackers'], $this->resultData['defenders']) . '" target="_blank">' . __('fleet_engine.battle.simulation') . '</a></div>';
 		$html .= '</div>';
 
 		return $html;

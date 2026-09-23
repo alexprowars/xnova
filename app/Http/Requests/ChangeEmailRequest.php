@@ -18,7 +18,7 @@ class ChangeEmailRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'email.unique' => 'Данный email уже используется в игре.',
+			'email.unique' => __('validation.email_in_use'),
 		];
 	}
 }

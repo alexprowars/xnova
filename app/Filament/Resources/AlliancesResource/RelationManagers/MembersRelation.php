@@ -16,12 +16,12 @@ class MembersRelation extends RelationManager
 
 	public static function getLabel(): ?string
 	{
-		return 'Участники';
+		return __('admin.alliances.members');
 	}
 
 	public static function getModelLabel(): ?string
 	{
-		return 'участник';
+		return __('admin.alliances.member');
 	}
 
 	public function form(Schema $schema): Schema
@@ -30,7 +30,7 @@ class MembersRelation extends RelationManager
 			->columns(1)
 			->schema([
 				Select::make('user_id')
-					->label('Пользователь')
+					->label(__('admin.common.user'))
 					->relationship(name: 'user', titleAttribute: 'username')
 					->searchable()
 					->required(),
@@ -40,36 +40,36 @@ class MembersRelation extends RelationManager
 	public function table(Table $table): Table
 	{
 		return $table
-			->heading('Участники')
+			->heading(__('admin.alliances.members'))
 			->headerActions([
 				CreateAction::make()
 					->icon('lucide-circle-plus')
-					->label('Добавить'),
+					->label(__('admin.alliances.add')),
 			])
 			->recordActions([
 				DeleteAction::make()
 					->iconButton()
-					->modalHeading('Удалить участника из альянса?')
-					->modalDescription('После нажатия кнопки "подтвердить", выбранный вами участник выйдет из альянса'),
+					->modalHeading(__('admin.alliances.remove_member_heading'))
+					->modalDescription(__('admin.alliances.remove_member_description')),
 			])
 			->defaultSort('id', 'desc')
 			->columns([
 				TextColumn::make('user_id')
 					->label('ID'),
 				TextColumn::make('rank')
-					->label('Ранг'),
+					->label(__('admin.alliances.rank')),
 				TextColumn::make('user.username')
-					->label('Пользователь'),
+					->label(__('admin.common.user')),
 				TextColumn::make('user.email')
 					->label('Email'),
 				TextColumn::make('user.galaxy')
-					->label('Галактика'),
+					->label(__('admin.common.galaxy')),
 				TextColumn::make('user.system')
-					->label('Система'),
+					->label(__('admin.common.system')),
 				TextColumn::make('user.planet')
-					->label('Планета'),
+					->label(__('admin.common.planet')),
 				TextColumn::make('created_at')
-					->label('Дата добавления')
+					->label(__('admin.alliances.added_at'))
 					->dateTime(),
 			]);
 	}

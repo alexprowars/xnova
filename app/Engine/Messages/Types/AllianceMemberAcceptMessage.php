@@ -10,6 +10,7 @@ class AllianceMemberAcceptMessage extends AbstractMessage
 
 	public function render(): string
 	{
-		return 'Привет!<br>Альянс <b>' . $this->data['name'] . '</b> принял вас в свои ряды!' . ((!empty($this->data['message'])) ? '<br>Приветствие:<br>' . $this->data['message'] : '');
+		return __('messages.alliance_member_accept', ['name' => $this->data['name']])
+			. (!empty($this->data['message']) ? __('messages.alliance_member_greeting', ['message' => $this->data['message']]) : '');
 	}
 }

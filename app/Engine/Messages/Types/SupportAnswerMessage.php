@@ -10,6 +10,6 @@ class SupportAnswerMessage extends AbstractMessage
 
 	public function render(): string
 	{
-		return '<a href="/support/' . $this->data['ticket_id'] . '" target="_blank">Поступил ответ на тикет №' . $this->data['ticket_id'] . '</a>';
+		return __('messages.support_answer', ['ticket_id' => $this->data['ticket_id']]);
 	}
 }

@@ -11,8 +11,17 @@ class UserResource extends Resource
 	protected static ?string $model = User::class;
 
 	protected static ?int $navigationSort = 10;
-	protected static ?string $modelLabel = 'Пользователь';
-	protected static ?string $pluralModelLabel = 'Пользователи';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.common.user');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.users.users');
+	}
+
 	protected static ?string $recordTitleAttribute = 'username';
 
 	public static function getNavigationIcon(): string
@@ -22,12 +31,12 @@ class UserResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.management');
+		return __('admin.groups.management');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.users');
+		return __('admin.pages.users');
 	}
 
 	public static function canAccess(): bool

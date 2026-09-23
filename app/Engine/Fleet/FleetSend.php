@@ -79,30 +79,32 @@ class FleetSend
 		}
 
 		if ($this->target->getGalaxy() > (int) config('game.maxGalaxyInWorld') || $this->target->getGalaxy() < 1) {
-			throw new Exception('Ошибочная галактика!');
+			throw new Exception(__('fleet.invalid_galaxy'));
 		} elseif ($this->target->getSystem() > (int) config('game.maxSystemInGalaxy') || $this->target->getSystem() < 1) {
-			throw new Exception('Ошибочная система!');
+			throw new Exception(__('fleet.invalid_system'));
 		} elseif ($this->target->getPlanet() > $maxPlanetPosition || $this->target->getPlanet() < 1) {
-			throw new Exception('Ошибочная планета!');
+			throw new Exception(__('fleet.invalid_planet'));
 		} elseif (!in_array($this->target->getType(), PlanetType::cases())) {
-			throw new Exception('Неизвестный тип планеты!');
+			throw new Exception(__('fleet.unknown_planet_type'));
 		}
 
 		if (in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::Spy, MissionType::Destruction]) && config('game.disableAttacks', 0) > 0 && now()->timestamp < config('game.disableAttacks', 0)) {
-			throw new Exception('Посылать флот в атаку временно запрещено.<br>Дата включения атак ' . Game::datezone('d.m.Y H ч. i мин.', config('game.disableAttacks', 0)));
+			throw new Exception(__('fleet.attacks_disabled', [
+				'date' => Game::datezone(__('fleet.attacks_resume_date_format'), config('game.disableAttacks', 0)),
+			]));
 		}
 
 		if (!in_array($this->fleetSpeed, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1])) {
-			throw new Exception('Читеришь со скоростью?');
+			throw new Exception(__('fleet.cheat_speed'));
 		}
 
 		if (empty(array_filter($this->fleetArray))) {
-			throw new Exception('Недостаточно флота для отправки на планете!');
+			throw new Exception(__('fleet.not_enough_ships'));
 		}
 
 		foreach ($this->fleetArray as $ShipId => $count) {
 			if ($count > $this->planet->getLevel($ShipId)) {
-				throw new Exception('Недостаточно флота для отправки на планете!');
+				throw new Exception(__('fleet.not_enough_ships'));
 			}
 		}
 
@@ -115,20 +117,20 @@ class FleetSend
 		}
 
 		if ($maxFleets <= $flyingFleets) {
-			throw new Exception('Все слоты флота заняты. Изучите компьютерную технологию для увеличения кол-ва летящего флота.');
+			throw new Exception(__('fleet.no_free_slots'));
 		}
 
 		if ($this->planet->coordinates->isSame($this->target)) {
-			throw new Exception('Невозможно отправить флот на эту же планету!');
+			throw new Exception(__('fleet.same_planet'));
 		}
 
 		if ($this->mission != MissionType::Expedition) {
 			if (!$this->targetPlanet && $this->mission != MissionType::Colonization && $this->mission != MissionType::CreateBase) {
-				throw new Exception('Данной планеты не существует! - [' . $this->target->getGalaxy() . ':' . $this->target->getSystem() . ':' . $this->target->getPlanet() . ']');
+				throw new Exception(__('fleet.target_planet_not_found', $this->target->toArray()));
 			} elseif ($this->mission == MissionType::Destruction && !$this->targetPlanet) {
-				throw new Exception('Данной планеты не существует! - [' . $this->target->getGalaxy() . ':' . $this->target->getSystem() . ':' . $this->target->getPlanet() . ']');
+				throw new Exception(__('fleet.target_planet_not_found', $this->target->toArray()));
 			} elseif (!$this->targetPlanet && $this->mission == MissionType::Colonization && $this->target->getType() != PlanetType::PLANET) {
-				throw new Exception('Колонизировать можно только планету!');
+				throw new Exception(__('fleet.colonization_planet_only'));
 			}
 		} else {
 			if ($this->planet->user->getTechLevel('expedition') > 0) {
@@ -144,13 +146,13 @@ class FleetSend
 			}
 
 			if (!$this->planet->user->getTechLevel('expedition')) {
-				throw new Exception('Вами не изучена "Экспедиционная технология"!');
+				throw new Exception(__('fleet.expedition_technology_required'));
 			} elseif ($ExpeditionEnCours >= $MaxExpedition) {
-				throw new Exception('Вы уже отправили максимальное количество экспедиций!');
+				throw new Exception(__('fleet.expedition_limit_reached'));
 			}
 
 			if ($this->expeditionTime <= 0 || $this->expeditionTime > (round($this->planet->user->getTechLevel('expedition') / 2) + 1)) {
-				throw new Exception('Вы не можете столько времени летать в экспедиции!');
+				throw new Exception(__('fleet.invalid_expedition_time'));
 			}
 		}
 
@@ -163,11 +165,11 @@ class FleetSend
 		}
 
 		if (!in_array($this->mission, $missions)) {
-			throw new Exception('Выполнение данной миссии невозможно!');
+			throw new Exception(__('fleet.mission_not_possible'));
 		}
 
 		if ($this->mission == MissionType::Recycling && $this->targetPlanet->debris_metal <= 0 && $this->targetPlanet->debris_crystal <= 0) {
-			throw new Exception('Нет обломков для сбора.');
+			throw new Exception(__('fleet.no_debris'));
 		}
 
 		if ($this->targetPlanet) {
@@ -179,18 +181,18 @@ class FleetSend
 					return;
 				}
 
-				throw new Exception('Неизвестная ошибка #FLTNFU' . $this->targetPlanet->user_id);
+				throw new Exception(__('fleet.unknown_target_user', ['user_id' => $this->targetPlanet->user_id]));
 			}
 		} else {
 			$targerUser = $this->planet->user;
 		}
 
 		if (($targerUser->roles->isNotEmpty() && $this->planet->user->roles->isEmpty()) && ($this->mission != MissionType::Stay && $this->mission != MissionType::Transport)) {
-			throw new Exception('На этого игрока запрещено нападать');
+			throw new Exception(__('fleet.player_attack_forbidden'));
 		}
 
 		if ($targerUser->isVacation() && $this->mission != MissionType::Recycling && !$this->planet->user->isAdmin()) {
-			throw new Exception('Игрок в режиме отпуска!');
+			throw new Exception(__('fleet.vacation_pla'));
 		}
 
 		if ($this->planet->user->alliance_id && $targerUser->alliance_id && in_array($this->mission, [MissionType::Attack, MissionType::Assault, MissionType::StayAlly])) {
@@ -201,7 +203,7 @@ class FleetSend
 				->first();
 
 			if (in_array($this->mission, [MissionType::Attack, MissionType::Assault]) && $this->diplomacy && $this->diplomacy->type < 3) {
-				throw new Exception('Заключён мир или перемирие с альянсом атакуемого игрока.');
+				throw new Exception(__('fleet.alliance_peace'));
 			}
 		}
 
@@ -237,30 +239,30 @@ class FleetSend
 					->value('total_points') ?? 0;
 
 				if ($HePoints < $protectionPoints) {
-					throw new Exception('Игрок находится под защитой новичков!');
+					throw new Exception(__('fleet.noob_mess_n'));
 				}
 
 				if ($protectionFactor && $MyPoints > $HePoints * $protectionFactor) {
-					throw new Exception('Этот игрок слишком слабый для вас!');
+					throw new Exception(__('fleet.player_too_weak'));
 				}
 			}
 		}
 
 		if ($this->mission == MissionType::Transport && array_sum($this->resources) < 1) {
-			throw new Exception('Нет сырья для транспорта!');
+			throw new Exception(__('fleet.no_transport_resources'));
 		}
 
 		if ($this->mission != MissionType::Expedition) {
 			if (!$this->targetPlanet && $this->mission->value < 7) {
-				throw new Exception('Планеты не существует!');
+				throw new Exception(__('fleet.planet_does_not_exist'));
 			}
 
 			if ($this->targetPlanet && ($this->mission == MissionType::Colonization || $this->mission == MissionType::CreateBase)) {
-				throw new Exception('Место занято');
+				throw new Exception(__('fleet.position_occupied'));
 			}
 
 			if ($this->targetPlanet && $this->targetPlanet->getLevel('ally_deposit') == 0 && $targerUser->id != $this->planet->user->id && $this->mission == MissionType::StayAlly) {
-				throw new Exception('На планете нет склада альянса!');
+				throw new Exception(__('fleet.alliance_depot_required'));
 			}
 
 			$isOwnPlanet = $this->targetPlanet && $this->targetPlanet->user_id == $this->planet->user_id;
@@ -270,16 +272,16 @@ class FleetSend
 				$isFriends = Friend::hasFriends($this->planet->user, $targerUser);
 
 				if (!$isOwnPlanet && !$isSameAlliance && !$isFriends && (!$this->diplomacy || $this->diplomacy->type != 2)) {
-					throw new Exception('Нельзя охранять вражеские планеты!');
+					throw new Exception(__('fleet.cannot_defend_enemy'));
 				}
 			}
 
 			if ($isOwnPlanet && ($this->mission == MissionType::Attack || $this->mission == MissionType::Assault)) {
-				throw new Exception('Невозможно атаковать самого себя!');
+				throw new Exception(__('fleet.cannot_attack_self'));
 			}
 
 			if ($isOwnPlanet && $this->mission == MissionType::Spy) {
-				throw new Exception('Невозможно шпионить самого себя!');
+				throw new Exception(__('fleet.cannot_spy_self'));
 			}
 		}
 	}
@@ -296,7 +298,7 @@ class FleetSend
 			$this->planet->refreshForUpdate();
 
 			if ($this->planet->trashed() || $this->planet->user_id != $ownerId) {
-				throw new Exception('Планета недоступна для отправки флота!');
+				throw new Exception(__('fleet.origin_planet_unavailable'));
 			}
 
 			$this->planet->setRelation('user', $user);
@@ -412,17 +414,17 @@ class FleetSend
 			($this->planet->deuterium - ($consumption + $totalFleetCons)) >= $TransDeuterium;
 
 		if ($this->planet->deuterium < $consumption) {
-			throw new Exception('Не хватает топлива на полёт! (необходимо еще ' . ($consumption - $this->planet->deuterium) . ')');
+			throw new Exception(__('fleet.not_enough_fuel', ['amount' => $consumption - $this->planet->deuterium]));
 		}
 
 		if (!$hasResources) {
-			throw new Exception(__('fleet.fl_noressources') . Format::number($consumption));
+			throw new Exception(__('fleet.noressources') . Format::number($consumption));
 		}
 
 		$storageNeeded += $totalFleetCons;
 
 		if ($storageNeeded > $fleetStorage) {
-			throw new Exception(__('fleet.fl_nostoragespa') . Format::number($storageNeeded - $fleetStorage));
+			throw new Exception(__('fleet.nostoragespa') . Format::number($storageNeeded - $fleetStorage));
 		}
 
 		if ($this->assault && $fleetGroupTime && !empty($arrr)) {
@@ -438,7 +440,7 @@ class FleetSend
 
 		if ($this->mission == MissionType::Transport && $this->targetPlanet->user_id != $this->planet->user->id) {
 			if ($this->targetPlanet->user->onlinetime->lessThan(now()->subDays(7))) {
-				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" к неактивному игроку.');
+				throw new Exception(__('fleet.transport_inactive_player'));
 			}
 
 			$cnt = LogsTransfer::query()
@@ -448,7 +450,7 @@ class FleetSend
 				->count();
 
 			if ($cnt >= 3) {
-				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще 3х раз в неделю.');
+				throw new Exception(__('fleet.transport_weekly_limit'));
 			}
 
 			$cnt = LogsTransfer::query()
@@ -458,7 +460,7 @@ class FleetSend
 				->count();
 
 			if ($cnt > 0) {
-				throw new Exception('Вы не можете посылать флот с миссией "Транспорт" другому игроку чаще одного раза в день.');
+				throw new Exception(__('fleet.transport_daily_limit'));
 			}
 
 			LogsTransfer::create([
@@ -484,7 +486,7 @@ class FleetSend
 				->first();
 
 			if ($log && $log->amount > 2 && (!$this->diplomacy || $this->diplomacy->type != 3)) {
-				throw new Exception('Баш-контроль. Лимит ваших нападений на планету исчерпан.');
+				throw new Exception(__('fleet.attack_limit_reached'));
 			}
 
 			if ($log) {

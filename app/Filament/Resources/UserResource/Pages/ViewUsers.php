@@ -18,7 +18,7 @@ class ViewUsers extends ViewRecord
 				TextEntry::make('id')
 					->label('ID'),
 				TextEntry::make('username')
-					->label('Юзернэйм'),
+					->label(__('admin.users.username')),
 				TextEntry::make('email')
 					->label('Email'),
 			])

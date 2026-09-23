@@ -1,0 +1,264 @@
+.fi {
+	overflow-y: scroll;
+}
+
+.fi-header-heading {
+	@apply text-xl sm:text-2xl;
+}
+
+.fi-body {
+	@apply bg-gray-100 dark:bg-gray-950;
+}
+
+.fi-main {
+	@apply px-2 md:px-4 lg:px-4 2xl:px-6;
+}
+
+.fi-sidebar-nav {
+	@apply py-6 px-6 bg-white dark:bg-gray-900;
+}
+
+.fi-sidebar-nav-groups {
+	@apply gap-y-4;
+}
+
+.fi-sidebar-group-button, .fi-sidebar-item-button {
+	@apply py-2 px-2;
+}
+
+.fi-sidebar-item-icon, .fi-sidebar-item-grouped-border {
+	@apply h-5 w-5;
+}
+
+.fi-resource-relation-manager {
+	.fi-ta-header {
+		@apply gap-3 p-3 sm:px-4;
+	}
+}
+
+.fi-ta-ctn {
+	.fi-ta-header-toolbar {
+		@apply px-4 2xl:px-6;
+	}
+}
+
+.fi-ta-table {
+	.fi-ta-row:hover {
+		@apply bg-gray-200 dark:bg-white/15;
+	}
+
+	.fi-ta-row.mailhub-unread {
+		@apply bg-sky-50 dark:bg-sky-950/35;
+
+		.fi-ta-col {
+			@apply font-semibold;
+		}
+	}
+
+	.fi-ta-row.mailhub-unread:hover {
+		@apply bg-sky-100 dark:bg-sky-900/45;
+	}
+
+	.fi-ta-row.disabled .fi-ta-col {
+		@apply opacity-50;
+	}
+
+	.fi-ta-toggle {
+		@apply flex;
+	}
+
+	.fi-ta-cell {
+		@apply px-2 2xl:px-2.5 py-2.5 2xl:py-3 sm:first-of-type:ps-3 2xl:first-of-type:ps-3 sm:last-of-type:pe-3 2xl:last-of-type:pe-3;
+	}
+
+	.fi-ta-header-cell {
+		@apply px-2 2xl:px-2.5 py-2.5 2xl:py-3 sm:first-of-type:ps-3 sm:last-of-type:pe-3;
+	}
+
+	.fi-ta-selection-cell > div, .fi-ta-actions-cell > div {
+		@apply px-0 py-0.5;
+	}
+
+	.fi-ta-text, .fi-ta-icon, .fi-ta-toggle, .fi-ta-image, .fi-ta-checkbox, .fi-ta-view, .fi-ta-text-input {
+		@apply px-0 py-0;
+	}
+
+	.fi-ta-text-summary {
+		@apply px-0;
+	}
+}
+
+.fi-ta-filters.advanced-table {
+	@apply grid gap-y-4;
+
+	.fi-ta-filters-header {
+		@apply flex items-center justify-between;
+	}
+}
+
+.fi-ta-header-ctn {
+	@apply top-14 z-10 bg-[#e7f2f2] dark:bg-gray-900;
+}
+
+.fi-sidebar-item {
+	&.fi-active .fi-sidebar-item-btn {
+		@apply bg-gray-200 dark:bg-white/5;
+	}
+
+	.fi-sidebar-item-btn {
+		@apply hover:bg-gray-200 dark:hover:bg-white/5;
+	}
+}
+
+@media (min-width: 64rem) {
+    .fi-body-has-topbar .fi-sidebar {
+        height: calc(100dvh - 3.5rem);
+        top: 3.5rem;
+    }
+}
+
+.fi-topbar {
+	@apply h-14 min-h-14 lg:px-6;
+
+	.fi-topbar-nav-groups {
+		@apply gap-x-2;
+	}
+
+	.fi-topbar-item-btn {
+		@apply px-3 py-2;
+	}
+
+	.fi-topbar-item.fi-active .fi-topbar-item-btn, .fi-topbar-item:hover .fi-topbar-item-btn {
+		@apply bg-gray-100 dark:bg-white/5;
+	}
+
+	.fi-topbar-start {
+		@apply lg:max-xl:me-4;
+	}
+}
+
+.fi-tabs {
+	.fi-tabs-item {
+		@apply hover:bg-gray-100 dark:hover:bg-white/5;
+
+		&.fi-active {
+			@apply bg-gray-100 dark:bg-white/5;
+		}
+	}
+}
+
+.fi-fo-field-wrp > div {
+	@apply gap-y-1.5;
+}
+
+.fi-ta-text-item-label {
+	line-height: inherit;
+}
+
+.fi-page-sub-navigation-sidebar-ctn {
+	@apply w-60;
+}
+
+.fi-section-content .fi-fo-component-ctn {
+	@apply gap-4;
+}
+
+.fi-topbar-group-toggle-icon {
+	display: none;
+}
+
+.fi-sc.fi-sc-has-gap {
+	@apply gap-x-4 gap-y-4;
+}
+
+.fi-section:not(.fi-section-not-contained) {
+	@apply bg-[#f7fafa] dark:bg-gray-900;
+
+	.fi-section-header {
+		@apply bg-[#e7f2f2] dark:bg-gray-900 rounded-t-lg;
+	}
+}
+
+.fi-sc-section.h-full > .fi-section {
+	@apply h-full;
+}
+
+.fi-ta-main {
+	@apply bg-[#f7fafa] dark:bg-gray-900 overflow-clip rounded-xl;
+}
+
+.fi-selected td {
+	@apply bg-primary-400/15 dark:bg-primary-100/15;
+}
+
+.event-result-selected-name {
+	display: none;
+}
+
+.fi-select-input-value-label .event-result-selected-name {
+	display: inline;
+}
+
+.fi-ta-text-item {
+	&.fi-size-sm {
+		@apply leading-[inherit];
+	}
+}
+
+.fi-ta-col-toggle .fi-dropdown-panel > div {
+	@apply py-4 gap-y-3;
+}
+
+.fi, .fi * {
+	scrollbar-color: var(--gray-500) transparent;
+	scrollbar-width: thin;
+}
+
+.fi::-webkit-scrollbar, .fi ::-webkit-scrollbar {
+	height: 10px;
+	width: 10px;
+}
+
+.fi::-webkit-scrollbar-track, .fi ::-webkit-scrollbar-track {
+	background: transparent;
+	border-radius: 9999px;
+}
+
+.fi::-webkit-scrollbar-track:vertical, .fi ::-webkit-scrollbar-track:vertical {
+	margin-block: 4px;
+}
+
+.fi::-webkit-scrollbar-track:horizontal, .fi ::-webkit-scrollbar-track:horizontal {
+	margin-inline: 4px;
+}
+
+.fi::-webkit-scrollbar-thumb, .fi ::-webkit-scrollbar-thumb {
+	background-clip: padding-box;
+	background-color: var(--gray-500);
+	border: 2px solid transparent;
+	border-radius: 9999px;
+}
+
+.fi::-webkit-scrollbar-corner, .fi ::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+.fi-main-sidebar ::-webkit-scrollbar {
+	height: 0;
+}
+
+.fi-wi-stats-overview-stat {
+	@apply h-full;
+}
+
+.fi-ta-col-manager .fi-ta-col-manager-items {
+	@apply -mt-3;
+}
+
+.fi-ta-col-manager-item {
+	@apply pt-3;
+}
+
+.fi-pagination .fi-pagination-overview {
+	display: block;
+}

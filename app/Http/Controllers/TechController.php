@@ -95,7 +95,7 @@ class TechController extends Controller
 	public function info(int $id)
 	{
 		if (!Vars::getName($id)) {
-			throw new Exception('Элемент не существует');
+			throw new Exception(__('main.tech_not_found'));
 		}
 
 		$entity = EntityFactory::get($id, 1, $this->planet);

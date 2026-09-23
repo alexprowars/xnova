@@ -19,17 +19,17 @@ class Settings extends SettingsPage
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.settings');
+		return __('admin.groups.settings');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.settings');
+		return __('admin.pages.settings');
 	}
 
 	public function getTitle(): string
 	{
-		return __('admin.navigation.pages.settings');
+		return __('admin.pages.settings');
 	}
 
 	public static function canAccess(): bool
@@ -43,21 +43,21 @@ class Settings extends SettingsPage
 			->components([
 				Section::make([
 					Textarea::make('globalMessage')
-						->label('Глобальное сообщение'),
+						->label(__('admin.settings.global_message')),
 					TextInput::make('lastSettedGalaxyPos')
-						->label('Галактика')
+						->label(__('admin.common.galaxy'))
 						->integer()
 						->required(),
 					TextInput::make('lastSettedSystemPos')
-						->label('Система')
+						->label(__('admin.common.system'))
 						->integer()
 						->required(),
 					TextInput::make('lastSettedPlanetPos')
-						->label('Планета')
+						->label(__('admin.common.planet'))
 						->integer()
 						->required(),
 				])
-				->heading('Последняя позиция при регистрации')
+				->heading(__('admin.settings.registration_position'))
 
 			])
 			->columns(1);

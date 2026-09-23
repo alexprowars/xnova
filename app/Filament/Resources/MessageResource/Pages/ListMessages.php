@@ -24,29 +24,29 @@ class ListMessages extends ListRecords
 	{
 		return $table
 			->defaultSort('id', 'desc')
-			->emptyStateHeading('Сообщения не найдены')
+			->emptyStateHeading(__('admin.messages.messages_not_found'))
 			->defaultPaginationPageOption(25)
 			->columns([
 				TextColumn::make('id')
 					->label('ID')
 					->sortable(),
 				TextColumn::make('date')
-					->label('Дата')
+					->label(__('admin.common.date'))
 					->dateTime()
 					->sortable(),
 				TextColumn::make('type')
-					->label('Тип')
+					->label(__('admin.common.type'))
 					->sortable(),
 				TextColumn::make('from')
-					->label('От')
+					->label(__('admin.messages.from'))
 					->getStateUsing(fn(Message $record) => $record->from ? $record->from->username_formatted . ' ID:' . $record->from_id : 'SYSTEM')
 					->sortable(),
 				TextColumn::make('user')
-					->label('Кому')
+					->label(__('admin.messages.to'))
 					->getStateUsing(fn(Message $record) => $record->user ? $record->user->username_formatted . ' ID:' . $record->user_id : 'SYSTEM')
 					->sortable(),
 				TextColumn::make('subject')
-					->label('Тема')
+					->label(__('admin.messages.subject'))
 					->html()
 					->getStateUsing(function (Message $record) {
 						if ($message = MessageFactory::get($record->message)) {
@@ -56,7 +56,7 @@ class ListMessages extends ListRecords
 						return null;
 					}),
 				TextColumn::make('message')
-					->label('Текст')
+					->label(__('admin.messages.text'))
 					->html()
 					->sortable()
 					->searchable()
@@ -74,17 +74,17 @@ class ListMessages extends ListRecords
 			])
 			->filters([
 				SelectFilter::make('from_id')
-					->label('От кого')
+					->label(__('admin.messages.sender'))
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email']),
 				SelectFilter::make('user_id')
-					->label('Кому')
+					->label(__('admin.messages.to'))
 					->relationship('user', 'username')
 					->native(false)
 					->searchable(['id', 'username', 'email']),
 				DateFilter::make('time')
-					->label('Дата'),
+					->label(__('admin.common.date')),
 			])
 			->recordActions([
 				EditAction::make()

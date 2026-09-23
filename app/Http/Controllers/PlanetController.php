@@ -24,7 +24,7 @@ class PlanetController extends Controller
 	public function delete(): void
 	{
 		if ($this->user->planet_id == $this->planet->id) {
-			throw new Exception(__('overview.deletemessage_wrong'));
+			throw new Exception(__('main.overview_deletemessage_wrong'));
 		}
 
 		$fleetsQuery = Fleet::query()
@@ -38,7 +38,7 @@ class PlanetController extends Controller
 		}
 
 		if ($fleetsQuery->exists()) {
-			throw new Exception(__('overview.planet_delete_fleet_in_transit'));
+			throw new Exception(__('main.overview_planet_delete_fleet_in_transit'));
 		}
 
 		$destruyed = now()->addDay();
@@ -69,15 +69,15 @@ class PlanetController extends Controller
 		$name = strip_tags(trim($request->post('name', '')));
 
 		if (empty($name)) {
-			throw new Exception(__('overview.planet_rename_prompt'));
+			throw new Exception(__('main.overview_planet_rename_prompt'));
 		}
 
 		if (!preg_match("/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u", $name)) {
-			throw new Exception(__('overview.planet_name_invalid_chars'));
+			throw new Exception(__('main.overview_planet_name_invalid_chars'));
 		}
 
 		if (mb_strlen($name) <= 1 || mb_strlen($name) >= 20) {
-			throw new Exception(__('overview.planet_name_invalid_length'));
+			throw new Exception(__('main.overview_planet_name_invalid_length'));
 		}
 
 		$this->planet->name = $name;
@@ -89,7 +89,7 @@ class PlanetController extends Controller
 	public function image(Request $request)
 	{
 		if ($this->user->credits < 1) {
-			throw new Exception(__('overview.insufficient_credits'));
+			throw new Exception(__('main.overview_insufficient_credits'));
 		}
 
 		$image = (int) $request->post('image', 0);
@@ -102,7 +102,7 @@ class PlanetController extends Controller
 		}
 
 		if ($image <= 0 || $image > $this->planetImages[$type]) {
-			throw new Exception(__('overview.insufficient_cheat_skills'));
+			throw new Exception(__('main.overview_insufficient_cheat_skills'));
 		}
 
 		$this->planet->image = $type . 'planet' . ($image < 10 ? '0' : '') . $image;

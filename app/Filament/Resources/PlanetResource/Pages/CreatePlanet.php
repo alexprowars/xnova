@@ -17,7 +17,11 @@ use Filament\Schemas\Schema;
 class CreatePlanet extends CreateRecord
 {
 	protected static string $resource = PlanetResource::class;
-	protected static ?string $title = 'Создать планету';
+
+	public function getTitle(): string
+	{
+		return __('admin.planets.create_planet');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -27,24 +31,24 @@ class CreatePlanet extends CreateRecord
 				Section::make()
 					->schema([
 						TextInput::make('name')
-							->label('Название')
+							->label(__('admin.common.title'))
 							->maxLength(50)
 							->default(__('main.sys_colo_defaultname')),
 						Select::make('user_id')
-							->label('Игрок')
+							->label(__('admin.common.player'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email']),
 						TextInput::make('galaxy')
-							->label('Галактика')
+							->label(__('admin.common.galaxy'))
 							->integer()
 							->required(),
 						TextInput::make('system')
-							->label('Система')
+							->label(__('admin.common.system'))
 							->required()
 							->integer(),
 						TextInput::make('planet')
-							->label('Планета')
+							->label(__('admin.common.planet'))
 							->integer()
 							->required(),
 					]),
@@ -60,7 +64,7 @@ class CreatePlanet extends CreateRecord
 		);
 
 		if (!$planet) {
-			throw new Exception('Не удалось создать планету');
+			throw new Exception(__('admin.planets.planet_creation_failed'));
 		}
 
 		return $planet;
@@ -68,6 +72,6 @@ class CreatePlanet extends CreateRecord
 
 	protected function getCreatedNotificationTitle(): ?string
 	{
-		return 'Планета создана';
+		return __('admin.planets.planet_created');
 	}
 }

@@ -15,8 +15,17 @@ class ContentResource extends Resource
 	protected static ?string $model = Content::class;
 
 	protected static ?int $navigationSort = 110;
-	protected static ?string $modelLabel = 'Контент';
-	protected static ?string $pluralModelLabel = 'Контент';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.content.content');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.content.content');
+	}
+
 	protected static ?string $recordTitleAttribute = 'title';
 
 	public static function getNavigationIcon(): string
@@ -26,12 +35,12 @@ class ContentResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.content');
+		return __('admin.pages.content');
 	}
 
 	public static function canAccess(): bool
@@ -46,11 +55,11 @@ class ContentResource extends Resource
 				Section::make()
 					->schema([
 						TextInput::make('title')
-							->label('Название'),
+							->label(__('admin.common.title')),
 						TextInput::make('alias')
-							->label('Символьный код'),
+							->label(__('admin.content.slug')),
 						RichEditor::make('html')
-							->label('Контент'),
+							->label(__('admin.content.content')),
 					]),
 			]);
 	}

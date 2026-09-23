@@ -11,27 +11,35 @@ class MissionMissileAttackMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return 'Ракетная атака';
+		return __('fleet_engine.missile.subject');
 	}
 
 	public function render(): string
 	{
 		if (empty($this->data)) {
-			$message = 'Вражеская ракетная атака была отбита ракетами-перехватчиками<br>';
+			$message = __('fleet_engine.missile.intercepted');
 		} else {
-			$message = 'Произведена межпланетная атака (' . $this->data['missiles'] . ' ракет) с ' . $this->data['planet']['name'] . ' ' . Coordinates::fromArray($this->data['planet'])->getLink() . ' ';
-			$message .= 'на планету ' . $this->data['target']['name'] . ' ' . Coordinates::fromArray($this->data['target'])->getLink() . '.<br><br>';
+			$message = __('fleet_engine.missile.launched', [
+				'count' => $this->data['missiles'],
+				'origin_name' => $this->data['planet']['name'],
+				'origin' => Coordinates::fromArray($this->data['planet'])->getLink(),
+				'target_name' => $this->data['target']['name'],
+				'target' => Coordinates::fromArray($this->data['target'])->getLink(),
+			]);
 
 			if ($this->data['missiles_destroyed'] > 0) {
-				$message .= $this->data['missiles_destroyed'] . ' ракеты-перехватчика частично отбили атаку вражеских межпланетных ракет.<br>';
+				$message .= __('fleet_engine.missile.partially_intercepted', ['count' => $this->data['missiles_destroyed']]);
 			}
 
 			foreach ($this->data['destroyed'] as $id => $count) {
-				$message .= __('main.tech.' . $id) . ' (' . $count . ' уничтожено)<br>';
+				$message .= __('fleet_engine.missile.destroyed', [
+					'name' => __('main.tech.' . $id),
+					'count' => $count,
+				]);
 			}
 
 			if (empty($this->data['destroyed'])) {
-				$message .= 'Нет обороны для разрушения!';
+				$message .= __('fleet_engine.missile.no_defense');
 			}
 		}
 

@@ -33,18 +33,17 @@ class ListUsers extends ListRecords
 				TextColumn::make('email')
 					->label('Email'),
 				TextColumn::make('username')
-					->label('Никнейм'),
+					->label(__('admin.users.nickname')),
 				TextColumn::make('galaxy')
-					->label('Г'),
+					->label(__('admin.common.galaxy_short')),
 				TextColumn::make('system')
-					->label('С'),
+					->label(__('admin.common.system_short')),
 				TextColumn::make('planet')
-					->label('П'),
+					->label(__('admin.common.planet_short')),
 				TextColumn::make('ip')
-					->label('IP')
-					->formatStateUsing(fn ($state) => long2ip($state)),
+					->label('IP'),
 				TextColumn::make('created_at')
-					->label('Дата регистрации')
+					->label(__('admin.users.registered_at'))
 					->dateTime(),
 			])
 			->filters([])

@@ -20,7 +20,7 @@ class AllianceMembersController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_WATCH_MEMBERLIST)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$result = [
@@ -71,22 +71,22 @@ class AllianceMembersController extends Controller
 
 			if ($result['status']) {
 				if (strtotime($member->user->onlinetime) + 60 * 10 >= time()) {
-					$item['online'] = '<span class="positive">' . __('alliance.On') . '</span>';
+					$item['online'] = '<span class="positive">' . __('alliance.on') . '</span>';
 				} elseif (strtotime($member->user->onlinetime) + 60 * 20 >= time()) {
 					$item['online'] = '<span class="neutral">' . __('alliance.15_min') . '</span>';
 				} else {
 					$hours = (int) floor((time() - strtotime($member->user->onlinetime)) / 3600);
 
-					$item['online'] = '<span class="negative">' . __('alliance.Off') . ' ' . Format::time($hours * 3600) . '</span>';
+					$item['online'] = '<span class="negative">' . __('alliance.off') . ' ' . Format::time($hours * 3600) . '</span>';
 				}
 			}
 
 			if ($alliance->user_id == $member->user_id) {
-				$item['range'] = empty($alliance->owner_rank) ? 'Основатель' : $alliance->owner_rank;
+				$item['range'] = empty($alliance->owner_rank) ? __('alliance.founder') : $alliance->owner_rank;
 			} elseif ($member->rank !== null && isset($alliance->ranks[$member->rank]['name'])) {
 				$item['range'] = $alliance->ranks[$member->rank]['name'];
 			} else {
-				$item['range'] = __('alliance.Novate');
+				$item['range'] = __('alliance.novate');
 			}
 
 			$result['members'][] = $item;
@@ -118,19 +118,19 @@ class AllianceMembersController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_KICK)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$kick = (int) $request->post('id', 0);
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_KICK) && $kick) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$user = User::findOne($kick);
 
 		if (!$user || $user->alliance_id != $alliance->id || $user->id == $alliance->user_id) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$alliance->deleteMember($user->id);
@@ -141,7 +141,7 @@ class AllianceMembersController extends Controller
 		$alliance = $this->getAlliance();
 
 		if ($alliance->user_id != $this->user->id && !$alliance->canAccess(AllianceAccess::CAN_EDIT_RIGHTS)) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		$id = (int) $request->input('id');
@@ -153,11 +153,11 @@ class AllianceMembersController extends Controller
 		$user = User::find($id);
 
 		if (!$user) {
-			throw new Exception('Игрок не найден');
+			throw new Exception(__('alliance.player_not_found'));
 		}
 
 		if ($user->id == $this->user->id) {
-			throw new Exception(__('alliance.Denied_access'));
+			throw new Exception(__('alliance.denied_access'));
 		}
 
 		if ($user->id == $alliance->user_id) {

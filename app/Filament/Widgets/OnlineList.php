@@ -25,8 +25,8 @@ class OnlineList extends TableWidget
 			->modifyQueryUsing(fn (Builder $query) => $query->where('onlinetime', '>', now()->subMinutes(15)))
 			->defaultPaginationPageOption(10)
 			->defaultSort('ip')
-			->heading('Активные игроки')
-			->emptyStateHeading('Нет активных игроков')
+			->heading(__('admin.dashboard.active_players'))
+			->emptyStateHeading(__('admin.dashboard.no_active_players'))
 			->poll('60s')
 			->searchable()
 			->striped()
@@ -36,16 +36,16 @@ class OnlineList extends TableWidget
 					->icon('heroicon-o-envelope')
 					->url(fn(User $record) => url('messages/write/' . $record->id . '/')),
 				TextColumn::make('username')
-					->label('Логин игрока')
+					->label(__('admin.dashboard.player_username'))
 					->sortable(),
 				TextColumn::make('ip')
 					->label('Ip')
 					->sortable(),
 				TextColumn::make('alliance_name')
-					->label('Альянс')
+					->label(__('admin.common.alliance'))
 					->sortable(),
 				TextColumn::make('onlinetime')
-					->label('Активность')
+					->label(__('admin.common.activity'))
 					->formatStateUsing(fn (User $record) => Format::time((int) $record->onlinetime->diffInSeconds()))
 					->sortable(),
 			]);

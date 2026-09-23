@@ -11,8 +11,17 @@ class FleetResource extends Resource
 	protected static ?string $model = Fleet::class;
 
 	protected static ?int $navigationSort = 80;
-	protected static ?string $modelLabel = 'Флот';
-	protected static ?string $pluralModelLabel = 'Флот';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.fleets.fleet');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.fleets.fleets');
+	}
+
 	protected static ?string $recordTitleAttribute = 'name';
 
 	public static function getNavigationIcon(): string
@@ -22,12 +31,12 @@ class FleetResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.fleets');
+		return __('admin.pages.fleets');
 	}
 
 	public static function canAccess(): bool

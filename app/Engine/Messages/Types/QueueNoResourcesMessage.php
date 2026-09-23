@@ -17,9 +17,11 @@ class QueueNoResourcesMessage extends AbstractMessage
 
 	public function render(): string
 	{
-		$message = 'У вас недостаточно ресурсов чтобы начать строительство здания "' . __('main.tech.' . $this->data['object']) . '"
-		 на планете ' . $this->data['planet']['name'] . ' ' . Coordinates::fromArray($this->data['planet'])->getLink() . '.
-		 <br>Вам необходимо ещё: <br>';
+		$message = __('buildings.queue_no_resources', [
+			'building' => __('main.tech.' . $this->data['object']),
+			'planet' => $this->data['planet']['name'],
+			'coordinates' => Coordinates::fromArray($this->data['planet'])->getLink(),
+		]) . '<br>' . __('buildings.queue_missing_resources') . '<br>';
 
 		if (!empty($this->data['metal'])) {
 			$message .= Format::number($this->data['metal']) . ' ' . __('main.res_plural.metal') . '<br>';

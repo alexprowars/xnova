@@ -12,12 +12,12 @@ class MissionStayMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_qg');
+		return __('fleet_engine.stay.subject');
 	}
 
 	public function render(): string
 	{
-		$message = __('fleet_engine.sys_stat_mess', [
+		$message = __('fleet_engine.stay.arrived', [
 			'target' => Coordinates::fromArray($this->data)->getLink(),
 			'metal' => Format::number($this->data['metal']),
 			'crystal' => Format::number($this->data['crystal']),

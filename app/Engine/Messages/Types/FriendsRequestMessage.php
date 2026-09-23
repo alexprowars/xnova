@@ -10,11 +10,11 @@ class FriendsRequestMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return 'Запрос дружбы';
+		return __('messages.friends_request_subject');
 	}
 
 	public function render(): string
 	{
-		return 'Игрок ' . $this->data['name'] . ' отправил вам запрос на добавление в друзья. <a href="/friends/requests"><< просмотреть >></a>';
+		return __('messages.friends_request', ['name' => $this->data['name']]);
 	}
 }

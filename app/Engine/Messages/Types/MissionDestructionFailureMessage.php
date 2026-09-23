@@ -10,11 +10,11 @@ class MissionDestructionFailureMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_destruc_report');
+		return __('fleet_engine.destruction.report');
 	}
 
 	public function render(): string
 	{
-		return __('fleet_engine.sys_destruc_stop');
+		return __('fleet_engine.destruction.stopped');
 	}
 }

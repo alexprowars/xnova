@@ -14,7 +14,11 @@ use Filament\Schemas\Schema;
 class EditAlliance extends EditRecord
 {
 	protected static string $resource = AlliancesResource::class;
-	protected static ?string $title = 'Редактирование альянса';
+
+	public function getTitle(): string
+	{
+		return __('admin.alliances.edit_alliance');
+	}
 
 	public function form(Schema $schema): Schema
 	{
@@ -23,22 +27,22 @@ class EditAlliance extends EditRecord
 				Section::make()
 					->schema([
 						TextInput::make('name')
-							->label('Имя')
+							->label(__('admin.common.name'))
 							->required(),
 						TextInput::make('tag')
-							->label('Тэг')
+							->label(__('admin.alliances.tag'))
 							->required(),
 						Select::make('user_id')
-							->label('Лидер')
+							->label(__('admin.alliances.leader'))
 							->relationship('user', 'username')
 							->native(false)
 							->searchable(['id', 'username', 'email']),
 						TextInput::make('web')
-							->label('Сайт'),
+							->label(__('admin.alliances.website')),
 						RichEditor::make('description')
-							->label('Описание'),
+							->label(__('admin.alliances.description')),
 						SpatieMediaLibraryFileUpload::make('photo')
-							->label('Логотип'),
+							->label(__('admin.alliances.logo')),
 					]),
 			]);
 	}

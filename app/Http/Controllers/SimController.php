@@ -72,7 +72,7 @@ class SimController extends Controller
 		$log = LogsSimulation::findOne($id);
 
 		if (!$log) {
-			throw new Exception('Лога не существует');
+			throw new Exception(__('main.sim_log_not_found'));
 		}
 
 		$result = $log->data;
@@ -80,7 +80,7 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report();
 		} catch (Throwable $e) {
-			throw new Exception('Ошибка обработки боевого отчета: ' . $e->getMessage());
+			throw new Exception(__('main.sim_report_error', ['error' => $e->getMessage()]));
 		}
 
 		return Inertia::render('Sim/Report', [
@@ -96,7 +96,7 @@ class SimController extends Controller
 		$sim = new Simulation();
 
 		if (empty($r[0]) || empty($r[$sim->getMaxSlots()])) {
-			throw new PageException('Нет данных для симуляции боя');
+			throw new PageException(__('main.sim_no_data'));
 		}
 
 		foreach ($r as $slot) {
@@ -121,7 +121,7 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report();
 		} catch (Throwable $e) {
-			throw new PageException('Ошибка обработки боевого отчета: ' . $e->getMessage());
+			throw new PageException(__('main.sim_report_error', ['error' => $e->getMessage()]));
 		}
 
 		$log = LogsSimulation::create([

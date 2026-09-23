@@ -19,64 +19,64 @@ class ViewPlanet extends ViewRecord
 				TextEntry::make('id')
 					->label('ID'),
 				TextEntry::make('name')
-					->label('Название'),
+					->label(__('admin.common.title')),
 				TextEntry::make('user_id')
-					->label('Игрок'),
-				Fieldset::make('Координаты')
+					->label(__('admin.common.player')),
+				Fieldset::make(__('admin.common.coordinates'))
 					->columns(4)
 					->schema([
 						TextEntry::make('galaxy')
-							->label('Галактика'),
+							->label(__('admin.common.galaxy')),
 						TextEntry::make('system')
-							->label('Система'),
+							->label(__('admin.common.system')),
 						TextEntry::make('planet')
-							->label('Планета'),
+							->label(__('admin.common.planet')),
 						TextEntry::make('planet_type')
-							->label('Тип'),
+							->label(__('admin.common.type')),
 					]),
 				TextEntry::make('last_update')
 					->dateTime()
-					->label('Время обновления'),
+					->label(__('admin.planets.updated_at')),
 				TextEntry::make('last_active')
 					->dateTime()
-					->label('Время активности'),
+					->label(__('admin.planets.activity_time')),
 				TextEntry::make('destroyed_at')
 					->dateTime()
-					->label('Время уничтожения'),
+					->label(__('admin.planets.destroyed_at')),
 				TextEntry::make('merchand')
 					->dateTime()
-					->label('Время покупки ресурсов'),
+					->label(__('admin.planets.resources_purchased_at')),
 				TextEntry::make('image')
-					->label('Картинка'),
+					->label(__('admin.planets.image')),
 				TextEntry::make('diameter')
-					->label('Диаметр'),
+					->label(__('admin.common.diameter')),
 				TextEntry::make('field_current')
-					->label('Кол-во полей'),
+					->label(__('admin.planets.field_count')),
 				TextEntry::make('field_max')
-					->label('Макс кол-во полей'),
+					->label(__('admin.planets.max_field_count')),
 				TextEntry::make('temp_min')
-					->label('Темп. мин.'),
+					->label(__('admin.planets.min_temperature')),
 				TextEntry::make('temp_max')
-					->label('Темп. макс.'),
-				Fieldset::make('Ресурсы')
+					->label(__('admin.planets.max_temperature')),
+				Fieldset::make(__('admin.planets.resources'))
 					->columns(3)
 					->schema([
 						TextEntry::make('metal')
-							->label('Металл')
+							->label(__('admin.planets.metal'))
 							->numeric(4, ',', ' '),
 						TextEntry::make('crystal')
-							->label('Кристалл')
+							->label(__('admin.planets.crystal'))
 							->numeric(4, ',', ' '),
 						TextEntry::make('deuterium')
-							->label('Дейтерий')
+							->label(__('admin.planets.deuterium'))
 							->numeric(4, ',', ' '),
 					]),
-				Fieldset::make('Поле обломков')
+				Fieldset::make(__('admin.planets.debris_field'))
 					->schema([
 						TextEntry::make('debris_metal')
-							->label('Металл'),
+							->label(__('admin.planets.metal')),
 						TextEntry::make('debris_crystal')
-							->label('Кристалл'),
+							->label(__('admin.planets.crystal')),
 					]),
 			])
 			->columns(1);

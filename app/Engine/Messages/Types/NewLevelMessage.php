@@ -11,11 +11,11 @@ class NewLevelMessage extends AbstractMessage
 	public function render(): string
 	{
 		if ($this->data['type'] == 'mine') {
-			return '<a href="/officiers">Получен новый промышленный уровень</a>';
+			return __('messages.new_industrial_level');
 		}
 
 		if ($this->data['type'] == 'raid') {
-			return '<a href="/officiers">Получен новый военный уровень</a>';
+			return __('messages.new_military_level');
 		}
 
 		return '';

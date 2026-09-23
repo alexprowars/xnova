@@ -14,7 +14,7 @@ class ContentController extends Controller
 	public function index(string $slug, Request $request)
 	{
 		if (empty($slug)) {
-			throw new Exception('Страница не найдена!');
+			throw new Exception(__('main.content_page_not_found'));
 		}
 
 		$content = Content::query()
@@ -22,7 +22,7 @@ class ContentController extends Controller
 			->first();
 
 		if (!$content) {
-			throw new Exception('Страница не найдена!');
+			throw new Exception(__('main.content_page_not_found'));
 		}
 
 		$result = [

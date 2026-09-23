@@ -18,7 +18,7 @@ class UserController extends Controller
 			$this->planet->refreshForUpdate();
 
 			if ($this->user->daily_bonus?->isFuture()) {
-				throw new Exception('Вы не можете получить ежедневный бонус в данное время');
+				throw new Exception(__('main.user_daily_bonus_unavailable'));
 			}
 
 			$factor = $this->user->daily_bonus_factor < 50
@@ -48,9 +48,9 @@ class UserController extends Controller
 		});
 
 		if ($this->user->daily_bonus_factor > 1) {
-			toast(ToastType::SUCCESS, 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия, а также 1 кредит.');
+			toast(ToastType::SUCCESS, __('main.user_daily_bonus_with_credit', ['amount' => Format::number($add)]));
 		} else {
-			toast(ToastType::SUCCESS, 'Спасибо за поддержку!<br>Вы получили в качестве бонуса по <b>' . Format::number($add) . '</b> Металла, Кристаллов и Дейтерия.');
+			toast(ToastType::SUCCESS, __('main.user_daily_bonus', ['amount' => Format::number($add)]));
 		}
 	}
 
@@ -63,7 +63,7 @@ class UserController extends Controller
 		}
 
 		if (!$this->user->setSelectedPlanet($planetId)) {
-			throw new Exception('Планета недоступна для выбора');
+			throw new Exception(__('main.user_planet_unavailable'));
 		}
 	}
 }

@@ -11,13 +11,13 @@ class MissionTransportArrivedMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return __('fleet_engine.sys_mess_tower');
+		return __('fleet_engine.transport.subject');
 	}
 
 	public function render(): string
 	{
 		$this->data['target'] = Coordinates::fromArray($this->data['target'])->getLink();
 
-		return __('fleet_engine.sys_tran_mess_owner', $this->data);
+		return __('fleet_engine.transport.arrived', $this->data);
 	}
 }

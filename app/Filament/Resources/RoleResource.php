@@ -32,12 +32,12 @@ class RoleResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.settings');
+		return __('admin.groups.settings');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.roles');
+		return __('admin.pages.roles');
 	}
 
 	public static function getModelLabel(): string
@@ -67,10 +67,10 @@ class RoleResource extends Resource
 				Section::make()
 					->schema([
 						TextInput::make('name')
-							->label(__('admin.roles.form.code'))
+							->label(__('admin.roles.code'))
 							->required(),
 						Select::make('guard_name')
-							->label(__('admin.roles.form.guard'))
+							->label(__('admin.roles.auth_guard'))
 							->options([
 								'web' => 'web',
 								'api' => 'api',
@@ -80,12 +80,12 @@ class RoleResource extends Resource
 						Select::make('permissions')
 							->columnSpanFull()
 							->multiple()
-							->label(__('admin.roles.form.permissions'))
+							->label(__('admin.roles.permissions'))
 							->relationship(
 								name: 'permissions',
 								modifyQueryUsing: fn(Builder $query) => $query->orderBy('name'),
 							)
-							->getOptionLabelFromRecordUsing(fn(Permission $record) => ___('admin.roles.list.' . $record->name, $record->name) . " ({$record->name}, {$record->guard_name})")
+							->getOptionLabelFromRecordUsing(fn(Permission $record) => ___('admin.roles.' . $record->name, $record->name) . " ({$record->name}, {$record->guard_name})")
 							->searchable(['name', 'guard_name'])
 							->preload(),
 					]),
@@ -100,13 +100,13 @@ class RoleResource extends Resource
 					->label('ID')
 					->searchable(),
 				TextColumn::make('name')
-					->label(__('admin.roles.table.code'))
+					->label(__('admin.roles.code'))
 					->searchable(),
 				TextColumn::make('permissions_count')
-					->label(__('admin.roles.table.count'))
+					->label(__('admin.roles.permission_count'))
 					->counts('permissions'),
 				TextColumn::make('guard_name')
-					->label(__('admin.roles.table.guard'))
+					->label(__('admin.roles.guard'))
 					->searchable(),
 			])
 			->recordActions([

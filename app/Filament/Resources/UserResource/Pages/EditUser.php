@@ -31,7 +31,7 @@ class EditUser extends EditRecord
 				Section::make()
 					->schema([
 						TextInput::make('username')
-							->label('Юзернэйм')
+							->label(__('admin.users.username'))
 							->maxLength(50)
 							->required(),
 						TextInput::make('email')
@@ -40,24 +40,24 @@ class EditUser extends EditRecord
 							->email()
 							->required(),
 						TextInput::make('password')
-							->label('Пароль')
+							->label(__('admin.users.password'))
 							->password(),
 						Select::make('race')
-							->label('Раса')
+							->label(__('admin.users.race'))
 							->options(__('main.race')),
 						TextInput::make('credits')
-							->label('Кредиты')
+							->label(__('admin.users.credits'))
 							->integer(),
 						Textarea::make('about')
-							->label('О себе')
+							->label(__('admin.users.about'))
 							->rows(5),
-						Select::make('roles')->label('Роли')
+						Select::make('roles')->label(__('admin.users.roles'))
 							->multiple()
 							->relationship('roles', 'name')
 							->native(false),
 					]),
 				Section::make()
-					->heading('Офицеры')
+					->heading(__('admin.users.officers'))
 					->schema([
 						DateTimePicker::make('officier_geologist')
 							->label(__('main.tech.601')),

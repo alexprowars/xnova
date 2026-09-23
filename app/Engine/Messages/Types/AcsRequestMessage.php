@@ -11,11 +11,17 @@ class AcsRequestMessage extends AbstractMessage
 
 	public function getSubject(): ?string
 	{
-		return 'Флот';
+		return __('messages.acs_request_subject');
 	}
 
 	public function render(): string
 	{
-		return 'Игрок ' . $this->data['user'] . ' приглашает вас произвести совместное нападение на планету ' . $this->data['planet']['name'] . ' ' . Coordinates::fromArray($this->data['planet'])->getLink() . ' игрока ' . $this->data['planet']['user'] . '. Имя ассоциации: ' . $this->data['assault'] . '. Если вы отказываетесь, то просто проигнорируйте данной сообщение.';
+		return __('messages.acs_request', [
+			'user' => $this->data['user'],
+			'planet' => $this->data['planet']['name'],
+			'coordinates' => Coordinates::fromArray($this->data['planet'])->getLink(),
+			'owner' => $this->data['planet']['user'],
+			'assault' => $this->data['assault'],
+		]);
 	}
 }

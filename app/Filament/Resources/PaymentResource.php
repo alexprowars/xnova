@@ -11,8 +11,16 @@ class PaymentResource extends Resource
 	protected static ?string $model = Payment::class;
 
 	protected static ?int $navigationSort = 40;
-	protected static ?string $modelLabel = 'Транзакции';
-	protected static ?string $pluralModelLabel = 'Транзакции';
+
+	public static function getModelLabel(): string
+	{
+		return __('admin.payments.transaction');
+	}
+
+	public static function getPluralModelLabel(): string
+	{
+		return __('admin.payments.transactions');
+	}
 
 	public static function getNavigationIcon(): string
 	{
@@ -21,12 +29,12 @@ class PaymentResource extends Resource
 
 	public static function getNavigationGroup(): string
 	{
-		return __('admin.navigation.groups.game');
+		return __('admin.groups.game');
 	}
 
 	public static function getNavigationLabel(): string
 	{
-		return __('admin.navigation.pages.payments');
+		return __('admin.pages.payments');
 	}
 
 	public static function canAccess(): bool

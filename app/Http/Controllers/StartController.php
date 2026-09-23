@@ -44,7 +44,7 @@ class StartController extends Controller
 			->exists();
 
 		if ($existUser) {
-			throw ValidationException::withMessages(['name' => __('reg.error_userexist')]);
+			throw ValidationException::withMessages(['name' => __('main.reg_error_userexist')]);
 		}
 
 		[$sex, $avatar] = explode('_', $data['avatar']);

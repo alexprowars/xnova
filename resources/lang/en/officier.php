@@ -1,7 +1,9 @@
 <?php
 
 return [
-	'NoPoints' => 'You do not have enough credits!',
+	'no_points' => 'You do not have enough credits!',
+	'invalid_parameters' => 'Invalid input parameters',
+	'invalid_item' => 'Invalid item selected',
 	'OffiRecrute' => 'Officer recruited!',
 	'off_points' => 'Available credits: ',
 	'Officier' => 'Officer',
