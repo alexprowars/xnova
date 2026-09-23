@@ -9,7 +9,7 @@
 <script setup>
 	import BuildQueueRow from './BuildQueueRow.vue';
 	import { computed, onBeforeUnmount, watch } from 'vue';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import dayjs from 'dayjs';
 	import { router } from '@inertiajs/vue3';
 
@@ -20,7 +20,7 @@
 		},
 	});
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const endTime = computed(() => {
 		return props.queue.length ? dayjs(props.queue[0].date).diff(now.value) / 1000 : 0
 	});

@@ -580,6 +580,7 @@
 			"toolbar_smilies": "Смайлы",
 			"button_clear": "Очистить",
 			"button_send": "Отправить",
+			"send_error": "Не удалось отправить сообщение. Повторите попытку.",
 			"message_placeholder": "Сообщение…",
 			"empty_state": "Пока нет сообщений"
 		},
@@ -851,6 +852,10 @@
 			"no_movement": "На этой планете нет движения флотов.",
 			"dir_outbound": "летит",
 			"dir_inbound": "возвращается",
+			"origin_moon": "луны",
+			"origin_planet": "планеты",
+			"target_moon": "луну",
+			"target_planet": "планету",
 			"fleet_row": "Игрок ({fleet}) с {type1} {planetName}{pos1} {direction} на {type2} {targetName}{pos2}. Задание: {mission}"
 		},
 		"overview": {

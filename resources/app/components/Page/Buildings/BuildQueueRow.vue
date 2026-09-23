@@ -41,7 +41,7 @@
 
 <script setup>
 	import dayjs from 'dayjs';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import { computed } from 'vue';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
@@ -53,7 +53,7 @@
 	});
 
 	const { t } = useI18n();
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const time = computed(() => dayjs(props.item['date']).diff(now.value) / 1000);
 
 	function remove () {

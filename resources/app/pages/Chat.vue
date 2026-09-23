@@ -66,7 +66,7 @@
 				<button
 					type="submit"
 					class="page-chat-send button"
-					:disabled="!message.trim()"
+					:disabled="sending || !message.trim()"
 					:title="$t('pages.chat.button_send')"
 					:aria-label="$t('pages.chat.button_send')"
 				>
@@ -90,6 +90,7 @@
 	import ChatMessage from '~/components/Page/Chat/ChatMessage.vue';
 	import { Head } from '@inertiajs/vue3';
 	import Popover from '~/components/Popover.vue';
+	import { useErrorNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
 
@@ -107,6 +108,7 @@
 	const textRef = ref(null);
 	const smilesList = ref(parser.patterns.smiles);
 	const message = ref('');
+	const sending = ref(false);
 	const { messages } = chatStore;
 
 	onMounted(() => {
@@ -161,12 +163,26 @@
 		chatStore.clear();
 	}
 
-	function sendMessage () {
-		if (!message.value.trim()) {
+	async function sendMessage () {
+		if (sending.value || !message.value.trim()) {
 			return;
 		}
 
-		chatStore.sendMessage(message.value);
-		message.value = '';
+		const submittedMessage = message.value;
+		sending.value = true;
+
+		try {
+			if (await chatStore.sendMessage(submittedMessage)) {
+				if (message.value === submittedMessage) {
+					message.value = '';
+				}
+			} else {
+				useErrorNotification(t('pages.chat.send_error'));
+			}
+		} catch (error) {
+			useErrorNotification(t('pages.chat.send_error'));
+		} finally {
+			sending.value = false;
+		}
 	}
 </script>

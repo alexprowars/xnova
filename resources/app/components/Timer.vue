@@ -4,7 +4,7 @@
 
 <script setup>
 	import dayjs from 'dayjs';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import { computed } from 'vue';
 
 	const props = defineProps({
@@ -18,6 +18,6 @@
 		}
 	});
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const time = computed(() => dayjs(props.value).diff(now.value) / 1000);
 </script>

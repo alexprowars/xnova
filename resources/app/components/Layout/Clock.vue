@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 </script>

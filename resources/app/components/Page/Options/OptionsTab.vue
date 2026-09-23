@@ -121,8 +121,8 @@
 					<div class="options-row">
 						<label for="options-timezone" class="options-label">{{ $t('pages.options.timezone') }}</label>
 						<div class="options-control">
-							<select id="options-timezone" name="timezone" v-model="user.options['timezone']">
-								<option :value="null">{{ $t('pages.options.timezone_system') }}</option>
+							<select id="options-timezone" name="timezone" v-model="timezone">
+								<option value="">{{ $t('pages.options.timezone_system') }}</option>
 								<option v-for="i in timezones" :key="i" :value="i">{{ i > 0 ? '+' + i : i }}</option>
 							</select>
 						</div>
@@ -237,6 +237,13 @@
 		{ id: 'vacation', label: t('pages.options.vacation_delete_tab') },
 		{ id: 'auth', label: t('pages.options.auth_points') },
 	]);
+
+	const timezone = computed({
+		get: () => user.value.options.timezone ?? '',
+		set: (value) => {
+			user.value.options.timezone = value === '' ? null : value;
+		},
+	});
 
 	const timezones = ref([]);
 

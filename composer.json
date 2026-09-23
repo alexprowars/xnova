@@ -37,6 +37,7 @@
         "socialiteproviders/vkid": "^5.1",
         "spatie/laravel-medialibrary": "^11.12",
         "spatie/laravel-permission": "^7.2",
+        "stijnvanouplines/blade-country-flags": "^1.0",
         "technikermathe/blade-lucide-icons": "^3.102"
     },
     "require-dev": {

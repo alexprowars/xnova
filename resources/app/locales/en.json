@@ -576,6 +576,7 @@
 			"toolbar_smilies": "Smilies",
 			"button_clear": "Clear",
 			"button_send": "Send",
+			"send_error": "Could not send the message. Please try again.",
 			"message_placeholder": "Message…",
 			"empty_state": "No messages yet"
 		},
@@ -847,6 +848,10 @@
 			"no_movement": "There is no fleet movement on this planet.",
 			"dir_outbound": "is heading",
 			"dir_inbound": "is returning",
+			"origin_moon": "the moon",
+			"origin_planet": "the planet",
+			"target_moon": "the moon",
+			"target_planet": "the planet",
 			"fleet_row": "Player ({fleet}) from {type1} {planetName}{pos1} {direction} to {type2} {targetName}{pos2}. Mission: {mission}"
 		},
 		"overview": {

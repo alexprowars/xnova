@@ -36,7 +36,7 @@
 
 <script setup>
 	import { computed } from 'vue';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import dayjs from 'dayjs';
 
 	const props = defineProps({
@@ -46,7 +46,7 @@
 		}
 	});
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const items = computed(() => props.queue.flatMap((item) => {
 		const remainingTime = Math.ceil(dayjs(item.date).diff(now.value) / 1000);
 

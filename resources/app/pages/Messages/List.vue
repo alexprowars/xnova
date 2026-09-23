@@ -86,7 +86,7 @@
 
 	watch([category, limit], () => {
 		deleteItems.value = [];
-		router.get(usePage().url, { category: category.value, limit: limit.value });
+		router.get(usePage().url, { category: category.value, limit: limit.value, page: 1 });
 	});
 
 	function deleteMessages() {

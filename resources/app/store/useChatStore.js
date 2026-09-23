@@ -74,7 +74,10 @@ export default function useChatStore () {
 			message = message.replace('\'', '`');
 		}
 
-		await useHttp({ message }).post('/chat');
+		const form = useHttp({ message });
+		await form.post('/chat');
+
+		return !form.hasErrors;
 	}
 
 	async function loadMessages () {

@@ -220,7 +220,7 @@
 	import useState from '~/composables/useState.js';
 	import { computed, onMounted, ref, watch } from 'vue';
 	import dayjs from 'dayjs';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import { Link, useForm } from '@inertiajs/vue3';
 	import { getConsumption, getDistance, getDuration, getSpeed, getStorage } from '~/utils/fleet.js';
 	import { startLoading, stopLoading } from '~/composables/useLoading.js';
@@ -244,7 +244,7 @@
 	const mission = ref(props.page.mission);
 	const moon = ref();
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const target_time = computed(() => now.value.getTime() + (duration.value * 1000));
 
 	const alliance = ref(0);

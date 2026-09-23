@@ -211,8 +211,8 @@ test('transport failures roll back ships and do not create transfer logs', funct
 })->with([
 	'empty cargo' => [[], 100000, 'Нет сырья для транспорта!'],
 	'no fuel' => [['metal' => 100], 0, 'Не хватает топлива на полёт!'],
-	'not enough metal' => [['metal' => 100001], 100000, fn() => __('fleet.fl_noressources')],
-	'cargo leaves no room for fuel' => [['metal' => 5000], 100000, fn() => __('fleet.fl_nostoragespa')],
+	'not enough metal' => [['metal' => 100001], 100000, fn() => __('fleet.noressources')],
+	'cargo leaves no room for fuel' => [['metal' => 5000], 100000, fn() => __('fleet.nostoragespa')],
 ]);
 
 test('recycling requires a nonempty debris field', function () {

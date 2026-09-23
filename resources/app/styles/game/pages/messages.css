@@ -341,7 +341,7 @@
 		justify-content: center;
 	}
 
-	.messages-pagination .pagination a {
+	.messages-pagination .pagination button, .messages-pagination .pagination [data-type=ellipsis] {
 		min-width: 30px;
 		height: 30px;
 		padding: 4px 9px;
@@ -352,7 +352,7 @@
 		font-size: 12px;
 	}
 
-	.messages-pagination .pagination a:hover, .messages-pagination .pagination .active a {
+	.messages-pagination .pagination button:hover, .messages-pagination .pagination .active button {
 		border-color: var(--ui-border-hover-color);
 		background: var(--ui-button-hover-background);
 		color: var(--text-color);

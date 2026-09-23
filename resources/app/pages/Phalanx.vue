@@ -25,7 +25,7 @@
 						<template #fleet>
 							<span v-html="item['fleet']"></span>
 						</template>
-						<template #type1>{{ item['type_1'] }}</template>
+						<template #type1>{{ $t('pages.phalanx.origin_' + item['type_1']) }}</template>
 						<template #planetName>{{ item['planet_name'] }}</template>
 						<template #pos1>
 							<span class="phalanx-coordinates"> [<span v-html="item['planet_position']"></span>]</span>
@@ -33,7 +33,7 @@
 						<template #direction>
 							{{ item['direction'] === 1 ? $t('pages.phalanx.dir_outbound') : $t('pages.phalanx.dir_inbound') }}
 						</template>
-						<template #type2>{{ item['type_2'] }}</template>
+						<template #type2>{{ $t('pages.phalanx.target_' + item['type_2']) }}</template>
 						<template #targetName>{{ item['target_name'] }}</template>
 						<template #pos2>
 							<span class="phalanx-coordinates"> [<span v-html="item['target_position']"></span>]</span>
@@ -51,7 +51,7 @@
 <script setup>
 	import { UiCount, UiEmptyState, UiHeading, UiPanel } from '~/components/UI';
 	import RadarIcon from '~/images/icons/radar.svg?component';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import dayjs from 'dayjs';
 	import { Head } from '@inertiajs/vue3';
 	import App from '~/App.vue';
@@ -65,5 +65,5 @@
 		page: Object,
 	});
 
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 </script>

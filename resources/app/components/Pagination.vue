@@ -1,53 +1,41 @@
-=<template>
-	<nav>
-		<ul class="pagination">
-			<li v-for="item in items" :class="{active: options['page'] === item}">
-				<a v-if="item > 0" href @click.prevent="load(item)">{{ item }}</a>
-				<a v-else href @click.prevent="load(item)">...</a>
+<template>
+	<PaginationRoot
+		:page="options.page"
+		:total="options.total"
+		:items-per-page="options.limit"
+		:sibling-count="3"
+		show-edges
+		aria-label="Пагинация"
+		@update:page="load"
+	>
+		<PaginationList v-slot="{ items }" as="ul" class="pagination">
+			<li v-for="(item, index) in items" :key="item.type === 'page' ? item.value : 'ellipsis-' + index" :class="{ active: options.page === item.value }">
+				<PaginationListItem v-if="item.type === 'page'" :value="item.value" :aria-label="'Страница ' + item.value">
+					{{ item.value }}
+				</PaginationListItem>
+				<PaginationEllipsis v-else as="span" aria-hidden="true">...</PaginationEllipsis>
 			</li>
-		</ul>
-	</nav>
+		</PaginationList>
+	</PaginationRoot>
 </template>
 
 <script setup>
-	import { computed } from 'vue';
 	import { router, usePage } from '@inertiajs/vue3';
+	import { PaginationEllipsis, PaginationList, PaginationListItem, PaginationRoot } from 'reka-ui';
 
-	const props = defineProps({
+	defineProps({
 		options: {
-			type: Object
+			type: Object,
+			required: true,
 		}
 	});
 
-	const pages = computed(() => {
-		return Math.ceil(props.options['total'] / props.options['limit']);
-	});
-
-	const items = computed(() => {
-		let end = false;
-		let arr = [];
-
-		for (let i = 1; i <= pages.value; i++) {
-			if ((props.options['page'] <= i + 3 && props.options['page'] >= i - 3) || i === 1 || i === pages.value || pages.value <= 6) {
-				end = false;
-
-				arr.push(i);
-			} else {
-				if (end === false) {
-					arr.push(0);
-				}
-
-				end = true;
-			}
-		}
-
-		return arr;
-	});
+	const inertiaPage = usePage();
 
 	function load (page) {
 		const params = new URLSearchParams(window.location.search);
-		params.append('page', page);
+		params.set('page', page);
 
-		router.get(usePage().url, Object.fromEntries(params));
+		router.get(inertiaPage.url, Object.fromEntries(params));
 	}
 </script>

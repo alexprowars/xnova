@@ -4,10 +4,11 @@ export function isSSR () {
 	return typeof window === 'undefined';
 }
 
-export async function changePlanet(id) {
+export function changePlanet(id, options = {}) {
 	useForm({ id }).post('/user/planet', {
 		preserveScroll: true,
 		preserveUrl: true,
+		...options,
 	});
 }
 

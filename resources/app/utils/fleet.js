@@ -31,7 +31,7 @@ export function getConsumption (params) {
 		return sum + (item['consumption'] * item['count']) * params.distance / 35000 * ((speed / 10) + 1) * ((speed / 10) + 1)
 	}, 0)
 
-	return Math.round(consumption) + 1
+	return Math.max(Math.round(consumption), 1)
 }
 
 export function getDuration (params) {

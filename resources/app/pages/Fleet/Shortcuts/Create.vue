@@ -4,7 +4,7 @@
 		<div class="block">
 			<div class="title">{{ $t('pages.fleets.shortcut.create.heading') }}</div>
 			<div class="content">
-				<form method="post" class="fleet-shortcut-form" @submit.prevent="send">
+				<form method="post" class="fleet-shortcut-form" @submit.prevent="send" @reset.prevent="form.resetAndClearErrors()">
 					<div class="fleet-shortcut-fields">
 						<label class="fleet-field fleet-shortcut-name">
 							<span>{{ $t('pages.fleets.shortcut.form.title_name') }}</span>

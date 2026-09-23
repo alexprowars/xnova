@@ -30,7 +30,7 @@
 				<button
 					type="submit"
 					class="mini-chat-send button icon-button"
-					:disabled="!message.trim()"
+					:disabled="sending || !message.trim()"
 					:title="$t('pages.chat.button_send')"
 					:aria-label="$t('pages.chat.button_send')"
 				>
@@ -47,6 +47,7 @@
 	import { onBeforeUnmount, onMounted, ref, watch, inject } from 'vue';
 	import ChatMessage from './Page/Chat/ChatMessage.vue';
 	import { isMobile } from '~/utils/helpers.js';
+	import { useErrorNotification } from '~/composables/useToast.js';
 
 	const { t } = useI18n();
 
@@ -62,6 +63,7 @@
 	const mobile = ref(isMobile() || !props.visible);
 	const active = ref(localStorage?.getItem('mini-chat-active') === 'Y');
 	const message = ref('');
+	const sending = ref(false);
 
 	const textRef = ref(null);
 	const chatRef = ref(null);
@@ -124,13 +126,27 @@
 		message.value = t('chat_recipient.private') + ' [' + user + '] ' + message.value;
 	}
 
-	function sendMessage () {
-		if (!message.value.trim()) {
+	async function sendMessage () {
+		if (sending.value || !message.value.trim()) {
 			return;
 		}
 
-		chatStore.sendMessage(message.value);
-		message.value = '';
+		const submittedMessage = message.value;
+		sending.value = true;
+
+		try {
+			if (await chatStore.sendMessage(submittedMessage)) {
+				if (message.value === submittedMessage) {
+					message.value = '';
+				}
+			} else {
+				useErrorNotification(t('pages.chat.send_error'));
+			}
+		} catch (error) {
+			useErrorNotification(t('pages.chat.send_error'));
+		} finally {
+			sending.value = false;
+		}
 	}
 
 	function onResize () {

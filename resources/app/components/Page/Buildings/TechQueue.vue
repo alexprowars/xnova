@@ -10,7 +10,7 @@
 <script setup>
 	import { computed } from 'vue';
 	import dayjs from 'dayjs';
-	import { useNow } from '@vueuse/core';
+	import { useUpdateInterval } from '~/composables/useUpdateInterval.js';
 	import { useI18n } from 'vue-i18n';
 	import { openConfirmModal } from '~/composables/useModals.js';
 	import { router, useForm } from '@inertiajs/vue3';
@@ -20,7 +20,7 @@
 	});
 
 	const { t } = useI18n();
-	const now = useNow({ interval: 1000 });
+	const now = useUpdateInterval();
 	const time = computed(() => dayjs(props.build['date']).diff(dayjs(now.value).utc()) / 1000);
 
 	function cancelAction () {

@@ -360,12 +360,34 @@
 	}
 
 	.application {
+		position: relative;
+		isolation: isolate;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		min-height: 100dvh;
-		background: radial-gradient(ellipse at 65% 0, color-mix(in srgb, var(--ui-page-glow-color) 43.92%, transparent), transparent 60%), linear-gradient(color-mix(in srgb, var(--page-background) 85.88%, transparent), color-mix(in srgb, var(--page-background) 96.08%, transparent)), url('~/images/background_1.jpg') center top / cover fixed;
+		background: var(--page-background);
 		align-items: center;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			pointer-events: none;
+			background: radial-gradient(ellipse at 65% 0, color-mix(in srgb, var(--ui-page-glow-color) 43.92%, transparent), transparent 60%), linear-gradient(color-mix(in srgb, var(--page-background) 85.88%, transparent), color-mix(in srgb, var(--page-background) 96.08%, transparent));
+		}
+
+		@media (min-width: 768px) {
+			&::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -2;
+				pointer-events: none;
+				background: url('~/images/background_1.jpg') center top / cover no-repeat;
+			}
+		}
 	}
 
 	.separator {
@@ -1037,13 +1059,17 @@
 	.pagination {
 		@apply inline-flex text-sm px-0 -space-x-px;
 
-		a {
+		button {
+			cursor: pointer;
+		}
+
+		button, [data-type=ellipsis] {
 			@apply flex items-center justify-center px-5 h-12 text-lg leading-tight border;
 			background: var(--ui-panel-heading-background);
 			border-color: var(--ui-border-color);
 			color: var(--ui-muted-color);
 
-			&:hover {
+			&:is(button):hover, &[data-selected] {
 				background: var(--ui-active-background);
 				color: var(--text-color);
 			}

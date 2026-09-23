@@ -346,9 +346,9 @@
 		return result;
 	});
 
-	async function toPlanet(id) {
-		await changePlanetFn(id);
-
-		router.visit('/overview');
+	function toPlanet(id) {
+		changePlanetFn(id, {
+			onSuccess: () => router.visit('/overview'),
+		});
 	}
 </script>

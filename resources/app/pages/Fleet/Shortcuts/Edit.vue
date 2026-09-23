@@ -4,7 +4,7 @@
 		<div class="block">
 			<div class="title">{{ page['name'] }} [{{ page['galaxy'] }}:{{ page['system'] }}:{{ page['planet'] }}]</div>
 			<div class="content">
-				<form method="post" class="fleet-shortcut-form" @submit.prevent="update">
+				<form method="post" class="fleet-shortcut-form" @submit.prevent="update" @reset.prevent="form.resetAndClearErrors()">
 					<div class="fleet-shortcut-fields">
 						<label class="fleet-field fleet-shortcut-name">
 							<span>{{ $t('pages.fleets.shortcut.form.title_name') }}</span>

@@ -193,6 +193,12 @@
 	}
 }
 
+.im-modal-wrapper {
+	max-width: 600px;
+	margin: 40px auto;
+	@apply xl:min-w-100;
+}
+
 .im-modal-content {
 	vertical-align: middle;
 	text-align: left;
@@ -201,9 +207,6 @@
 	padding: 6px;
 	border: 1px solid var(--border-color);
 	border-radius: 8px;
-	max-width: 600px;
-	margin: 40px auto;
-	@apply xl:min-w-100;
 
 	.im-close-button {
 		cursor: pointer;

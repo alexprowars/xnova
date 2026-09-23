@@ -40,12 +40,12 @@
 	import useState from '~/composables/useState.js';
 	import PanelResource from './PlanetPanelResource.vue';
 	import PlanetPanelEnergy from './PlanetPanelEnergy.vue';
-	import { computed, ref } from 'vue';
+	import { computed } from 'vue';
 	import { Link } from '@inertiajs/vue3';
 	import Popper from '~/components/Popper.vue';
 	import { useIntervalFn } from '@vueuse/shared';
 
-	const updated = ref(0);
+	let updated = Date.now();
 
 	const state = useState();
 	const user = computed(() => state.user);
@@ -58,17 +58,14 @@
 	}
 
 	function update () {
-		if (updated.value === 0) {
-			updated.value = (new Date).getTime();
-		}
-
-		let factor = ((new Date).getTime() - updated.value) / 1000;
+		const now = Date.now();
+		const factor = (now - updated) / 1000;
 
 		if (factor < 0) {
 			return;
 		}
 
-		updated.value = (new Date).getTime();
+		updated = now;
 
 		['metal', 'crystal', 'deuterium']
 			.filter(res => typeof planet.value['resources'][res] !== 'undefined')
