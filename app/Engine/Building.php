@@ -31,9 +31,9 @@ class Building
 		return true;
 	}
 
-	public static function checkLabInQueue(Planet $planet): bool
+	public static function checkLabInQueue(Planet $planet, ?QueueManager $queue = null): bool
 	{
-		$BuildQueue = (new QueueManager($planet))
+		$BuildQueue = ($queue ?? new QueueManager($planet))
 			->get(QueueType::BUILDING);
 
 		if ($BuildQueue->isNotEmpty()) {

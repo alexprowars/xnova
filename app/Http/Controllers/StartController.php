@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\Vars;
 use App\Models;
+use App\Services\OfficierService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -57,7 +58,7 @@ class StartController extends Controller
 		$this->user->daily_bonus = now()->addDay();
 
 		foreach (Vars::getOfficiers() as $code) {
-			$this->user->setAttribute('officier_' . $code, now()->addDays(7));
+			OfficierService::activate($this->user, $code, 7 * 86400);
 		}
 
 		$this->user->update();

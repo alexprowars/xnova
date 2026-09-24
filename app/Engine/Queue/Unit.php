@@ -17,22 +17,22 @@ class Unit
 	{
 	}
 
-	public function add(BaseObject $element, int $count): void
+	public function add(BaseObject $element, int $count): ?Models\Queue
 	{
 		$planet = $this->queue->getPlanet();
 
-		$planet->getConnection()
-			->transaction(function () use ($planet, $element, $count) {
+		return $planet->getConnection()
+			->transaction(function () use ($planet, $element, $count): ?Models\Queue {
 				$planet->refreshForUpdate();
 				$planet->getProduction()->reset();
 
 				$this->queue->loadQueue();
 
-				$this->addLocked($element, $count);
+				return $this->addLocked($element, $count);
 			});
 	}
 
-	protected function addLocked(BaseObject $element, int $count): void
+	protected function addLocked(BaseObject $element, int $count): ?Models\Queue
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
@@ -40,7 +40,7 @@ class Unit
 		$entity = EntityFactory::get($element->getId(), 1, $planet);
 
 		if (!$entity->isAvailable() || (!($entity instanceof Entity\Ship) && !($entity instanceof Entity\Defence))) {
-			return;
+			return null;
 		}
 
 		$buildItems = $this->queue->get(QueueType::SHIPYARD);
@@ -85,13 +85,13 @@ class Unit
 		}
 
 		if (!$count) {
-			return;
+			return null;
 		}
 
 		$count = min($count, $entity->getMaxConstructible());
 
 		if ($count <= 0) {
-			return;
+			return null;
 		}
 
 		$cost = $entity->getPrice();
@@ -103,7 +103,7 @@ class Unit
 
 		$buildTime = $entity->getTime();
 
-		Models\Queue::create([
+		$item = Models\Queue::create([
 			'type' => QueueType::SHIPYARD,
 			'operation' => QueueConstructionType::BUILDING,
 			'user_id' => $user->id,
@@ -131,5 +131,7 @@ class Unit
 				'amount' 			=> $count
 			]);
 		}
+
+		return $this->queue->get()->firstWhere('id', $item->id);
 	}
 }

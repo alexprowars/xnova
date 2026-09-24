@@ -863,7 +863,7 @@
 			"planet_rename_hint": "Editing a planet",
 			"planet_rename_action": "change",
 			"resources_notify": "One of the mines is offline. Go to the \"{link}\" menu and restore production.",
-			"newbie_mode_notify": "<span class=\"positive\">Newbie Boost mode is active.</span><br>The mode will be deactivated after reaching 1000 points.",
+			"newbie_protection_notify": "<span class=\"positive\">New player protection is active.</span><br>Protection ends after reaching {points} points.",
 			"officier_active_until": "Hired until",
 			"officier_noactive": "Not hired",
 			"diameter": "Diameter",

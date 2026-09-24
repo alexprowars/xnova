@@ -23,7 +23,7 @@
 						</template>
 					</i18n-t>
 				</div>
-				<div v-if="user.protection" class="overview-notice" v-html="$t('pages.overview.newbie_mode_notify')"></div>
+				<div v-if="user.protection" class="overview-notice" v-html="$t('pages.overview.newbie_protection_notify', { points: $formatNumber(page.noobProtectionPoints) })"></div>
 				<div v-if="page.fleets.length" class="mb-2">
 					<Fleets :items="page.fleets"/>
 				</div>

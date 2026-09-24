@@ -37,6 +37,8 @@ return [
 	'game_speed' => env('GAME_BASE_SPEED', 1),
 	// Скорость полётов
 	'fleet_speed' => env('GAME_FLEET_SPEED', 1),
+	// Суточное ограничение транспорта ресурсов между игроками
+	'transportDailyLimitEnabled' => env('GAME_TRANSPORT_DAILY_LIMIT_ENABLED', true),
 	// Скорость добычи ресурсов
 	'resource_multiplier' => env('GAME_RESOURCE_SPEED', 1),
 	// Множитель размера колонизируемых планет

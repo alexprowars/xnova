@@ -19,7 +19,7 @@ class Production
 	public function __construct(protected Planet $planet, protected ?CarbonImmutable $updateTime = null)
 	{
 		if (!$this->updateTime) {
-			$this->updateTime = now()->toImmutable();
+			$this->updateTime = now()->toImmutable()->startOfSecond();
 		}
 
 		$this->calculate();
@@ -46,7 +46,7 @@ class Production
 
 	public function reset(): void
 	{
-		$this->updateTime = now()->toImmutable();
+		$this->updateTime = now()->toImmutable()->startOfSecond();
 		$this->basic = null;
 		$this->storage = null;
 		$this->production = null;

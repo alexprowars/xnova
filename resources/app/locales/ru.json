@@ -867,7 +867,7 @@
 			"planet_rename_hint": "Редактирование планеты",
 			"planet_rename_action": "изменить",
 			"resources_notify": "Одна из шахт находится в выключенном состоянии. Зайдите в меню \"{link}\" и восстановите производство.",
-			"newbie_mode_notify": "<span class=\"positive\">Активен режим ускорения новичков.</span><br>Режим будет деактивирован после достижения 1000 очков.",
+			"newbie_protection_notify": "<span class=\"positive\">Активна защита новичка.</span><br>Защита отключится после достижения {points} очков.",
 			"officier_active_until": "Нанят до",
 			"officier_noactive": "Не нанят",
 			"diameter": "Диаметр",

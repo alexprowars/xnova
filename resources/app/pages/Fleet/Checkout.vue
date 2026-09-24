@@ -173,7 +173,7 @@
 							<button type="button" class="fleet-max" @click="maxRes(type)">
 								{{ $t('pages.fleets.checkout.resources_max') }}
 							</button>
-							<input :id="'cargo-' + type" v-model.number="resource[type]" type="text" inputmode="numeric">
+							<input :id="'cargo-' + type" v-model.number="resource[type]" type="text" inputmode="numeric" placeholder="0">
 						</div>
 					</div>
 					<div class="fleet-cargo-remaining">
@@ -233,7 +233,7 @@
 
 	const formRef = ref();
 	const resource = ref({
-		metal: 0, crystal: 0, deuterium: 0,
+		metal: '', crystal: '', deuterium: '',
 	});
 	const speed = ref(10);
 	const distance = ref(0);
@@ -338,8 +338,8 @@
 	}
 
 	function maxRes (type) {
-		let current = resource.value.metal + resource.value.crystal + resource.value.deuterium
-		current -= resource.value[type]
+		let current = Number(resource.value.metal || 0) + Number(resource.value.crystal || 0) + Number(resource.value.deuterium || 0)
+		current -= Number(resource.value[type] || 0)
 
 		let free = storage.value - hold.value - current
 
@@ -358,7 +358,7 @@
 	}
 
 	function clearResAll () {
-		resource.value.metal = resource.value.crystal = resource.value.deuterium = 0
+		resource.value.metal = resource.value.crystal = resource.value.deuterium = ''
 	}
 
 	function send() {

@@ -15,10 +15,10 @@ class Build
 	{
 	}
 
-	public function add(BaseObject $element, bool $destroy = false): void
+	public function add(BaseObject $element, bool $destroy = false): ?Models\Queue
 	{
 		if ($destroy && in_array($element->getId(), [33, 41], true)) {
-			return;
+			return null;
 		}
 
 		$planet = $this->queue->getPlanet();
@@ -58,10 +58,10 @@ class Build
 			$build = $planet->getEntity($element->getId());
 
 			if (!$build) {
-				return;
+				return null;
 			}
 
-			Models\Queue::create([
+			$item = Models\Queue::create([
 				'type' => QueueType::BUILDING,
 				'operation' => $destroy ? QueueConstructionType::DESTROY : QueueConstructionType::BUILDING,
 				'user_id' => $user->id,
@@ -74,7 +74,11 @@ class Build
 
 			$this->queue->loadQueue();
 			$this->queue->nextBuildingQueue();
+
+			return $this->queue->get()->firstWhere('id', $item->id);
 		}
+
+		return null;
 	}
 
 	public function delete(int $queueId): void

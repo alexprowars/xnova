@@ -22,12 +22,29 @@ use Illuminate\Support\Collection;
 
 class QueueManager
 {
-	/** @var Models\Queue[]|null|Collection<array-key, Models\Queue> */
-	protected mixed $queue;
+	/** @var Collection<array-key, Models\Queue>|null */
+	protected ?Collection $queue = null;
+	private Models\Queue|false|null $research = false;
 
 	public function __construct(protected Planet $planet)
 	{
-		$this->loadQueue();
+	}
+
+	public static function recalculateForUser(Models\User $user): void
+	{
+		$queue = $user->queue()
+			->whereNotNull('date')
+			->with('planet')
+			->get();
+
+		foreach ($queue as $item) {
+			if (!$item->planet) {
+				continue;
+			}
+
+			$item->planet->setRelation('user', $user);
+			$item->update(['date_end' => $item->date->addSeconds($item->getTime())]);
+		}
 	}
 
 	public function loadQueue(bool $forUpdate = false): void
@@ -37,8 +54,20 @@ class QueueManager
 			->whereBelongsTo($this->planet)
 			->when($forUpdate, fn($query) => $query->lockForUpdate())
 			->get()
-			->map(fn(Models\Queue $item) => $item->setRelation('planet', $item->planet))
+			->map(fn(Models\Queue $item) => $item->setRelation('planet', $this->planet))
 			->collect();
+
+		$this->research = false;
+	}
+
+	public function getResearch(): ?Models\Queue
+	{
+		if ($this->research === false) {
+			$this->research = $this->get(QueueType::RESEARCH)->first()
+				?? $this->getUser()->queue()->where('type', QueueType::RESEARCH)->first();
+		}
+
+		return $this->research;
 	}
 
 	public function getPlanet(): Planet
@@ -51,15 +80,17 @@ class QueueManager
 		return $this->planet->user;
 	}
 
-	public function add(BaseObject $element, int $count = 1, bool $destroy = false): void
+	public function add(BaseObject $element, int $count = 1, bool $destroy = false): ?Models\Queue
 	{
 		if ($element->getType() == ItemType::BUILDING) {
-			(new Queue\Build($this))->add($element, $destroy);
+			return (new Queue\Build($this))->add($element, $destroy);
 		} elseif ($element->getType() == ItemType::TECH) {
-			(new Queue\Tech($this))->add($element);
+			return (new Queue\Tech($this))->add($element);
 		} elseif ($element->getType() == ItemType::FLEET || $element->getType() == ItemType::DEFENSE) {
-			(new Queue\Unit($this))->add($element, $count);
+			return (new Queue\Unit($this))->add($element, $count);
 		}
+
+		return null;
 	}
 
 	public function delete(BaseObject $element, int $queueId = 0): void
@@ -74,6 +105,10 @@ class QueueManager
 	/** @return Collection<array-key, Models\Queue> */
 	public function get(?QueueType $type = null): Collection
 	{
+		if ($this->queue === null) {
+			$this->loadQueue();
+		}
+
 		if (!$type) {
 			return $this->queue;
 		} elseif (in_array($type, QueueType::cases())) {
@@ -85,23 +120,21 @@ class QueueManager
 
 	public function getCount(?QueueType $type = null): int
 	{
-		if (!$type) {
-			return $this->queue->count();
-		} elseif (in_array($type, QueueType::cases())) {
-			return $this->queue->where('type', $type)->count();
-		}
-
-		return 0;
+		return $this->get($type)->count();
 	}
 
 	public function deleteInQueue(Models\Queue $queueItem): bool
 	{
-		if (!$this->queue->firstWhere('id', $queueItem->id)) {
+		if (!$this->get()->firstWhere('id', $queueItem->id)) {
 			return false;
 		}
 
 		if ($queueItem->delete()) {
 			$this->queue = $this->queue->reject(fn(Models\Queue $item) => $item->is($queueItem));
+
+			if ($queueItem->type === QueueType::RESEARCH) {
+				$this->research = false;
+			}
 
 			return true;
 		}
@@ -115,18 +148,24 @@ class QueueManager
 
 		$this->planet->getConnection()->transaction(function () use ($user) {
 			$user->refreshForUpdate();
-			$this->planet->refreshForUpdate();
-			$this->planet->setRelation('user', $user);
-			$this->planet->setRelation('entities', $this->planet->entities()->lockForUpdate()->get());
-			$this->planet->getProduction()->reset();
 
-			$this->loadQueue(true);
+			$this->planet->unsetRelation('user')
+				->unsetRelation('entities')
+				->refreshForUpdate();
+
+			$this->planet->setRelation('user', $user);
+
 			$this->updateLocked();
 		});
 	}
 
-	protected function updateLocked(): void
+	private function updateLocked(): void
 	{
+		$this->planet->setRelation('entities', $this->planet->entities()->lockForUpdate()->get());
+		$this->planet->getProduction()->reset();
+
+		$this->loadQueue(true);
+
 		$buildingsCount = $this->getCount(QueueType::BUILDING);
 
 		if ($buildingsCount) {
@@ -390,8 +429,7 @@ class QueueManager
 
 	public function checkTechQueue(): void
 	{
-		$queueItem = $this->planet->user->queue()
-			->where('type', QueueType::RESEARCH)->first();
+		$queueItem = $this->getResearch();
 
 		if (!$queueItem) {
 			return;
@@ -421,6 +459,8 @@ class QueueManager
 			if (!$this->deleteInQueue($queueItem)) {
 				$queueItem->delete();
 			}
+
+			$this->research = false;
 
 			event(new PlanetEntityUpdated($this->planet));
 

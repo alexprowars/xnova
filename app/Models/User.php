@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Engine\Entity\Model\TechnologiesCollection;
 use App\Engine\Entity\Model\TechnologiesEntity;
 use App\Engine\Enums\PlanetType;
+use App\Engine\QueueManager;
 use App\Engine\Traits\User\HasBonuses;
 use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
@@ -93,24 +94,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	protected static function booted(): void
 	{
 		static::updated(function (User $model) {
-			if (!$model->wasChanged(['officier_architect', 'officier_technocrat'])) {
-				return;
+			if ($model->wasChanged(['officier_architect', 'officier_technocrat', 'officier_geologist'])) {
+				$model->bonusData = [];
 			}
 
-			$model->bonusData = [];
-
-			$queue = $model->queue()
-				->whereNotNull('date')
-				->with('planet')
-				->get();
-
-			foreach ($queue as $item) {
-				if (!$item->planet) {
-					continue;
-				}
-
-				$item->planet->setRelation('user', $model);
-				$item->update(['date_end' => $item->date->addSeconds($item->getTime())]);
+			if ($model->wasChanged(['officier_architect', 'officier_technocrat'])) {
+				QueueManager::recalculateForUser($model);
 			}
 		});
 
@@ -123,7 +112,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 				}
 			}
 
-			LogsStat::query()->where('object_id', $model->id)->where('type', 1)->delete();
+			LogsStat::query()->where('object_id', $model->id)
+				->where('type', 1)
+				->delete();
 
 			$model->queue()->delete();
 			$model->planets()->update([
@@ -391,7 +382,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 
 	public function getPoints(): ?Statistic
 	{
-		return Cache::remember('app::statistics_' . $this->id, 1800, function () {
+		return Cache::remember('app::statistics_' . $this->id, 86400, function () {
 			return $this->statistics()
 				->where('stat_code', 1)
 				->first();

@@ -17,24 +17,24 @@ class Tech
 	{
 	}
 
-	public function add(BaseObject $element): void
+	public function add(BaseObject $element): ?Models\Queue
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
 
-		$planet->getConnection()
-			->transaction(function () use ($planet, $user, $element) {
+		return $planet->getConnection()
+			->transaction(function () use ($planet, $user, $element): ?Models\Queue {
 				$user->refreshForUpdate();
 
 				$planet->refreshForUpdate();
 				$planet->setRelation('user', $user);
 				$planet->getProduction()->reset();
 
-				$this->addLocked($element);
+				return $this->addLocked($element);
 			});
 	}
 
-	protected function addLocked(BaseObject $element): void
+	protected function addLocked(BaseObject $element): ?Models\Queue
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
@@ -56,7 +56,7 @@ class Tech
 
 				$buildTime = $entity->getTime();
 
-				Models\Queue::create([
+				$item = Models\Queue::create([
 					'type' => QueueType::RESEARCH,
 					'operation' => QueueConstructionType::BUILDING,
 					'user_id' => $user->id,
@@ -66,6 +66,8 @@ class Tech
 					'date_end' => now()->addSeconds($buildTime),
 					'level' => $user->getTechLevel($element->getId()) + 1,
 				]);
+
+				$this->queue->loadQueue();
 
 				if (config('game.log.research', false)) {
 					LogsHistory::create([
@@ -82,8 +84,12 @@ class Tech
 						'amount' 			=> $user->getTechLevel($element->getId()) + 1
 					]);
 				}
+
+				return $this->queue->get()->firstWhere('id', $item->id);
 			}
 		}
+
+		return null;
 	}
 
 	public function delete(BaseObject $element): void

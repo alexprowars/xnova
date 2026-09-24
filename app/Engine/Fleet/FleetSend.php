@@ -453,14 +453,16 @@ class FleetSend
 				throw new Exception(__('fleet.transport_weekly_limit'));
 			}
 
-			$cnt = LogsTransfer::query()
-				->whereBelongsTo($this->planet->user)
-				->whereBelongsTo($this->targetPlanet->user, 'target')
-				->where('created_at', '>', now()->subDay())
-				->count();
+			if (config('game.transportDailyLimitEnabled') && !$this->planet->user->isAdmin()) {
+				$cnt = LogsTransfer::query()
+					->whereBelongsTo($this->planet->user)
+					->whereBelongsTo($this->targetPlanet->user, 'target')
+					->where('created_at', '>', now()->subDay())
+					->count();
 
-			if ($cnt > 0) {
-				throw new Exception(__('fleet.transport_daily_limit'));
+				if ($cnt > 0) {
+					throw new Exception(__('fleet.transport_daily_limit'));
+				}
 			}
 
 			LogsTransfer::create([

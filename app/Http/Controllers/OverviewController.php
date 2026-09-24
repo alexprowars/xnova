@@ -28,6 +28,7 @@ class OverviewController extends Controller
 		return Inertia::render('Overview', [
 			'dailyBonus' => $dailyBonus,
 			'fleets' => FleetService::list(auth()->user()),
+			'noobProtectionPoints' => (int) config('game.noobprotectionPoints'),
 		]);
 	}
 

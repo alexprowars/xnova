@@ -48,13 +48,8 @@
 
 	const props = defineProps({
 		item: Object,
+		contracts: Array,
 	});
-
-	const contracts = [
-		{ duration: 7, price: 20, label: 'cost_week' },
-		{ duration: 14, price: 40, label: 'cost_weeks' },
-		{ duration: 30, price: 80, label: 'cost_month' },
-	];
 
 	const state = useState();
 	const user = computed(() => state.user);

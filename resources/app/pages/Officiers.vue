@@ -14,7 +14,7 @@
 			</div>
 		</div>
 		<div class="officiers-list">
-			<Row v-for="item in page.items" :key="item.code" :item="item"/>
+			<Row v-for="item in page.items" :key="item.code" :item="item" :contracts="page.contracts"/>
 		</div>
 	</div>
 </template>

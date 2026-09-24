@@ -99,8 +99,14 @@
 		border: 1px solid transparent;
 		border-radius: 5px;
 		background: transparent;
-		font-size: 20px;
 		cursor: pointer;
+
+		svg {
+			display: block;
+			width: 18px;
+			height: 12px;
+			border-radius: 2px;
+		}
 
 		&:hover, &:focus-visible {
 			background: var(--ui-active-background);

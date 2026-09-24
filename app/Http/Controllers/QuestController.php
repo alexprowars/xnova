@@ -6,6 +6,7 @@ use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Exceptions\Exception;
 use App\Format;
+use App\Services\OfficierService;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -240,10 +241,7 @@ class QuestController extends Controller
 							throw new Exception(__('quests.unknown_reward_officer'));
 						}
 
-						$attribute = 'officier_' . $code;
-						$expiresAt = $this->user->{$attribute};
-
-						$this->user->{$attribute} = ($expiresAt?->isFuture() ? $expiresAt : now())->addSeconds($duration);
+						OfficierService::activate($this->user, $code, $duration);
 					}
 				} elseif ($rewardKey == 'storage_rand') {
 					$this->planet->updateAmount(random_int(22, 24), 1, true);
