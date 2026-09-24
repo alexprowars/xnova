@@ -9,36 +9,89 @@ use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Enums\QueueType;
-use App\Engine\Fleet\MissionType;
 use App\Engine\Objects\BaseObject;
 use App\Engine\Objects\BuildingObject;
 use App\Engine\Objects\ObjectsFactory;
-use App\Engine\QueueManager;
 use App\Models\Fleet;
 use App\Models\Planet;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class StrategyPlanner
 {
 	private array $recommendations = [];
 	private array $units = [];
-	private QueueManager $queue;
+	private ?array $snapshot = null;
 
-	public function __construct(private Planet $planet, private StrategyType $strategy, private bool $researchHub = true, private int $probeTarget = 7)
+	/** @param Collection<int, Planet>|null $colonies */
+	public function __construct(private Planet $planet, private StrategyType $strategy, private bool $researchHub = true, private int $probeTarget = 7, private ?Collection $colonies = null)
 	{
-		$this->queue = new QueueManager($planet);
 	}
 
 	/** @return array<int, array{id: int, count: int, score: float, reason: string}> */
 	public function getRecommendations(ItemType $type): array
 	{
-		if (empty($this->recommendations)) {
-			$this->plan();
-		}
+		$this->prepare();
 
 		$result = array_filter($this->recommendations, fn(array $item) => ObjectsFactory::get($item['id'])->getType() === $type);
 		usort($result, fn(array $a, array $b) => $b['score'] <=> $a['score'] ?: $a['id'] <=> $b['id']);
 
 		return $result;
+	}
+
+	public function prepare(bool $onlyAvailableQueues = false): void
+	{
+		if ($this->snapshot === null) {
+			$this->snapshot = $this->planningState();
+
+			if (!$onlyAvailableQueues || $this->hasAvailableQueue()) {
+				$this->plan();
+			}
+		}
+	}
+
+	private function hasAvailableQueue(): bool
+	{
+		$queue = collect($this->snapshot['queue']);
+		$localQueue = $queue->where('planet_id', $this->planet->id);
+
+		return (!$localQueue->contains('type', QueueType::BUILDING->value) && $this->planet->field_current < $this->planet->getMaxFields())
+			|| !$localQueue->contains('type', QueueType::SHIPYARD->value)
+			|| ($this->researchHub && !$queue->contains('type', QueueType::RESEARCH->value));
+	}
+
+	public function isCurrent(): bool
+	{
+		return $this->snapshot !== null && $this->snapshot === $this->planningState();
+	}
+
+	private function planningState(): array
+	{
+		$user = $this->planet->user;
+		$officers = [];
+
+		foreach (['geologist', 'engineer', 'admiral', 'architect', 'technocrat', 'metaphysician'] as $officer) {
+			$officers[$officer] = $user->{'officier_' . $officer}?->isFuture() ?? false;
+		}
+
+		return [
+			'entities' => $this->planet->entities->pluck('amount', 'entity_id')->sortKeys()->all(),
+			'technologies' => $user->technologies->pluck('level', 'id')->filter()->sortKeys()->all(),
+			'race' => $user->race,
+			'officers' => $officers,
+			'fields' => $this->planet->getMaxFields(),
+			'used_fields' => $this->planet->field_current,
+			'queue' => $user->queue()->where(function (Builder $query) {
+				$query->where('planet_id', $this->planet->id)->orWhere('type', QueueType::RESEARCH)->orWhereIn('object_id', [31, 208]);
+			})->orderBy('id')->get(['id', 'planet_id', 'object_id', 'level', 'type'])->toArray(),
+			'fleets' => Fleet::query()->whereBelongsTo($user)
+				->when(!$this->researchHub, fn(Builder $query) => $query->coordinates(FleetDirection::START, $this->planet->coordinates))
+				->orderBy('id')->get(['id', 'entities', 'start_galaxy', 'start_system', 'start_planet', 'start_type'])->toArray(),
+			'colonization' => $this->researchHub ? $user->planets()->whereNull('destroyed_at')
+				->select(['id', 'planet_type'])
+				->withSum(['entities as colonizers' => fn($query) => $query->where('entity_id', 208)], 'amount')
+				->orderBy('id')->get()->toArray() : [],
+		];
 	}
 
 	/** @return Entity<BaseObject> */
@@ -80,8 +133,16 @@ class StrategyPlanner
 			return;
 		}
 
+		$colonyCount = 0;
+		$hasColonizer = false;
+
 		if ($this->researchHub) {
-			$colonies = $this->planet->user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)->with('entities')->get();
+			$this->colonies ??= $this->planet->user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)->get();
+			$colonies = $this->colonies->filter(fn(Planet $colony) => $colony->user_id === $this->planet->user_id
+				&& !$colony->trashed() && !$colony->destroyed_at && $colony->planet_type === PlanetType::PLANET);
+			$colonies->loadMissing('entities');
+			$colonyCount = collect($this->snapshot['colonization'])->where('planet_type', PlanetType::PLANET->value)->count();
+			$hasColonizer = collect($this->snapshot['colonization'])->contains(fn(array $planet) => $planet['colonizers'] > 0);
 
 			if ($colonies->contains(fn(Planet $colony) => $colony->getMaxFields() - $colony->field_current <= 20)) {
 				$this->addGoal(108, 10, 1100, 'Prepare the nanite factory for colony expansion');
@@ -142,13 +203,16 @@ class StrategyPlanner
 			$this->addGoal(215, max(3, (int) ceil($scale * $military / 25)), 80, 'Fleet for major raids');
 		}
 
-		$colonies = $this->planet->user->planets()->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')->count();
-		$expanding = Fleet::query()->whereBelongsTo($this->planet->user)->where('mission', MissionType::Colonization)->where('mess', 0)->exists();
 		$desired = min((int) config('game.maxPlanets', 9), max(1, intdiv($metalLevel - 5, 3)));
 
-		if ($this->researchHub && !$expanding && $colonies < $desired) {
-			$this->addGoal(150, $colonies, 110, 'Unlock the next colony');
-			$this->addGoal(208, 1, 105, 'Prepare for colonization');
+		if ($this->researchHub && $colonyCount < $desired) {
+			$this->addGoal(150, $colonyCount, 110, 'Unlock the next colony');
+
+			$limit = min((int) config('game.maxPlanets', 9), $this->planet->user->getTechLevel('colonization') + 1);
+
+			if ($colonyCount < $limit && !$hasColonizer && ($this->units[208] ?? 0) === 0) {
+				$this->addGoal(208, 1, 105, 'Prepare for colonization');
+			}
 		}
 	}
 
@@ -156,6 +220,7 @@ class StrategyPlanner
 	{
 		$best = null;
 		$bestValue = 0.0;
+		$bestEnergy = 0.0;
 
 		foreach ([1 => ['metal', 1.0], 2 => ['crystal', 1.5], 3 => ['deuterium', 2.0]] as $id => [$resource, $value]) {
 			$entity = $this->getEntity($id);
@@ -172,6 +237,7 @@ class StrategyPlanner
 			if ($efficiency > $bestValue) {
 				$bestValue = $efficiency;
 				$best = $id;
+				$bestEnergy = abs($delta?->get('energy') ?? 0);
 			}
 		}
 
@@ -179,11 +245,12 @@ class StrategyPlanner
 			return;
 		}
 
-		$delta = Building::getNextProduction(ObjectsFactory::get($best), $this->planet->getLevel($best), $this->planet);
-		$needed = $this->planet->energy_used + abs($delta?->get('energy') ?? 0);
+		$needed = $this->planet->energy_used + $bestEnergy;
 
 		if ($this->planet->energy < $needed) {
-			$this->addGoal(4, $this->planet->getLevel(4) + 1, 1000, 'Energy for active mines and the next upgrade');
+			$shortage = $this->planet->energy < $this->planet->energy_used;
+			$this->addGoal(4, $this->planet->getLevel(4) + 1, $shortage ? 1000 : 100,
+				$shortage ? 'Restore energy for active mines' : 'Energy for the next mine upgrade');
 		} else {
 			$this->addGoal($best, $this->planet->getLevel($best) + 1, 100, 'Best production increase for the upgrade cost');
 		}
@@ -195,16 +262,22 @@ class StrategyPlanner
 			$this->units[$entity->entity_id] = $entity->amount;
 		}
 
-		foreach ($this->queue->get(QueueType::SHIPYARD) as $item) {
-			$this->units[$item->object_id] = ($this->units[$item->object_id] ?? 0) + $item->level;
+		foreach ($this->snapshot['queue'] as $item) {
+			if (($item['planet_id'] === $this->planet->id || $item['object_id'] === 208) && $item['type'] === QueueType::SHIPYARD->value) {
+				$this->units[$item['object_id']] = ($this->units[$item['object_id']] ?? 0) + $item['level'];
+			}
 		}
 
-		$flights = Fleet::query()->whereBelongsTo($this->planet->user)
-			->coordinates(FleetDirection::START, $this->planet->coordinates)->get();
+		foreach ($this->snapshot['fleets'] as $flight) {
+			$local = $flight['start_galaxy'] === $this->planet->galaxy
+				&& $flight['start_system'] === $this->planet->system
+				&& $flight['start_planet'] === $this->planet->planet
+				&& $flight['start_type'] === $this->planet->planet_type->value;
 
-		foreach ($flights as $flight) {
-			foreach ($flight->entities as $entity) {
-				$this->units[$entity->id] = ($this->units[$entity->id] ?? 0) + $entity->count;
+			foreach ($flight['entities'] as $entity) {
+				if ($local || $entity['i'] === 208) {
+					$this->units[$entity['i']] = ($this->units[$entity['i']] ?? 0) + $entity['c'];
+				}
 			}
 		}
 	}

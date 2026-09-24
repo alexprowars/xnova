@@ -12,6 +12,7 @@ class Ai extends Model
 
 	protected $casts = [
 		'active' => 'boolean',
+		'next_run_at' => 'immutable_datetime',
 		'state' => 'array',
 		'strategy' => StrategyType::class,
 	];

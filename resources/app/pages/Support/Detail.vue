@@ -17,7 +17,7 @@
 						{{ $formatDate(page.item.created_at, 'DD MMM YYYY HH:mm') }}
 					</time>
 				</div>
-				<div class="support-message-body" v-html="page.item.message"/>
+				<TextViewer class="support-message-body" :text="page.item.message"/>
 			</article>
 			<article
 				v-for="(message, index) in page.item.messages"
@@ -30,7 +30,7 @@
 					<span v-else>{{ message.user || '—' }}</span>
 					<time v-if="message.date" :datetime="message.date">{{ $formatDate(message.date, 'DD MMM YYYY HH:mm') }}</time>
 				</div>
-				<div class="support-message-body" v-html="message.message"/>
+				<TextViewer class="support-message-body" :text="message.message"/>
 			</article>
 		</div>
 		<UiPanel clip :title="$t('pages.support.detail.answer_title')" v-if="page.item.status !== 0">
@@ -66,6 +66,7 @@
 	import { useVuelidate } from '@vuelidate/core';
 	import { Head, useForm } from '@inertiajs/vue3';
 	import TextEditor from '~/components/TextEditor.vue';
+	import TextViewer from '~/components/TextViewer.vue';
 	import { useSuccessNotification } from '~/composables/useToast.js';
 	import { useI18n } from 'vue-i18n';
 

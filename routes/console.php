@@ -12,3 +12,6 @@ Schedule::command(Commands\UpdateStats::class)->cron('5 */6 * * *');
 
 Schedule::command(Commands\AiUpdate::class)
 	->everyMinute()->withoutOverlapping(30)->runInBackground();
+
+Schedule::command(Commands\AiUpdate::class, ['--threats-only'])
+	->everyMinute()->withoutOverlapping(30)->runInBackground();

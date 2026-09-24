@@ -6,7 +6,6 @@ use App\Engine\Coordinates;
 use App\Engine\Entity\Ship;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
-use App\Engine\Enums\MessageType;
 use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\FleetCollection;
 use App\Engine\Fleet\FleetSend;
@@ -17,16 +16,16 @@ use App\Exceptions\Exception;
 use App\Facades\Galaxy;
 use App\Facades\Vars;
 use App\Models\Ai;
-use App\Models\AllianceDiplomacy;
 use App\Models\Fleet;
-use App\Models\Friend;
-use App\Models\Message;
 use App\Models\LogsFleet;
 use App\Models\Planet;
 use App\Models\Statistic;
 use App\Models\User;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -34,14 +33,42 @@ class FleetCommander
 {
 	private array $reports = [];
 	private array $targetWeights = [];
+	private StrategyType $strategy;
+	private array $state;
 
-	public function __construct(private Planet $planet, private StrategyType $strategy, private array $state)
+	/** @param Collection<int, Planet>|null $colonies */
+	public function __construct(private Planet $planet, private Ai $ai, private RunContext $context = new RunContext(), private ?Collection $colonies = null)
 	{
+		$this->strategy = $ai->strategy;
+		$this->state = $ai->state ?? [];
 	}
 
 	public function getState(): array
 	{
 		return $this->state;
+	}
+
+	/** @return Collection<int, Planet> */
+	private function colonies(): Collection
+	{
+		$this->colonies ??= $this->planet->user->planets()->whereNull('destroyed_at')
+			->where('planet_type', PlanetType::PLANET)->orderBy('id')->get();
+
+		return $this->colonies->filter(fn(Planet $colony) => $colony->user_id === $this->ai->user_id
+			&& !$colony->trashed() && !$colony->destroyed_at && $colony->planet_type === PlanetType::PLANET);
+	}
+
+	/** @return Builder<Fleet> */
+	public static function incomingThreats(): Builder
+	{
+		return Fleet::query()->where('mess', 0)
+			->whereIn('mission', [MissionType::Attack, MissionType::Assault, MissionType::Destruction])
+			->where('start_date', '<=', now()->addMinutes(10));
+	}
+
+	public function defend(): bool
+	{
+		return $this->hasSlot() && $this->evacuate();
 	}
 
 	public function run(): void
@@ -66,7 +93,7 @@ class FleetCommander
 			return;
 		}
 
-		$this->loadReports();
+		$this->reports = $this->context->reports($this->planet->user_id);
 		$targets = $this->targets();
 		$this->attack($targets);
 
@@ -108,7 +135,8 @@ class FleetCommander
 		$duration = $collection->getDuration(10, $distance);
 		$fuel = $collection->getConsumption($duration, $distance);
 
-		return ['duration' => $duration, 'fuel' => $fuel, 'capacity' => max(0, $collection->getStorage() - $fuel)];
+		// Отрицательный остаток означает, что даже топливо не помещается в трюм.
+		return ['duration' => $duration, 'fuel' => $fuel, 'capacity' => $collection->getStorage() - $fuel];
 	}
 
 	private function maxFlightDuration(MissionType $mission): float
@@ -120,23 +148,58 @@ class FleetCommander
 		return $maxFlightHours * 3600 / Game::getSpeed('fleet');
 	}
 
-	private function send(Coordinates $target, MissionType $mission, array $ships, array $resources = []): bool
+	private function send(Coordinates $target, MissionType $mission, array $ships, array $resources = [], ?Closure $validate = null, ?Closure $onSent = null): bool
 	{
-		if (empty($ships) || !$this->hasSlot()) {
+		if (empty($ships)) {
 			return false;
 		}
 
-		$flight = $this->flight($ships, $target);
-
-		if ($flight['fuel'] + ($resources['deuterium'] ?? 0) > $this->planet->deuterium || $flight['duration'] > $this->maxFlightDuration($mission)) {
-			return false;
-		}
+		$origin = $this->planet->coordinates;
 
 		try {
-			$sender = new FleetSend($this->planet, $target, $mission);
-			$sender->setFleets($ships);
-			$sender->setResources($resources);
-			$fleet = $sender->send();
+			$fleet = $this->planet->getConnection()->transaction(function () use ($origin, $target, $mission, $ships, $resources, $validate, $onSent): ?Fleet {
+				$user = User::query()->lockForUpdate()->find($this->ai->user_id);
+				$this->planet->refreshForUpdate();
+
+				if (!$user || $user->isVacation() || $user->blocked_at || $this->planet->trashed() || $this->planet->destroyed_at
+					|| $this->planet->user_id !== $user->id || !$origin->isSame($this->planet->coordinates)) {
+					return null;
+				}
+
+				$this->planet->setRelation('user', $user);
+				$this->planet->setRelation('entities', $this->planet->entities()->lockForUpdate()->get());
+				$this->planet->getProduction()->reset();
+
+				if (!$this->hasSlot() || !$this->missionIsCurrent($target, $mission) || ($validate && !$validate())) {
+					return null;
+				}
+
+				$flight = $this->flight($ships, $target);
+
+				if ($flight['capacity'] < array_sum($resources) || $flight['fuel'] + ($resources['deuterium'] ?? 0) > $this->planet->deuterium
+					|| $flight['duration'] > $this->maxFlightDuration($mission)) {
+					return null;
+				}
+
+				$sender = new FleetSend($this->planet, $target, $mission);
+				$sender->setFleets($ships);
+				$sender->setResources($resources);
+				$fleet = $sender->send();
+
+				if ($onSent) {
+					$onSent();
+				}
+
+				// Память о миссии фиксируется вместе с флотом, даже если ход прервётся позже.
+				$this->ai->update(['state' => $this->state]);
+				$this->planet->getConnection()->afterCommit(fn() => $this->context->recordFleet($fleet));
+
+				return $fleet;
+			});
+
+			if (!$fleet) {
+				return false;
+			}
 
 			if (config('ai.log_decisions', true)) {
 				Log::info('ai.fleet', ['user_id' => $this->planet->user_id, 'planet_id' => $this->planet->id, 'fleet_id' => $fleet->id, 'mission' => $mission->name, 'target' => $target->toArray()]);
@@ -154,6 +217,89 @@ class FleetCommander
 		}
 	}
 
+	private function missionIsCurrent(Coordinates $target, MissionType $mission): bool
+	{
+		$missions = match ($mission) {
+			MissionType::Attack => [MissionType::Attack, MissionType::Assault],
+			MissionType::Spy => [MissionType::Spy, MissionType::Attack],
+			MissionType::Transport => [MissionType::Transport, MissionType::Stay],
+			default => [$mission],
+		};
+
+		if ($mission !== MissionType::Stay && $this->flightExists($target, $missions)) {
+			return false;
+		}
+
+		if ($mission === MissionType::Colonization) {
+			$user = $this->planet->user;
+			$max = min((int) config('game.maxPlanets', 9), $user->getTechLevel('colonization') + 1);
+
+			return $user->planets()->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')->count() < $max
+				&& !Fleet::query()->whereBelongsTo($user)->where('mission', MissionType::Colonization)->where('mess', 0)->exists()
+				&& !Fleet::query()->coordinates(FleetDirection::END, $target)->where('mission', MissionType::Colonization)->where('mess', 0)->exists()
+				&& $this->colonizationSystemIsCurrent($target);
+		}
+
+		if (in_array($mission, [MissionType::Stay, MissionType::Transport], true)) {
+			if (!Planet::query()->coordinates($target)->where('user_id', $this->planet->user_id)->whereNull('destroyed_at')->exists()) {
+				return false;
+			}
+		}
+
+		if ($mission === MissionType::Stay) {
+			return self::incomingThreats()->coordinates(FleetDirection::END, $this->planet->coordinates)->whereNot('user_id', $this->planet->user_id)->exists()
+				&& !Fleet::query()->coordinates(FleetDirection::END, $target)->where('mess', 0)
+					->whereIn('mission', [MissionType::Attack, MissionType::Assault, MissionType::Destruction])->exists();
+		}
+
+		return true;
+	}
+
+	private function colonizationSystemIsCurrent(Coordinates $target): bool
+	{
+		// Общая карта — снимок прохода; перед отправкой проверяем только выбранную систему.
+		$owners = Planet::query()->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('galaxy', $target->getGalaxy())->where('system', $target->getSystem())
+			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')->distinct()->pluck('user_id');
+		$pendingOwners = Fleet::query()->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('end_galaxy', $target->getGalaxy())->where('end_system', $target->getSystem())
+			->where('mission', MissionType::Colonization)->where('mess', 0)->distinct()->pluck('user_id');
+		$owners = $owners->merge($pendingOwners)->unique();
+
+		return !$owners->contains($this->planet->user_id) && $owners->count() < (int) config('ai.max_bots_per_system', 3);
+	}
+
+	private function targetIsCurrent(Planet $target): bool
+	{
+		if (($this->state['targets'][$target->id]['attacked_at'] ?? 0) > now()->subMinutes((int) config('ai.attack_cooldown_minutes', 180))->timestamp) {
+			return false;
+		}
+
+		$current = Planet::query()->with('user')->where('user_id', $target->user_id)->whereNull('destroyed_at')
+			->coordinates($target->coordinates)->find($target->id);
+		$user = $current?->user;
+
+		if (!$user || $user->isVacation() || $user->blocked_at || $user->roles->isNotEmpty()
+			|| $user->id === $this->planet->user_id) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function combatState(): array
+	{
+		$user = $this->planet->user;
+
+		return [
+			'ships' => $this->attackShips(),
+			'technologies' => $user->technologies->pluck('level', 'id')->filter()->sortKeys()->all(),
+			'race' => $user->race,
+			'mercenary' => $user->officier_mercenary?->isFuture() ?? false,
+			'admiral' => $user->officier_admiral?->isFuture() ?? false,
+		];
+	}
+
 	private function colonize(): void
 	{
 		if ($this->planet->getLevel(208) < 1) {
@@ -162,7 +308,7 @@ class FleetCommander
 
 		$user = $this->planet->user;
 		$max = min((int) config('game.maxPlanets', 9), $user->getTechLevel('colonization') + 1);
-		$count = $user->planets()->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')->count();
+		$count = $this->colonies()->count();
 		$pending = Fleet::query()->whereBelongsTo($user)->where('mission', MissionType::Colonization)->where('mess', 0)->count();
 
 		if ($count + $pending >= $max || $pending > 0) {
@@ -171,10 +317,10 @@ class FleetCommander
 
 		$ships = [208 => 1];
 
-		foreach ($this->colonizationSystems() as $position) {
+		foreach ($this->context->colonization()->candidates($this->planet->user_id) as $position) {
 			$flight = $this->flight($ships, $position);
 
-			if ($flight['fuel'] > $this->planet->deuterium || $flight['duration'] > $this->maxFlightDuration(MissionType::Colonization)) {
+			if ($flight['capacity'] < 0 || $flight['fuel'] > $this->planet->deuterium || $flight['duration'] > $this->maxFlightDuration(MissionType::Colonization)) {
 				continue;
 			}
 
@@ -197,63 +343,42 @@ class FleetCommander
 		}
 	}
 
-	/** @return list<Coordinates> */
-	private function colonizationSystems(): array
-	{
-		$population = [];
-		$owners = [];
-		$planets = Planet::query()->whereIn('user_id', Ai::query()->select('user_id'))
-			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')
-			->get(['galaxy', 'system', 'user_id']);
-
-		foreach ($planets as $planet) {
-			$key = $planet->galaxy . ':' . $planet->system;
-			$population[$key] = ($population[$key] ?? 0) + 1;
-			$owners[$key][$planet->user_id] = true;
-		}
-
-		$fleets = Fleet::query()->whereIn('user_id', Ai::query()->select('user_id'))
-			->where('mission', MissionType::Colonization)->where('mess', 0)
-			->get(['end_galaxy', 'end_system', 'user_id']);
-
-		foreach ($fleets as $fleet) {
-			$key = $fleet->end_galaxy . ':' . $fleet->end_system;
-			$population[$key] = ($population[$key] ?? 0) + 1;
-			$owners[$key][$fleet->user_id] = true;
-		}
-
-		$systems = [];
-		$maxGalaxies = (int) config('game.maxGalaxyInWorld');
-		$maxSystems = (int) config('game.maxSystemInGalaxy');
-		$maxBotsPerSystem = (int) config('ai.max_bots_per_system', 3);
-
-		for ($galaxy = 1; $galaxy <= $maxGalaxies; $galaxy++) {
-			for ($system = 1; $system <= $maxSystems; $system++) {
-				$key = $galaxy . ':' . $system;
-
-				if (isset($owners[$key][$this->planet->user_id]) || count($owners[$key] ?? []) >= $maxBotsPerSystem) {
-					continue;
-				}
-
-				$systems[] = new Coordinates($galaxy, $system);
-			}
-		}
-
-		// При равной заселённости выбираем случайную систему, без привязки к основной планете.
-		shuffle($systems);
-		usort($systems, fn(Coordinates $a, Coordinates $b) => ($population[$a->getGalaxy() . ':' . $a->getSystem()] ?? 0)
-			<=> ($population[$b->getGalaxy() . ':' . $b->getSystem()] ?? 0));
-
-		return $systems;
-	}
-
 	/** @return array<Planet> */
 	private function targets(): array
 	{
 		$radius = (int) config('ai.search_radius', 50);
 		$galaxyRadius = (int) config('ai.search_galaxy_radius', 1);
 		$targetLimit = (int) config('ai.target_limit', 30);
-		$query = Planet::query()->with(['user.roles'])
+		$cacheKey = 'ai:targets:v1:' . implode(':', [
+			$this->planet->id, $this->planet->user_id, $this->planet->galaxy, $this->planet->system, $this->planet->planet,
+			$radius, $galaxyRadius, (int) config('game.maxGalaxyInWorld'), $targetLimit,
+		]);
+
+		// Сохраняем итог отбора вместе с данными целей и весами, без повторных запросов при чтении.
+		$cached = Cache::remember($cacheKey, now()->addMinutes((int) config('ai.target_cache_minutes', 30)), function () use ($radius, $galaxyRadius, $targetLimit): array {
+			return array_map(fn(Planet $target) => [
+				'planet' => Arr::only($target->getAttributes(), ['id', 'user_id', 'galaxy', 'system', 'planet', 'planet_type']),
+				'user' => ['id' => $target->user_id, 'username' => $target->user->username],
+				'weight' => $this->targetWeights[$target->id],
+			], $this->selectTargets($radius, $galaxyRadius, $targetLimit));
+		});
+		$targets = [];
+		$this->targetWeights = [];
+
+		foreach ($cached as $item) {
+			$target = new Planet()->newFromBuilder($item['planet']);
+			$target->setRelation('user', new User()->newFromBuilder($item['user']));
+			$this->targetWeights[$target->id] = $item['weight'];
+			$targets[] = $target;
+		}
+
+		return $targets;
+	}
+
+	/** @return array<Planet> */
+	private function selectTargets(int $radius, int $galaxyRadius, int $targetLimit): array
+	{
+		$query = Planet::query()->with(['user'])
 			->whereNot('user_id', $this->planet->user_id)
 			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')
 			->whereHas('user', function (Builder $query) {
@@ -278,12 +403,9 @@ class FleetCommander
 			$targets = $targets->merge($galaxyQuery->limit($targetLimit * 5)->get());
 		}
 
-		$bots = Ai::query()->whereIn('user_id', $targets->pluck('user_id'))->pluck('user_id')->all();
-		$humans = User::query()->whereNotIn('id', Ai::query()->select('user_id'))
-			->whereNull('vacation')->whereNull('blocked_at')->whereDoesntHave('roles')
-			->where('onlinetime', '>=', now()->subHours((int) config('ai.active_humans_hours', 24)))
-			->count();
-		$preferBots = $humans < (int) config('ai.active_humans_threshold', 10);
+		$bots = $this->context->bots();
+		$activeHumansThreshold = (int) config('ai.active_humans_threshold', 10);
+		$preferBots = $activeHumansThreshold > 0 && $this->context->activeHumans() < $activeHumansThreshold;
 		$points = Statistic::query()->where('stat_type', 1)->where('stat_code', 1)
 			->whereIn('user_id', [...$targets->pluck('user_id')->all(), $this->planet->user_id])->pluck('total_points', 'user_id');
 		$cappedTargets = LogsFleet::query()->where('s_id', $this->planet->user_id)
@@ -298,21 +420,8 @@ class FleetCommander
 		foreach ($targets as $target) {
 			$user = $target->user;
 
-			if (($this->planet->user->alliance_id && $user->alliance_id === $this->planet->user->alliance_id) || Friend::hasFriends($this->planet->user, $user)) {
-				continue;
-			}
-
-			$diplomacy = null;
-			if ($user->alliance_id && $this->planet->user->alliance_id) {
-				$diplomacy = AllianceDiplomacy::query()->where('alliance_id', $user->alliance_id)
-					->where('diplomacy_id', $this->planet->user->alliance_id)->where('status', 1)->first();
-				if ($diplomacy && $diplomacy->type < 3) {
-					continue;
-				}
-			}
-
 			$key = $target->galaxy . ':' . $target->system . ':' . $target->planet;
-			if (isset($cappedTargets[$key]) && (!$diplomacy || $diplomacy->type != 3)) {
+			if (isset($cappedTargets[$key])) {
 				continue;
 			}
 
@@ -331,7 +440,7 @@ class FleetCommander
 				continue;
 			}
 
-			$this->targetWeights[$target->id] = $preferBots && in_array($user->id, $bots) ? (float) config('ai.bot_target_bonus', 3) : 1.0;
+			$this->targetWeights[$target->id] = $preferBots && isset($bots[$user->id]) ? (float) config('ai.bot_target_bonus', 3) : 1.0;
 			$distances[$target->id] = $distanceCalculator->getDistance($this->planet->coordinates, $target->coordinates);
 			$eligible[] = $target;
 		}
@@ -369,58 +478,14 @@ class FleetCommander
 		return $selected;
 	}
 
-	private function loadReports(): void
-	{
-		$messages = Message::query()->whereBelongsTo($this->planet->user)->where('type', MessageType::Spy)
-			->where('message->type', 'MissionEspionage')
-			->where('date', '>=', now()->subMinutes((int) config('ai.report_lifetime_minutes', 120)))
-			->orderByDesc('date')->orderByDesc('id')->limit(200)->get();
-
-		foreach ($messages as $message) {
-			$data = $message->message['data'] ?? [];
-			$resourceRow = $data['rows'][0] ?? [];
-			$position = $resourceRow['planet'] ?? [];
-
-			if (empty($position)) {
-				continue;
-			}
-
-			$key = ($position['galaxy'] ?? 0) . ':' . ($position['system'] ?? 0) . ':' . ($position['planet'] ?? 0) . ':' . ($position['type'] ?? 0);
-
-			if (isset($this->reports[$key])) {
-				continue;
-			}
-
-			$report = ['date' => $message->date->timestamp, 'user_id' => $resourceRow['user']['id'] ?? null, 'resources' => $resourceRow['resources'] ?? [], 'units' => [], 'technologies' => [], 'technologies_known' => false, 'fleet_known' => false, 'defense_known' => false];
-
-			foreach ($data['rows'] ?? [] as $row) {
-				$title = $row['title'] ?? '';
-				$isFleet = $title === 'fleet_engine.sys_spy_fleet';
-				$isDefense = $title === 'fleet_engine.sys_spy_defenses';
-				$isTech = $title === 'main.tech.100';
-				$report['fleet_known'] = $report['fleet_known'] || $isFleet;
-				$report['defense_known'] = $report['defense_known'] || $isDefense;
-				$report['technologies_known'] = $report['technologies_known'] || $isTech;
-
-				if (!$isFleet && !$isDefense && !$isTech) {
-					continue;
-				}
-
-				foreach ($row['items'] ?? [] as $item) {
-					$report[$isTech ? 'technologies' : 'units'][$item['id']] = (int) $item['lv'];
-				}
-			}
-
-			$this->reports[$key] = $report;
-		}
-	}
 
 	private function report(Planet $target): ?array
 	{
 		$key = $target->galaxy . ':' . $target->system . ':' . $target->planet . ':' . $target->planet_type->value;
 		$report = $this->reports[$key] ?? null;
 
-		if (!$report || $report['user_id'] !== $target->user_id || $report['date'] <= ($this->state['targets'][$target->id]['attacked_at'] ?? 0)) {
+		if (!$report || $report['user_id'] !== $target->user_id || $report['date'] <= ($this->state['targets'][$target->id]['attacked_at'] ?? 0)
+			|| $report['date'] < now()->subMinutes((int) config('ai.report_lifetime_minutes', 120))->timestamp) {
 			return null;
 		}
 
@@ -446,8 +511,11 @@ class FleetCommander
 			$required = min($count, (int) config('ai.max_probes', 32));
 			$count = min($required, $this->planet->getLevel(210));
 
-			if ($this->send($target->coordinates, MissionType::Spy, [210 => $count])) {
-				$this->state['targets'][$target->id] = array_merge($memory, ['scouted_at' => now()->timestamp, 'probes' => $count, 'required_probes' => $required]);
+			if ($this->send($target->coordinates, MissionType::Spy, [210 => $count], [],
+				fn() => $this->targetIsCurrent($target),
+				function () use ($target, $count, $required) {
+					$this->state['targets'][$target->id] = array_merge($this->state['targets'][$target->id] ?? [], ['scouted_at' => now()->timestamp, 'probes' => $count, 'required_probes' => $required]);
+				})) {
 				return;
 			}
 		}
@@ -457,6 +525,7 @@ class FleetCommander
 	private function attack(array $targets): void
 	{
 		$ships = $this->attackShips();
+		$combatState = $this->combatState();
 
 		if (empty($ships)) {
 			return;
@@ -520,8 +589,25 @@ class FleetCommander
 				continue;
 			}
 
-			if ($this->send($target->coordinates, MissionType::Attack, $ships)) {
-				$this->state['targets'][$target->id]['attacked_at'] = now()->timestamp;
+			if ($this->send($target->coordinates, MissionType::Attack, $ships, [],
+				function () use ($target, $ships, $combatState, $forecast, $candidate): bool {
+					if ($combatState !== $this->combatState() || !$this->targetIsCurrent($target) || !$this->report($target)) {
+						return false;
+					}
+
+					$flight = $this->flight($ships, $target->coordinates);
+					$profit = min($candidate['loot'], max(0, $forecast['capacity'] - $flight['fuel'])) - $forecast['loss'] - $flight['fuel'] * 2;
+
+					return $flight['fuel'] <= $this->planet->deuterium * 0.5 && $profit >= (float) config('ai.min_raid_profit', 1000);
+				},
+				function () use ($target) {
+					$this->state['targets'][$target->id]['attacked_at'] = now()->timestamp;
+				})) {
+				return;
+			}
+
+			if ($combatState !== $this->combatState()) {
+				unset($this->state['targets'][$target->id]['evaluated_at'], $this->state['targets'][$target->id]['evaluated_report']);
 				return;
 			}
 		}
@@ -582,10 +668,8 @@ class FleetCommander
 
 	private function evacuate(): bool
 	{
-		$threat = Fleet::query()->coordinates(FleetDirection::END, $this->planet->coordinates)
-			->whereNot('user_id', $this->planet->user_id)->where('mess', 0)
-			->whereIn('mission', [MissionType::Attack, MissionType::Assault, MissionType::Destruction])
-			->where('start_date', '<=', now()->addMinutes(10))->exists();
+		$threat = self::incomingThreats()->coordinates(FleetDirection::END, $this->planet->coordinates)
+			->whereNot('user_id', $this->planet->user_id)->exists();
 
 		if (!$threat) {
 			return false;
@@ -603,9 +687,8 @@ class FleetCommander
 			return false;
 		}
 
-		$destinations = $this->planet->user->planets()->whereNot('id', $this->planet->id)
-			->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)
-			->orderByRaw('ABS(`galaxy` - ?), ABS(`system` - ?)', [$this->planet->galaxy, $this->planet->system])->get();
+		$destinations = $this->colonies()->where('id', '!=', $this->planet->id)
+			->sortBy(fn(Planet $colony) => [abs($colony->galaxy - $this->planet->galaxy), abs($colony->system - $this->planet->system)]);
 
 		foreach ($destinations as $destination) {
 			if (Fleet::query()->coordinates(FleetDirection::END, $destination->coordinates)->where('mess', 0)
@@ -641,8 +724,8 @@ class FleetCommander
 			return;
 		}
 
-		$colonies = $this->planet->user->planets()->with('entities')->whereNot('id', $this->planet->id)
-			->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)->orderByDesc('id')->get();
+		$colonies = $this->colonies()->where('id', '!=', $this->planet->id)->sortByDesc('id');
+		$colonies->loadMissing('entities');
 
 		foreach ($colonies as $colony) {
 			if ($colony->getLevel(1) >= 10 || $this->flightExists($colony->coordinates, [MissionType::Transport, MissionType::Stay])) {
@@ -661,7 +744,7 @@ class FleetCommander
 	private function cargo(array $flight, float $fraction, array $limits = []): array
 	{
 		$resources = [];
-		$capacity = $flight['capacity'];
+		$capacity = max(0, $flight['capacity']);
 
 		foreach (['deuterium', 'crystal', 'metal'] as $resource) {
 			$available = max(0, $this->planet->{$resource} - ($resource === 'deuterium' ? $flight['fuel'] : 0));

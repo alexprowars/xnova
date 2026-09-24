@@ -2,13 +2,18 @@
 
 return [
 	'log_decisions' => env('AI_LOG_DECISIONS', false),
+	'fleet_interval_seconds' => env('AI_FLEET_INTERVAL_SECONDS', 300),
+	'development_interval_seconds' => env('AI_DEVELOPMENT_INTERVAL_SECONDS', 300),
+	'min_interval_seconds' => env('AI_MIN_INTERVAL_SECONDS', 300),
+	// Горизонт накопления, роста приоритета ожидающих целей и пересмотра развития.
 	'saving_horizon_hours' => 3,
 	'max_batch' => 20,
 	'shipyard_hours' => 2,
 	'search_radius' => 100,
 	'search_galaxy_radius' => 2,
 	'target_limit' => 30,
-	'active_humans_threshold' => 10,
+	'target_cache_minutes' => 30,
+	'active_humans_threshold' => 0,
 	'active_humans_hours' => 24,
 	'bot_target_bonus' => 3,
 	'report_lifetime_minutes' => 120,
