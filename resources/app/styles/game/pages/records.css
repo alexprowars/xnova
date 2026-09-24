@@ -67,6 +67,10 @@
 			overflow-wrap: anywhere;
 		}
 
+		.game-list-section th:last-child {
+			white-space: nowrap;
+		}
+
 		.records-winner {
 			color: var(--ui-link-color);
 		}

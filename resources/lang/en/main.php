@@ -253,7 +253,7 @@ return [
 
 		600 => 'Officers',
 
-		700 => 'Fraction',
+		700 => 'Faction',
 
 		701 => 'Confederation',
 		702 => 'Bionics',

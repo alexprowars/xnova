@@ -65,7 +65,7 @@
 								@click="diffShips(ship.id, -1)"
 								:aria-label="$t('pages.fleets.main.quantity_m')"
 							>
-								−
+								<span aria-hidden="true">−</span>
 							</button>
 							<input
 								type="number"
@@ -83,7 +83,7 @@
 								@click="diffShips(ship.id, 1)"
 								:aria-label="$t('pages.fleets.main.quantity_p')"
 							>
-								+
+								<span aria-hidden="true">+</span>
 							</button>
 						</div>
 						<span v-else class="fleet-meta">—</span>

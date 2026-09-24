@@ -14,7 +14,7 @@ class BattleReport
 	{
 	}
 
-	public function report(): string
+	public function report(bool $showSimulationLink = true): string
 	{
 		$usersInfo = [];
 		$position = null;
@@ -294,28 +294,29 @@ class BattleReport
 
 		if (!empty($this->resultData['repair'])) {
 			foreach ($this->resultData['repair'] as $data2) {
-				$html .= '<div class="report_fleet mb-2"><span class="neutral">' . __('fleet_engine.battle.repaired_defense') . '</div>';
-				$html .= '<div class="report_fleet mb-2"><table class="table">';
-
-				$raport1 = '';
-				$raport2 = '';
+				$repairedUnits = [];
 
 				foreach ($data2 as $ship_id => $ship_count) {
 					if ($ship_count > 0) {
-						$raport1 .= '<th>' . __('main.tech.' . $ship_id) . '</th>';
-						$raport2 .= '<th>' . Format::number(ceil($ship_count)) . '</th>';
+						$repairedUnits[] = '<div class="report-repair-unit"><img src="/assets/images/elements/' . $ship_id . '.webp" alt="" width="36" height="36" loading="lazy"><span>' . __('main.tech.' . $ship_id) . '</span><strong>' . Format::number(ceil($ship_count)) . '</strong></div>';
 					}
 				}
-				$raport1 .= '</tr>';
-				$raport2 .= '</tr>';
-				$html .= $raport1 . $raport2;
 
-				$html .= '</table>';
-				$html .= '</div></div>';
+				if (empty($repairedUnits)) {
+					continue;
+				}
+
+				$html .= '<section class="report-repair">';
+				$html .= '<div class="report-repair-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.2 8.5 8 11 4.8-2.5 8-6 8-11V5l-8-3Z"/><path d="m8 12 2.5 2.5L16 9"/></svg><h2>' . __('fleet_engine.battle.repaired_defense') . '</h2></div>';
+				$html .= '<div class="report-repair-units">' . implode('', $repairedUnits) . '</div>';
+				$html .= '</section>';
 			}
 		}
 
-		$html .= '<div class="text-center"><a href="' . $this->convertToSimLink($this->resultData, $this->resultData['attackers'], $this->resultData['defenders']) . '" target="_blank">' . __('fleet_engine.battle.simulation') . '</a></div>';
+		if ($showSimulationLink) {
+			$html .= '<div class="report-actions"><a class="button report-simulation-link" href="' . $this->convertToSimLink($this->resultData, $this->resultData['attackers'], $this->resultData['defenders']) . '" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m7 4.5 8 5.5-8 5.5v-11Z"/></svg><span>' . __('fleet_engine.battle.simulation') . '</span></a></div>';
+		}
+
 		$html .= '</div>';
 
 		return $html;

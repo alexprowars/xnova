@@ -69,7 +69,7 @@ class TechController extends Controller
 							$itemRow['required'] .= ' + <b>' . $minus . '</b>';
 						}
 					} else {
-						$itemRow['required'] .= __('main.tech.' . $resClass) . ' (';
+						$itemRow['required'] .= __('main.tech.700') . ' (';
 
 						if ($this->user->race != $level) {
 							$itemRow['required'] .= '<span class="negative">' . __('main.race.' . $level);
@@ -122,7 +122,7 @@ class TechController extends Controller
 			foreach ($element->getRequeriments() as $ids => $level) {
 				$item['requirments'][] = [
 					'id' => $ids,
-					'name' => __('main.tech.' . $ids),
+					'name' => __('main.tech.' . ($ids === 'race' ? 700 : $ids)),
 					'current' => $this->user->getTechLevel($ids) ?: $this->planet->getLevel($ids),
 					'level' => $level,
 					'queue' => -1,

@@ -85,7 +85,7 @@ class Building
 
 			$result[] = [
 				'id' => $reqId,
-				'name' => __('main.tech.' . $reqId),
+				'name' => __('main.tech.' . ($reqId === 'race' ? 700 : $reqId)),
 				'level' => $level,
 				'diff' => $minus,
 			];

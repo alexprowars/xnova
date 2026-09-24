@@ -414,6 +414,10 @@
 			margin-top: 12px;
 		}
 
+		@media (max-width: 639px) {
+			padding-bottom: 24px;
+		}
+
 		@media (max-width: 479px) {
 			width: 100%;
 			padding-bottom: 20px;
@@ -757,7 +761,15 @@
 		width: 100%;
 		position: fixed;
 		bottom: 0;
-		@apply max-xs:relative max-xs:mt-7.5 z-10;
+		@apply z-10;
+
+		@media (max-width: 639px) {
+			position: relative;
+			bottom: auto;
+			height: auto;
+			line-height: normal;
+			text-align: left;
+		}
 
 		a, a:link {
 			color: var(--ui-muted-color);
@@ -773,20 +785,78 @@
 	}
 
 	.footer-mobile {
-		background: var(--ui-black-color);
+		box-sizing: border-box;
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 14px 16px;
 		color: var(--ui-muted-color);
-		font: normal 10px Verdana, Arial, Helvetica, sans-serif;
-		margin: 0;
+		font-size: 12px;
+		line-height: 1.4;
 
-		> div {
-			padding: 5px;
+		a, a:link {
+			margin: 0;
+			color: var(--ui-muted-color);
 		}
 
-		a {
-			color: var(--ui-muted-color);
-			margin: 0 5px;
-			text-decoration: none;
-			font-weight: normal;
+		.footer-mobile-links {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 7px;
+			padding-bottom: 14px;
+
+			a {
+				padding: 6px 9px;
+				border: 1px solid var(--ui-border-muted-color);
+				border-radius: 5px;
+				background: var(--ui-panel-background);
+				color: var(--ui-label-color);
+				white-space: nowrap;
+
+				&:hover, &:focus-visible {
+					border-color: var(--ui-border-hover-color);
+					background: var(--ui-hover-background);
+				}
+			}
+		}
+
+		.footer-mobile-meta {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 8px 18px;
+			padding-top: 12px;
+			border-top: 1px solid var(--ui-border-muted-color);
+		}
+
+		.footer-mobile-credit, .footer-mobile-stats {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.footer-mobile-credit {
+			flex-wrap: wrap;
+		}
+
+		.footer-mobile-stats {
+			font-variant-numeric: tabular-nums;
+
+			span:first-child {
+				color: var(--ui-success-color);
+			}
+
+			span:last-child {
+				color: var(--ui-warning-color);
+			}
+		}
+
+		@media (max-width: 359px) {
+			.footer-mobile-meta {
+				justify-content: center;
+				text-align: center;
+			}
 		}
 	}
 

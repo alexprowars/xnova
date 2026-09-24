@@ -80,7 +80,7 @@ class SimController extends Controller
 		$result = $log->data;
 
 		try {
-			$report = new BattleReport($result)->report();
+			$report = new BattleReport($result)->report(showSimulationLink: false);
 		} catch (Throwable $e) {
 			throw new Exception(__('main.sim_report_error', ['error' => $e->getMessage()]));
 		}
@@ -121,7 +121,7 @@ class SimController extends Controller
 		$result = $sim->getResult();
 
 		try {
-			$report = new BattleReport($result)->report();
+			$report = new BattleReport($result)->report(showSimulationLink: false);
 		} catch (Throwable $e) {
 			throw new PageException(__('main.sim_report_error', ['error' => $e->getMessage()]));
 		}

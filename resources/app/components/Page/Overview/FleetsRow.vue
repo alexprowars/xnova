@@ -18,12 +18,8 @@
 							<template v-else>
 								<div v-for="(count, unit) in item['units']" class="grid grid-cols-4">
 									<div v-if="count === null" class="col-span-4 text-center">{{ $t('tech.' + unit) }}</div>
-									<div v-if="count !== null" class="col-span-3">{{ $t('tech.' + unit) }}:</div>
+									<div v-if="count !== null" class="col-span-3">{{ unit === 'total' ? $t('fleet_activity.count') : $t('tech.' + unit) + ':' }}</div>
 									<div v-if="count !== null" class="text-right">{{ $formatNumber(count) }}</div>
-								</div>
-								<div v-if="item['total']" class="grid grid-cols-2">
-									<div>{{ $t('fleet_activity.count') }}</div>
-									<div class="text-right">{{ $formatNumber(item['total']) }}</div>
 								</div>
 							</template>
 						</div>
