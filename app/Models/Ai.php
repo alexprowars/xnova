@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Engine\Ai\StrategyType;
+use App\Engine\Ai\Development\StrategyType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

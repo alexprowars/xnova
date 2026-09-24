@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Ai;
+namespace App\Engine\Ai\Development;
 
 use Filament\Support\Contracts\HasLabel;
 

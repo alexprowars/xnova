@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Engine\Ai;
+namespace App\Engine\Ai\Development;
 
+use App\Engine\Ai\Economy\ResourceValue;
 use App\Engine\Building;
-use App\Engine\Entity\Entity;
 use App\Engine\EntityFactory;
+use App\Engine\Entity\Entity;
 use App\Engine\Enums\FleetDirection;
 use App\Engine\Enums\ItemType;
 use App\Engine\Enums\PlanetType;
@@ -24,7 +25,14 @@ class StrategyPlanner
 	private ?array $snapshot = null;
 
 	/** @param Collection<int, Planet>|null $colonies */
-	public function __construct(private Planet $planet, private StrategyType $strategy, private bool $researchHub = true, private int $probeTarget = 7, private ?Collection $colonies = null)
+	public function __construct(
+		private Planet $planet,
+		private StrategyType $strategy,
+		private bool $researchHub = true,
+		private int $probeTarget = 7,
+		private ?Collection $colonies = null,
+		private array $fleetRequests = [],
+	)
 	{
 	}
 
@@ -50,19 +58,29 @@ class StrategyPlanner
 		}
 	}
 
+	public function isCurrent(): bool
+	{
+		return $this->snapshot !== null && $this->snapshot === $this->planningState();
+	}
+
+	/** @return Entity<BaseObject> */
+	public function getEntity(int $id): Entity
+	{
+		$object = ObjectsFactory::get($id);
+		$level = $object->getType() === ItemType::TECH ? $this->planet->user->getTechLevel($id) : $this->planet->getLevel($id);
+
+		return EntityFactory::get($id, $level, $this->planet);
+	}
+
 	private function hasAvailableQueue(): bool
 	{
 		$queue = collect($this->snapshot['queue']);
 		$localQueue = $queue->where('planet_id', $this->planet->id);
 
-		return (!$localQueue->contains('type', QueueType::BUILDING->value) && $this->planet->field_current < $this->planet->getMaxFields())
+		return (!$localQueue->contains('type', QueueType::BUILDING->value)
+			&& $this->planet->field_current < $this->planet->getMaxFields())
 			|| !$localQueue->contains('type', QueueType::SHIPYARD->value)
 			|| ($this->researchHub && !$queue->contains('type', QueueType::RESEARCH->value));
-	}
-
-	public function isCurrent(): bool
-	{
-		return $this->snapshot !== null && $this->snapshot === $this->planningState();
 	}
 
 	private function planningState(): array
@@ -76,31 +94,71 @@ class StrategyPlanner
 
 		return [
 			'entities' => $this->planet->entities->pluck('amount', 'entity_id')->sortKeys()->all(),
-			'technologies' => $user->technologies->pluck('level', 'id')->filter()->sortKeys()->all(),
+			'technologies' => $user->technologies->pluck('level', 'id')
+				->filter()
+				->sortKeys()
+				->all(),
 			'race' => $user->race,
 			'officers' => $officers,
 			'fields' => $this->planet->getMaxFields(),
 			'used_fields' => $this->planet->field_current,
-			'queue' => $user->queue()->where(function (Builder $query) {
-				$query->where('planet_id', $this->planet->id)->orWhere('type', QueueType::RESEARCH)->orWhereIn('object_id', [31, 208]);
-			})->orderBy('id')->get(['id', 'planet_id', 'object_id', 'level', 'type'])->toArray(),
-			'fleets' => Fleet::query()->whereBelongsTo($user)
-				->when(!$this->researchHub, fn(Builder $query) => $query->coordinates(FleetDirection::START, $this->planet->coordinates))
-				->orderBy('id')->get(['id', 'entities', 'start_galaxy', 'start_system', 'start_planet', 'start_type'])->toArray(),
-			'colonization' => $this->researchHub ? $user->planets()->whereNull('destroyed_at')
-				->select(['id', 'planet_type'])
-				->withSum(['entities as colonizers' => fn($query) => $query->where('entity_id', 208)], 'amount')
-				->orderBy('id')->get()->toArray() : [],
+			'queue' => $this->queueState(),
+			'fleets' => $this->fleetState(),
+			'colonization' => $this->colonizationState(),
 		];
 	}
 
-	/** @return Entity<BaseObject> */
-	public function getEntity(int $id): Entity
+	private function queueState(): array
 	{
-		$object = ObjectsFactory::get($id);
-		$level = $object->getType() === ItemType::TECH ? $this->planet->user->getTechLevel($id) : $this->planet->getLevel($id);
+		$user = $this->planet->user;
 
-		return EntityFactory::get($id, $level, $this->planet);
+		return $user->queue()
+			->where(function (Builder $query) {
+				$query->where('planet_id', $this->planet->id)
+					->orWhere('type', QueueType::RESEARCH)
+					->orWhereIn('object_id', [31, 208]);
+			})
+			->orderBy('id')
+			->toBase()
+			->get(['id', 'planet_id', 'object_id', 'level', 'type'])
+			->map(fn($row) => (array) $row)
+			->all();
+	}
+
+	private function fleetState(): array
+	{
+		$user = $this->planet->user;
+
+		return Fleet::query()
+			->whereBelongsTo($user)
+			->when(
+				!$this->researchHub,
+				fn(Builder $query) => $query->coordinates(FleetDirection::START, $this->planet->coordinates),
+			)
+			->orderBy('id')
+			->toBase()
+			->get(['id', 'entities', 'start_galaxy', 'start_system', 'start_planet', 'start_type'])
+			->map(fn($row) => (array) $row)
+			->all();
+	}
+
+	private function colonizationState(): array
+	{
+		$user = $this->planet->user;
+
+		if (!$this->researchHub) {
+			return [];
+		}
+
+		return $user->planets()
+			->whereNull('destroyed_at')
+			->select(['id', 'planet_type'])
+			->withSum(['entities as colonizers' => fn($query) => $query->where('entity_id', 208)], 'amount')
+			->orderBy('id')
+			->toBase()
+			->get()
+			->map(fn($row) => (array) $row)
+			->all();
 	}
 
 	private function plan(): void
@@ -112,14 +170,23 @@ class StrategyPlanner
 		$this->loadUnits();
 		$this->planMines();
 
+		foreach ($this->fleetRequests as $id => $count) {
+			$this->addGoal($id, $count, 115, 'Fleet required by reconnaissance');
+		}
+
 		$metalLevel = $this->planet->getLevel(1);
 		$production = $this->planet->getProduction()->getResourceProduction();
 		$storage = $this->planet->getProduction()->getStorageCapacity();
 
-		foreach ([22 => 'metal', 23 => 'crystal', 24 => 'deuterium'] as $id => $resource) {
+		foreach ([
+			22 => 'metal',
+			23 => 'crystal',
+			24 => 'deuterium',
+		] as $id => $resource) {
 			$free = $storage->get($resource) - $this->planet->{$resource};
 
-			if ($free < max(0, $production->get($resource)) * 2 || $this->planet->{$resource} >= $storage->get($resource) * 0.9) {
+			if ($free < max(0, $production->get($resource)) * 2
+				|| $this->planet->{$resource} >= $storage->get($resource) * 0.9) {
 				$this->addGoal($id, $this->planet->getLevel($id) + 1, 700, 'Storage will be full soon');
 			}
 		}
@@ -137,9 +204,16 @@ class StrategyPlanner
 		$hasColonizer = false;
 
 		if ($this->researchHub) {
-			$this->colonies ??= $this->planet->user->planets()->whereNull('destroyed_at')->where('planet_type', PlanetType::PLANET)->get();
-			$colonies = $this->colonies->filter(fn(Planet $colony) => $colony->user_id === $this->planet->user_id
-				&& !$colony->trashed() && !$colony->destroyed_at && $colony->planet_type === PlanetType::PLANET);
+			$this->colonies ??= $this->planet->user->planets()
+				->whereNull('destroyed_at')
+				->where('planet_type', PlanetType::PLANET)
+				->get();
+			$colonies = $this->colonies->filter(
+				fn(Planet $colony) => $colony->user_id === $this->planet->user_id
+					&& !$colony->trashed()
+					&& !$colony->destroyed_at
+					&& $colony->planet_type === PlanetType::PLANET,
+			);
 			$colonies->loadMissing('entities');
 			$colonyCount = collect($this->snapshot['colonization'])->where('planet_type', PlanetType::PLANET->value)->count();
 			$hasColonizer = collect($this->snapshot['colonization'])->contains(fn(array $planet) => $planet['colonizers'] > 0);
@@ -172,7 +246,12 @@ class StrategyPlanner
 		};
 
 		$this->addGoal(202, max(2, (int) ceil($scale / 5)), 85, 'Cargo ships for resource collection and colonies');
-		$this->addGoal(210, min((int) config('ai.max_probes', 32), max(7, $metalLevel, $this->probeTarget)), 95, 'Espionage probes');
+		$this->addGoal(
+			210,
+			min((int) config('ai.max_probes', 32), max(7, $metalLevel, $this->probeTarget)),
+			95,
+			'Espionage probes',
+		);
 		$this->addGoal(204, (int) ceil($scale * $military), 60, 'Strike fleet');
 		$this->addGoal(401, max(5, (int) ceil($scale / 3)), 45, 'Basic protection for resource production');
 
@@ -188,7 +267,12 @@ class StrategyPlanner
 		}
 
 		if ($metalLevel >= 14) {
-			$this->addGoal(206, max(3, (int) ceil($scale * $military / 8)), 80, 'Cruisers against light ships and rocket launchers');
+			$this->addGoal(
+				206,
+				max(3, (int) ceil($scale * $military / 8)),
+				80,
+				'Cruisers against light ships and rocket launchers',
+			);
 			$this->addGoal(402, (int) ceil($scale / 4), 40, 'Diversify defenses');
 			$this->addGoal(115, max(6, intdiv($metalLevel, 2)), 55, 'Cargo ship speed');
 		}
@@ -222,11 +306,15 @@ class StrategyPlanner
 		$bestValue = 0.0;
 		$bestEnergy = 0.0;
 
-		foreach ([1 => ['metal', 1.0], 2 => ['crystal', 1.5], 3 => ['deuterium', 2.0]] as $id => [$resource, $value]) {
+		foreach ([
+			1 => ['metal', 1.0],
+			2 => ['crystal', 1.5],
+			3 => ['deuterium', 2.0],
+		] as $id => [$resource, $value]) {
 			$entity = $this->getEntity($id);
 			$delta = Building::getNextProduction($entity->getObject(), $entity->getLevel(), $this->planet);
 			$price = $entity->getPrice();
-			$cost = $price['metal'] + $price['crystal'] * 1.5 + $price['deuterium'] * 2;
+			$cost = ResourceValue::sum($price);
 			$efficiency = ($delta?->get($resource) ?? 0) * $value / max(1, $cost);
 
 			// Без синтезатора начальные запасы дейтерия однажды закончатся.
@@ -249,8 +337,12 @@ class StrategyPlanner
 
 		if ($this->planet->energy < $needed) {
 			$shortage = $this->planet->energy < $this->planet->energy_used;
-			$this->addGoal(4, $this->planet->getLevel(4) + 1, $shortage ? 1000 : 100,
-				$shortage ? 'Restore energy for active mines' : 'Energy for the next mine upgrade');
+			$this->addGoal(
+				4,
+				$this->planet->getLevel(4) + 1,
+				$shortage ? 1000 : 100,
+				$shortage ? 'Restore energy for active mines' : 'Energy for the next mine upgrade',
+			);
 		} else {
 			$this->addGoal($best, $this->planet->getLevel($best) + 1, 100, 'Best production increase for the upgrade cost');
 		}
@@ -263,7 +355,8 @@ class StrategyPlanner
 		}
 
 		foreach ($this->snapshot['queue'] as $item) {
-			if (($item['planet_id'] === $this->planet->id || $item['object_id'] === 208) && $item['type'] === QueueType::SHIPYARD->value) {
+			if (($item['planet_id'] === $this->planet->id || $item['object_id'] === 208)
+				&& $item['type'] === QueueType::SHIPYARD->value) {
 				$this->units[$item['object_id']] = ($this->units[$item['object_id']] ?? 0) + $item['level'];
 			}
 		}
@@ -274,7 +367,7 @@ class StrategyPlanner
 				&& $flight['start_planet'] === $this->planet->planet
 				&& $flight['start_type'] === $this->planet->planet_type->value;
 
-			foreach ($flight['entities'] as $entity) {
+			foreach (json_decode($flight['entities'], true, flags: JSON_THROW_ON_ERROR) as $entity) {
 				if ($local || $entity['i'] === 208) {
 					$this->units[$entity['i']] = ($this->units[$entity['i']] ?? 0) + $entity['c'];
 				}
@@ -282,7 +375,13 @@ class StrategyPlanner
 		}
 	}
 
-	private function addGoal(int $id, int $target, float $score, string $reason, array $path = []): void
+	private function addGoal(
+		int $id,
+		int $target,
+		float $score,
+		string $reason,
+		array $path = [],
+	): void
 	{
 		if (in_array($id, $path, true)) {
 			return;
@@ -330,10 +429,20 @@ class StrategyPlanner
 		$price = $entity->getPrice();
 		$capacity = $this->planet->getProduction()->getStorageCapacity();
 
-		foreach ([22 => 'metal', 23 => 'crystal', 24 => 'deuterium'] as $storageId => $resource) {
+		foreach ([
+			22 => 'metal',
+			23 => 'crystal',
+			24 => 'deuterium',
+		] as $storageId => $resource) {
 			if (($price[$resource] ?? 0) > $capacity->get($resource)) {
 				$available = false;
-				$this->addGoal($storageId, $this->planet->getLevel($storageId) + 1, $score + 10, 'Storage capacity for goal: ' . $reason, $path);
+				$this->addGoal(
+					$storageId,
+					$this->planet->getLevel($storageId) + 1,
+					$score + 10,
+					'Storage capacity for goal: ' . $reason,
+					$path,
+				);
 			}
 		}
 
@@ -343,6 +452,7 @@ class StrategyPlanner
 
 		if (($price['energy'] ?? 0) > $this->planet->energy) {
 			$this->addGoal(4, $this->planet->getLevel(4) + 1, $score + 10, 'Energy for goal: ' . $reason, $path);
+
 			return;
 		}
 

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Engine\Ai\StrategyType;
+use App\Engine\Ai\Development\StrategyType;
 use App\Engine\Coordinates;
 use App\Facades\Galaxy;
 use App\Models\Ai;

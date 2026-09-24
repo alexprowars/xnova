@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Ai;
+namespace App\Engine\Ai\World;
 
 use App\Engine\Coordinates;
 use App\Engine\Enums\PlanetType;
@@ -11,8 +11,10 @@ use App\Models\Planet;
 
 class ColonizationMap
 {
+
 	/** @var array<string, array{coordinates: Coordinates, population: int, owners: array<int, true>, index: int}> */
 	private array $systems = [];
+
 	/** @var array<int, list<string>> */
 	private array $buckets = [];
 	private array $planets = [];
@@ -27,20 +29,31 @@ class ColonizationMap
 		for ($galaxy = 1; $galaxy <= $maxGalaxies; $galaxy++) {
 			for ($system = 1; $system <= $maxSystems; $system++) {
 				$key = $galaxy . ':' . $system;
-				$this->systems[$key] = ['coordinates' => new Coordinates($galaxy, $system), 'population' => 0, 'owners' => [], 'index' => count($this->buckets[0])];
+				$this->systems[$key] = [
+					'coordinates' => new Coordinates($galaxy, $system),
+					'population' => 0,
+					'owners' => [],
+					'index' => count($this->buckets[0]),
+				];
 				$this->buckets[0][] = $key;
 			}
 		}
 
-		$planets = Planet::query()->whereIn('user_id', Ai::query()->select('user_id'))
-			->where('planet_type', PlanetType::PLANET)->whereNull('destroyed_at')->get(['id', 'galaxy', 'system', 'user_id']);
+		$planets = Planet::query()
+			->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('planet_type', PlanetType::PLANET)
+			->whereNull('destroyed_at')
+			->get(['id', 'galaxy', 'system', 'user_id']);
 
 		foreach ($planets as $planet) {
 			$this->recordPlanet($planet);
 		}
 
-		$fleets = Fleet::query()->whereIn('user_id', Ai::query()->select('user_id'))
-			->where('mission', MissionType::Colonization)->where('mess', 0)->get(['id', 'end_galaxy', 'end_system', 'user_id', 'mission', 'mess']);
+		$fleets = Fleet::query()
+			->whereIn('user_id', Ai::query()->select('user_id'))
+			->where('mission', MissionType::Colonization)
+			->where('mess', 0)
+			->get(['id', 'end_galaxy', 'end_system', 'user_id', 'mission', 'mess']);
 
 		foreach ($fleets as $fleet) {
 			$this->recordFleet($fleet);
@@ -87,7 +100,8 @@ class ColonizationMap
 
 	public function recordFleet(Fleet $fleet): void
 	{
-		if ($fleet->mission !== MissionType::Colonization || $fleet->mess != 0 || isset($this->fleets[$fleet->id])) {
+		if ($fleet->mission !== MissionType::Colonization || $fleet->mess != 0
+			|| isset($this->fleets[$fleet->id])) {
 			return;
 		}
 

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\AiResources\Pages;
 
-use App\Engine\Ai\StrategyType;
+use App\Engine\Ai\Development\StrategyType;
 use App\Filament\Resources\AiResources;
 use App\Services\UserService;
 use Filament\Forms\Components\Select;

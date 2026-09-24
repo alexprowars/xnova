@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Engine\Ai;
+namespace App\Engine\Ai\Runtime;
 
 use App\Engine\Enums\QueueType;
 use App\Engine\Game;
@@ -25,6 +25,7 @@ class TurnSchedule
 		$seconds = (int) config('ai.' . $activity . '_interval_seconds', 600) / ($speed > 0 ? $speed : 1);
 		$minutes = max(1, (int) ceil(max((int) config('ai.min_interval_seconds', 600), $seconds) / 60));
 		$minute = intdiv($this->earliestRun()->timestamp, 60);
+
 		// Постоянная фаза распределяет ботов по минутам, в том числе после перезапуска.
 		$minute += ($this->aiId % $minutes - $minute % $minutes + $minutes) % $minutes;
 
