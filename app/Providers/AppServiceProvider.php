@@ -11,10 +11,12 @@ use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -65,6 +67,17 @@ class AppServiceProvider extends ServiceProvider
 			url()->forceHttps();
 
 			DB::prohibitDestructiveCommands();
+
+			$slowLogPath = storage_path('/logs/slow_sql_' . date('Y_m_d') . '.log');
+
+			DB::listen(function (QueryExecuted $query) use ($slowLogPath) {
+				if ($query->time > 100) {
+					File::append(
+						$slowLogPath,
+						$query->sql . ' [' . implode(', ', $query->bindings) . ']' . ' time [' . $query->time . ']' . PHP_EOL
+					);
+				}
+			});
 		}
 
 		/*\DB::listen(function ($query) {
@@ -120,10 +133,6 @@ class AppServiceProvider extends ServiceProvider
 
 	public function register()
 	{
-		if (!str_starts_with(request()->path(), 'api') || isset($_SERVER['LARAVEL_OCTANE'])) {
-			$this->app->register(AdminPanelProvider::class);
-		}
-
 		$this->app->singleton(GalaxyService::class);
 		$this->app->singleton(Vars::class);
 		$this->app->singleton(PlanetServiceFactory::class);

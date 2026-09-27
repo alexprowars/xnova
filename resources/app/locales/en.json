@@ -124,6 +124,7 @@
 		"close": "Close"
 	},
 	"menu": {
+		"admin": "Admin",
 		"overview": "Overview",
 		"empire": "Empire",
 		"galaxy": "Galaxy",

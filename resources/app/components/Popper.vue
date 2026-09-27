@@ -1,9 +1,9 @@
 <template>
-	<TooltipProvider :delay-duration="200">
+	<TooltipProvider :delay-duration="delayDuration">
 		<TooltipRoot v-model:open="open" disable-closing-trigger>
 			<Trigger/>
 			<TooltipPortal>
-				<TooltipContent class="ui-tooltip" :class="popperClass" side="top" :side-offset="5" :collision-padding="12" hide-when-detached>
+				<TooltipContent class="ui-tooltip" :class="popperClass" side="top" :side-offset="5" :collision-padding="12" hide-when-detached @pointermove.capture="onContentPointerMove">
 					<slot name="content" :shown="open" :hide="hide">{{ content }}</slot>
 					<TooltipArrow class="ui-tooltip-arrow" :width="10" :height="5"/>
 				</TooltipContent>
@@ -19,6 +19,7 @@
 	defineOptions({ inheritAttrs: false });
 	defineProps({
 		content: String,
+		delayDuration: { type: Number, default: 200 },
 		popperClass: String,
 	});
 
@@ -37,6 +38,12 @@
 
 	function hide() {
 		open.value = false;
+	}
+
+	function onContentPointerMove(event) {
+		if (slots.content) {
+			event.stopPropagation();
+		}
 	}
 
 	function onPointerUp(event) {

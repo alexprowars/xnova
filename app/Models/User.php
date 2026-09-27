@@ -11,9 +11,6 @@ use App\Engine\Traits\User\HasOptions;
 use App\Engine\Traits\User\HasTechnologies;
 use App\Facades\Galaxy;
 use Database\Factories\UserFactory;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName;
-use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
@@ -35,7 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property TechnologiesCollection $technologies
  */
-class User extends Authenticatable implements FilamentUser, HasName, HasMedia, HasLocalePreference
+class User extends Authenticatable implements HasMedia, HasLocalePreference
 {
 	use HasRoles;
 	use Notifiable;
@@ -368,16 +365,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasMedia, H
 	{
 		return Planet::query()->whereBelongsTo($user)
 			->pluck('id')->all();
-	}
-
-	public function canAccessPanel(Panel $panel): bool
-	{
-		return $this->id === 1 || $this->can('panel');
-	}
-
-	public function getFilamentName(): string
-	{
-		return $this->username;
 	}
 
 	public function getPoints(): ?Statistic

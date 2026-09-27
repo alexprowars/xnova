@@ -10,7 +10,7 @@
 		<div id="game-planets" :class="{ active }" class="planet-sidebar">
 			<div class="sidebar-caption">{{ $t('interface.colonies') }} <span>{{ items.length }}</span></div>
 			<div class="list">
-				<PlanetRow v-for="item in items" :key="item['id']" :item="item"></PlanetRow>
+				<PlanetRow v-for="item in items" :key="item['id']" :item="item" @select="emit('select')"></PlanetRow>
 			</div>
 		</div>
 	</div>
@@ -29,7 +29,7 @@
 	});
 
 	const state = useState();
-	const emit = defineEmits(['toggle']);
+	const emit = defineEmits(['toggle', 'select']);
 
 	const items = computed(() => {
 		return state.user.planets || [];

@@ -207,4 +207,6 @@ Route::middleware(['auth', RedirectToStart::class])->group(function () {
 	Route::post('planet/image', [Controllers\PlanetController::class, 'image'])->middleware(IsVacationMode::class);
 });
 
+require __DIR__ . '/admin.php';
+
 Route::fallback(fn () => abort(404))->withoutMiddleware(HandleInertiaRequests::class);

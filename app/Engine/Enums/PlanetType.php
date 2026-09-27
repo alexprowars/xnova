@@ -2,9 +2,7 @@
 
 namespace App\Engine\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum PlanetType: int implements HasLabel
+enum PlanetType: int
 {
 	case PLANET = 1;
 	case DEBRIS = 2;

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Planet extends Model
@@ -65,6 +66,12 @@ class Planet extends Model
 	public function moon(): BelongsTo
 	{
 		return $this->belongsTo(Planet::class, 'moon_id');
+	}
+
+	/** @return HasOne<Planet, $this> */
+	public function parentPlanet(): HasOne
+	{
+		return $this->hasOne(Planet::class, 'moon_id');
 	}
 
 	/** @return HasMany<PlanetEntity, $this> */

@@ -24,10 +24,13 @@
 		}
 	});
 
+	const emit = defineEmits(['select']);
 	const state = useState();
 	const planet = computed(() => state.planet);
 
 	function changePlanet () {
+		emit('select');
+
 		if (planet.value.id === item.id) {
 			return;
 		}

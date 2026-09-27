@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Fleet;
 
-use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Fleet;
+use App\Services\FleetService;
 use Illuminate\Http\Request;
 
 class FleetBackController extends Controller
@@ -24,34 +24,6 @@ class FleetBackController extends Controller
 			throw new Exception(__('fleet.onlyyours'));
 		}
 
-		if (!$fleet->canBack()) {
-			throw new Exception(__('fleet.notback'));
-		}
-
-		if ($fleet->end_stay) {
-			if ($fleet->start_date->isFuture()) {
-				$flyingTime = $fleet->created_at->diffInSeconds(now());
-			} else {
-				$flyingTime = $fleet->created_at->diffInSeconds($fleet->start_date);
-			}
-		} else {
-			$flyingTime = $fleet->created_at->diffInSeconds(now());
-		}
-
-		$returnTime = now()->toImmutable()->addSeconds($flyingTime);
-
-		if ($fleet->mission == MissionType::Attack && $fleet->assault) {
-			$fleet->assault->delete();
-		}
-
-		$fleet->update([
-			'start_date'		=> now()->subSecond(),
-			'end_stay' 			=> null,
-			'end_date' 			=> $returnTime->addSecond(),
-			'target_user_id'	=> $this->user->id,
-			'assault_id' 		=> null,
-			'updated_at' 		=> $returnTime->addSecond(),
-			'mess' 				=> 1,
-		]);
+		FleetService::recall($fleet);
 	}
 }

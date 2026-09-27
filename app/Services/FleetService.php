@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Engine\Entity\Model\FleetEntityCollection;
 use App\Engine\Fleet\MissionType;
+use App\Exceptions\Exception;
 use App\Format;
 use App\Http\Resources\FleetRow;
 use App\Models\Fleet;
@@ -12,9 +13,44 @@ use App\Models\LogsBattle;
 use App\Models\Planet;
 use App\Models\Report;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class FleetService
 {
+	public static function recall(Fleet $fleet): void
+	{
+		DB::transaction(function () use ($fleet) {
+			$fleet->refreshForUpdate();
+
+			if (!$fleet->canBack()) {
+				throw new Exception(__('fleet.notback'));
+			}
+
+			$now = now();
+
+			$arrival = $fleet->end_stay && $fleet->start_date->lessThanOrEqualTo($now)
+				? $fleet->start_date
+				: $now;
+
+			$flyingTime = max(0, $fleet->created_at->diffInSeconds($arrival));
+			$returnTime = $now->addSeconds($flyingTime)->addSecond();
+
+			if ($fleet->mission === MissionType::Attack && $fleet->assault) {
+				$fleet->assault->delete();
+			}
+
+			$fleet->update([
+				'start_date' => $now->subSecond(),
+				'end_stay' => null,
+				'end_date' => $returnTime,
+				'target_user_id' => $fleet->user_id,
+				'assault_id' => null,
+				'updated_at' => $returnTime,
+				'mess' => 1,
+			]);
+		});
+	}
+
 	/**
 	 * @param FleetEntityCollection $fleets
 	 * @return array<'metal'|'crystal', int>

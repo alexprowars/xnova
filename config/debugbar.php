@@ -54,7 +54,6 @@ return [
 		'config' => env('DEBUGBAR_COLLECTORS_CONFIG', false),          // Display config settings
 		'cache' => env('DEBUGBAR_COLLECTORS_CACHE', true),            // Display cache events
 		'models' => env('DEBUGBAR_COLLECTORS_MODELS', true),           // Display models
-		'livewire' => env('DEBUGBAR_COLLECTORS_LIVEWIRE', true),         // Display Livewire (when available)
 		'inertia' => env('DEBUGBAR_COLLECTORS_INERTIA', true),          // Display Inertia (when available)
 		'jobs' => env('DEBUGBAR_COLLECTORS_JOBS', true),             // Display dispatched jobs
 		'pennant' => env('DEBUGBAR_COLLECTORS_PENNANT', true),          // Display Pennant feature flags
@@ -118,9 +117,7 @@ return [
 			'timeline' => env('DEBUGBAR_OPTIONS_VIEWS_TIMELINE', true),                  // Add the views to the timeline
 			'data' => env('DEBUGBAR_OPTIONS_VIEWS_DATA', false),                         // True for all data, 'keys' for only names, false for no parameters.
 			'group' => (int)env('DEBUGBAR_OPTIONS_VIEWS_GROUP', 50),                    // Group duplicate views. Pass value to auto-group, or true/false to force
-			'exclude_paths' => [    // Add the paths which you don't want to appear in the views
-				'vendor/filament',   // Exclude Filament components by default
-			],
+			'exclude_paths' => [],    // Add the paths which you don't want to appear in the views
 		],
 		'inertia' => [
 			'pages' => env('DEBUGBAR_OPTIONS_VIEWS_INERTIA_PAGES', 'js/Pages'),  // Path for Inertia views

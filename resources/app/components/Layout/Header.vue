@@ -37,6 +37,7 @@
 					</Link>
 				</Popper>
 			</div>
+			<a v-if="user.can_admin" href="/admin" class="px-3" :aria-label="$t('menu.admin')">{{ $t('menu.admin') }}</a>
 			<Clock class="game-clock"/>
 			<LanguageSwitcher/>
 			<div class="top-menu-block right">

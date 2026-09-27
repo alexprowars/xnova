@@ -4,7 +4,7 @@
 		<GuestHeader v-else-if="view['header']"/>
 		<main>
 			<MainMenu v-if="user && view['menu']" :active="sidebar === 'menu'" @toggle="sidebarToggle('menu')"/>
-			<PlanetsList v-if="user && view['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')"/>
+			<PlanetsList v-if="user && view['planets']" :active="sidebar === 'planet'" @toggle="sidebarToggle('planet')" @select="sidebar = ''"/>
 			<div class="main-content" v-touch:tap="tap">
 				<PlanetPanel v-if="user && view['resources']"/>
 				<div class="main-content-row">

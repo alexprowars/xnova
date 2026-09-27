@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Admin\Access;
 use App\Engine\Enums\ItemType;
 use App\Facades\Vars;
 use App\Models\User;
@@ -30,6 +31,7 @@ class UserResource extends JsonResource
 
 		$data = [
 			'id' => $this->resource->id,
+			'can_admin' => Access::allows($this->resource, 'panel'),
 			'name' => trim($this->resource->username),
 			'email' => $this->resource->email,
 			'race' => $this->resource->race,

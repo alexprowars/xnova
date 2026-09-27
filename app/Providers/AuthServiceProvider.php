@@ -14,7 +14,7 @@ class AuthServiceProvider extends ServiceProvider
 	public function boot(Gate $gate): void
 	{
 		$gate->before(function ($user) {
-			return $user->id === 1;
+			return $user->id === 1 ? true : null;
 		});
 
 		Authenticate::redirectUsing(function () {

@@ -1,6 +1,5 @@
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import i18n, { createLocalization, resolveLocale, setLocale } from './i18n.js';
-import './styles.css';
 import toastPlugin from './plugins/toast';
 import { morph, number, time } from './utils/format.js';
 import dayjs from 'dayjs';
@@ -14,6 +13,7 @@ import en from 'dayjs/locale/en';
 import ru from 'dayjs/locale/ru';
 import App from './App.vue';
 import DefaultLayout from './layouts/DefaultLayout.vue';
+import AdminLayout from './layouts/AdminLayout.vue';
 import Vue3TouchEvents from 'vue3-touch-events'
 import { createModal } from '@kolirt/vue-modal';
 import { putConfig, withInertiaModal } from '@inertiaui/modal-vue';
@@ -45,8 +45,8 @@ if (typeof window !== 'undefined') {
 
 createInertiaApp({
 	title: (title) => (title ? `${title} - ${appName}` : appName),
-	layout: () => {
-		return [App, DefaultLayout];
+	layout: (name) => {
+		return name.startsWith('Admin/') ? AdminLayout : [App, DefaultLayout];
 	},
 	defaults: {
 		visitOptions: (href, options) => {

@@ -20,7 +20,7 @@
 		<link rel="apple-touch-icon" type="image/png" sizes="512x512" href="{{ asset('/assets/images/pwa/icon_512.png') }}"/>
 		<link rel="manifest" href="{{ asset('/manifest.json') }}"/>
 
-        @vite('resources/app/app.js')
+        @vite(['resources/app/app.js', 'resources/app/styles.css'])
 
 		<x-inertia::head>
 			<title>{{ config('app.name', 'Laravel') }}</title>

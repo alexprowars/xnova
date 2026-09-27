@@ -2,9 +2,7 @@
 
 namespace App\Engine\Ai\Development;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum StrategyType: string implements HasLabel
+enum StrategyType: string
 {
 	case ECONOMY  = 'economy';
 	case MILITARY = 'military';
@@ -12,6 +10,6 @@ enum StrategyType: string implements HasLabel
 
 	public function getLabel(): string
 	{
-		return __('admin.ai.strategy_' . $this->value);
+		return __('admin.strategy_' . $this->value);
 	}
 }

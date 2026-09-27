@@ -2,9 +2,7 @@
 
 namespace App\Engine\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum MessageType: int implements HasLabel
+enum MessageType: int
 {
 	case User = 1;
 	case Spy = 2;

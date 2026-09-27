@@ -21,11 +21,6 @@ Thumbs.db
 /public/packages/
 /database/database.sqlite
 /public/storage
-/public/css/filament*
-/public/js/filament*
-/public/css/malzariey
-/public/js/malzariey
-/public/fonts/filament
 /bootstrap/ssr/
 /public/hot
 /.agents
@@ -33,3 +28,6 @@ Thumbs.db
 /AGENTS.md
 /rust/target/
 !/rust/Cargo.lock
+.playwright-cli
+output
+*.md
