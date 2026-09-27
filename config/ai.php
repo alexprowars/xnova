@@ -9,6 +9,11 @@ return [
 	'saving_horizon_hours' => 3,
 	'max_batch' => 20,
 	'shipyard_hours' => 2,
+	'energy' => [
+		// Спутники закрывают только небольшой дефицит, основную мощность дают электростанции.
+		'satellite_limit' => 20,
+		'satellite_shortage_ratio' => 0.1,
+	],
 	'search_radius' => 100,
 	'search_galaxy_radius' => 2,
 	'target_limit' => 30,

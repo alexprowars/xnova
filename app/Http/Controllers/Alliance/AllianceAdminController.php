@@ -201,12 +201,19 @@ class AllianceAdminController extends Controller
 			throw new PageException(__('alliance.denied_access'));
 		}
 
-		$member = $alliance->members()->with('user')
+		$member = $alliance->members()
+			->whereNot('user_id', $alliance->user_id)
+			->whereNotNull('rank')
+			->with('user')
 			->find((int) $request->post('member', 0));
 
 		$user = $member?->user;
 
 		if (!$user || $user->alliance_id != $this->user->alliance_id) {
+			throw new PageException(__('alliance.operation_impossible'));
+		}
+
+		if (($alliance->ranks[$member->rank][AllianceAccess::CAN_EDIT_RIGHTS->value] ?? 0) != 1) {
 			throw new PageException(__('alliance.operation_impossible'));
 		}
 

@@ -1,4 +1,4 @@
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import i18n, { createLocalization, resolveLocale, setLocale } from './i18n.js';
 import './styles.css';
 import toastPlugin from './plugins/toast';
@@ -27,6 +27,21 @@ dayjs.extend(customParseFormat);
 dayjs.extend(relativeTime);
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+if (typeof window !== 'undefined') {
+	let reloadHistoryPage = false;
+
+	window.addEventListener('popstate', (event) => {
+		reloadHistoryPage = Boolean(event.state?.page);
+	});
+
+	router.on('navigate', () => {
+		if (reloadHistoryPage) {
+			reloadHistoryPage = false;
+			router.reload();
+		}
+	});
+}
 
 createInertiaApp({
 	title: (title) => (title ? `${title} - ${appName}` : appName),

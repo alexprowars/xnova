@@ -13,6 +13,7 @@ return [
 	'invalid_planet' => 'Invalid planet!',
 	'unknown_planet_type' => 'Unknown planet type!',
 	'not_enough_ships' => 'There are not enough ships on the planet to send this fleet!',
+	'immobile_ships' => 'You cannot send a fleet containing ships with no flight speed!',
 	'no_free_slots' => 'All fleet slots are occupied. Research Computer Technology to increase the number of fleets you can send.',
 	'same_planet' => 'You cannot send a fleet to its own planet!',
 	'colonization_planet_only' => 'Only planets can be colonized!',

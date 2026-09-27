@@ -33,7 +33,7 @@ class GalaxyController extends Controller
 
 		$phalanx = false;
 
-		if ($this->planet->getLevel('phalanx') > 0) {
+		if ($this->planet->getLevel('phalanx') > 0 && $galaxy == $this->planet->galaxy) {
 			$range = Formulas::getPhalanxRange($this->planet->getLevel('phalanx'));
 
 			$systemLimitMin = max(1, $this->planet->system - $range);

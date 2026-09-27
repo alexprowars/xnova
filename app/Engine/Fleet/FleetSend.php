@@ -323,6 +323,10 @@ class FleetSend
 
 		$fleetCollection = FleetCollection::createFromArray($this->fleetArray, $this->planet);
 
+		if ($fleetCollection->getSpeed() <= 0) {
+			throw new Exception(__('fleet.immobile_ships'));
+		}
+
 		$distance = $fleetCollection->getDistance($this->planet->coordinates, $this->target);
 		$duration = $fleetCollection->getDuration($this->fleetSpeed, $distance);
 		$consumption = $fleetCollection->getConsumption($duration, $distance);

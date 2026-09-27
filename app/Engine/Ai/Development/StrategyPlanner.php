@@ -238,53 +238,20 @@ class StrategyPlanner
 		$this->addGoal(108, min(12, max(2, intdiv($metalLevel, 3))), 70, 'Fleet slots for reconnaissance and missions');
 		$this->addGoal(106, min(16, max(3, intdiv($metalLevel, 2) - 1)), 75, 'Target reconnaissance');
 
-		$scale = max(1, ($metalLevel - 4) ** 2);
-		$military = match ($this->strategy) {
-			StrategyType::MILITARY => 1.5,
-			StrategyType::ECONOMY => 0.5,
-			StrategyType::BALANCED => 1.0,
-		};
-
-		$this->addGoal(202, max(2, (int) ceil($scale / 5)), 85, 'Cargo ships for resource collection and colonies');
-		$this->addGoal(
-			210,
-			min((int) config('ai.max_probes', 32), max(7, $metalLevel, $this->probeTarget)),
-			95,
-			'Espionage probes',
-		);
-		$this->addGoal(204, (int) ceil($scale * $military), 60, 'Strike fleet');
-		$this->addGoal(401, max(5, (int) ceil($scale / 3)), 45, 'Basic protection for resource production');
+		$this->planUnits($metalLevel);
 
 		if ($metalLevel >= 10) {
-			$this->addGoal(203, max(2, (int) ceil($scale / 15)), 70, 'Cargo capacity for raids');
-			$this->addGoal(205, max(2, (int) ceil($scale * $military / 5)), 65, 'Reinforce the strike fleet');
-			$this->addGoal(209, max(1, (int) ceil($scale / 20)), 55, 'Collect debris');
-			$this->addGoal(407, 1, 55, 'Shield dome');
-
 			foreach ([109, 110, 111] as $id) {
 				$this->addGoal($id, max(3, intdiv($metalLevel, 2) - 1), 80, 'Combat technologies');
 			}
 		}
 
 		if ($metalLevel >= 14) {
-			$this->addGoal(
-				206,
-				max(3, (int) ceil($scale * $military / 8)),
-				80,
-				'Cruisers against light ships and rocket launchers',
-			);
-			$this->addGoal(402, (int) ceil($scale / 4), 40, 'Diversify defenses');
 			$this->addGoal(115, max(6, intdiv($metalLevel, 2)), 55, 'Cargo ship speed');
 		}
 
 		if ($metalLevel >= 18) {
-			$this->addGoal(207, max(3, (int) ceil($scale * $military / 15)), 85, 'Heavy strike fleet');
-			$this->addGoal(404, max(2, (int) ceil($scale / 30)), 45, 'Defense against heavy fleets');
 			$this->addGoal(15, max(1, intdiv($metalLevel - 16, 4)), 75, 'Speed up production');
-		}
-
-		if ($metalLevel >= 22) {
-			$this->addGoal(215, max(3, (int) ceil($scale * $military / 25)), 80, 'Fleet for major raids');
 		}
 
 		$desired = min((int) config('game.maxPlanets', 9), max(1, intdiv($metalLevel - 5, 3)));
@@ -297,6 +264,28 @@ class StrategyPlanner
 			if ($colonyCount < $limit && !$hasColonizer && ($this->units[208] ?? 0) === 0) {
 				$this->addGoal(208, 1, 105, 'Prepare for colonization');
 			}
+		}
+	}
+
+	private function planUnits(int $metalLevel): void
+	{
+		foreach (UnitTargets::forDevelopment($metalLevel, $this->strategy) as $id => $target) {
+			$this->addGoal($id, $target['count'], $target['score'], $target['reason']);
+		}
+
+		$this->addGoal(
+			210,
+			min((int) config('ai.max_probes', 32), max(7, $metalLevel, $this->probeTarget)),
+			95,
+			'Espionage probes',
+		);
+
+		if ($metalLevel >= 10) {
+			$this->addGoal(407, 1, 55, 'Small shield dome');
+		}
+
+		if ($metalLevel >= 18) {
+			$this->addGoal(408, 1, 55, 'Large shield dome');
 		}
 	}
 
@@ -337,15 +326,38 @@ class StrategyPlanner
 
 		if ($this->planet->energy < $needed) {
 			$shortage = $this->planet->energy < $this->planet->energy_used;
-			$this->addGoal(
-				4,
-				$this->planet->getLevel(4) + 1,
+			$this->planEnergy(
+				$needed,
 				$shortage ? 1000 : 100,
 				$shortage ? 'Restore energy for active mines' : 'Energy for the next mine upgrade',
 			);
 		} else {
 			$this->addGoal($best, $this->planet->getLevel($best) + 1, 100, 'Best production increase for the upgrade cost');
 		}
+	}
+
+	private function planEnergy(float $required, float $score, string $reason, array $path = []): void
+	{
+		$solarPlant = $this->getEntity(4);
+		$satellite = EntityFactory::get(212, 1, $this->planet);
+		$satelliteEnergy = $satellite->getProduction()?->get('energy') ?? 0;
+		$plantEnergy = Building::getNextProduction($solarPlant->getObject(), $solarPlant->getLevel(), $this->planet)?->get('energy') ?? 0;
+		$missing = max(0, $required - $this->planet->energy);
+		$satelliteCount = $satelliteEnergy > 0 ? (int) ceil($missing / $satelliteEnergy) : 0;
+
+		if ($this->planet->getLevel(1) >= 10 && $satelliteCount > 0
+			&& $satelliteCount <= (int) config('ai.energy.satellite_limit', 20)
+			&& $missing <= $required * (float) config('ai.energy.satellite_shortage_ratio', 0.1)
+			&& ResourceValue::sum($satellite->getPrice()) / $satelliteEnergy
+				<= ResourceValue::sum($solarPlant->getPrice()) / max(1, $plantEnergy)) {
+			// Цель включает уже заказанные спутники: очередь не должна создавать лишний резерв.
+			$target = $this->planet->getLevel(212) + $satelliteCount;
+			$this->addGoal(212, $target, $score, $reason, $path);
+
+			return;
+		}
+
+		$this->addGoal(4, $solarPlant->getLevel() + 1, $score, $reason, $path);
 	}
 
 	private function loadUnits(): void
@@ -383,7 +395,7 @@ class StrategyPlanner
 		array $path = [],
 	): void
 	{
-		if (in_array($id, $path, true)) {
+		if (in_array($id, $path, true) || in_array($id, [502, 503], true)) {
 			return;
 		}
 
@@ -405,7 +417,7 @@ class StrategyPlanner
 
 		$requirements = $object->getRequeriments();
 
-		if (isset($requirements['race']) && $requirements['race'] !== $this->planet->user->race) {
+		if (isset($requirements['race'])) {
 			return;
 		}
 
@@ -451,7 +463,7 @@ class StrategyPlanner
 		}
 
 		if (($price['energy'] ?? 0) > $this->planet->energy) {
-			$this->addGoal(4, $this->planet->getLevel(4) + 1, $score + 10, 'Energy for goal: ' . $reason, $path);
+			$this->planEnergy($price['energy'], $score + 10, 'Energy for goal: ' . $reason, $path);
 
 			return;
 		}

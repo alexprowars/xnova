@@ -65,9 +65,13 @@ class FleetCheckoutController extends Controller
 					continue;
 				}
 
-				$fleets[$i] = $cnt;
-
 				$ship = PlanetEntity\Ship::createEntity($i, 1, $this->planet)->getInfo();
+
+				if ($ship['speed'] <= 0) {
+					throw new Exception(__('fleet.immobile_ships'));
+				}
+
+				$fleets[$i] = $cnt;
 				$ship['count'] = $cnt;
 
 				$result['ships'][] = $ship;
