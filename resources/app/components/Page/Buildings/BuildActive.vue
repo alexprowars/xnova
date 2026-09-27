@@ -53,7 +53,10 @@
 				</div>
 
 				<div v-if="item['available'] && !user.vacation" class="building-active-upgrade">
-					<div v-if="emptyFieldsCount <= 0" class="negative">
+					<div v-if="item.blocked" class="negative">
+						{{ item.blocked }}
+					</div>
+					<div v-else-if="emptyFieldsCount <= 0" class="negative">
 						{{ $t('pages.building.status_no_more_fields') }}
 					</div>
 					<div v-else-if="user['queue_max'] <= queueByType('build').length" class="negative">

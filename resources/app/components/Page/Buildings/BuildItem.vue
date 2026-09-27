@@ -54,7 +54,7 @@
 	});
 
 	const available = computed(() => {
-		return props.item['available'] && (hasResources.value || queueByType('build').length > 0)
+		return props.item['available'] && !props.item.blocked && (hasResources.value || queueByType('build').length > 0)
 			&& emptyFieldsCount.value > 0 && !user.value.vacation;
 	});
 

@@ -18,7 +18,7 @@
 			</button>
 			<span v-else class="overview-queue-planet">{{ planetItem?.name }}</span>
 		</div>
-		<div class="overview-queue-time">
+		<div v-if="item.date" class="overview-queue-time">
 			<div class="overview-queue-countdown">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
 					<circle cx="12" cy="12" r="9"/>
@@ -30,6 +30,7 @@
 				{{ $formatDate(item.date, 'DD MMM HH:mm:ss') }}
 			</div>
 		</div>
+		<div v-else class="overview-queue-time">{{ $t('pages.building.queue_pending') }}</div>
 	</div>
 </template>
 

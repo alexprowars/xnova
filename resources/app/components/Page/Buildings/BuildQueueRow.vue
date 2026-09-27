@@ -1,5 +1,5 @@
 <template>
-	<div class="build-queue-row" :class="{ 'is-current': index === 0, 'is-finished': index === 0 && time <= 0 }">
+	<div class="build-queue-row" :class="{ 'is-current': index === 0 && item.date, 'is-finished': index === 0 && item.date && time <= 0 }">
 		<div class="build-queue-item">
 			<img class="build-queue-image" :src="'/assets/images/elements/' + item.item + '.webp'" alt="" width="42" height="42">
 			<div class="build-queue-description">
@@ -8,7 +8,7 @@
 					<span class="build-queue-level">{{ $t('pages.building.queue_level', { level: item.level }) }}</span>
 				</div>
 				<div class="build-queue-status">
-					<span v-if="index === 0">
+					<span v-if="index === 0 && item.date">
 						{{ time > 0 ? $t('pages.building.queue_in_progress') : $t('pages.building.queue_finished') }}
 					</span>
 					<span v-else>{{ $t('pages.building.queue_pending') }} · {{ index + 1 }}</span>
@@ -17,7 +17,7 @@
 			</div>
 		</div>
 		<div class="build-queue-details">
-			<div class="build-queue-time">
+			<div v-if="item.date" class="build-queue-time">
 				<div v-if="index === 0 && time > 0" class="build-queue-timer">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
 						<circle cx="12" cy="12" r="9"/>
@@ -30,10 +30,10 @@
 					{{ $formatDate(item.date, 'DD MMM HH:mm:ss') }}
 				</div>
 			</div>
-			<button v-if="index === 0 && time > 0" type="button" class="button is-danger" @click="cancel">
+			<button v-if="index === 0 && item.date && time > 0" type="button" class="button is-danger" @click="cancel">
 				{{ $t('pages.building.queue_cancel') }}
 			</button>
-			<Link v-else-if="index === 0" href="/buildings" class="button is-success">{{ $t('pages.building.queue_next') }}</Link>
+			<Link v-else-if="index === 0 && item.date" href="/buildings" class="button is-success">{{ $t('pages.building.queue_next') }}</Link>
 			<button v-else type="button" class="button is-danger" @click="remove">{{ $t('pages.building.queue_remove') }}</button>
 		</div>
 	</div>
@@ -54,7 +54,7 @@
 
 	const { t } = useI18n();
 	const now = useUpdateInterval();
-	const time = computed(() => dayjs(props.item['date']).diff(now.value) / 1000);
+	const time = computed(() => props.item.date ? dayjs(props.item.date).diff(now.value) / 1000 : null);
 
 	function remove () {
 		openConfirmModal(

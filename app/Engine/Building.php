@@ -33,18 +33,20 @@ class Building
 
 	public static function checkLabInQueue(Planet $planet, ?QueueManager $queue = null): bool
 	{
-		$BuildQueue = ($queue ?? new QueueManager($planet))
-			->get(QueueType::BUILDING);
-
-		if ($BuildQueue->isNotEmpty()) {
-			if ($BuildQueue->first()->object_id == 31 && $BuildQueue->first()->date && config('game.BuildLabWhileRun', 0) != 1) {
-				return true;
-			}
-
+		if (config('game.BuildLabWhileRun', 0) == 1) {
 			return false;
 		}
 
-		return false;
+		return ($queue?->getUser() ?? $planet->user)->queue()
+			->where('type', QueueType::BUILDING)
+			->where('object_id', 31)
+			->exists();
+	}
+
+	public static function checkResearchInProgress(User $user): bool
+	{
+		return config('game.BuildLabWhileRun', 0) != 1
+			&& $user->queue()->where('type', QueueType::RESEARCH)->exists();
 	}
 
 	public static function getTechTree(BaseObject $object, User $user, Planet $planet): ?array

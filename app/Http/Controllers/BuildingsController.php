@@ -20,6 +20,7 @@ class BuildingsController extends Controller
 	public function index(): Response
 	{
 		$viewOnlyAvailable = $this->user->getOption('only_available');
+		$researchInProgress = Building::checkResearchInProgress($this->user);
 
 		$items = [];
 
@@ -50,6 +51,7 @@ class BuildingsController extends Controller
 				'name' => $element->getName(),
 				'code' => $element->getCode(),
 				'available' => $available,
+				'blocked' => $element->getId() == 31 && $researchInProgress ? __('buildings.research_in_progress') : null,
 				'price' => $price,
 			];
 
@@ -84,6 +86,10 @@ class BuildingsController extends Controller
 
 		if (!$object->hasAllowedBuild($this->planet->planet_type)) {
 			throw new Exception(__('buildings.building_not_allowed'));
+		}
+
+		if ($elementId == 31 && Building::checkResearchInProgress($this->user)) {
+			throw new Exception(__('buildings.research_in_progress'));
 		}
 
 		$queueManager = new QueueManager($this->planet);

@@ -153,7 +153,7 @@ class ResearchController extends Controller
 				break;
 			case 'search':
 				if (Building::checkLabInQueue($this->planet)) {
-					return;
+					throw new Exception(__('buildings.labo_on_update'));
 				}
 
 				$queueManager->add($object);

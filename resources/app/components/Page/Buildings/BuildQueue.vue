@@ -22,7 +22,7 @@
 
 	const now = useUpdateInterval();
 	const endTime = computed(() => {
-		return props.queue.length ? dayjs(props.queue[0].date).diff(now.value) / 1000 : 0
+		return props.queue[0]?.date ? dayjs(props.queue[0].date).diff(now.value) / 1000 : null;
 	});
 
 	let timeout;
@@ -31,11 +31,13 @@
 		clearTimeout(timeout);
 	});
 
-	watch(endTime, (val) => {
-		if (val <= 0) {
+	watch(() => endTime.value !== null && endTime.value <= 0, (finished) => {
+		clearTimeout(timeout);
+
+		if (finished) {
 			timeout = setTimeout(() => {
 				router.reload();
 			}, 5000);
 		}
-	});
+	}, { immediate: true });
 </script>

@@ -73,9 +73,9 @@ class QueueResource extends JsonResource
 		$queue = $this->user->queue->where('type', QueueType::BUILDING);
 
 		foreach ($queue as $item) {
-			$endTime[$item->planet_id] ??= $item->date ?? now();
+			$endTime[$item->planet_id] ??= $item->date;
 			$endTime[$item->planet_id] = $endTime[$item->planet_id]
-				->addSeconds($item->getTime());
+				?->addSeconds($item->getTime());
 
 			$result[] = [
 				'id' => $item->id,
@@ -83,7 +83,7 @@ class QueueResource extends JsonResource
 				'type'	=> $item->type,
 				'level' => $item->level,
 				'mode' 	=> $item->operation,
-				'date' 	=> $endTime[$item->planet_id]->utc()->toAtomString(),
+				'date' 	=> $endTime[$item->planet_id]?->utc()->toAtomString(),
 				'planet_id' => $item->planet_id,
 				'planet_name' => $item->planet->name ?? '',
 			];

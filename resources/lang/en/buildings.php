@@ -1,7 +1,8 @@
 <?php
 
 return [
-	'labo_on_update' => 'The research lab is being upgraded!',
+	'labo_on_update' => 'Research is unavailable: a laboratory is in the construction queue.',
+	'research_in_progress' => 'You cannot build or demolish a laboratory while research is in progress.',
 	'invalid_building_object' => 'Invalid building.',
 	'building_not_allowed' => 'This building cannot be constructed here.',
 	'research_planet_not_found' => 'The research planet could not be found.',

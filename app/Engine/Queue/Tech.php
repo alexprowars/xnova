@@ -2,6 +2,7 @@
 
 namespace App\Engine\Queue;
 
+use App\Engine\Building;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
 use App\Engine\Objects\BaseObject;
@@ -38,6 +39,10 @@ class Tech
 	{
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
+
+		if (Building::checkLabInQueue($planet)) {
+			return null;
+		}
 
 		$techHandle = Models\Queue::query()
 			->whereBelongsTo($user)

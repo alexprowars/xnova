@@ -2,6 +2,7 @@
 
 namespace App\Engine\Queue;
 
+use App\Engine\Building;
 use App\Engine\Entity;
 use App\Engine\Enums\QueueConstructionType;
 use App\Engine\Enums\QueueType;
@@ -17,12 +18,35 @@ class Build
 
 	public function add(BaseObject $element, bool $destroy = false): ?Models\Queue
 	{
+		$planet = $this->queue->getPlanet();
+		$user = $this->queue->getUser();
+
+		return $planet->getConnection()->transaction(function () use ($planet, $user, $element, $destroy): ?Models\Queue {
+			$user->refreshForUpdate();
+
+			$planet->unsetRelation('user')->unsetRelation('entities')->refreshForUpdate();
+			$planet->setRelation('user', $user);
+			$planet->setRelation('entities', $planet->entities()->lockForUpdate()->get());
+			$planet->getProduction()->reset();
+
+			$this->queue->loadQueue(true);
+
+			return $this->addLocked($element, $destroy);
+		});
+	}
+
+	protected function addLocked(BaseObject $element, bool $destroy): ?Models\Queue
+	{
 		if ($destroy && in_array($element->getId(), [33, 41], true)) {
 			return null;
 		}
 
 		$planet = $this->queue->getPlanet();
 		$user = $this->queue->getUser();
+
+		if ($element->getId() == 31 && Building::checkResearchInProgress($user)) {
+			return null;
+		}
 
 		$maxBuidSize = config('game.maxBuildingQueue', 1);
 
