@@ -13,7 +13,7 @@ class RegistrationRequest extends FormRequest
 		return [
 			'email' => 'required|email|unique:users,email',
 			'password' => ['required', Password::min(6), 'confirmed'],
-			'captcha' => ['required', new ReCaptcha()],
+			'captcha' => [!empty(config('services.recaptcha.secret_key')) ? 'required' : 'nullable', new ReCaptcha()],
 		];
 	}
 

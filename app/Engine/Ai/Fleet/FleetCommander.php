@@ -508,6 +508,11 @@ class FleetCommander
 
 	private function recycle(): void
 	{
+		if (($this->state['recycled_at'] ?? 0)
+			> now()->subMinutes((int) config('ai.recycle_cooldown_minutes', 180))->timestamp) {
+			return;
+		}
+
 		$count = $this->planet->getLevel(209);
 
 		if ($count < 1) {
@@ -542,7 +547,14 @@ class FleetCommander
 			$flight = $this->flight($ships, $coordinates);
 
 			if (min($debris, $flight->capacity) > $flight->fuel * 2 + (float) config('ai.min_raid_profit', 1000)
-				&& $this->send($coordinates, MissionType::Recycling, $ships)) {
+				&& $this->send(
+					$coordinates,
+					MissionType::Recycling,
+					$ships,
+					onSent: function () {
+						$this->state['recycled_at'] = now()->timestamp;
+					},
+				)) {
 				return;
 			}
 		}

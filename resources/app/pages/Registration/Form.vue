@@ -57,11 +57,10 @@
 	import { UiButton, UiPanel } from '~/components/UI';
 	import { useVuelidate } from '@vuelidate/core'
 	import { required, email as emailValidation, minLength } from '@vuelidate/validators'
-	import { computed } from 'vue';
 	import ReCaptcha from '~/components/ReCaptcha.vue';
 	import { Head, Link, useForm } from '@inertiajs/vue3';
 
-	const recaptchaKey = computed(() => import.meta.env.VITE_APP_NAME || null);
+	const recaptchaKey = import.meta.env.VITE_RECAPTCHA_KEY || null;
 
 	const form = useForm({
 		email: '',

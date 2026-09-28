@@ -18,12 +18,16 @@ return [
 	'search_galaxy_radius' => 2,
 	'target_limit' => 30,
 	'target_cache_minutes' => 30,
-	'active_humans_threshold' => 0,
+	// При небольшом числе активных за сутки игроков боты предпочитают воевать друг с другом.
+	'active_humans_threshold' => 100,
 	'active_humans_hours' => 24,
-	'bot_target_bonus' => 3,
+	'bot_target_bonus' => 10,
 	'report_lifetime_minutes' => 120,
-	'scout_cooldown_minutes' => 20,
-	'attack_cooldown_minutes' => 180,
+	// Паузы для повторного шпионажа и атак одним ботом на ту же планету, включая цели-ботов.
+	'scout_cooldown_minutes' => 60,
+	'attack_cooldown_minutes' => 720,
+	// Пауза между отправками на сбор обломков, общая для всех планет бота.
+	'recycle_cooldown_minutes' => env('AI_RECYCLE_COOLDOWN_MINUTES', 180),
 	'max_probes' => 32,
 	'max_flight_hours' => 12,
 	'max_colonization_flight_hours' => 48,
