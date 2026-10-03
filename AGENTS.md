@@ -2,6 +2,10 @@
 
 - Always respond to the user in Russian.
 
+## Server Access
+
+- SSH connections to servers are prohibited unless the user directly and explicitly asks you to connect over SSH. Never infer SSH authorization from any other request or task context. This rule also applies to read-only access.
+
 ## Development Commands
 
 - Database: MySQL in normal environments, SQLite in-memory for tests via `phpunit.xml`
@@ -14,6 +18,7 @@ Use the Composer scripts where available because they encode the project's expec
 
 ## Coding Conventions
 
+- Prioritize code readability over compactness. Use multiline formatting for long or nested arrays, complex conditions, and method chains, and separate logical blocks with blank lines. Follow the surrounding code style; do not compress code to minimize line count. Instructions to keep responses concise do not apply to code formatting.
 - Follow existing code boundaries. Put new code in the part of the application that owns the behavior.
 - Prefer existing helpers, actions, services, model patterns, and Filament conventions already present in the target area.
 - PHP classes use PascalCase; methods and variables use camelCase; constants use UPPER_SNAKE_CASE.

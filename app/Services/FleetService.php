@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Engine\Coordinates;
 use App\Engine\Entity\Model\FleetEntityCollection;
+use App\Engine\Enums\PlanetType;
 use App\Engine\Fleet\MissionType;
 use App\Exceptions\Exception;
 use App\Format;
@@ -49,6 +51,27 @@ class FleetService
 				'mess' => 1,
 			]);
 		});
+	}
+
+	/**
+	 * @param array{metal: int|float, crystal: int|float} $debris
+	 */
+	public static function addDebris(Coordinates $coordinates, array $debris): void
+	{
+		$planetIds = Planet::query()
+			->coordinates($coordinates)
+			->whereNot('planet_type', PlanetType::MOON)
+			->orderBy('id')
+			->pluck('id');
+
+		foreach ($planetIds as $planetId) {
+			Planet::query()
+				->whereKey($planetId)
+				->incrementEach([
+					'debris_metal' => $debris['metal'],
+					'debris_crystal' => $debris['crystal'],
+				]);
+		}
 	}
 
 	/**

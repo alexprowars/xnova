@@ -14,7 +14,7 @@ test('returning fleet restores ships and cargo only when its return time is reac
 	$fleet = $this->createMissionFleet($mission, [$shipId => 2], ['mess' => 1]);
 	$this->travelTo($fleet->end_date->subSecond());
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->not->toBeNull()
 		->and($this->planet->fresh()->getLevel($shipId))->toBe(3)
@@ -22,7 +22,7 @@ test('returning fleet restores ships and cargo only when its return time is reac
 		->toEqual(['metal' => 10000, 'crystal' => 10000, 'deuterium' => 10000]);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel($shipId))->toBe(5)
@@ -54,7 +54,7 @@ test('returning fleet restores every surviving ship type and ignores destroyed s
 	$fleet->save();
 	$this->travelTo($fleet->end_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(5)
@@ -77,7 +77,7 @@ test('return to a moon restores the fleet to the moon or its planet if destroyed
 	]);
 	$this->travelTo($fleet->end_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull();
 	if ($destroyed) {
@@ -105,7 +105,7 @@ test('cancelled deployment does not transfer ships or cargo to a new owner of th
 	$this->planet->update(['user_id' => $this->targetUser->id]);
 	$this->travelTo($fleet->end_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(0)
@@ -118,7 +118,7 @@ test('returning fleet is removed when its origin no longer exists', function (Mi
 	$this->planet->delete();
 	$this->travelTo($fleet->end_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->targetPlanet->fresh()->getLevel(202))->toBe(0)

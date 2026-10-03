@@ -14,10 +14,18 @@ return new class extends Migration {
 			$table->json('data');
 			$table->timestamp('created_at')->useCurrent();
 		});
+
+		Schema::table('halls_of_fame', function (Blueprint $table) {
+			$table->foreignId('report_id')->nullable()->constrained('logs_battles')->nullOnDelete();
+		});
 	}
 
 	public function down()
 	{
+		Schema::table('halls_of_fame', function (Blueprint $table) {
+			$table->dropConstrainedForeignId('report_id');
+		});
+
 		Schema::drop('logs_battles');
 	}
 };

@@ -21,15 +21,15 @@ test('transport unloads at arrival and returns ships without returning delivered
 	$fleet = $this->createMissionFleet(MissionType::Transport);
 
 	$this->travelTo($fleet->start_date->subSecond());
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(0)
 		->and($this->targetPlanet->fresh()->metal)->toEqual(10000);
 	Notification::assertNothingSent();
 
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->updated_at->equalTo($fleet->end_date))->toBeTrue()
@@ -42,7 +42,7 @@ test('transport unloads at arrival and returns ships without returning delivered
 	Notification::assertSentToTimes($this->targetUser, SystemMessage::class, 1);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(5)
@@ -54,7 +54,7 @@ test('an overdue transport delivers cargo and returns ships in one job', functio
 	$fleet = $this->createMissionFleet(MissionType::Transport);
 	$this->travelTo($fleet->end_date->addHour());
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->targetPlanet->fresh()->only(['metal', 'crystal', 'deuterium']))
@@ -69,7 +69,7 @@ test('deployment transfers ships and cargo to the destination and removes the fl
 	$fleet = $this->createMissionFleet(MissionType::Stay, [202 => 2], ['target_user_id' => $this->user->id]);
 	$this->travelTo($fleet->start_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->targetPlanet->fresh()->getLevel(202))->toBe(5)
@@ -84,7 +84,7 @@ test('deployment returns with cargo if the destination changes owner', function 
 	$fleet = $this->createMissionFleet(MissionType::Stay, [202 => 2], ['target_user_id' => $this->user->id]);
 	$this->travelTo($fleet->start_date);
 
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->getCargo())->toBe(1700)
@@ -92,7 +92,7 @@ test('deployment returns with cargo if the destination changes owner', function 
 		->and($this->targetPlanet->fresh()->metal)->toEqual(10000);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(2)
@@ -106,7 +106,7 @@ test('allied fleet holds until the deadline and then returns ships and cargo', f
 		'end_date' => now()->addHours(4),
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(3)
 		->and($fleet->fresh()->updated_at->equalTo($fleet->end_stay))->toBeTrue()
@@ -114,17 +114,17 @@ test('allied fleet holds until the deadline and then returns ships and cargo', f
 		->and($this->targetPlanet->fresh()->metal)->toEqual(10000);
 
 	$this->travelTo($fleet->end_stay->subSecond());
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect($fleet->fresh()->mess)->toBe(3);
 
 	$this->travelTo($fleet->end_stay);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->updated_at->equalTo($fleet->end_date))->toBeTrue()
 		->and($this->planet->fresh()->getLevel(202))->toBe(0);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(2)
 		->and($this->planet->fresh()->only(['metal', 'crystal', 'deuterium']))
@@ -139,9 +139,9 @@ test('expedition enters its holding phase upon arrival', function () {
 		'end_date' => now()->addHours(4),
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	$this->travelTo($fleet->end_stay->subSecond());
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(3)
 		->and($fleet->fresh()->updated_at->equalTo($fleet->end_stay))->toBeTrue()
@@ -159,8 +159,8 @@ test('recyclers collect only available debris within their remaining capacity an
 		'resource_deuterium' => 0,
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->resource_metal)->toBe($cargo + $collectedMetal)
@@ -169,7 +169,7 @@ test('recyclers collect only available debris within their remaining capacity an
 		->and($this->targetPlanet->fresh()->debris_crystal)->toEqual($crystal - $collectedCrystal);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(209))->toBe(1)
@@ -190,7 +190,7 @@ test('espionage of an undefended planet sends reports and returns probes', funct
 		'resource_deuterium' => 0,
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->entities->getByEntityId(210)->count)->toBe(2)
@@ -199,7 +199,7 @@ test('espionage of an undefended planet sends reports and returns probes', funct
 	Notification::assertSentTo($this->targetUser, SystemMessage::class);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(210))->toBe(2);
 });
@@ -213,7 +213,7 @@ test('attack on an undefended planet loads loot and returns the surviving fleet'
 		'resource_deuterium' => 0,
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->won)->toBe(1)
@@ -223,7 +223,7 @@ test('attack on an undefended planet loads loot and returns the surviving fleet'
 		->and(Report::count())->toBe(1);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(4)
 		->and($this->planet->fresh()->only(['metal', 'crystal', 'deuterium']))
@@ -238,7 +238,7 @@ test('colonization and base creation consume one founding ship and unload the re
 		'target_user_id' => null,
 	]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	$colony = Planet::findByCoordinates(new Coordinates(1, 1, 15, $type));
 	expect($colony)->not->toBeNull()
@@ -258,14 +258,14 @@ test('colonization and base creation consume one founding ship and unload the re
 test('founding fleet returns intact when the colony or base limit is reached', function (MissionType $mission, int $shipId) {
 	$fleet = $this->createMissionFleet($mission, [$shipId => 1], ['end_planet' => 15, 'target_user_id' => null]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->entities->getByEntityId($shipId)->count)->toBe(1)
 		->and(Galaxy::isPositionFree(new Coordinates(1, 1, 15)))->toBeTrue();
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel($shipId))->toBe(1)
 		->and($this->planet->fresh()->only(['metal', 'crystal', 'deuterium']))
@@ -280,7 +280,7 @@ test('founding fleet returns without unloading when another player occupies its 
 	$this->user->setTech('fleet_base', 1);
 	$fleet = $this->createMissionFleet($mission, [$shipId => 1], ['target_user_id' => null]);
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($this->targetPlanet->fresh()->getLevel($shipId))->toBe(0)
@@ -288,7 +288,7 @@ test('founding fleet returns without unloading when another player occupies its 
 		->toEqual(['metal' => 10000, 'crystal' => 10000, 'deuterium' => 10000]);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel($shipId))->toBe(1)
 		->and($this->planet->fresh()->only(['metal', 'crystal', 'deuterium']))
@@ -302,13 +302,13 @@ test('a fleet returns intact when its destination has disappeared', function (Mi
 	$fleet = $this->createMissionFleet($mission, [$shipId => 1]);
 	$this->targetPlanet->delete();
 	$this->travelTo($fleet->start_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 
 	expect($fleet->fresh()->mess)->toBe(1)
 		->and($fleet->fresh()->getCargo())->toBe(1700);
 
 	$this->travelTo($fleet->end_date);
-	(new FleetMissionJob($fleet->fresh()))->handle();
+	(new FleetMissionJob($fleet->id))->handle();
 	expect(Fleet::find($fleet->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel($shipId))->toBe(1)
 		->and($this->planet->fresh()->only(['metal', 'crystal', 'deuterium']))

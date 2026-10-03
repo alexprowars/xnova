@@ -13,7 +13,7 @@ class Fleet extends Command
 
 	public function handle(): void
 	{
-		$fleets = Models\Fleet::query()
+		$fleetIds = Models\Fleet::query()
 			->where(function (Builder $query) {
 				$query->whereNowOrPast('start_date')
 					->where('mess', 0);
@@ -28,10 +28,10 @@ class Fleet extends Command
 					->whereNot('mess', 0);
 			})
 			->orderBy('updated_at')
-			->get();
+			->pluck('id');
 
-		foreach ($fleets as $fleet) {
-			dispatch(new FleetMissionJob($fleet));
+		foreach ($fleetIds as $fleetId) {
+			dispatch(new FleetMissionJob($fleetId));
 		}
 	}
 }

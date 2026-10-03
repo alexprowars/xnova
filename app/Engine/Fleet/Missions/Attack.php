@@ -156,12 +156,10 @@ class Attack extends BaseMission
 		$totalDebris = array_sum($result['debris']);
 
 		if ($totalDebris > 0) {
-			Planet::query()->coordinates(new Coordinates($target->galaxy, $target->system, $target->planet))
-				->whereNot('planet_type', PlanetType::MOON)
-				->incrementEach([
-					'debris_metal' => $result['debris']['metal'],
-					'debris_crystal' => $result['debris']['crystal'],
-				]);
+			FleetService::addDebris(
+				new Coordinates($target->galaxy, $target->system, $target->planet),
+				$result['debris'],
+			);
 		}
 
 		foreach ($attackFleets->getPlayers() as $player) {

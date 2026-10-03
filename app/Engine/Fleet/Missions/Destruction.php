@@ -98,12 +98,7 @@ class Destruction extends BaseMission
 					$debris = FleetService::convertFleetToDebris($this->fleet->entities);
 
 					if ($debris['metal'] > 0 || $debris['crystal'] > 0) {
-						Models\Planet::query()->coordinates($this->fleet->getDestinationCoordinates(false))
-							->whereNot('planet_type', PlanetType::MOON)
-							->incrementEach([
-								'debris_metal' => $debris['metal'],
-								'debris_crystal' => $debris['crystal'],
-							]);
+						FleetService::addDebris($this->fleet->getDestinationCoordinates(false), $debris);
 					}
 				}
 

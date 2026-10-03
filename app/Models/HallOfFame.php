@@ -15,9 +15,9 @@ class HallOfFame extends Model
 		'date' => 'immutable_datetime',
 	];
 
-	/** @return BelongsTo<Report, $this> */
-	public function user(): BelongsTo
+	/** @return BelongsTo<LogsBattle, $this> */
+	public function battleLog(): BelongsTo
 	{
-		return $this->belongsTo(Report::class, 'report_id');
+		return $this->belongsTo(LogsBattle::class, 'report_id');
 	}
 }

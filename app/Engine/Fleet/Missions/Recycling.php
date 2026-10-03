@@ -22,6 +22,7 @@ class Recycling extends BaseMission
 		$targetPlanet = Planet::query()
 			->coordinates($this->fleet->getDestinationCoordinates(false))
 			->whereNot('planet_type', PlanetType::MOON)
+			->lockForUpdate()
 			->first();
 
 		$recycled = $this->calculateRecycledGoods($targetPlanet);
@@ -88,35 +89,33 @@ class Recycling extends BaseMission
 			}
 		}
 
-		$incomingFleetGoods = $this->fleet->resource_metal + $this->fleet->resource_crystal + $this->fleet->resource_deuterium;
+		$incomingFleetGoods = $this->fleet->getCargo();
 
 		// Если часть ресурсов хранится в переработчиках
 		if ($incomingFleetGoods > $otherFleetCapacity) {
 			$recyclerCapacity -= ($incomingFleetGoods - $otherFleetCapacity);
 		}
 
-		if (($target->debris_metal + $target->debris_crystal) <= $recyclerCapacity) {
-			$result['metal'] = $target->debris_metal;
-			$result['crystal'] = $target->debris_crystal;
-		} elseif (($target->debris_metal > $recyclerCapacity / 2) and ($target->debris_crystal > $recyclerCapacity / 2)) {
-			$result['metal'] = $recyclerCapacity / 2;
-			$result['crystal'] = $recyclerCapacity / 2;
-		} elseif ($target->debris_metal > $target->debris_crystal) {
-			$result['crystal'] = $target->debris_crystal;
+		if ($recyclerCapacity <= 0) {
+			return $result;
+		}
 
-			if ($target->debris_metal > ($recyclerCapacity - $result['crystal'])) {
-				$result['metal'] = $recyclerCapacity - $result['crystal'];
-			} else {
-				$result['metal'] = $target->debris_metal;
-			}
+		$metal = max(0, $target->debris_metal);
+		$crystal = max(0, $target->debris_crystal);
+		$halfCapacity = intdiv($recyclerCapacity, 2);
+
+		if (($metal + $crystal) <= $recyclerCapacity) {
+			$result['metal'] = $metal;
+			$result['crystal'] = $crystal;
+		} elseif ($metal > $halfCapacity && $crystal > $halfCapacity) {
+			$result['metal'] = $halfCapacity;
+			$result['crystal'] = $recyclerCapacity - $halfCapacity;
+		} elseif ($metal > $crystal) {
+			$result['crystal'] = $crystal;
+			$result['metal'] = min($metal, $recyclerCapacity - $result['crystal']);
 		} else {
-			$result['metal'] = $target->debris_metal;
-
-			if ($target->debris_crystal > ($recyclerCapacity - $result['metal'])) {
-				$result['crystal'] = $recyclerCapacity - $result['metal'];
-			} else {
-				$result['crystal'] = $target->debris_crystal;
-			}
+			$result['metal'] = $metal;
+			$result['crystal'] = min($crystal, $recyclerCapacity - $result['metal']);
 		}
 
 		return $result;

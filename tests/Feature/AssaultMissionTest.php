@@ -116,8 +116,8 @@ test('a rejected group join leaves existing schedules and ships unchanged', func
 test('a group participant waits for the leading attack without starting a separate battle', function () {
 	$this->travelTo($this->follower->start_date);
 
-	(new FleetMissionJob($this->follower->fresh()))->handle();
-	(new FleetMissionJob($this->follower->fresh()))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
 
 	expect(Report::count())->toBe(0)
 		->and($this->follower->fresh()->mess)->toBe(0)
@@ -131,8 +131,8 @@ test('a missing target disbands the group and all participants return without a 
 	$this->targetPlanet->delete();
 	$this->travelTo($this->leader->start_date);
 
-	(new FleetMissionJob($this->leader->fresh()))->handle();
-	(new FleetMissionJob($this->follower->fresh()))->handle();
+	(new FleetMissionJob($this->leader->id))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
 
 	expect(Assault::find($this->assault->id))->toBeNull()
 		->and(AssaultUser::where('assault_id', $this->assault->id)->count())->toBe(0)
@@ -143,13 +143,13 @@ test('a missing target disbands the group and all participants return without a 
 		->and(Report::count())->toBe(0);
 
 	$this->travelTo($this->leader->end_date);
-	(new FleetMissionJob($this->leader->fresh()))->handle();
+	(new FleetMissionJob($this->leader->id))->handle();
 	expect(Fleet::find($this->leader->id))->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(2)
 		->and(Fleet::find($this->follower->id))->not->toBeNull();
 
 	$this->travelTo($this->follower->end_date);
-	(new FleetMissionJob($this->follower->fresh()))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
 	expect(Fleet::find($this->follower->id))->toBeNull()
 		->and($this->allyPlanet->fresh()->getLevel(202))->toBe(16);
 });
@@ -161,9 +161,9 @@ test('joint attack shares loot by free cargo space and returns survivors to thei
 	$this->follower->update(['entities' => FleetEntityCollection::createFromArray([202 => $followerCount])]);
 	$this->travelTo($this->leader->start_date);
 
-	(new FleetMissionJob($this->follower->fresh()))->handle();
-	(new FleetMissionJob($this->leader->fresh()))->handle();
-	(new FleetMissionJob($this->follower->fresh()))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
+	(new FleetMissionJob($this->leader->id))->handle();
+	(new FleetMissionJob($this->follower->id))->handle();
 
 	$leader = $this->leader->fresh();
 	$follower = $this->follower->fresh();
@@ -190,7 +190,7 @@ test('joint attack shares loot by free cargo space and returns survivors to thei
 		->and($follower->updated_at->equalTo($follower->end_date))->toBeTrue();
 
 	$this->travelTo($leader->end_date);
-	(new FleetMissionJob($leader))->handle();
+	(new FleetMissionJob($leader->id))->handle();
 	expect(Fleet::find($leader->id))->toBeNull()
 		->and(Fleet::find($follower->id))->not->toBeNull()
 		->and($this->planet->fresh()->getLevel(202))->toBe(2)
@@ -198,7 +198,7 @@ test('joint attack shares loot by free cargo space and returns survivors to thei
 		->toEqual(['metal' => 10000 + $cargo + $leaderShare, 'crystal' => 10000 + $leaderShare, 'deuterium' => 10000 + $leaderShare]);
 
 	$this->travelTo($follower->end_date);
-	(new FleetMissionJob($follower->fresh()))->handle();
+	(new FleetMissionJob($follower->id))->handle();
 	expect(Fleet::count())->toBe(0)
 		->and(Report::count())->toBe(1)
 		->and($this->allyPlanet->fresh()->getLevel(202))->toBe(10 + $followerCount)
@@ -215,7 +215,7 @@ test('defeated joint attack removes destroyed fleets and the group without resto
 	$this->targetPlanet->updateAmount(214, 1000);
 	$this->travelTo($this->leader->start_date);
 
-	(new FleetMissionJob($this->leader->fresh()))->handle();
+	(new FleetMissionJob($this->leader->id))->handle();
 
 	expect(Fleet::find($this->leader->id))->toBeNull()
 		->and(Fleet::find($this->follower->id))->toBeNull()
