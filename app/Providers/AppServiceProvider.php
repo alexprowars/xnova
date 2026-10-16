@@ -105,6 +105,8 @@ class AppServiceProvider extends ServiceProvider
 				return $response;
 			}
 
+			$showDetails = !app()->isProduction() && config('app.debug');
+
 			if ($response->exception instanceof PageException) {
 				return $response->render(
 					'Errors/Page',
@@ -112,18 +114,22 @@ class AppServiceProvider extends ServiceProvider
 						'errors' => ['error' => $response->exception->getMessage()],
 						'status' => $response->statusCode(),
 						'message' => $response->exception->getMessage(),
-					], !app()->isProduction() ? ['trace' => $response->exception->getTraceAsString()] : [])
+					], $showDetails ? ['trace' => $response->exception->getTraceAsString()] : [])
 				)->withSharedData();
 			}
 
 			if (in_array($response->statusCode(), [403, 404, 500, 503])) {
+				$message = $showDetails
+					? $response->exception->getMessage()
+					: __('main.http_errors.' . $response->statusCode());
+
 				return $response->render(
 					'Errors/FullPage',
 					array_merge([
-						'errors' => ['error' => $response->exception->getMessage()],
+						'errors' => ['error' => $message],
 						'status' => $response->statusCode(),
-						'message' => $response->exception->getMessage(),
-					], !app()->isProduction() ? ['trace' => $response->exception->getTraceAsString()] : [])
+						'message' => $message,
+					], $showDetails ? ['trace' => $response->exception->getTraceAsString()] : [])
 				);
 			}
 

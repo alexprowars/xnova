@@ -18,7 +18,7 @@ class SupportController extends Controller
 	public function index()
 	{
 		$tickets = SupportTicket::query()
-			->whereBelongsTo($this->user)
+			->when(!$this->user->can('support'), fn (Builder $query) => $query->whereBelongsTo($this->user))
 			->latest()
 			->get();
 
@@ -61,8 +61,10 @@ class SupportController extends Controller
 
 	public function answer(int $id, Request $request): void
 	{
+		$isSupport = $this->user->can('support');
+
 		$ticket = SupportTicket::query()
-			->whereBelongsTo($this->user)
+			->when(!$isSupport, fn (Builder $query) => $query->whereBelongsTo($this->user))
 			->findOne($id);
 
 		if (!$ticket) {
@@ -87,17 +89,22 @@ class SupportController extends Controller
 		->user()->associate($this->user)
 		->save();
 
-		$ticket->status = 3;
+		$ticket->status = $isSupport && $ticket->user_id !== $this->user->id ? 2 : 3;
 		$ticket->updateTimestamps();
 		$ticket->save();
 
 		$usersId = array_unique(array_merge(
-			[1],
+			[1, $ticket->user_id],
 			$ticket->messages()->whereNot('user_id', $this->user->id)->pluck('user_id')->toArray()
 		));
 
-		foreach ($usersId as $userId) {
-			User::findOne($userId)?->notify(
+		$users = User::query()
+			->whereIn('id', $usersId)
+			->whereNot('id', $this->user->id)
+			->get();
+
+		foreach ($users as $user) {
+			$user->notify(
 				new SystemMessage(MessageType::System, new SupportAnswerMessage(['ticket_id' => $ticket->id]), $this->user->username)
 			);
 		}
@@ -107,7 +114,7 @@ class SupportController extends Controller
 	{
 		$ticket = SupportTicket::query()
 			->with(['messages', 'messages.user'])
-			->when(!$this->user->isAdmin(), fn (Builder $query) => $query->where(function (Builder $query) {
+			->when(!$this->user->can('support'), fn (Builder $query) => $query->where(function (Builder $query) {
 				$query->whereBelongsTo($this->user)
 					->orWhereHas('messages', fn (Builder $query) => $query->whereBelongsTo($this->user));
 			}))

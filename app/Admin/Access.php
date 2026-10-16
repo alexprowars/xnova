@@ -3,6 +3,8 @@
 namespace App\Admin;
 
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class Access
 {
@@ -29,6 +31,52 @@ class Access
 		$user = auth()->user();
 
 		abort_unless($user && self::allows($user, 'panel') && self::allows($user, $permission), 403);
+	}
+
+	public static function isSuperuser(User $user): bool
+	{
+		return $user->id === 1 || $user->hasRole('admin');
+	}
+
+	public static function canManageUser(User $actor, User $user): bool
+	{
+		if (self::isSuperuser($actor)) {
+			return true;
+		}
+
+		return !self::isSuperuser($user)
+			&& $user->getAllPermissions()->pluck('id')
+				->diff($actor->getAllPermissions()->pluck('id'))
+				->isEmpty();
+	}
+
+	public static function authorizeUser(User $user): void
+	{
+		$actor = auth()->user();
+
+		abort_unless($actor && self::canManageUser($actor, $user), 403);
+	}
+
+	public static function canManageRole(User $actor, Role $role): bool
+	{
+		if (self::isSuperuser($actor)) {
+			return true;
+		}
+
+		return strtolower(trim($role->name ?? '')) !== 'admin'
+			&& $role->permissions->every(fn(Permission $permission) => self::canGrantPermission($actor, $permission));
+	}
+
+	public static function authorizeRole(Role $role): void
+	{
+		$actor = auth()->user();
+
+		abort_unless($actor && self::canManageRole($actor, $role), 403);
+	}
+
+	public static function canGrantPermission(User $actor, Permission $permission): bool
+	{
+		return self::isSuperuser($actor) || $actor->getAllPermissions()->contains('id', $permission->id);
 	}
 
 	public static function shared(User $user): array

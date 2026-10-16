@@ -522,16 +522,17 @@ class UpdateStatistics
 	{
 		$elements = Vars::getItemsByType([ItemType::BUILDING, ItemType::TECH, ItemType::FLEET, ItemType::DEFENSE]);
 
-		$array = '';
+		$records = [];
 
 		foreach ($elements as $elementId) {
 			if ($elementId != 407 && $elementId != 408) {
-				$array .= $elementId . " => array('username' => '" . ($this->maxinfos[$elementId]['username'] ?? '') . "', 'maxlvl' => " . ($this->maxinfos[$elementId]['maxlvl'] ?? 0) . "),\n";
+				$records[$elementId] = [
+					'username' => $this->maxinfos[$elementId]['username'] ?? '',
+					'maxlvl' => $this->maxinfos[$elementId]['maxlvl'] ?? 0,
+				];
 			}
 		}
 
-		$file = "<?php \n//The File is created on " . date("d. M y H:i:s") . "\n$" . "recordsArray = [\n" . $array . "\n];\n?>";
-
-		file_put_contents(base_path('bootstrap/cache/CacheRecords.php'), $file);
+		Cache::forever('app::records', $records);
 	}
 }

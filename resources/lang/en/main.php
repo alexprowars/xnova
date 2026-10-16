@@ -1,6 +1,12 @@
 <?php
 
 return [
+	'http_errors' => [
+		403 => 'Access denied.',
+		404 => 'Page not found.',
+		500 => 'An internal server error occurred. Please try again later.',
+		503 => 'The service is temporarily unavailable. Please try again later.',
+	],
 	'format_time' => [
 		'day' => 'd.',
 		'hour' => 'h.',
@@ -41,7 +47,7 @@ return [
 	'players_profile_not_found' => 'Profile not found',
 	'players_info_not_found' => 'Information about this player was not found',
 	'sim_log_not_found' => 'Simulation log not found',
-	'sim_report_error' => 'Error processing the battle report: :error',
+	'sim_report_error' => 'Could not process the battle report. Please try again later.',
 	'sim_no_data' => 'No data for battle simulation',
 	'sim_player' => 'Player :number',
 	'notes_added' => 'Note added',

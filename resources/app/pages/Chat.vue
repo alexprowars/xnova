@@ -15,8 +15,10 @@
 			</button>
 		</div>
 		<div ref="chatboxRef" class="page-chat-messages" role="log" :aria-label="$t('menu.chat')">
-			<ChatMessage v-for="item in messages" :key="item.id" :item="item" @player="toPlayer" @private="toPrivate"/>
-			<div v-if="!messages.length" class="page-chat-empty">{{ $t('pages.chat.empty_state') }}</div>
+			<div v-if="messages.length" ref="messagesRef">
+				<ChatMessage v-for="item in messages" :key="item.id" :item="item" @player="toPlayer" @private="toPrivate"/>
+			</div>
+			<div v-else class="page-chat-empty">{{ $t('pages.chat.empty_state') }}</div>
 		</div>
 		<form class="page-chat-compose" @submit.prevent="sendMessage">
 			<div class="page-chat-toolbar">
@@ -85,7 +87,8 @@
 	import SmileIcon from '~/images/icons/editor/smile.svg?component';
 	import SendIcon from '~/images/icons/send.svg?component';
 	import { useI18n } from 'vue-i18n';
-	import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+	import { inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+	import { useResizeObserver } from '@vueuse/core';
 	import parser from '~/utils/parser';
 	import ChatMessage from '~/components/Page/Chat/ChatMessage.vue';
 	import { Head } from '@inertiajs/vue3';
@@ -105,20 +108,29 @@
 	const chatStore = inject('chat');
 
 	const chatboxRef = ref(null);
+	const messagesRef = ref(null);
 	const textRef = ref(null);
 	const smilesList = ref(parser.patterns.smiles);
 	const message = ref('');
 	const sending = ref(false);
 	const { messages } = chatStore;
+	let scrollFrame;
 
-	onMounted(() => {
-		chatStore.loadMessages();
+	useResizeObserver([chatboxRef, messagesRef], scrollToBottom);
 
+	onMounted(async () => {
 		window.addEventListener('resize', scrollToBottom, true);
+
+		await chatStore.loadMessages();
+		await nextTick();
+
+		scrollToBottom();
+		chatStore.clearUnread();
 	});
 
 	onBeforeUnmount(() => {
-		window.removeEventListener('resize', scrollToBottom);
+		window.removeEventListener('resize', scrollToBottom, true);
+		cancelAnimationFrame(scrollFrame);
 	});
 
 	watch(message, () => {
@@ -126,15 +138,19 @@
 	});
 
 	watch(messages, () => {
-		setTimeout(scrollToBottom, 250);
+		scrollToBottom();
 
 		chatStore.clearUnread();
-	});
+	}, { deep: 1, flush: 'post' });
 
 	function scrollToBottom () {
-		if (chatboxRef.value) {
-			chatboxRef.value.scrollTop = chatboxRef.value.scrollHeight
-		}
+		cancelAnimationFrame(scrollFrame);
+
+		scrollFrame = requestAnimationFrame(() => {
+			if (chatboxRef.value) {
+				chatboxRef.value.scrollTop = chatboxRef.value.scrollHeight;
+			}
+		});
 	}
 
 	function addTag (tag, type) {

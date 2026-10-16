@@ -2,7 +2,7 @@
 	<tr class="galaxy-row" :class="{ 'is-empty': !item, 'is-own': item?.user?.id === currentUser.id, 'is-destroyed': item?.planet?.destruyed }">
 		<td class="th galaxy-position">{{ planet }}</td>
 		<td class="th img">
-			<Popper popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed']">
+			<Popper interactive popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed']">
 				<template #content>
 					<PlanetTooltip :item="item" :is-vacation="isVacation" :is-own="item.user?.id === currentUser.id" :can-phalanx="user.phalanx > 0"/>
 				</template>
@@ -20,7 +20,7 @@
 			</div>
 		</td>
 		<td class="th img whitespace-nowrap">
-			<Popper popper-class="galaxy-tooltip" v-if="item && item['moon'] && !item['moon']['destruyed']">
+			<Popper interactive popper-class="galaxy-tooltip" v-if="item && item['moon'] && !item['moon']['destruyed']">
 				<template #content>
 					<MoonTooltip :item="item" :is-vacation="isVacation" :is-own="item.user?.id === currentUser.id" :can-destroy="currentPlanet.units.dearth_star > 0"/>
 				</template>
@@ -29,7 +29,7 @@
 			<span v-if="item && item['moon'] && item['moon']['destruyed']">~</span>
 		</td>
 		<td class="th galaxy-debris" :class="[debris_class]">
-			<Popper popper-class="galaxy-tooltip" v-if="item && (item.debris.metal || item.debris.crystal)">
+			<Popper interactive popper-class="galaxy-tooltip" v-if="item && (item.debris.metal || item.debris.crystal)">
 				<template #content>
 					<DebrisTooltip :item="item" :is-vacation="isVacation" :can-recycle="currentPlanet.units.recycler > 0" @collect="debris"/>
 				</template>
@@ -37,13 +37,14 @@
 			</Popper>
 		</td>
 		<td class="th galaxy-player">
-			<Popper popper-class="galaxy-tooltip" v-if="item && item.user && !item['planet']['destruyed']">
+			<Popper interactive popper-class="galaxy-tooltip" v-if="item && item.user && !item['planet']['destruyed']">
 				<template #content>
 					<PlayerTooltip :item="item" :is-own="item.user.id === currentUser.id"/>
 				</template>
 				<div>
 					<span :class="[user_status_class]">{{ item.user['name'] }}</span>
 					<span v-if="user_status" :class="[user_status_class]">
+						{{ ' ' }}
 						<span style="color: var(--text-color)">(</span>
 						<span v-if="user_status === 'UG' || user_status === 'G'">
 							<Link href="/blocked" :class="[user_status_class]">{{ user_status }}</Link>
@@ -51,9 +52,9 @@
 						<span v-else>{{ user_status }}</span>
 						<span style="color: var(--text-color)">)</span>
 					</span>
-					<span v-if="item.user['role'] === 'admin'" class="negative">A</span>
-					<span v-if="item.user['role'] === 'super-operator'" class="neutral">SGo</span>
-					<span v-if="item.user['role'] === 'operator'" class="positive">Go</span>
+					<span v-if="item.user['role'] === 'admin'" class="negative"> A</span>
+					<span v-if="item.user['role'] === 'super-operator'" class="neutral"> SGo</span>
+					<span v-if="item.user['role'] === 'operator'" class="positive"> Go</span>
 				</div>
 			</Popper>
 		</td>
@@ -63,7 +64,7 @@
 			</Link>
 		</td>
 		<td class="th">
-			<Popper popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed'] && item['alliance']">
+			<Popper interactive popper-class="galaxy-tooltip" v-if="item && !item['planet']['destruyed'] && item['alliance']">
 				<template #content>
 					<AllianceTooltip :item="item"/>
 				</template>
@@ -94,7 +95,7 @@
 							<GalaxyIcon type="missile"/>
 						</button>
 					</Popper>
-					<Popper popper-class="galaxy-tooltip" v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']">
+					<Popper interactive popper-class="galaxy-tooltip" v-if="!isVacation && currentPlanet['units']['spy_sonde'] && !item.user['vacation']">
 						<template #content>
 							<div class="text-center flex flex-col gap-2">
 								<div>

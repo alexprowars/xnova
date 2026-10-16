@@ -41,7 +41,7 @@
 					<div v-if="item['is_max']" class="text-center negative">
 						{{ $t('construction.unit_limit', { count: item['max'] }) }}
 					</div>
-					<div v-else-if="max > 0">
+					<div v-else-if="max > 0" class="flex items-center gap-2">
 						<a @click.prevent="setMax">
 							{{ $t('pages.building.maximum') }}: <span class="positive">{{ $formatNumber(max) }}</span>
 						</a>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Format;
 use App\Settings;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
 
@@ -12,11 +13,7 @@ class RecordsController extends Controller
 	public function index(Settings $settings)
 	{
 		/** @var array<int, array> $recordsArray */
-		$recordsArray = [];
-
-		if (file_exists(base_path('bootstrap/cache/CacheRecords.php'))) {
-			require_once(base_path('bootstrap/cache/CacheRecords.php'));
-		}
+		$recordsArray = Cache::get('app::records', []);
 
 		$Builds = [];
 		$MoonsBuilds = [];

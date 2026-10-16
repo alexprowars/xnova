@@ -46,12 +46,14 @@ class RoleController extends AdminController
 					Permission::query()
 						->orderBy('name')
 						->get()
+						->filter(fn(Permission $permission) => Access::canGrantPermission(auth()->user(), $permission))
 						->map(
 							fn(Permission $permission) => [
 								'value' => $permission->id,
 								'label' => $permission->name . ' (' . $permission->guard_name . ')',
 							],
 						)
+						->values()
 						->all(),
 					[],
 				),
@@ -70,6 +72,7 @@ class RoleController extends AdminController
 	public function edit(Role $role)
 	{
 		Access::authorize('roles');
+		Access::authorizeRole($role);
 
 		return $this->form('roles', $this->fields($role), $role->id);
 	}
@@ -82,6 +85,7 @@ class RoleController extends AdminController
 	public function update(Request $request, Role $role)
 	{
 		Access::authorize('roles');
+		Access::authorizeRole($role);
 
 		$data = $request->validate([
 			'name' => [
@@ -106,13 +110,24 @@ class RoleController extends AdminController
 		}
 
 		DB::transaction(function () use ($role, $data) {
+			if ($role->exists) {
+				$role->refreshForUpdate();
+				Access::authorizeRole($role);
+			}
+
 			$permissions = Permission::query()
 				->whereIn('id', $data['permissions'])
 				->get();
 
+			foreach ($permissions as $permission) {
+				abort_unless(Access::canGrantPermission(auth()->user(), $permission), 403);
+			}
+
 			unset($data['permissions']);
 
-			$role->fill($data)->save();
+			$role->fill($data);
+			Access::authorizeRole($role);
+			$role->save();
 			$role->syncPermissions($permissions);
 		});
 

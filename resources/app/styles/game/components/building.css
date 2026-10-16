@@ -185,6 +185,10 @@
 			padding-right: 28px;
 			border-bottom: 1px solid var(--border-color);
 			background: transparent;
+
+			> :not(:first-child) {
+				margin-inline-start: 0.25em;
+			}
 		}
 
 		.buldings-active-price {

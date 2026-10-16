@@ -82,7 +82,9 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report(showSimulationLink: false);
 		} catch (Throwable $e) {
-			throw new Exception(__('main.sim_report_error', ['error' => $e->getMessage()]));
+			report($e);
+
+			throw new Exception(__('main.sim_report_error'));
 		}
 
 		return Inertia::render('Sim/Report', [
@@ -123,7 +125,9 @@ class SimController extends Controller
 		try {
 			$report = new BattleReport($result)->report(showSimulationLink: false);
 		} catch (Throwable $e) {
-			throw new PageException(__('main.sim_report_error', ['error' => $e->getMessage()]));
+			report($e);
+
+			throw new PageException(__('main.sim_report_error'));
 		}
 
 		$log = LogsSimulation::create([

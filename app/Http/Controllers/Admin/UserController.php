@@ -87,15 +87,18 @@ class UserController extends AdminController
 				$field('about', 'textarea'),
 			];
 
-			if (auth()->user()->can('roles')) {
+			if (Access::allows(auth()->user(), 'roles')) {
 				$fields[] = $field(
 					'roles',
 					'checkboxes',
 					Role::query()
 						->where('guard_name', 'web')
+						->with('permissions')
 						->orderBy('name')
 						->get()
+						->filter(fn(Role $role) => Access::canManageRole(auth()->user(), $role))
 						->map(fn(Role $role) => ['value' => $role->id, 'label' => $role->name])
+						->values()
 						->all(),
 				);
 			}
@@ -113,7 +116,12 @@ class UserController extends AdminController
 		Access::authorize('users');
 
 		$data = $request->validate([
-			'username' => 'required|string|max:50',
+			'username' => [
+				'required',
+				'string',
+				'max:50',
+				'regex:/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u',
+			],
 			'email' => 'required|email|max:50|unique:users,email',
 			'password' => 'required|string|min:8|max:100',
 		]);
@@ -130,6 +138,7 @@ class UserController extends AdminController
 	public function edit(Request $request, User $user)
 	{
 		Access::authorize('users');
+		Access::authorizeUser($user);
 
 		$links = [];
 
@@ -212,9 +221,15 @@ class UserController extends AdminController
 	public function update(Request $request, User $user)
 	{
 		Access::authorize('users');
+		Access::authorizeUser($user);
 
 		$rules = [
-			'username' => 'required|string|max:50',
+			'username' => [
+				'required',
+				'string',
+				'max:50',
+				'regex:/^[a-zA-Zа-яА-Я0-9_.,\-!?* ]+$/u',
+			],
 			'email' => ['required', 'email', 'max:50', Rule::unique('users')->ignore($user->id)],
 			'password' => 'nullable|string|min:8|max:100',
 			'race' => 'required|integer|between:0,4',
@@ -229,7 +244,7 @@ class UserController extends AdminController
 			$rules['officier_' . $code] = 'nullable|date';
 		}
 
-		if ($request->user()->can('roles')) {
+		if (Access::allows($request->user(), 'roles')) {
 			$rules['roles'] = 'present|array';
 			$rules['roles.*'] = ['integer', 'distinct', Rule::exists('roles', 'id')->where('guard_name', 'web')];
 		}
@@ -238,9 +253,20 @@ class UserController extends AdminController
 
 		DB::transaction(function () use ($data, $user) {
 			$user->refreshForUpdate();
+			Access::authorizeUser($user);
 
 			if (isset($data['roles'])) {
-				$user->syncRoles(Role::query()->whereIn('id', $data['roles'])->get());
+				$roles = Role::query()
+					->where('guard_name', 'web')
+					->whereIn('id', $data['roles'])
+					->lockForUpdate()
+					->get();
+
+				foreach ($roles as $role) {
+					Access::authorizeRole($role);
+				}
+
+				$user->syncRoles($roles);
 				unset($data['roles']);
 			}
 
@@ -265,6 +291,7 @@ class UserController extends AdminController
 	public function research(Request $request, User $user, int $entity)
 	{
 		Access::authorize('users');
+		Access::authorizeUser($user);
 
 		abort_unless(in_array($entity, Vars::getItemsByType(ItemType::TECH), true), 404);
 
@@ -272,6 +299,7 @@ class UserController extends AdminController
 
 		DB::transaction(function () use ($user, $entity, $data) {
 			$user->refreshForUpdate();
+			Access::authorizeUser($user);
 			$user->setTech($entity, $data['level']);
 
 			QueueManager::recalculateForUser($user);
@@ -296,6 +324,7 @@ class UserController extends AdminController
 				default => 'users',
 			},
 		);
+		Access::authorizeUser($user);
 
 		if (in_array($data['action'], ['ban', 'delete'], true)) {
 			abort_if($user->id === 1 || $user->id === $request->user()->id, 403);
@@ -303,6 +332,8 @@ class UserController extends AdminController
 
 		DB::transaction(function () use ($user, $data) {
 			$user->refreshForUpdate();
+			Access::authorizeUser($user);
+
 			switch ($data['action']) {
 				case 'ban':
 					Blocked::create([

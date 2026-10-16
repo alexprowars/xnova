@@ -48,6 +48,8 @@ class Message extends Model
 	 */
 	public function prunable(): Builder
 	{
-		return static::query()->where('date', '<', now()->subDays(14))->whereNot('type', 2);
+		return static::query()
+			->where('date', '<', now()->subDays(14))
+			->whereNot('type', MessageType::User);
 	}
 }
