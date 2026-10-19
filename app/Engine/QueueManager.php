@@ -529,7 +529,9 @@ class QueueManager
 			}
 		}
 
-		$isUpdated = false;
+		$completedAmounts = [];
+
+		$now = now();
 
 		foreach ($queue as $i => $item) {
 			if (!isset($buildTypes[$item->object_id])) {
@@ -540,37 +542,35 @@ class QueueManager
 
 			$buildTime = $entity->getTime();
 
-			while ($item->date->addSeconds($buildTime)->isPast()) {
-				if ($item->object_id == 502 || $item->object_id == 503) {
-					$requiredSpace = $item->object_id == 503 ? 2 : 1;
+			$elapsedTime = $item->date->diffInSeconds($now);
 
-					if ($missilesSpace < $requiredSpace) {
-						break;
-					}
+			$completedCount = max(0, (int) floor($elapsedTime / $buildTime));
+			$completedCount = min($item->level, $completedCount);
 
-					$missilesSpace -= $requiredSpace;
+			if ($item->object_id == 502 || $item->object_id == 503) {
+				$requiredSpace = $item->object_id == 503 ? 2 : 1;
+				$completedCount = min($completedCount, max(0, intdiv($missilesSpace, $requiredSpace)));
+				$missilesSpace -= $completedCount * $requiredSpace;
+			}
+
+			if ($completedCount > 0) {
+				$item->date = $item->date->addSeconds($buildTime * $completedCount);
+
+				$builded += $completedCount;
+				$completedAmounts[$item->object_id] = ($completedAmounts[$item->object_id] ?? 0) + $completedCount;
+
+				$item->level -= $completedCount;
+			}
+
+			if ($item->level <= 0) {
+				if (!$this->deleteInQueue($item)) {
+					$item->delete();
 				}
 
-				$item->date = $item->date->addSeconds($buildTime);
+				$nextItem = $queue->get($i + 1);
 
-				$builded++;
-				$this->planet->updateAmount($item->object_id, 1, true);
-				$item->level--;
-
-				$isUpdated = true;
-
-				if ($item->level <= 0) {
-					if (!$this->deleteInQueue($item)) {
-						$item->delete();
-					}
-
-					$nextItem = $queue->get($i + 1);
-
-					if ($nextItem && $nextItem->date->lessThan($item->date)) {
-						$nextItem->date = $item->date;
-					}
-
-					break;
+				if ($nextItem && $nextItem->date->lessThan($item->date)) {
+					$nextItem->date = $item->date;
 				}
 			}
 
@@ -584,7 +584,9 @@ class QueueManager
 			}
 		}
 
-		if ($isUpdated) {
+		if (!empty($completedAmounts)) {
+			$this->planet->updateAmounts($completedAmounts, true);
+
 			event(new PlanetEntityUpdated($this->planet));
 		}
 

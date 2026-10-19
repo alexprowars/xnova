@@ -862,7 +862,7 @@
 			"origin_planet": "планеты",
 			"target_moon": "луну",
 			"target_planet": "планету",
-			"fleet_row": "Игрок ({fleet}) с {type1} {planetName}{pos1} {direction} на {type2} {targetName}{pos2}. Задание: {mission}"
+			"fleet_row": "{fleet} с {type1} {planetName}{pos1} {direction} на {type2} {targetName}{pos2}. Задание: {mission}"
 		},
 		"overview": {
 			"planet_rename_hint": "Редактирование планеты",

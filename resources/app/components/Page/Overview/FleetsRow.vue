@@ -8,6 +8,7 @@
 			<div class="overview-fleet-description">
 				<template v-if="item['owner']">{{ $t('fleet_activity.own') }}</template>
 				<template v-else>{{ $t(item['assault'] ? 'fleet_activity.allied' : 'fleet_activity.foreign') }}</template>
+				{{ ' ' }}
 
 				<Popper popper-class="overview-fleet-tooltip">
 					<template #content>
@@ -30,12 +31,14 @@
 					</template>
 					<button v-else type="button" class="overview-fleet-trigger">{{ $t('fleet_activity.fleet') }}</button>
 				</Popper>
+				{{ ' ' }}
 
 				<template v-if="!item['owner']">
-					{{ $t('fleet_activity.of_player') }}
+					{{ $t('fleet_activity.of_player') + ' ' }}
 					<template v-if="item['user']">
 						{{ item['user']['name'] }} <Link :href="'/messages/write/' + item['user']['id']" :title="$t('send_message')" :aria-label="$t('send_message')"><SendIcon class="inline-block size-4 align-middle" aria-hidden="true" focusable="false"/></Link>
 					</template>
+					{{ ' ' }}
 				</template>
 
 				<template v-if="item['status'] === 0">

@@ -43,6 +43,17 @@
 		color: var(--ui-text-color);
 	}
 
+	.phalanx-fleet-trigger {
+		padding: 0;
+		border: 0;
+		border-bottom: 1px dashed currentColor;
+		border-radius: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
 	@media (max-width: 479px) {
 		.phalanx-flight {
 			grid-template-columns: minmax(0, 1fr);
@@ -55,5 +66,19 @@
 			align-items: baseline;
 			gap: 10px;
 		}
+	}
+}
+
+.phalanx-fleet-composition {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	padding: 8px;
+	font-variant-numeric: tabular-nums;
+
+	.phalanx-fleet-unit {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		padding-block: 4px;
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Engine\Enums\QueueType;
 use App\Engine\QueueManager;
 use App\Exceptions\Exception;
 use App\Models;
@@ -18,6 +19,13 @@ class Queue extends Command
 		$planetsId = Models\Queue::query()
 			->whereNotNull('date')
 			->where('date_end', '<=', now()->addSeconds(5))
+			->where(function ($query) {
+				$query->where('type', '!=', QueueType::SHIPYARD)
+					->orWhereIn('id', Models\Queue::query()
+						->selectRaw('MIN(id)')
+						->where('type', QueueType::SHIPYARD)
+						->groupBy('planet_id'));
+			})
 			->groupBy('planet_id')
 			->pluck('planet_id');
 

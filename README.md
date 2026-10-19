@@ -176,7 +176,8 @@ Run these commands from the repository root. For builds and checks in Docker, pr
 | `npm run build` | Build frontend assets and the SSR bundle |
 | `composer test` | Run the Pest test suite |
 | `composer analyse` | Run PHPStan and Larastan |
-| `php artisan game:daemon` | Process fleet events and game queues |
+| `php artisan game:daemon fleet` | Run the fleet worker |
+| `php artisan game:daemon queue` | Run the game queue worker |
 
 ## Game configuration
 

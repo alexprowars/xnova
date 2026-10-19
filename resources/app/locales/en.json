@@ -858,7 +858,7 @@
 			"origin_planet": "the planet",
 			"target_moon": "the moon",
 			"target_planet": "the planet",
-			"fleet_row": "Player ({fleet}) from {type1} {planetName}{pos1} {direction} to {type2} {targetName}{pos2}. Mission: {mission}"
+			"fleet_row": "{fleet} from {type1} {planetName}{pos1} {direction} to {type2} {targetName}{pos2}. Mission: {mission}"
 		},
 		"overview": {
 			"planet_rename_hint": "Editing a planet",

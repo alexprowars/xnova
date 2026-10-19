@@ -58,9 +58,14 @@ services:
     command: [ "php", "artisan", "schedule:work" ]
     user: "web"
 
-  daemon:
+  daemon-fleet:
     <<: *base-image
-    command: [ "php", "artisan", "game:daemon" ]
+    command: [ "php", "artisan", "game:daemon", "fleet" ]
+    user: "web"
+
+  daemon-queue:
+    <<: *base-image
+    command: [ "php", "artisan", "game:daemon", "queue" ]
     user: "web"
 
   redis:

@@ -205,6 +205,33 @@ class Planet extends Model
 		$entity->save();
 	}
 
+	/** @param array<int, int> $amounts */
+	public function updateAmounts(array $amounts, bool $isDifferent = false): void
+	{
+		if (empty($amounts)) {
+			return;
+		}
+
+		$values = [];
+
+		foreach ($amounts as $entityId => $amount) {
+			$entity = $this->getEntity($entityId);
+
+			if (!$entity) {
+				throw new Exception('update unknown entity');
+			}
+
+			$values[] = [
+				'id' => $entity->id,
+				'entity_id' => $entity->entity_id,
+				'amount' => $isDifferent ? $entity->amount + $amount : $amount,
+			];
+		}
+
+		$this->entities()->upsert($values, ['id'], ['amount']);
+		$this->unsetRelation('entities');
+	}
+
 	public function getProduction(?CarbonImmutable $updateTime = null): Production
 	{
 		if (!isset($this->production)) {

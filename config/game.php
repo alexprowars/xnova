@@ -2,6 +2,9 @@
 
 return [
 	'version' => '7.0',
+	'daemon' => [
+		'gc_memory_growth_mb' => env('GAME_DAEMON_GC_MEMORY_GROWTH_MB', 32),
+	],
 	'spyReportRow' => 2,
 	'fieldsByMoonBase'  => env('GAME_MOONBASE_FIELDS', 4),
 	'maxPlanets' => env('GAME_MAX_PLANETS', 9),

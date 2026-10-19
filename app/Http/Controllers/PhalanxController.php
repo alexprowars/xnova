@@ -99,9 +99,9 @@ class PhalanxController extends Controller
 					'type_1' => $type1,
 					'type_2' => $type2,
 					'planet_name' => $row->user_name,
-					'planet_position' => $row->splitStartPosition(),
+					'planet_position' => $row->getOriginCoordinates()->toArray(),
 					'target_name' => $row->target_user_name,
-					'target_position' => $row->splitTargetPosition(),
+					'target_position' => $row->getDestinationCoordinates()->toArray(),
 					'mission' => $row->mission,
 					'direction' => 1
 				];
@@ -114,9 +114,9 @@ class PhalanxController extends Controller
 					'type_1' => $type2,
 					'type_2' => $type1,
 					'planet_name' => $row->target_user_name,
-					'planet_position' => $row->splitTargetPosition(),
+					'planet_position' => $row->getDestinationCoordinates()->toArray(),
 					'target_name' => $row->user_name,
-					'target_position' => $row->splitStartPosition(),
+					'target_position' => $row->getOriginCoordinates()->toArray(),
 					'mission' => $row->mission,
 					'direction' => 2
 				];
