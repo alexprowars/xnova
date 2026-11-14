@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
 		JsonResource::withoutWrapping();
 
-		RateLimiter::for('global', fn () => Limit::perMinute(60)->by(request()->ip()));
+		RateLimiter::for('global', fn () => Limit::perSecond(10)->by(request()->ip()));
 
 		Str::macro('sanitize', function (string $string): string {
 			return htmlspecialchars($string);
